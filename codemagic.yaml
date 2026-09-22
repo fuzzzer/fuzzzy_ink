@@ -1,45 +1,44 @@
-# Codemagic build pipeline — Fuzzzy Seal (com.fuzzzycore.seal)
-#
-# Seven workflows: development / staging / production on Android and iOS, plus production on macOS.
-# The environments matrix (owner's decision, do not change without asking):
-#
-#              development                     staging                         production
-#   Android    Firebase App Distribution       Firebase App Distribution       Play internal track
-#              + own Play record (internal)    + own Play record (internal)
-#   iOS        Firebase App Distribution       Firebase App Distribution       TestFlight
-#              (ad-hoc)                        (ad-hoc)
-#   macOS      —                               —                               Mac App Store
-#
-# THE SECRET-FREE RULE, and it is not optional here: this repository is PUBLIC, so this file is
-# world-readable. It names secrets; it never carries a value. Every keystore, certificate, API key and
-# service account lives in the Codemagic vault and is injected into the build container at run time.
-# The names below are labels. Nothing here is sensitive, and nothing here may ever become sensitive.
-#
-# GitHub Actions (.github/workflows/main.yaml) stays the CI: tests, the 16 KB gate, reproducibility and the
-# provenance attestation on every push and tag. Codemagic produces the SIGNED artefacts that CI cannot.
-#
-# Validated against https://codemagic.io/codemagic-schema.json.
-# Runbook, including exactly what the owner enters in the Codemagic UI: documents/security/RELEASE.md §6,
-# and playbooks/codemagic.md in FuzzyCore_HQ.
+# Fuzzzy Seal — signed builds for Google Play, TestFlight and the Mac App Store.
+# This repository is public: credentials are referenced by name and injected by Codemagic at build
+# time. No secret value belongs in this file, ever.
 
 definitions:
-  # ---------------------------------------------------------------------------------------------------
-  # Shared steps
-  # ---------------------------------------------------------------------------------------------------
+  flutter_version: &flutter_version 3.41.7
 
-  # The Rust core (rust/fuzzy_crypto_core) is built by cargokit inside `flutter build`; Codemagic images
-  # ship no Rust, so rustup is installed per build with the toolchain rust-toolchain.toml pins.
-  rust_toolchain: &rust_toolchain
+  install_rust: &install_rust
     name: Install Rust 1.98.1
+    # The Codemagic images ship no Rust; the version must track rust-toolchain.toml.
     script: |
       set -euo pipefail
       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.98.1
       echo "PATH=$HOME/.cargo/bin:$PATH" >> "$CM_ENV"
 
-  # `fuzzzy_ui_kit` is a git dependency on the PRIVATE repo fuzzzy-bot/fuzzy_design (pubspec.yaml). A
-  # read-only deploy key is supplied as FUZZY_DESIGN_SSH_KEY (group fuzzzycore_deps); Codemagic loads every
-  # `*_SSH_KEY` variable into the SSH agent, and this rewrite sends exactly that one URL over SSH.
-  pub_git_auth: &pub_git_auth
+  add_rust_android_targets: &add_rust_android_targets
+    name: Add the Rust Android targets
+    script: rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
+
+  add_rust_ios_target: &add_rust_ios_target
+    name: Add the Rust iOS target
+    script: rustup target add aarch64-apple-ios
+
+  add_rust_macos_targets: &add_rust_macos_targets
+    name: Add the Rust macOS targets
+    script: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+
+  install_android_ndk: &install_android_ndk
+    name: Install Android NDK 28.2.13676358
+    # cargokit resolves the NDK from android.ndkVersion; keep the two numbers equal.
+    script: '"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"'
+
+  seed_cargo_path_remap: &seed_cargo_path_remap
+    name: Seed the Cargo path remap
+    # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android, which makes cargo ignore the rustflags in
+    # .cargo/config.toml; it appends to an existing value, so the remap is seeded here instead.
+    script: |
+      set -euo pipefail
+      echo "CARGO_ENCODED_RUSTFLAGS=--remap-path-prefix=$HOME/.cargo/registry/src=/cargo/registry/src" >> "$CM_ENV"
+
+  route_design_kit_over_ssh: &route_design_kit_over_ssh
     name: Route the private fuzzzy_ui_kit dependency over SSH
     script: git config --global url."git@github.com:fuzzzy-bot/fuzzy_design.git".insteadOf "https://github.com/fuzzzy-bot/fuzzy_design.git"
 
@@ -47,86 +46,43 @@ definitions:
     name: Flutter pub get
     script: flutter pub get
 
-  rust_android_targets: &rust_android_targets
-    name: Rust Android targets
-    script: rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
-
-  # cargokit resolves the NDK from android.ndkVersion under $ANDROID_SDK_ROOT/ndk — the Linux image does
-  # not ship 28.2.13676358 (GitHub's android job installs it the same way).
-  android_ndk: &android_ndk
-    name: Android NDK 28.2.13676358
-    script: '"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"'
-
-  # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
-  # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
-  # The keystore itself is mapped onto the ANDROID_KEYSTORE_* names in each workflow's `android_signing`
-  # block, so nothing about a key is handled in a script.
-  cargo_remap: &cargo_remap
-    name: Seed the Cargo path remap
-    script: |
-      set -euo pipefail
-      echo "CARGO_ENCODED_RUSTFLAGS=--remap-path-prefix=$HOME/.cargo/registry/src=/cargo/registry/src" >> "$CM_ENV"
-
-  # Every LOAD segment of the crate's .so must be aligned >= 0x4000 on the 64-bit ABIs
-  # (Android's 16 KB requirement; armeabi-v7a is 32-bit and printed for information only).
-  # Flavor-parameterised so development and staging are held to the same bar as production.
-  page_size_gate: &page_size_gate
-    name: 16 KB page-size check
-    script: |
-      set -euo pipefail
-      readelf=$ANDROID_SDK_ROOT/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf
-      unzip -o -q "build/app/outputs/flutter-apk/app-$FLAVOR-release.apk" 'lib/*' -d "$CM_BUILD_DIR/build/apk-libs"
-      find "$CM_BUILD_DIR/build/apk-libs/lib" -name 'libfuzzy_crypto_core.so' | sort
-      bad=0; checked=0
-      for abi in arm64-v8a x86_64; do
-        so="$CM_BUILD_DIR/build/apk-libs/lib/$abi/libfuzzy_crypto_core.so"
-        if [ ! -f "$so" ]; then echo "MISSING $so"; bad=1; continue; fi
-        echo "## $abi"
-        "$readelf" -lW "$so" | awk '$1 == "LOAD"'
-        for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
-          if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $so"; bad=1; fi
-        done
-        checked=$((checked + 1))
-      done
-      so="$CM_BUILD_DIR/build/apk-libs/lib/armeabi-v7a/libfuzzy_crypto_core.so"
-      if [ -f "$so" ]; then echo "## armeabi-v7a (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'; fi
-      echo "checked=$checked bad=$bad"
-      [ "$checked" -eq 2 ] && [ "$bad" -eq 0 ]
-
-  keychain_init: &keychain_init
-    name: Set up keychain to be used for code signing
+  initialize_keychain: &initialize_keychain
+    name: Initialize the signing keychain
     script: keychain initialize
-  keychain_certs: &keychain_certs
-    name: Set up signing certificate
+
+  add_certificates: &add_certificates
+    name: Add the signing certificate to the keychain
     script: keychain add-certificates
-  use_profiles: &use_profiles
-    name: Set up code signing settings on Xcode project
+
+  apply_profiles: &apply_profiles
+    name: Apply the provisioning profiles to the Xcode project
     script: xcode-project use-profiles
 
-  # ---------------------------------------------------------------------------------------------------
-  # Shared environment fragments
-  # ---------------------------------------------------------------------------------------------------
-  flutter_version: &flutter_version 3.41.7
+  fetch_ios_adhoc_profile: &fetch_ios_adhoc_profile
+    name: Fetch the ad-hoc signing files
+    script: app-store-connect fetch-signing-files "$BUNDLE_ID" --platform IOS --type IOS_APP_ADHOC --create
 
-  android_cache: &android_cache
-    cache_paths:
-      - ~/.pub-cache
-      - ~/.gradle/caches
-      - ~/.cargo/registry
-  apple_cache: &apple_cache
-    cache_paths:
-      - ~/.pub-cache
-      - ~/Library/Caches/CocoaPods
-      - ~/.cargo/registry
+  fetch_ios_appstore_profile: &fetch_ios_appstore_profile
+    name: Fetch the App Store signing files
+    script: app-store-connect fetch-signing-files "$BUNDLE_ID" --platform IOS --type IOS_APP_STORE --create
 
-  # android/app/build.gradle declares signingConfigs.release from these four environment variables and has
-  # NO usable fallback in CI, so every release build — development included — needs a keystore.
+  fetch_macos_appstore_profile: &fetch_macos_appstore_profile
+    name: Fetch the Mac App Store signing files
+    script: app-store-connect fetch-signing-files "$BUNDLE_ID" --platform MAC_OS --type MAC_APP_STORE --create
+
+  fetch_mac_installer_certificate: &fetch_mac_installer_certificate
+    name: Fetch the Mac Installer Distribution certificate
+    script: ./scripts/fetch_mac_installer_certificate.sh
+
   internal_keystore: &internal_keystore
+    # android/app/build.gradle builds signingConfigs.release from these four names and has no CI
+    # fallback, so a development release build needs a keystore just as much as a production one.
     - keystore: seal_internal
       keystore_environment_variable: ANDROID_KEYSTORE_PATH
       keystore_password_environment_variable: ANDROID_KEYSTORE_PASSWORD
       key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
       key_password_environment_variable: ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+
   upload_keystore: &upload_keystore
     - keystore: seal_upload
       keystore_environment_variable: ANDROID_KEYSTORE_PATH
@@ -134,79 +90,108 @@ definitions:
       key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
       key_password_environment_variable: ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 
-  email: &email
-    recipients:
-      - contact@fuzzzycore.com
-    notify:
-      success: true
-      failure: true
+  android_workflow: &android_workflow
+    instance_type: linux_x2
+    max_build_duration: 90
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/.gradle/caches
+        - ~/.cargo/registry
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/**/*.aab
+      - build/app/outputs/**/mapping.txt
+      # --split-debug-info puts the Dart symbols here; without them a crash report from a release
+      # build cannot be symbolicated.
+      - build/symbols/**
 
-  # ---------------------------------------------------------------------------------------------------
-  # Triggers. The publishing trunk is production-preparation on the owner's repository.
-  # ---------------------------------------------------------------------------------------------------
-  trunk_push: &trunk_push
+  android_environment: &android_environment
+    flutter: *flutter_version
+    java: 17
+
+  apple_workflow: &apple_workflow
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: fuzzzycore_appstore_codemagic_key
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/Library/Caches/CocoaPods
+        - ~/.cargo/registry
+
+  ios_workflow: &ios_workflow
+    <<: *apple_workflow
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+  apple_environment: &apple_environment
+    flutter: *flutter_version
+    xcode: 26.5
+    cocoapods: default
+
+  on_trunk_push: &on_trunk_push
     events:
       - push
     branch_patterns:
       - pattern: production-preparation
         include: true
     cancel_previous_builds: true
-  staging_tags: &staging_tags
+
+  on_staging_tag: &on_staging_tag
     events:
       - tag
     tag_patterns:
       - pattern: 'staging-*'
         include: true
-  release_tags: &release_tags
+
+  on_release_tag: &on_release_tag
     events:
       - tag
     tag_patterns:
       - pattern: 'v*'
         include: true
 
+  notify_by_email: &notify_by_email
+    recipients:
+      - contact@fuzzzycore.com
+    notify:
+      success: true
+      failure: true
+
+  play_internal_track: &play_internal_track
+    credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    track: internal
+    submit_as_draft: false
+
 workflows:
 
-  # =====================================================================================================
-  # ANDROID
-  # =====================================================================================================
-
   android-development:
+    <<: *android_workflow
     name: Android development (.dev, internal key, Firebase + Play internal)
-    instance_type: linux_x2
-    max_build_duration: 90
     environment:
+      <<: *android_environment
       android_signing: *internal_keystore
       groups:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-      vars:
-        FLAVOR: development
-      flutter: *flutter_version
-      java: 17
-    cache: *android_cache
-    triggering: *trunk_push
+    triggering: *on_trunk_push
     scripts:
-      - *rust_toolchain
-      - *rust_android_targets
-      - *android_ndk
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_android_targets
+      - *install_android_ndk
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *cargo_remap
+      - *seed_cargo_path_remap
       - name: Build APK
         script: flutter build apk --release --flavor development -t lib/main_development.dart --split-debug-info=build/symbols
       - name: Build App Bundle
         script: flutter build appbundle --release --flavor development -t lib/main_development.dart --split-debug-info=build/symbols
-      - *page_size_gate
-    artifacts:
-      - build/app/outputs/flutter-apk/*.apk
-      - build/app/outputs/bundle/**/*.aab
-      - build/app/outputs/**/mapping.txt
-      # --split-debug-info=build/symbols above strips the Dart symbols out of the binary; without these
-      # files a native crash report from a released build cannot be symbolicated.
-      - build/symbols/**
     publishing:
-      email: *email
+      email: *notify_by_email
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         android:
@@ -214,48 +199,32 @@ workflows:
           groups:
             - testers
           artifact_type: apk
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
-        submit_as_draft: false
+      google_play: *play_internal_track
 
   android-staging:
+    <<: *android_workflow
     name: Android staging (.stg, internal key, Firebase + Play internal)
-    instance_type: linux_x2
-    max_build_duration: 90
     environment:
+      <<: *android_environment
       android_signing: *internal_keystore
       groups:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-      vars:
-        FLAVOR: staging
-      flutter: *flutter_version
-      java: 17
-    cache: *android_cache
-    triggering: *staging_tags
+    triggering: *on_staging_tag
     scripts:
-      - *rust_toolchain
-      - *rust_android_targets
-      - *android_ndk
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_android_targets
+      - *install_android_ndk
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *cargo_remap
+      - *seed_cargo_path_remap
       - name: Build APK
         script: flutter build apk --release --flavor staging -t lib/main_staging.dart --split-debug-info=build/symbols
       - name: Build App Bundle
         script: flutter build appbundle --release --flavor staging -t lib/main_staging.dart --split-debug-info=build/symbols
-      - *page_size_gate
-    artifacts:
-      - build/app/outputs/flutter-apk/*.apk
-      - build/app/outputs/bundle/**/*.aab
-      - build/app/outputs/**/mapping.txt
-      # --split-debug-info=build/symbols above strips the Dart symbols out of the binary; without these
-      # files a native crash report from a released build cannot be symbolicated.
-      - build/symbols/**
     publishing:
-      email: *email
+      email: *notify_by_email
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         android:
@@ -263,103 +232,57 @@ workflows:
           groups:
             - testers
           artifact_type: apk
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
-        submit_as_draft: false
+      google_play: *play_internal_track
 
   android-production:
+    <<: *android_workflow
     name: Android production (upload key, Play internal track)
-    instance_type: linux_x2
-    max_build_duration: 90
     environment:
+      <<: *android_environment
       android_signing: *upload_keystore
       groups:
         - fuzzzycore_deps
         - fuzzzycore_play
-      vars:
-        FLAVOR: production
-      flutter: *flutter_version
-      java: 17
-    cache: *android_cache
-    triggering: *release_tags
+    triggering: *on_release_tag
     scripts:
-      - *rust_toolchain
-      - *rust_android_targets
-      - *android_ndk
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_android_targets
+      - *install_android_ndk
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *cargo_remap
+      - *seed_cargo_path_remap
       - name: Build APK
         script: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
       - name: Build App Bundle
         script: flutter build appbundle --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
-      - *page_size_gate
-    artifacts:
-      - build/app/outputs/flutter-apk/*.apk
-      - build/app/outputs/bundle/**/*.aab
-      - build/app/outputs/**/mapping.txt
-      # --split-debug-info=build/symbols above strips the Dart symbols out of the binary; without these
-      # files a native crash report from a released build cannot be symbolicated.
-      - build/symbols/**
     publishing:
-      email: *email
-      # Lands on the internal track only. Promotion to production is a deliberate act in the Play Console.
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
-        submit_as_draft: false
-
-  # =====================================================================================================
-  # iOS
-  #
-  # Signing is Codemagic AUTOMATIC signing: certificates and provisioning profiles are created and held
-  # inside Codemagic from the App Store Connect API key integration. No .p12 or .p8 ever exists as a file.
-  # `xcode-project use-profiles` rewrites the Xcode project at build time — the committed signing style is
-  # correct as it stands and must be left alone.
-  # =====================================================================================================
+      email: *notify_by_email
+      google_play: *play_internal_track
 
   ios-development:
+    <<: *ios_workflow
     name: iOS development (.dev, ad-hoc, Firebase App Distribution)
-    instance_type: mac_mini_m2
-    max_build_duration: 90
-    integrations:
-      app_store_connect: fuzzzycore_appstore_codemagic_key
     environment:
+      <<: *apple_environment
       groups:
         - fuzzzycore_deps
         - fuzzzycore_firebase
       vars:
         BUNDLE_ID: com.fuzzzycore.seal.dev
-      flutter: *flutter_version
-      xcode: 26.5
-      cocoapods: default
-    cache: *apple_cache
-    triggering: *trunk_push
+    triggering: *on_trunk_push
     scripts:
-      - *rust_toolchain
-      - name: Rust iOS target
-        script: rustup target add aarch64-apple-ios
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_ios_target
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *keychain_init
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --platform IOS \
-            --type IOS_APP_ADHOC \
-            --create
-      - *keychain_certs
-      - *use_profiles
-      - name: Build Flutter IPA
-        script: |
-          flutter build ipa --release --flavor development -t lib/main_development.dart \
-            --export-options-plist=/Users/builder/export_options.plist
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - *initialize_keychain
+      - *fetch_ios_adhoc_profile
+      - *add_certificates
+      - *apply_profiles
+      - name: Build IPA
+        script: flutter build ipa --release --flavor development -t lib/main_development.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
-      email: *email
+      email: *notify_by_email
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         ios:
@@ -368,46 +291,29 @@ workflows:
             - testers
 
   ios-staging:
+    <<: *ios_workflow
     name: iOS staging (.stg, ad-hoc, Firebase App Distribution)
-    instance_type: mac_mini_m2
-    max_build_duration: 90
-    integrations:
-      app_store_connect: fuzzzycore_appstore_codemagic_key
     environment:
+      <<: *apple_environment
       groups:
         - fuzzzycore_deps
         - fuzzzycore_firebase
       vars:
         BUNDLE_ID: com.fuzzzycore.seal.stg
-      flutter: *flutter_version
-      xcode: 26.5
-      cocoapods: default
-    cache: *apple_cache
-    triggering: *staging_tags
+    triggering: *on_staging_tag
     scripts:
-      - *rust_toolchain
-      - name: Rust iOS target
-        script: rustup target add aarch64-apple-ios
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_ios_target
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *keychain_init
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --platform IOS \
-            --type IOS_APP_ADHOC \
-            --create
-      - *keychain_certs
-      - *use_profiles
-      - name: Build Flutter IPA
-        script: |
-          flutter build ipa --release --flavor staging -t lib/main_staging.dart \
-            --export-options-plist=/Users/builder/export_options.plist
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - *initialize_keychain
+      - *fetch_ios_adhoc_profile
+      - *add_certificates
+      - *apply_profiles
+      - name: Build IPA
+        script: flutter build ipa --release --flavor staging -t lib/main_staging.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
-      email: *email
+      email: *notify_by_email
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         ios:
@@ -416,156 +322,64 @@ workflows:
             - testers
 
   ios-production:
+    <<: *ios_workflow
     name: iOS production (App Store signed, TestFlight)
-    instance_type: mac_mini_m2
-    max_build_duration: 90
-    integrations:
-      app_store_connect: fuzzzycore_appstore_codemagic_key
     environment:
+      <<: *apple_environment
       groups:
         - fuzzzycore_deps
       vars:
-        # ios/Runner.xcodeproj Release-production. No iOS entitlements file exists and none is needed:
-        # file_picker / share_plus use the system document picker and share sheet.
         BUNDLE_ID: com.fuzzzycore.seal
-      flutter: *flutter_version
-      xcode: 26.5
-      cocoapods: default
-    cache: *apple_cache
-    triggering: *release_tags
+    triggering: *on_release_tag
     scripts:
-      - *rust_toolchain
-      - name: Rust iOS target
-        script: rustup target add aarch64-apple-ios
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_ios_target
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *keychain_init
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --platform IOS \
-            --type IOS_APP_STORE \
-            --create
-      - *keychain_certs
-      - *use_profiles
-      - name: Build Flutter IPA
-        script: |
-          flutter build ipa --release --flavor production -t lib/main_production.dart \
-            --export-options-plist=/Users/builder/export_options.plist
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - *initialize_keychain
+      - *fetch_ios_appstore_profile
+      - *add_certificates
+      - *apply_profiles
+      - name: Build IPA
+        script: flutter build ipa --release --flavor production -t lib/main_production.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
-      email: *email
-      # TestFlight only. Submission to App Store review stays a deliberate act by the owner.
+      email: *notify_by_email
       app_store_connect:
         auth: integration
         submit_to_testflight: true
         beta_groups:
           - Internal testers
 
-  # =====================================================================================================
-  # macOS — production only, Mac App Store. There is deliberately no development or staging macOS
-  # workflow: the owner's matrix ships macOS through the store alone.
-  # =====================================================================================================
-
   macos-production:
+    <<: *apple_workflow
     name: macOS production (Mac App Store signed)
-    instance_type: mac_mini_m2
-    max_build_duration: 90
-    # The certificate private key this signs with is CERTIFICATE_PRIVATE_KEY in the seal_macos_signing group.
-    integrations:
-      app_store_connect: fuzzzycore_appstore_codemagic_key
     environment:
+      <<: *apple_environment
       groups:
+        # seal_macos_signing carries CERTIFICATE_PRIVATE_KEY, which `keychain add-certificates` needs.
         - seal_macos_signing
         - fuzzzycore_deps
       vars:
-        # macos/Runner.xcodeproj Release-production; the app sandbox + the user-selected file entitlement
-        # (macos/Runner/Release.entitlements) are what the Mac App Store profile must carry.
         BUNDLE_ID: com.fuzzzycore.seal
-      flutter: *flutter_version
-      xcode: 26.5
-      cocoapods: default
-    cache: *apple_cache
-    triggering: *release_tags
+    triggering: *on_release_tag
     scripts:
-      - *rust_toolchain
-      - name: Rust macOS targets
-        script: rustup target add aarch64-apple-darwin x86_64-apple-darwin
-      - *pub_git_auth
+      - *install_rust
+      - *add_rust_macos_targets
+      - *route_design_kit_over_ssh
       - *pub_get
-      - *keychain_init
-      # MAC_APP_STORE = Mac App Store profile + Mac App Distribution certificate (the default here).
-      # For a notarized build distributed OUTSIDE the store use --type MAC_APP_DIRECT (Developer ID) and
-      # add the notarization step — both documented in documents/security/RELEASE.md §6.
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --platform MAC_OS \
-            --type MAC_APP_STORE \
-            --create
-      # `certificates list` on an empty result set logs "did not find any" and exits 0, so an `||`
-      # fallback here would never fire and nothing would ever be saved. The fallback has to key on
-      # whether a certificate actually landed on disk. The Codemagic CLI saves certificates as .p12 into
-      # $HOME/Library/MobileDevice/Certificates, which is also where `keychain add-certificates` reads
-      # them from; the count is taken before and after because the MAC_APP_STORE fetch above already
-      # saved its own certificate into the same directory.
-      - name: Fetch Mac Installer Distribution certificates
-        script: |
-          set -euo pipefail
-          CERT_DIR="$HOME/Library/MobileDevice/Certificates"
-          mkdir -p "$CERT_DIR"
-          before=$(find "$CERT_DIR" -name '*.p12' | wc -l | tr -d ' ')
-          app-store-connect certificates list --type MAC_INSTALLER_DISTRIBUTION --save
-          after=$(find "$CERT_DIR" -name '*.p12' | wc -l | tr -d ' ')
-          if [ "$after" -eq "$before" ]; then
-            echo "No Mac Installer Distribution certificate was saved — creating one."
-            app-store-connect certificates create --type MAC_INSTALLER_DISTRIBUTION --save
-            after=$(find "$CERT_DIR" -name '*.p12' | wc -l | tr -d ' ')
-          fi
-          if [ "$after" -eq "$before" ]; then
-            echo "ERROR: neither listing nor creating produced a Mac Installer Distribution certificate."
-            exit 1
-          fi
-          find "$CERT_DIR" -name '*.p12' -print
-      - *keychain_certs
-      - *use_profiles
-      - name: Build Flutter macOS
+      - *initialize_keychain
+      - *fetch_macos_appstore_profile
+      - *fetch_mac_installer_certificate
+      - *add_certificates
+      - *apply_profiles
+      - name: Build macOS app
         script: flutter build macos --release --flavor production -t lib/main_production.dart
-      - name: Package application
-        # App Store Connect takes a .pkg signed with the Mac Installer Distribution certificate.
-        script: |
-          set -euo pipefail
-          cd build/macos/Build/Products/Release-production
-          xcrun productbuild --component "Fuzzzy Seal.app" /Applications/ unsigned.pkg
-          # The Mac Installer Distribution certificate's common name reads
-          # "3rd Party Mac Developer Installer: <name> (<team>)". Matching on that substring is a STRING
-          # CONTRACT WITH APPLE'S CONSOLE WORDING, not an API guarantee — if Apple renames the type, this
-          # step must fail here rather than sign with whatever else is in the keychain.
-          # No `head -n 1`: under `set -o pipefail` the closed pipe can kill the step with SIGPIPE for a
-          # reason that has nothing to do with certificates, and taking the first of several matches would
-          # silently pick by sort order, which an expired certificate wins as easily as a valid one.
-          INSTALLER_CERT_NAMES=$(keychain list-certificates \
-            | jq -r '[.[] | select(.common_name | contains("Mac Developer Installer")) | .common_name] | unique | .[]')
-          INSTALLER_CERT_COUNT=$(printf '%s' "$INSTALLER_CERT_NAMES" | grep -c . || true)
-          if [ "$INSTALLER_CERT_COUNT" -ne 1 ]; then
-            echo "ERROR: expected exactly one Mac Installer Distribution certificate in the keychain, found $INSTALLER_CERT_COUNT."
-            echo "Matched common names were:"
-            printf '%s\n' "$INSTALLER_CERT_NAMES"
-            echo "Zero means the fetch step above saved no installer certificate (or Apple changed the"
-            echo "certificate's common name). More than one means the team holds several — possibly an"
-            echo "expired one — and productsign must not be left to guess between them."
-            exit 1
-          fi
-          INSTALLER_CERT_NAME="$INSTALLER_CERT_NAMES"
-          echo "Signing the installer package with: $INSTALLER_CERT_NAME"
-          xcrun productsign --sign "$INSTALLER_CERT_NAME" unsigned.pkg "Fuzzzy Seal.pkg"
-          rm -f unsigned.pkg
+      - name: Package and sign the installer
+        script: ./scripts/package_macos_installer.sh build/macos/Build/Products/Release-production "Fuzzzy Seal"
     artifacts:
       - build/macos/Build/Products/Release-production/*.pkg
       - /tmp/xcodebuild_logs/*.log
     publishing:
-      email: *email
+      email: *notify_by_email
       app_store_connect:
         auth: integration
