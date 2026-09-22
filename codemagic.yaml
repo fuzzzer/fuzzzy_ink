@@ -195,7 +195,7 @@ workflows:
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         android:
-          app_id: $FIREBASE_APP_ID_SEAL_ANDROID_DEV
+          app_id: $FIREBASE_APP_ID_INK_ANDROID_DEV
           groups:
             - testers
           artifact_type: apk
@@ -228,7 +228,7 @@ workflows:
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         android:
-          app_id: $FIREBASE_APP_ID_SEAL_ANDROID_STG
+          app_id: $FIREBASE_APP_ID_INK_ANDROID_STG
           groups:
             - testers
           artifact_type: apk
@@ -286,7 +286,7 @@ workflows:
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         ios:
-          app_id: $FIREBASE_APP_ID_SEAL_IOS_DEV
+          app_id: $FIREBASE_APP_ID_INK_IOS_DEV
           groups:
             - testers
 
@@ -317,7 +317,7 @@ workflows:
       firebase:
         firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
         ios:
-          app_id: $FIREBASE_APP_ID_SEAL_IOS_STG
+          app_id: $FIREBASE_APP_ID_INK_IOS_STG
           groups:
             - testers
 
