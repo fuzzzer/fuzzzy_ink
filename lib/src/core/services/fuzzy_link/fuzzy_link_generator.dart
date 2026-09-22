@@ -6,13 +6,12 @@ class FuzzyLinkGenerator {
   static const _scheme = 'fuzzylink';
   static const _expirationDuration = Duration(hours: 24);
 
+  /// [invitationContent] is the opaque `Fuzz/` blob, carried as one field.
   static String generateInvitationLink(String invitationContent) {
-    final innerJson = jsonDecode(invitationContent) as Map<String, dynamic>;
     final payload = jsonEncode({
       'v': FuzzyLinkPayload.currentVersion,
       't': FuzzyLinkType.invitation.payloadCode,
-      'I': innerJson['I'],
-      'P': innerJson['P'],
+      'b': invitationContent,
       'exp': _generateExpirationTimestamp(),
     });
     final encoded = _encodePayload(payload);
@@ -20,13 +19,10 @@ class FuzzyLinkGenerator {
   }
 
   static String generateAcceptanceLink(String acceptanceContent) {
-    final innerJson = jsonDecode(acceptanceContent) as Map<String, dynamic>;
     final payload = jsonEncode({
       'v': FuzzyLinkPayload.currentVersion,
       't': FuzzyLinkType.acceptance.payloadCode,
-      'I': innerJson['I'],
-      'P': innerJson['P'],
-      'E': innerJson['E'],
+      'b': acceptanceContent,
       'exp': _generateExpirationTimestamp(),
     });
     final encoded = _encodePayload(payload);
@@ -55,13 +51,13 @@ class FuzzyLinkGenerator {
       FuzzyLinkType.fuzz => 'Encrypted Message',
     };
 
-    return '🔐 Fuzzy Chat $typeLabel\n'
+    return '🔐 Fuzzzy Seal $typeLabel\n'
         '\n'
-        'Tap the link to open in Fuzzy Chat:\n'
+        'Tap the link to open in Fuzzzy Seal:\n'
         '$link\n'
         '\n'
         '────────────────────\n'
-        "Can't tap? Copy the text below and paste into Fuzzy Chat:\n"
+        "Can't tap? Copy the text below and paste into Fuzzzy Seal:\n"
         '$rawFuzz';
   }
 

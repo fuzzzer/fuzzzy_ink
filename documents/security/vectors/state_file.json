@@ -1,0 +1,8 @@
+{
+  "aad": "chat-state6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "history_key": "5555555555555555555555555555555555555555555555555555555555555555",
+  "nonce": "444444444444444444444444444444444444444444444444",
+  "plaintext": "state_file.body.json",
+  "state": "a freshly invited chat on A's fixed account (invitation.hex), no session",
+  "store_key": "3333333333333333333333333333333333333333333333333333333333333333"
+}

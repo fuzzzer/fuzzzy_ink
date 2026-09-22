@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class ChatUnlockPage extends StatefulWidget {
   const ChatUnlockPage({super.key});
@@ -26,13 +27,19 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
       duration: const Duration(milliseconds: 300),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _autoBiometricAttempted) return;
-      final store = context.read<FuzzyAuthStore>();
-      if (store.state.biometricEnabled && store.state.status.isLocked) {
-        _autoBiometricAttempted = true;
-        store.unlockWithBiometrics();
-      }
+      if (!mounted) return;
+      _tryAutoBiometricUnlock(context.read<FuzzyAuthStore>().state);
     });
+  }
+
+  /// Once per page: at mount, or when the boot check resolves to `locked`
+  /// while this page is already the gate (T-0329).
+  void _tryAutoBiometricUnlock(FuzzyAuthState state) {
+    if (_autoBiometricAttempted) return;
+    if (state.biometricEnabled && state.status.isLocked) {
+      _autoBiometricAttempted = true;
+      context.read<FuzzyAuthStore>().unlockWithBiometrics();
+    }
   }
 
   @override
@@ -55,6 +62,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
   Widget build(BuildContext context) {
     return BlocConsumer<FuzzyAuthStore, FuzzyAuthState>(
       listener: (context, state) {
+        _tryAutoBiometricUnlock(state);
         if (state.verificationFailed) {
           _shakeController.forward(from: 0);
         }
@@ -70,10 +78,11 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
         }
       },
       builder: (context, state) {
-        final isLoading = state.status.isUnlocking;
+        // `initial` = the boot-time store open still running (T-0329).
+        final isLoading = state.status.isUnlocking || state.status.isInitial;
 
         return Scaffold(
-          backgroundColor: context.uiColors.backgroundPrimaryColor,
+          backgroundColor: context.fuzzzyColors.ground,
           body: Stack(
             children: [
               SafeArea(
@@ -86,7 +95,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                       Icon(
                         Icons.lock_rounded,
                         size: 80,
-                        color: context.uiColors.primaryColor,
+                        color: context.fuzzzyColors.ink,
                       ),
                       const SizedBox(height: 24),
                       Text(
@@ -96,7 +105,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                             .headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: context.uiColors.primaryTextColor,
+                              color: context.fuzzzyColors.ink,
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -104,7 +113,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                       Text(
                         currentContextLocalization.chatUnlockSubtitle,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: context.uiColors.secondaryTextColor,
+                              color: context.fuzzzyColors.inkMute,
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -113,7 +122,8 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                         animation: _shakeController,
                         builder: (context, child) {
                           final sineValue = math.sin(
-                                  4 * 3.14159265 * _shakeController.value,) *
+                                4 * 3.14159265 * _shakeController.value,
+                              ) *
                               8 *
                               (1 - _shakeController.value);
                           return Transform.translate(
@@ -121,21 +131,21 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                             child: child,
                           );
                         },
-                        child: FuzzyTextField(
+                        child: FuzzzyTextField(
                           controller: _passwordController,
-                          labelText:
-                              currentContextLocalization.chatAuthPassword,
-                          obscureText: !_isPasswordVisible,
+                          label: currentContextLocalization.chatAuthPassword,
+                          obscure: !_isPasswordVisible,
                           onSubmitted: (_) => _onUnlock(),
-                          suffixIcon: IconButton(
+                          suffix: IconButton(
                             icon: Icon(
                               _isPasswordVisible
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: context.uiColors.secondaryTextColor,
+                              color: context.fuzzzyColors.inkMute,
                             ),
                             onPressed: () => setState(
-                                () => _isPasswordVisible = !_isPasswordVisible,),
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
                           ),
                         ),
                       ),
@@ -143,18 +153,19 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                         const SizedBox(height: 8),
                         Text(
                           currentContextLocalization.chatAuthIncorrectPassword,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(
+                            color: context.fuzzzyColors.destructiveText,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],
                       const SizedBox(height: 40),
-                      FuzzyButton(
-                        text: currentContextLocalization.chatAuthUnlock,
-                        isEnabled:
-                            _passwordController.text.isNotEmpty && !isLoading,
-                        onTap: _passwordController.text.isNotEmpty && !isLoading
-                            ? _onUnlock
-                            : () {},
+                      FuzzzyButton(
+                        label: currentContextLocalization.chatAuthUnlock,
+                        onPressed:
+                            _passwordController.text.isNotEmpty && !isLoading
+                                ? _onUnlock
+                                : null,
                       ),
                       if (state.biometricEnabled) ...[
                         const SizedBox(height: 24),
@@ -168,7 +179,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                                 Icon(
                                   Icons.fingerprint,
                                   size: 56,
-                                  color: context.uiColors.primaryColor,
+                                  color: context.fuzzzyColors.ink,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -178,8 +189,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                                       .textTheme
                                       .bodySmall
                                       ?.copyWith(
-                                        color:
-                                            context.uiColors.secondaryTextColor,
+                                        color: context.fuzzzyColors.inkMute,
                                       ),
                                 ),
                               ],
@@ -191,7 +201,7 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                       Text(
                         currentContextLocalization.chatAuthForgotPassword,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: context.uiColors.secondaryTextColor,
+                              color: context.fuzzzyColors.inkMute,
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -200,9 +210,9 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                 ),
               ),
               if (isLoading)
-                const ColoredBox(
-                  color: Colors.black54,
-                  child: Center(
+                ColoredBox(
+                  color: context.fuzzzyColors.ground.withValues(alpha: 0.54),
+                  child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),

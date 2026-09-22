@@ -4,8 +4,9 @@ analyzer:
   exclude:
     - lib/src/core/l10n/**
     - code_generators/**
-    - "packages/pointycastle/**"
     - "**/*.g.dart"
+    - lib/rust_bridge/**
+    - rust_builder/**
 
   errors:
     inference_failure_on_instance_creation: ignore

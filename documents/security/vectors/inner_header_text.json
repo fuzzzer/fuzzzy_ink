@@ -1,0 +1,9 @@
+{
+  "body": "hello",
+  "chat_id": "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "content_type": "0x01 text",
+  "counter": 7,
+  "direction": "0x00 A->B",
+  "recipient_ed25519": "ca93ac1705187071d67b83c7ff0efe8108e8ec4530575d7726879333dbdabe7c",
+  "sender_ed25519": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+}

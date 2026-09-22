@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 export 'widgets/widgets.dart';
@@ -15,13 +16,13 @@ class MainShellPage extends StatelessWidget {
     final currentLoc = GoRouterState.of(context).uri.toString();
     final isChat = currentLoc == AppRouter.home;
     final isVault = currentLoc.startsWith('/vault');
-    final loc = context.fuzzyChatLocalizations;
+    final loc = context.fuzzzySealLocalizations;
 
     String title = '';
     Widget? rightAction;
 
     if (isChat) {
-      title = loc.fuzzyChat;
+      title = loc.fuzzzySeal;
       rightAction = const BasicEncryptionNavigatorAction();
     } else if (isVault) {
       title = loc.fuzzyVault;
@@ -31,12 +32,12 @@ class MainShellPage extends StatelessWidget {
             return IconButton(
               icon: Icon(
                 Icons.more_vert,
-                color: context.uiColors.primaryTextColor,
+                color: context.fuzzzyColors.ink,
               ),
               onPressed: () {
                 showModalBottomSheet<void>(
                   context: context,
-                  backgroundColor: context.uiColors.backgroundPrimaryColor,
+                  backgroundColor: context.fuzzzyColors.ground,
                   shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(16)),
@@ -53,19 +54,19 @@ class MainShellPage extends StatelessWidget {
                               height: 4,
                               margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
-                                color: context.uiColors.secondaryTextColor,
+                                color: context.fuzzzyColors.inkMute,
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
                             ListTile(
                               leading: Icon(
                                 Icons.lock_outline,
-                                color: context.uiColors.primaryColor,
+                                color: context.fuzzzyColors.ink,
                               ),
                               title: Text(
                                 loc.vaultLockVault,
                                 style: TextStyle(
-                                  color: context.uiColors.primaryTextColor,
+                                  color: context.fuzzzyColors.ink,
                                 ),
                               ),
                               onTap: () {
@@ -87,30 +88,34 @@ class MainShellPage extends StatelessWidget {
       );
     }
 
+    final shellAppBar = FuzzzyAppBar(
+      title: title,
+      leading: Builder(
+        builder: (context) {
+          return IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.menu,
+              color: context.fuzzzyColors.ink,
+            ),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        },
+      ),
+      actions: rightAction != null ? [rightAction] : null,
+    );
+
     return Scaffold(
-      backgroundColor: context.uiColors.backgroundPrimaryColor,
+      backgroundColor: context.fuzzzyColors.ground,
       drawer: const MainDrawer(),
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(70),
+        preferredSize: Size.fromHeight(
+          shellAppBar.preferredSize.height + MediaQuery.of(context).padding.top,
+        ),
         child: SafeArea(
-          child: FuzzyHeader(
-            title: title,
-            leftAction: Builder(
-              builder: (context) {
-                return IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.menu,
-                    color: context.uiColors.primaryTextColor,
-                  ),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              },
-            ),
-            rightAction: rightAction,
-          ),
+          child: shellAppBar,
         ),
       ),
       body: child,

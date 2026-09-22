@@ -3,7 +3,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -88,7 +89,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
         } catch (_) {}
       }
     }
-    
+
     // Clear the FilePicker cache to ensure picked files are removed
     FilePicker.platform.clearTemporaryFiles();
 
@@ -153,7 +154,9 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
     if (_pickedFileBytes == null || _pickedFileName == null) return;
     try {
       final tempFile = await _writeTempFile();
-      await DeviceFileInteractor.revealFile(tempFile.path);
+      if (context.mounted) {
+        await DeviceFileInteractor.revealFile(tempFile.path, context: context);
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -278,26 +281,29 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: context.uiColors.secondaryColor,
+          backgroundColor: context.fuzzzyColors.surface,
           title: Text(
             'Delete Item',
-            style: TextStyle(color: context.uiColors.primaryTextColor),
+            style: TextStyle(color: context.fuzzzyColors.ink),
           ),
           content: Text(
             'Are you sure you want to delete this item? This action cannot be undone.',
-            style: TextStyle(color: context.uiColors.primaryTextColor),
+            style: TextStyle(color: context.fuzzzyColors.ink),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
                 currentContextLocalization.cancel,
-                style: TextStyle(color: context.uiColors.primaryTextColor),
+                style: TextStyle(color: context.fuzzzyColors.ink),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'Delete',
+                style: TextStyle(color: context.fuzzzyColors.destructiveText),
+              ),
             ),
           ],
         );
@@ -337,7 +343,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                FuzzyHeader(
+                FuzzzyAppBar(
                   title: widget.payload.existingItem == null
                       ? (_type == VaultItemType.password
                           ? currentContextLocalization.vaultNewPassword
@@ -345,10 +351,16 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                               ? currentContextLocalization.vaultNewNote
                               : currentContextLocalization.vaultFileLabel)
                       : currentContextLocalization.vaultEditItem,
-                  leftAction: const FuzzyBackButton(),
-                  rightAction: widget.payload.existingItem != null
-                      ? _isDeleting
-                          ? const Padding(
+                  leading: FuzzzyIconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    variant: FuzzzyIconButtonVariant.filled,
+                    semanticLabel: 'Back',
+                    onPressed: () => context.goBack(),
+                  ),
+                  actions: widget.payload.existingItem != null
+                      ? [
+                          if (_isDeleting)
+                            const Padding(
                               padding: EdgeInsets.only(right: 16),
                               child: Center(
                                 child: SizedBox(
@@ -359,13 +371,15 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                 ),
                               ),
                             )
-                          : IconButton(
-                              icon: const Icon(
+                          else
+                            IconButton(
+                              icon: Icon(
                                 Icons.delete_outline,
-                                color: Colors.red,
+                                color: context.fuzzzyColors.destructiveText,
                               ),
                               onPressed: () => _onDelete(context),
-                            )
+                            ),
+                        ]
                       : null,
                 ),
                 Expanded(
@@ -375,30 +389,30 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (_type != VaultItemType.password) ...[
-                          FuzzyTextField(
+                          FuzzzyTextField(
                             controller: _titleController,
-                            labelText: currentContextLocalization.vaultTitle,
+                            label: currentContextLocalization.vaultTitle,
                           ),
                           const SizedBox(height: 16),
                         ],
                         if (_type == VaultItemType.password) ...[
-                          FuzzyTextField(
+                          FuzzzyTextField(
                             controller: _usernameController,
-                            labelText:
+                            label:
                                 currentContextLocalization.vaultUsernameEmail,
                           ),
                           const SizedBox(height: 16),
-                          FuzzyTextField(
+                          FuzzzyTextField(
                             controller: _passwordController,
-                            labelText:
+                            label:
                                 currentContextLocalization.vaultPasswordLabel,
-                            obscureText: !_isPasswordVisible,
-                            suffixIcon: IconButton(
+                            obscure: !_isPasswordVisible,
+                            suffix: IconButton(
                               icon: Icon(
                                 _isPasswordVisible
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: context.uiColors.secondaryTextColor,
+                                color: context.fuzzzyColors.inkMute,
                               ),
                               onPressed: () => setState(
                                 () => _isPasswordVisible = !_isPasswordVisible,
@@ -406,10 +420,9 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          FuzzyTextField(
+                          FuzzzyTextField(
                             controller: _urlController,
-                            labelText:
-                                currentContextLocalization.vaultUrlWebsite,
+                            label: currentContextLocalization.vaultUrlWebsite,
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -418,7 +431,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: context.uiColors.secondaryColor,
+                                color: context.fuzzzyColors.surface,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
@@ -428,7 +441,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                     children: [
                                       Icon(
                                         Icons.file_present_rounded,
-                                        color: context.uiColors.primaryColor,
+                                        color: context.fuzzzyColors.ink,
                                         size: 32,
                                       ),
                                       const SizedBox(width: 12),
@@ -440,8 +453,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                             Text(
                                               _pickedFileName!,
                                               style: TextStyle(
-                                                color: context
-                                                    .uiColors.primaryTextColor,
+                                                color: context.fuzzzyColors.ink,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               overflow: TextOverflow.ellipsis,
@@ -452,8 +464,8 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                                   _pickedFileBytes!.length,
                                                 ),
                                                 style: TextStyle(
-                                                  color: context.uiColors
-                                                      .secondaryTextColor,
+                                                  color: context
+                                                      .fuzzzyColors.inkMute,
                                                   fontSize: 12,
                                                 ),
                                               ),
@@ -483,15 +495,21 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                             onTap: () => _shareFile(context),
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: _FileActionButton(
-                                            icon: Icons.folder_open_rounded,
-                                            label:
-                                                currentContextLocalization.show,
-                                            onTap: () => _revealFile(context),
+                                        // On mobile revealing is the share
+                                        // sheet, so "Show" would duplicate
+                                        // "Share File".
+                                        if (DeviceFileInteractor
+                                            .canRevealFile) ...[
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: _FileActionButton(
+                                              icon: Icons.folder_open_rounded,
+                                              label: currentContextLocalization
+                                                  .show,
+                                              onTap: () => _revealFile(context),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ],
                                     ),
                                   ],
@@ -500,18 +518,18 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                             ),
                             const SizedBox(height: 16),
                           ],
-                          FuzzyButton(
-                            text: _pickedFileName != null
+                          FuzzzyButton(
+                            label: _pickedFileName != null
                                 ? currentContextLocalization.vaultEditItem
                                 : 'Select File',
-                            onTap: _pickFile,
+                            onPressed: _pickFile,
                           ),
                           const SizedBox(height: 16),
                         ],
                         if (_type != VaultItemType.file) ...[
-                          FuzzyTextField(
+                          FuzzzyTextField(
                             controller: _notesController,
-                            labelText: _type == VaultItemType.password
+                            label: _type == VaultItemType.password
                                 ? currentContextLocalization.vaultNotesOptional
                                 : currentContextLocalization.vaultSecureNote,
                             minLines: _type == VaultItemType.password ? 1 : 15,
@@ -523,9 +541,9 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                         if (_isSaving)
                           const Center(child: CircularProgressIndicator())
                         else
-                          FuzzyButton(
-                            text: currentContextLocalization.vaultSave,
-                            onTap: () => _onSave(context),
+                          FuzzzyButton(
+                            label: currentContextLocalization.vaultSave,
+                            onPressed: () => _onSave(context),
                           ),
                       ],
                     ),
@@ -563,7 +581,7 @@ class _FileActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: context.uiColors.backgroundPrimaryColor,
+      color: context.fuzzzyColors.ground,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
@@ -573,13 +591,13 @@ class _FileActionButton extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 20, color: context.uiColors.primaryColor),
+              Icon(icon, size: 20, color: context.fuzzzyColors.ink),
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 11,
-                  color: context.uiColors.primaryTextColor,
+                  color: context.fuzzzyColors.ink,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,

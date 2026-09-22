@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 export 'widgets/vault_group_filter.dart';
@@ -81,8 +82,8 @@ class _VaultHomePageState extends State<VaultHomePage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _createItem(context),
-        backgroundColor: context.uiColors.primaryColor,
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: context.fuzzzyColors.actionPrimaryBg,
+        child: Icon(Icons.add, color: context.fuzzzyColors.actionPrimaryFg),
       ),
     );
   }
@@ -111,19 +112,19 @@ class _VaultTabBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
       decoration: BoxDecoration(
-        color: context.uiColors.backgroundSecondaryColor,
+        color: context.fuzzzyColors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TabBar(
         controller: controller,
         indicator: BoxDecoration(
-          color: context.uiColors.primaryColor,
+          color: context.fuzzzyColors.actionPrimaryBg,
           borderRadius: BorderRadius.circular(10),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
-        labelColor: context.uiColors.backgroundPrimaryColor,
-        unselectedLabelColor: context.uiColors.secondaryTextColor,
+        labelColor: context.fuzzzyColors.ground,
+        unselectedLabelColor: context.fuzzzyColors.inkMute,
         labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         unselectedLabelStyle:
             const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
@@ -132,35 +133,44 @@ class _VaultTabBar extends StatelessWidget {
         tabs: [
           Tab(
             height: 36,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.key_rounded, size: 16),
-                const SizedBox(width: 6),
-                Text(currentContextLocalization.vaultPasswords),
-              ],
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.key_rounded, size: 16),
+                  const SizedBox(width: 6),
+                  Text(currentContextLocalization.vaultPasswords),
+                ],
+              ),
             ),
           ),
           Tab(
             height: 36,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.notes_rounded, size: 16),
-                const SizedBox(width: 6),
-                Text(currentContextLocalization.vaultNotes),
-              ],
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.notes_rounded, size: 16),
+                  const SizedBox(width: 6),
+                  Text(currentContextLocalization.vaultNotes),
+                ],
+              ),
             ),
           ),
           Tab(
             height: 36,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.file_present_rounded, size: 16),
-                const SizedBox(width: 6),
-                Text(currentContextLocalization.vaultFiles),
-              ],
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.file_present_rounded, size: 16),
+                  const SizedBox(width: 6),
+                  Text(currentContextLocalization.vaultFiles),
+                ],
+              ),
             ),
           ),
         ],

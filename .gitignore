@@ -42,6 +42,7 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 .fvm/
+pubspec_overrides.yaml
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -118,3 +119,5 @@ keystore.properties
 
 scripts/outputs
 scripts/ai_agent
+# Rust crypto core build output (rust/fuzzy_crypto_core/Cargo.lock is committed)
+rust/fuzzy_crypto_core/target/

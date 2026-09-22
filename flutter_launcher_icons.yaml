@@ -1,0 +1,33 @@
+# App icon — production (the company mark: blood red sun crossed by a black ink branch).
+# ANDROID ONLY, on purpose.
+#
+# Artwork is owner-approved and lives in the brand kit:
+#   ~/FuzzyCore_HQ/company/brand/logo/fuzzycore/v1/prod/night/
+# This app uses the standard company mark, not an app-specific one (owner decision 2026-09-22:
+# the bespoke chat mark read as a plain red blob at icon size).
+# The copies under assets/launcher_icons/ are build inputs only — never edit them by hand and
+# never register them in `flutter: assets:`. To change the mark, re-export from the brand kit.
+#
+# iOS is deliberately NOT configured here. For a flavour this package writes to
+# `AppIcon-<flavour>.appiconset`, which this project's build configurations do not read, and a
+# flavour-less run rewrites ASSETCATALOG_COMPILER_APPICON_NAME on ALL NINE configurations to
+# `AppIcon` — which would silently ship the production mark on the staging and development
+# builds. The iOS sets are filled by scripts/ios_app_icons.py instead, which never touches the
+# Xcode project. Adding `ios:` back to any of these files re-opens that trap.
+#
+# Regenerating Android (flutter_launcher_icons 0.13.1 — order matters):
+#   1. fvm dart run flutter_launcher_icons
+#        -> when any flutter_launcher_icons-<flavour>.yaml file is present the tool IGNORES -f
+#           and generates the flavours only (staging + development).
+#   2. mkdir -p /tmp/fli && mv flutter_launcher_icons-*.yaml /tmp/fli/
+#      fvm dart run flutter_launcher_icons -f flutter_launcher_icons.yaml
+#      mv /tmp/fli/flutter_launcher_icons-*.yaml .
+#        -> this file, with no flavour, writes android/app/src/main/res.
+#   3. Copy each regenerated mipmap-anydpi-v26/ic_launcher.xml to ic_launcher_round.xml and each
+#      mipmap-*/ic_launcher.png to ic_launcher_round.png: the manifest declares android:roundIcon
+#      and the package does not fill that slot.
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/launcher_icons/production/ios/AppIcon-1024.png"
+  adaptive_icon_foreground: "assets/launcher_icons/production/android/ic_launcher_foreground.png"
+  adaptive_icon_background: "assets/launcher_icons/production/android/ic_launcher_background.png"

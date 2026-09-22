@@ -51,11 +51,12 @@ class PasswordStrengthService {
     caseSensitive: false,
   );
   static final _repeatingPattern = RegExp(r'(.)\1{2,}');
+  static final _nonLetterEdgesPattern = RegExp(r'^[^a-z]+|[^a-z]+$');
 
   PasswordStrength assess(String password) {
     final criteria = _evaluateCriteria(password);
 
-    if (password.isEmpty || _commonPasswords.contains(password.toLowerCase())) {
+    if (password.isEmpty || _isCommonPassword(password)) {
       return PasswordStrength(
         score: 0,
         level: PasswordStrengthLevel.weak,
@@ -70,6 +71,15 @@ class PasswordStrengthService {
       level: _scoreToLevel(score),
       criteriaResults: criteria,
     );
+  }
+
+  /// A common password padded with digits/symbols (`password123`, `!Qwerty1`)
+  /// is still that common password.
+  bool _isCommonPassword(String password) {
+    final lowercased = password.toLowerCase();
+    final core = lowercased.replaceAll(_nonLetterEdgesPattern, '');
+    return _commonPasswords.contains(lowercased) ||
+        _commonPasswords.contains(core);
   }
 
   Map<String, bool> _evaluateCriteria(String password) {

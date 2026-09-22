@@ -1,4 +1,4 @@
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 import 'package:isar/isar.dart';
 
 class {{modelName.pascalCase()}}LocalDataSource {

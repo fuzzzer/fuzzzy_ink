@@ -1,6 +1,6 @@
-import 'package:fuzzy_chat/lib.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:mocktail/mocktail.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -105,10 +105,9 @@ void main() {
       when(() => mockItemDS.getItem('nonexistent'))
           .thenAnswer((_) async => null);
 
-      final result =
-          await repository.moveItemToGroup('nonexistent', 'work');
+      final result = await repository.moveItemToGroup('nonexistent', 'work');
 
-      expect(result, isA<VaultFailure>());
+      expect(result, isA<VaultFailure<VaultItemMetadata>>());
       expect(
         (result as VaultFailure).type,
         VaultFailureType.itemNotFound,
@@ -130,7 +129,7 @@ void main() {
 
       final result = await repository.moveItemToGroup('item-1', 'work');
 
-      expect(result, isA<VaultFailure>());
+      expect(result, isA<VaultFailure<VaultItemMetadata>>());
       expect(
         (result as VaultFailure).type,
         VaultFailureType.storageWriteError,

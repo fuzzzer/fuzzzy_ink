@@ -37,4 +37,3 @@ class FuzzyUserAuthPreferencesState {
     return 'FuzzyUserAuthPreferencesState(activationStatus: $activationStatus, activationFailure: $activationFailure, lastAction: $lastAction)';
   }
 }
-

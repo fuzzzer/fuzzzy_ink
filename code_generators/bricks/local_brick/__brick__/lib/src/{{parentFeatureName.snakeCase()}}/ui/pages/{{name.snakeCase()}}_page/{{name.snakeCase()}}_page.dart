@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class {{name.pascalCase()}}Page extends StatelessWidget {
   const {{name.pascalCase()}}Page({super.key});

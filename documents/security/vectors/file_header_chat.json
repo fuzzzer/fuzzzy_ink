@@ -1,0 +1,8 @@
+{
+  "chunk_size": 1048576,
+  "key_mode": "0x01 chat",
+  "nonce_prefix": "909192939495969798999a9b9c9d9e9fa0a1a2",
+  "olm_body": "f1f2f3",
+  "olm_body_note": "placeholder — a real body is vodozemac's `PreKeyMessage::to_bytes()` of an inner header with content type 0x02 (inner_header_file_key.hex)",
+  "olm_type": "0x00 PreKey"
+}

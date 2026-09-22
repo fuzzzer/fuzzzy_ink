@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzySnackBarContent extends StatefulWidget {
   const FuzzySnackBarContent({
@@ -42,9 +43,8 @@ class _SnackBarContentState extends State<FuzzySnackBarContent> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
+    final fuzzzyColors = context.fuzzzyColors;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
     return Positioned(
       top: MediaQuery.of(context).padding.top + 64.0,
@@ -74,17 +74,19 @@ class _SnackBarContentState extends State<FuzzySnackBarContent> {
                 ),
                 child: Material(
                   elevation: widget.snackbarData.elevation ?? 12.0,
-                  shadowColor: uiColors.focusColor,
+                  shadowColor: fuzzzyColors.focus,
                   child: Container(
                     width: widget.snackbarData.width ?? 200,
                     decoration: BoxDecoration(
                       color: widget.snackbarData.backgroundColor ??
-                          uiColors.secondaryColor.withOpacity(0.7),
+                          fuzzzyColors.surface.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(_borderRadius),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 16,),
+                        horizontal: 8,
+                        vertical: 16,
+                      ),
                       child: Row(
                         children: [
                           if (widget.snackbarData.leading != null)
@@ -103,8 +105,8 @@ class _SnackBarContentState extends State<FuzzySnackBarContent> {
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: widget.snackbarData.labelStyle ??
-                                      uiTextStyles.body16.copyWith(
-                                        color: uiColors.backgroundPrimaryColor,
+                                      fuzzzyTextStyles.body.copyWith(
+                                        color: fuzzzyColors.ground,
                                       ),
                                 ),
                               Flexible(

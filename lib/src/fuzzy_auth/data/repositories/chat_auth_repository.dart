@@ -1,93 +1,97 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class ChatAuthRepository {
   ChatAuthRepository({
     required UserAuthPreferencesRepository userAuthPreferencesRepository,
-  }) : _userAuthPreferencesRepository = userAuthPreferencesRepository;
+    required CryptoStoreKeyRepository cryptoStoreKeyRepository,
+    required CryptoCoreService cryptoCoreService,
+  })  : _userAuthPreferencesRepository = userAuthPreferencesRepository,
+        _cryptoStoreKeyRepository = cryptoStoreKeyRepository,
+        _cryptoCoreService = cryptoCoreService;
 
   final UserAuthPreferencesRepository _userAuthPreferencesRepository;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final CryptoStoreKeyRepository _cryptoStoreKeyRepository;
+  final CryptoCoreService _cryptoCoreService;
 
-  static const _saltKey = 'chat_auth_salt';
-  static const _verificationTokenKey = 'chat_auth_verification_token';
-
+  /// The wrapped store-key blob is the truth about the lock and the
+  /// preference only a cache of it (F2-6 review R1): the store is tried under
+  /// `''` and the preference repaired when the two disagree, so a kill between
+  /// the two writes of [setupPassword] / [disableAuth] never locks anyone out.
+  /// Leaves the store open when the lock is disabled.
   Future<bool> isChatAuthEnabled() async {
-    final prefs = await _userAuthPreferencesRepository.getUserAuthPreferences();
-    if (prefs == null || !prefs.isAuthenticationOnceEnabled) return false;
+    final readRes = await _cryptoStoreKeyRepository.read();
+    if (readRes is CryptoCoreFailure) return false;
+    final wrapped = (readRes as CryptoCoreSuccess<Uint8List?>).data;
+    if (wrapped == null) return false;
 
-    final salt = await _secureStorage.read(key: _saltKey);
-    final token = await _secureStorage.read(key: _verificationTokenKey);
-    return salt != null && token != null;
+    final openRes = await _cryptoCoreService.openStore(
+      wrapped: wrapped,
+      password: '',
+    );
+    final enabled = openRes is CryptoCoreFailure;
+
+    final prefs = await _userAuthPreferencesRepository.getUserAuthPreferences();
+    if ((prefs?.isAuthenticationOnceEnabled ?? false) != enabled) {
+      await _userAuthPreferencesRepository.updateUserAuthPreferences(
+        UserAuthPreferences(isAuthenticationOnceEnabled: enabled),
+      );
+    }
+    return enabled;
   }
 
-  Future<void> setupPassword(String password) async {
-    final salt = generateRandomSecureBytes(24);
-    final masterKey =
-        await PasswordBasedEncryptionSevice.deriveKey(password, salt);
-
-    final verificationTokenBytes = generateRandomSecureBytes(32);
-    final encryptedToken =
-        await AESService.encrypt(verificationTokenBytes, masterKey);
-
-    await _secureStorage.write(key: _saltKey, value: base64Encode(salt));
-    await _secureStorage.write(
-      key: _verificationTokenKey,
-      value: base64Encode(encryptedToken),
+  /// With the lock disabled the store key is wrapped under `''`; enabling it
+  /// re-wraps that same key under [password].
+  Future<bool> setupPassword(String password) async {
+    final rewrapRes = await _cryptoStoreKeyRepository.rewrap(
+      oldPassword: '',
+      newPassword: password,
     );
+    if (rewrapRes is CryptoCoreFailure) return false;
 
     await _userAuthPreferencesRepository.updateUserAuthPreferences(
       UserAuthPreferences(isAuthenticationOnceEnabled: true),
     );
+    return true;
   }
 
+  /// Opens the store under [password] and leaves it open — the wrapped store
+  /// key is the verification token.
   Future<bool> verifyPassword(String password) async {
-    final saltBase64 = await _secureStorage.read(key: _saltKey);
-    final tokenBase64 = await _secureStorage.read(key: _verificationTokenKey);
+    final readRes = await _cryptoStoreKeyRepository.read();
+    if (readRes is CryptoCoreFailure) return false;
+    final wrapped = (readRes as CryptoCoreSuccess<Uint8List?>).data;
+    if (wrapped == null) return false;
 
-    if (saltBase64 == null || tokenBase64 == null) return false;
-
-    final salt = base64Decode(saltBase64);
-    final masterKey =
-        await PasswordBasedEncryptionSevice.deriveKey(password, salt);
-    final encryptedToken = base64Decode(tokenBase64);
-
-    try {
-      await AESService.decrypt(encryptedToken, masterKey);
-      return true;
-    } catch (_) {
-      return false;
-    }
+    final openRes = await _cryptoCoreService.openStore(
+      wrapped: wrapped,
+      password: password,
+    );
+    return openRes is CryptoCoreSuccess;
   }
 
-  Future<void> disableAuth() async {
-    await _secureStorage.delete(key: _saltKey);
-    await _secureStorage.delete(key: _verificationTokenKey);
+  Future<bool> disableAuth(String currentPassword) async {
+    final rewrapRes = await _cryptoStoreKeyRepository.rewrap(
+      oldPassword: currentPassword,
+      newPassword: '',
+    );
+    if (rewrapRes is CryptoCoreFailure) return false;
 
     await _userAuthPreferencesRepository.updateUserAuthPreferences(
       UserAuthPreferences(isAuthenticationOnceEnabled: false),
     );
+    return true;
   }
 
   Future<bool> changePassword({
     required String oldPassword,
     required String newPassword,
-    required List<String> chatIds,
-    required KeyStorageRepository keyStorageRepository,
   }) async {
-    final isValid = await verifyPassword(oldPassword);
-    if (!isValid) return false;
-
-    await keyStorageRepository.reencryptAllKeys(
-      chatIds: chatIds,
+    final rewrapRes = await _cryptoStoreKeyRepository.rewrap(
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
-
-    await setupPassword(newPassword);
-
-    return true;
+    return rewrapRes is! CryptoCoreFailure;
   }
 }

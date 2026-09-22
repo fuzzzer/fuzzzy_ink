@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 part 'fuzzy_auth_state.dart';
 
@@ -7,23 +7,44 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   FuzzyAuthStore({
     required this.chatAuthRepository,
     required this.biometricAuthRepository,
+    required this.cryptoStoreKeyRepository,
+    required this.cryptoCoreService,
   }) : super(
           const FuzzyAuthState.initial(),
         );
 
   final ChatAuthRepository chatAuthRepository;
   final BiometricAuthRepository biometricAuthRepository;
+  final CryptoStoreKeyRepository cryptoStoreKeyRepository;
+  final CryptoCoreService cryptoCoreService;
 
+  /// The store is open whenever the status is `noAuthRequired` or
+  /// `authenticated`, and closed on [lock]. Whether the lock is enabled is
+  /// read from the store-key blob, not the preference
+  /// ([ChatAuthRepository.isChatAuthEnabled]).
   Future<void> checkAuthStatus() async {
+    final ensureRes = await cryptoStoreKeyRepository.ensureStoreKey('');
+    if (ensureRes is CryptoCoreFailure) {
+      logger.e('Store key could not be created: ${ensureRes.type}');
+    }
+
     final enabled = await chatAuthRepository.isChatAuthEnabled();
     final biometricEnabled =
         enabled && await biometricAuthRepository.isEnabled(BiometricScope.chat);
     if (enabled) {
-      emit(state.copyWith(
-          status: AuthStateStatus.locked, biometricEnabled: biometricEnabled,),);
+      emit(
+        state.copyWith(
+          status: AuthStateStatus.locked,
+          biometricEnabled: biometricEnabled,
+        ),
+      );
     } else {
-      emit(state.copyWith(
-          status: AuthStateStatus.noAuthRequired, biometricEnabled: false,),);
+      emit(
+        state.copyWith(
+          status: AuthStateStatus.noAuthRequired,
+          biometricEnabled: false,
+        ),
+      );
     }
   }
 
@@ -34,7 +55,8 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
           await biometricAuthRepository.retrievePassword(BiometricScope.chat);
       if (password == null) {
         logger.w(
-            'Biometric unlock returned null password (cancelled or empty storage)',);
+          'Biometric unlock returned null password (cancelled or empty storage)',
+        );
         await _handleBiometricInvalidation();
         return;
       }
@@ -47,11 +69,13 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
 
   Future<void> _handleBiometricInvalidation() async {
     await biometricAuthRepository.disable(BiometricScope.chat);
-    emit(state.copyWith(
-      status: AuthStateStatus.locked,
-      biometricEnabled: false,
-      biometricInvalidated: true,
-    ),);
+    emit(
+      state.copyWith(
+        status: AuthStateStatus.locked,
+        biometricEnabled: false,
+        biometricInvalidated: true,
+      ),
+    );
   }
 
   Future<void> unlock(String password) async {
@@ -85,7 +109,8 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
     );
   }
 
-  void lock() {
+  Future<void> lock() async {
+    await cryptoCoreService.close();
     emit(
       state.copyWith(
         status: AuthStateStatus.locked,
@@ -106,14 +131,10 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   Future<bool> changePassword({
     required String oldPassword,
     required String newPassword,
-    required List<String> chatIds,
-    required KeyStorageRepository keyStorageRepository,
   }) async {
     final success = await chatAuthRepository.changePassword(
       oldPassword: oldPassword,
       newPassword: newPassword,
-      chatIds: chatIds,
-      keyStorageRepository: keyStorageRepository,
     );
 
     if (success) {

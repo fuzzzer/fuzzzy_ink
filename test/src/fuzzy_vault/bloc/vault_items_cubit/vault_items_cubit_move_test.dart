@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:fuzzy_chat/lib.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:mocktail/mocktail.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -92,8 +92,7 @@ void main() {
       'emits [loading, failed] when repository returns VaultFailure',
       setUp: () {
         when(() => mockRepo.moveItemToGroup('item-1', 'work')).thenAnswer(
-          (_) async =>
-              const VaultFailure(VaultFailureType.itemNotFound),
+          (_) async => const VaultFailure(VaultFailureType.itemNotFound),
         );
       },
       build: buildCubit,

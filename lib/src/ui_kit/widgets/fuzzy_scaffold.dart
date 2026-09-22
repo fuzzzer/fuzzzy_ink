@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 import '../ui_kit.dart';
 
@@ -29,13 +30,13 @@ class FuzzyScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uiColors = Theme.of(context).extension<UiColors>()!;
+    final fuzzzyColors = context.fuzzzyColors;
 
     return Scaffold(
       appBar: appBar,
       drawer: drawer,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      backgroundColor: backgroundColor ?? uiColors.backgroundPrimaryColor,
+      backgroundColor: backgroundColor ?? fuzzzyColors.ground,
       body: Stack(
         children: [
           SafeArea(

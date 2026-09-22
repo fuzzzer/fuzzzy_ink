@@ -1,6 +1,8 @@
+> **HISTORICAL (pre-hardening).** This file describes the pure-Dart crypto stack — `KeyStorageRepository`, `reencryptAllKeys`, the salt + AES verification token, PBE under the app-lock password — all **removed in v1.0.0-rc.1** (F4-4). Kept as the design record of the chat-auth gate; the current gate (store key wrapped by Argon2id in the Rust core, one `rewrap` on password change) is `.agents/project_guide/architecture_state.md` §4. Do not implement anything from this file.
+
 # TASK: Chat Authentication Gate — Finalize Implementation
 
-**Status:** IN_PROGRESS (Doer phase — ~70% complete)
+**Status:** SUPERSEDED — historical, see banner (was: IN_PROGRESS, Doer phase ~70%)
 
 ---
 ### PLAN (by [PLANNER])
@@ -54,7 +56,7 @@
 | `lib/src/fuzzy_auth/data/repositories/repositories.dart` | Added `chat_auth_repository.dart` export |
 | `lib/src/fuzzy_auth/ui/pages/pages.dart` | Added `chat_unlock_page` export |
 | `lib/src/fuzzy_auth/ui/pages/fuzzy_user_auth_page/fuzzy_user_auth_page.dart` | **Rewritten** — full settings page with enable/change/disable sections |
-| `lib/src/fuzzy_chat/data/repositories/keys_repository/key_storage_repository.dart` | Added two-phase commit `reencryptAllKeys()` + `recoverStagedMigration()` |
+| `lib/src/fuzzzy_seal/data/repositories/keys_repository/key_storage_repository.dart` | Added two-phase commit `reencryptAllKeys()` + `recoverStagedMigration()` |
 | `lib/src/app/app_router.dart` | Added `/chat-unlock` route + auth redirect in `redirect()` |
 | `lib/src/app/globals/global_bloc_listeners.dart` | Two auth listeners: unlock→home, lock→unlock page |
 | `lib/src/app/globals/global_bloc_providers.dart` | Calls `checkAuthStatus()` on `FuzzyAuthStore` at startup |

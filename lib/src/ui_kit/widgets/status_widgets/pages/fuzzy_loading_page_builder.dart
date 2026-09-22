@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class FuzzyLoadingPagebuilder extends StatelessWidget {
   const FuzzyLoadingPagebuilder({super.key});

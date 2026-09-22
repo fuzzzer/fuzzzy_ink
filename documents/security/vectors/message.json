@@ -1,0 +1,5 @@
+{
+  "olm_body": "deadbeef",
+  "olm_body_note": "placeholder — a real body is vodozemac's `Message::to_bytes()`",
+  "olm_type": "0x01 Normal"
+}

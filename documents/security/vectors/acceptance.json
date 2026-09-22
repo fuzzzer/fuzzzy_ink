@@ -1,0 +1,12 @@
+{
+  "b_curve25519_secret": "0505050505050505050505050505050505050505050505050505050505050505",
+  "b_ed25519_seed": "0404040404040404040404040404040404040404040404040404040404040404",
+  "chat_id": "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "derived": {
+    "b_curve25519": "50a61409b1ddd0325e9b16b700e719e9772c07000b1bd7786e907c653d20495d",
+    "b_ed25519": "ca93ac1705187071d67b83c7ff0efe8108e8ec4530575d7726879333dbdabe7c"
+  },
+  "prekey_msg": "a1a2a3a4a5",
+  "prekey_msg_note": "placeholder — a real pre-key message is vodozemac's randomised output (282 bytes for the 116-byte handshake plaintext)",
+  "signature": "Ed25519(b_ed25519_seed) over bytes[0 .. len-64], envelope included"
+}

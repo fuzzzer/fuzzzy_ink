@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 part 'vault_auth_state.dart';
 
@@ -82,9 +81,9 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     if (metaRes is! VaultSuccess) return false;
 
     final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
-    final keyRes =
-        await cryptoRepository.verifyAndDeriveKey(currentPassword, metadata);
+    final keyRes = await cryptoRepository.unlock(currentPassword, metadata);
     if (keyRes is VaultFailure) return false;
+    await _closeKey((keyRes as VaultSuccess<VaultKey>).data);
 
     await biometricAuthRepository.enable(BiometricScope.vault, currentPassword);
     emit(state.copyWith(biometricEnabled: true));
@@ -123,8 +122,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       return;
     }
 
-    final keyRes =
-        await cryptoRepository.verifyAndDeriveKey(password, metadata);
+    final keyRes = await cryptoRepository.unlock(password, metadata);
     if (keyRes is VaultFailure) {
       emit(
         state.copyWith(
@@ -135,7 +133,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       return;
     }
 
-    final masterKey = (keyRes as VaultSuccess<Uint8List>).data;
+    final masterKey = (keyRes as VaultSuccess<VaultKey>).data;
     _startAutoLockTimer(metadata.autoLockMinutes);
 
     emit(
@@ -168,8 +166,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     }
 
     final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
-    final keyRes =
-        await cryptoRepository.verifyAndDeriveKey(password, metadata);
+    final keyRes = await cryptoRepository.unlock(password, metadata);
 
     if (keyRes is VaultFailure) {
       emit(
@@ -182,7 +179,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       return;
     }
 
-    final masterKey = (keyRes as VaultSuccess<Uint8List>).data;
+    final masterKey = (keyRes as VaultSuccess<VaultKey>).data;
 
     final updatedMetadata = metadata.copyWith(lastUnlockedAt: DateTime.now());
     await vaultRepository.saveMetadata(updatedMetadata);
@@ -198,19 +195,25 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     );
   }
 
-  void lock() {
+  Future<void> lock() async {
     _autoLockTimer?.cancel();
     final keyToWipe = state.masterKey;
-    if (keyToWipe != null && keyToWipe.isNotEmpty) {
-      keyToWipe.fillRange(0, keyToWipe.length, 0);
+    if (keyToWipe != null) {
+      await _closeKey(keyToWipe);
     }
     emit(
-      state.copyWith(
+      VaultAuthState(
         status: StateStatus.success,
         authState: VaultAuthEnum.locked,
-        masterKey: Uint8List(0),
+        biometricEnabled: state.biometricEnabled,
       ),
     );
+  }
+
+  /// Zeroises the master key in the core and frees the handle.
+  Future<void> _closeKey(VaultKey key) async {
+    await key.close();
+    key.dispose();
   }
 
   void _startAutoLockTimer(int minutes) {

@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 import 'package:path/path.dart' as path;
 
 // ignore_for_file: avoid_redundant_argument_values
@@ -15,9 +12,11 @@ part 'custom_file_processing_state.dart';
 class CustomFileProcessingCubit<
         ActualProcessingOption extends FileProcessingOption>
     extends Cubit<CustomFileProcessingState> {
+  final CryptoCoreService cryptoCoreService;
   final ActualProcessingOption processingOption;
 
   CustomFileProcessingCubit({
+    required this.cryptoCoreService,
     required this.processingOption,
   }) : super(const CustomFileProcessingState());
 
@@ -117,11 +116,7 @@ class CustomFileProcessingCubit<
     try {
       String generalOutputPath = sl.get<AppDocumentsDirectory>().directory.path;
 
-      FileProcessingHandler handler;
-
-      final keyBytes = utf8.encode(customKey);
-      final digest = sha256.convert(keyBytes);
-      final Uint8List symmetricKey = Uint8List.fromList(digest.bytes);
+      final CryptoCoreResponse<FileProcessingHandler> res;
 
       if (processingOption is FileEncryptionOption) {
         generalOutputPath = await _buildOutputPathInChatFolder(
@@ -132,10 +127,10 @@ class CustomFileProcessingCubit<
           fuzzedFileIdentificator: fuzzedFileIdentificator,
         );
 
-        handler = await AESService.encryptFile(
+        res = await cryptoCoreService.encryptFileWithPassword(
+          password: customKey,
           inputPath: fileData.inputFilePath,
           outputPath: generalOutputPath,
-          key: symmetricKey,
         );
       } else if (processingOption is FileDecryptionOption) {
         generalOutputPath = await _buildOutputPathInChatFolder(
@@ -146,15 +141,26 @@ class CustomFileProcessingCubit<
           fuzzedFileIdentificator: fuzzedFileIdentificator,
         );
 
-        handler = await AESService.decryptFile(
+        res = await cryptoCoreService.decryptFileWithPassword(
+          password: customKey,
           inputPath: fileData.inputFilePath,
           outputPath: generalOutputPath,
-          key: symmetricKey,
         );
       } else {
         throw UnimplementedError(
-            'Unsupported FileProcessingOption: ${processingOption.runtimeType}',);
+          'Unsupported FileProcessingOption: ${processingOption.runtimeType}',
+        );
       }
+
+      if (res is CryptoCoreFailure<FileProcessingHandler>) {
+        _failFile(
+          fileData: fileData,
+          type: FileProcessingFailureType.unknown,
+          customKey: customKey,
+        );
+        return;
+      }
+      final handler = (res as CryptoCoreSuccess<FileProcessingHandler>).data;
 
       _activeFileProcessingHandler = handler;
 
@@ -171,12 +177,9 @@ class CustomFileProcessingCubit<
     } catch (error) {
       logger.i('FILE PROCESSING: file processing failed: $error');
 
-      _markFileAsFinished(
+      _failFile(
         fileData: fileData,
-        status: FileProcessingStatus.failed,
-        outputFilePath: null,
-      );
-      _goToNextFileProcessing(
+        type: FileProcessingFailureType.unknown,
         customKey: customKey,
       );
     }
@@ -203,6 +206,19 @@ class CustomFileProcessingCubit<
       return;
     }
 
+    // A failure is terminal with isComplete set too — it must win.
+    if (event.errorMessage != null) {
+      _resetThrottle();
+      logger.i('FILE PROCESSING: run failed: ${event.errorMessage}');
+      _failFile(
+        fileData: fileData,
+        type: _runFailureTypeOf(event.errorMessage!),
+        customKey: customKey,
+        progress: event.progress,
+      );
+      return;
+    }
+
     if (event.isComplete) {
       _resetThrottle();
       _markFileAsFinished(
@@ -222,6 +238,36 @@ class CustomFileProcessingCubit<
       fileData: fileData,
       progress: event.progress,
     );
+  }
+
+  void _failFile({
+    required FileProcessingData fileData,
+    required FileProcessingFailureType type,
+    required String customKey,
+    double? progress,
+  }) {
+    _markFileAsFinished(
+      fileData: fileData,
+      status: FileProcessingStatus.failed,
+      outputFilePath: null,
+      progress: progress,
+      failure: FileProcessingFailure(type: type),
+    );
+    _goToNextFileProcessing(
+      customKey: customKey,
+    );
+  }
+
+  /// The terminal event's `errorMessage` is a [CryptoCoreFailureType] name.
+  static FileProcessingFailureType _runFailureTypeOf(String errorMessage) {
+    return switch (CryptoCoreFailureType.values.asNameMap()[errorMessage]) {
+      CryptoCoreFailureType.wrongPassword =>
+        FileProcessingFailureType.wrongPassword,
+      CryptoCoreFailureType.corrupt ||
+      CryptoCoreFailureType.unsupportedFormat =>
+        FileProcessingFailureType.corrupt,
+      _ => FileProcessingFailureType.unknown,
+    };
   }
 
   void _resetThrottle() {
@@ -264,12 +310,14 @@ class CustomFileProcessingCubit<
     required FileProcessingStatus status,
     required String? outputFilePath,
     double? progress,
+    FileProcessingFailure? failure,
   }) {
     final updatedFile = fileData.copyWith(
       status: status,
       outputFilePath: outputFilePath,
       progress: progress ?? fileData.progress,
       isProcessed: true,
+      failure: failure,
     );
 
     final updatedState =
@@ -372,7 +420,9 @@ Future<String> _buildOutputPathInChatFolder({
   } else {
     final defuzzedFileName = fileName.endsWith('.$fuzzedFileIdentificator')
         ? fileName.substring(
-            0, fileName.length - '.$fuzzedFileIdentificator'.length,)
+            0,
+            fileName.length - '.$fuzzedFileIdentificator'.length,
+          )
         : fileName;
     return path.join(chatIdFolder.path, defuzzedFileName);
   }

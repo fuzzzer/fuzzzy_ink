@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../ui_kit.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyIconContainerButton extends StatelessWidget {
   final VoidCallback onTap;
@@ -23,8 +22,7 @@ class FuzzyIconContainerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
+    final fuzzzyColors = context.fuzzzyColors;
 
     return InkWell(
       onTap: onTap,
@@ -33,13 +31,13 @@ class FuzzyIconContainerButton extends StatelessWidget {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: backgroundColor ?? uiColors.secondaryColor,
+          color: backgroundColor ?? fuzzzyColors.surface,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: Icon(
             icon,
-            color: iconColor ?? uiColors.backgroundPrimaryColor,
+            color: iconColor ?? fuzzzyColors.ground,
             size: 30,
           ),
         ),

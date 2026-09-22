@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../ui_kit.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyButton extends StatelessWidget {
   final String text;
@@ -27,10 +26,8 @@ class FuzzyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
+    final fuzzzyColors = context.fuzzzyColors;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
     return InkWell(
       onTap: onTap,
@@ -41,8 +38,8 @@ class FuzzyButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor ??
               (isEnabled
-                  ? uiColors.focusColor
-                  : uiColors.focusColor.withOpacity(0.4)),
+                  ? fuzzzyColors.actionPrimaryBg
+                  : fuzzzyColors.actionPrimaryBg.withValues(alpha: 0.4)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
@@ -52,13 +49,14 @@ class FuzzyButton extends StatelessWidget {
               if (icon != null)
                 Icon(
                   icon,
-                  color: textColor ?? uiColors.backgroundPrimaryColor,
+                  color: textColor ?? fuzzzyColors.actionPrimaryFg,
                 ),
               if (icon != null) const SizedBox(width: 8),
               Text(
                 text,
-                style: uiTextStyles.bodyBold16.copyWith(
-                  color: uiColors.backgroundPrimaryColor,
+                style: fuzzzyTextStyles.body.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: fuzzzyColors.actionPrimaryFg,
                 ),
               ),
             ],

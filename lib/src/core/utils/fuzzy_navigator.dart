@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 import 'package:go_router/go_router.dart';
 
-/// Centralized navigation helpers for Fuzzy Chat.
+/// Centralized navigation helpers for Fuzzzy Seal.
 ///
 /// Use `context.goBack()` instead of raw `context.pop()` everywhere.
 /// This guarantees the chat list (home) is always reachable — even when

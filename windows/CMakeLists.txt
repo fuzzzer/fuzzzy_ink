@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(fuzzy_chat LANGUAGES CXX)
+project(fuzzzy_seal LANGUAGES CXX)
 
-set(BINARY_NAME "fuzzy_chat")
+set(BINARY_NAME "fuzzzy_seal")
 
 cmake_policy(SET CMP0063 NEW)
 

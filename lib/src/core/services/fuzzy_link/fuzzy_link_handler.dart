@@ -1,20 +1,23 @@
 import 'dart:async';
 
-import 'package:fuzzy_chat/lib.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class FuzzyLinkHandler {
   FuzzyLinkHandler({
     required FuzzyLinkService linkService,
     required ChatGeneralDataListRepository chatRepository,
     required FuzzyAuthStore authStore,
+    required CryptoCoreService cryptoCoreService,
   })  : _linkService = linkService,
         _chatRepository = chatRepository,
-        _authStore = authStore;
+        _authStore = authStore,
+        _cryptoCoreService = cryptoCoreService;
 
   final FuzzyLinkService _linkService;
   final ChatGeneralDataListRepository _chatRepository;
   final FuzzyAuthStore _authStore;
+  final CryptoCoreService _cryptoCoreService;
 
   StreamSubscription<Uri>? _subscription;
   FuzzyLinkPayload? _pendingPayload;
@@ -22,8 +25,21 @@ class FuzzyLinkHandler {
 
   bool get hasPendingPayload => _pendingPayload != null;
 
-  FuzzyChatLocalizations get _l10n =>
-      FuzzyChatLocalizations.of(navigatorKey.currentContext!)!;
+  FuzzzySealLocalizations get _l10n =>
+      FuzzzySealLocalizations.of(navigatorKey.currentContext!)!;
+
+  /// Feedback from outside the widget tree goes through the app's
+  /// `ScaffoldMessenger`, as `GlobalBlocListeners` does: `FuzzzyToast.show`
+  /// needs a context *inside* the navigator's `Overlay`, which no global key
+  /// provides (`navigatorKey.currentContext` is the navigator itself — T-0328).
+  void _showMessage(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+      ),
+    );
+  }
 
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -47,21 +63,22 @@ class FuzzyLinkHandler {
   void _handleUri(Uri uri) {
     final payload = FuzzyLinkParser.parse(uri);
     if (payload == null) {
-      FuzzySnackbar.show(label: _l10n.invalidLink);
+      if (navigatorKey.currentContext == null) return;
+      _showMessage(_l10n.invalidLink);
       return;
     }
 
     if (!payload.isSupported) {
-      FuzzySnackbar.show(label: _l10n.updateRequired);
+      _showMessage(_l10n.updateRequired);
       return;
     }
 
     if (payload is InvitationLinkPayload && payload.isExpired) {
-      FuzzySnackbar.show(label: _l10n.invitationLinkExpired);
+      _showMessage(_l10n.invitationLinkExpired);
       return;
     }
     if (payload is AcceptanceLinkPayload && payload.isExpired) {
-      FuzzySnackbar.show(label: _l10n.acceptanceLinkExpired);
+      _showMessage(_l10n.acceptanceLinkExpired);
       return;
     }
 
@@ -78,62 +95,60 @@ class FuzzyLinkHandler {
   }
 
   void _processPayload(FuzzyLinkPayload payload) {
-    final router = AppRouter.routerInstance;
-    if (router == null) return;
-
     switch (payload) {
       case InvitationLinkPayload():
-        _handleInvitation(router, payload);
+        _handleInvitation(payload);
       case AcceptanceLinkPayload():
-        _handleAcceptance(router, payload);
+        _handleAcceptance(payload);
       case FuzzMessageLinkPayload():
-        _handleFuzzMessage(router, payload);
+        _handleFuzzMessage(payload);
     }
   }
 
-  Future<void> _handleInvitation(
-      GoRouter router, InvitationLinkPayload payload,) async {
+  Future<void> _handleInvitation(InvitationLinkPayload payload) async {
     try {
-      final receivedInvitation =
-          await HandshakeService.parseInvitation(payload.rawInvitationContent);
-      final existingChat =
-          await _chatRepository.getChatById(receivedInvitation.chatId);
+      final chatIdRes =
+          _cryptoCoreService.peekChatId(payload.rawInvitationContent);
+      if (chatIdRes is CryptoCoreSuccess<String>) {
+        final existingChat = await _chatRepository.getChatById(chatIdRes.data);
 
-      if (existingChat != null) {
-        FuzzySnackbar.show(label: _l10n.cantAcceptOwnInvitation);
-        return;
+        if (existingChat != null) {
+          _showMessage(_l10n.cantAcceptOwnInvitation);
+          return;
+        }
       }
     } catch (_) {
       // Let the acceptance page handle parsing errors downstream.
     }
 
     _navigateCleanly(
-      router,
       AppRouter.chatAccept,
       extra: payload.rawInvitationContent,
     );
   }
 
-  Future<void> _handleAcceptance(
-      GoRouter router, AcceptanceLinkPayload payload,) async {
+  Future<void> _handleAcceptance(AcceptanceLinkPayload payload) async {
     try {
-      final acceptance =
-          await HandshakeService.parseAcceptance(payload.rawAcceptanceContent);
-      final chatId = acceptance.chatId;
+      final chatIdRes =
+          _cryptoCoreService.peekChatId(payload.rawAcceptanceContent);
+      if (chatIdRes is CryptoCoreFailure) {
+        _showMessage(_l10n.failedToProcessAcceptance);
+        return;
+      }
+      final chatId = (chatIdRes as CryptoCoreSuccess<String>).data;
       final chat = await _chatRepository.getChatById(chatId);
 
       if (chat == null) {
-        FuzzySnackbar.show(label: _l10n.chatNotFoundForAcceptance);
+        _showMessage(_l10n.chatNotFoundForAcceptance);
         return;
       }
 
       if (chat.setupStatus == ChatSetupStatus.connected) {
-        FuzzySnackbar.show(label: _l10n.alreadyConnected);
+        _showMessage(_l10n.alreadyConnected);
         return;
       }
 
       _navigateCleanly(
-        router,
         AppRouter.chatInvitation,
         extra: ChatInvitationPagePayload(
           chatName: chat.chatName,
@@ -142,22 +157,20 @@ class FuzzyLinkHandler {
         ),
       );
     } catch (_) {
-      FuzzySnackbar.show(label: _l10n.failedToProcessAcceptance);
+      _showMessage(_l10n.failedToProcessAcceptance);
     }
   }
 
-  Future<void> _handleFuzzMessage(
-      GoRouter router, FuzzMessageLinkPayload payload,) async {
+  Future<void> _handleFuzzMessage(FuzzMessageLinkPayload payload) async {
     try {
       final chat = await _chatRepository.getChatById(payload.chatId);
 
       if (chat == null) {
-        FuzzySnackbar.show(label: _l10n.chatNotFoundForMessage);
+        _showMessage(_l10n.chatNotFoundForMessage);
         return;
       }
 
       _navigateCleanly(
-        router,
         AppRouter.chatConnected,
         extra: ConnectedChatPagePayload(
           chatGeneralData: chat,
@@ -165,11 +178,13 @@ class FuzzyLinkHandler {
         ),
       );
     } catch (_) {
-      FuzzySnackbar.show(label: _l10n.failedToProcessMessage);
+      _showMessage(_l10n.failedToProcessMessage);
     }
   }
 
-  void _navigateCleanly(GoRouter router, String path, {Object? extra}) {
+  void _navigateCleanly(String path, {Object? extra}) {
+    final router = AppRouter.routerInstance;
+    if (router == null) return;
     router.go(AppRouter.home);
     router.push(path, extra: extra);
   }

@@ -6,5 +6,4 @@ export 'id_generator.dart';
 export 'logger.dart';
 export 'map_casting.dart';
 export 'reveal_file.dart';
-export 'secure_bytes_generation.dart';
 export 'share_helper.dart';

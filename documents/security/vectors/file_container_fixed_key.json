@@ -1,0 +1,16 @@
+{
+  "argon2": {
+    "algorithm": "Argon2id v0x13",
+    "m_cost_kib": 65536,
+    "output_len": 32,
+    "p_cost": 1,
+    "t_cost": 4
+  },
+  "chunk_size": 65536,
+  "chunks": "chunk 0 (65536 bytes): nonce = prefix | 00000000 | 00, aad = header | 00000000; chunk 1 (5 bytes, last): nonce = prefix | 00000001 | 01, aad = header | 00000001",
+  "key": "4242424242424242424242424242424242424242424242424242424242424242",
+  "key_note": "the bench path: the header still records salt a0..af and the Argon2 parameters, but the key was supplied directly — no password opens it",
+  "nonce_prefix": "909192939495969798999a9b9c9d9e9fa0a1a2",
+  "plaintext": "65541 bytes of xorshift64 (state 0x9e3779b97f4a7c15; x ^= x<<13, x ^= x>>7, x ^= x<<17; low byte per step)",
+  "salt": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf"
+}

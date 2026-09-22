@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class VaultRepository {
   const VaultRepository({
@@ -31,7 +31,6 @@ class VaultRepository {
         VaultMetadata(
           vaultId: jsonMap['vaultId'] as String,
           verificationToken: jsonMap['verificationToken'] as String,
-          masterSalt: jsonMap['masterSalt'] as String,
           createdAt: DateTime.parse(jsonMap['createdAt'] as String),
           lastUnlockedAt: DateTime.parse(jsonMap['lastUnlockedAt'] as String),
           autoLockMinutes: jsonMap['autoLockMinutes'] as int,
@@ -51,7 +50,6 @@ class VaultRepository {
       final jsonMap = {
         'vaultId': metadata.vaultId,
         'verificationToken': metadata.verificationToken,
-        'masterSalt': metadata.masterSalt,
         'createdAt': metadata.createdAt.toIso8601String(),
         'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
         'autoLockMinutes': metadata.autoLockMinutes,
@@ -95,7 +93,7 @@ class VaultRepository {
 
   Future<VaultResponse<VaultItem>> createItem(
     VaultItem item,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) async {
     try {
@@ -147,7 +145,7 @@ class VaultRepository {
 
   Future<VaultResponse<VaultItem>> getItem(
     String itemId,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) async {
     try {
@@ -211,7 +209,7 @@ class VaultRepository {
 
   Future<VaultResponse<VaultItem>> updateItem(
     VaultItem item,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) async {
     try {
@@ -443,100 +441,34 @@ class VaultRepository {
     }
   }
 
+  /// The master key is only re-wrapped under the new password; the items on
+  /// disk are untouched.
   Future<VaultResponse<void>> changeMasterPassword(
     String oldPassword,
     String newPassword,
   ) async {
-    try {
-      final metaRes = await getMetadata();
-      if (metaRes is VaultFailure) {
-        return VaultFailure(
-          (metaRes as VaultFailure).type,
-          message: (metaRes as VaultFailure).message,
-        );
-      }
-      final oldMetadata = (metaRes as VaultSuccess<VaultMetadata>).data;
-
-      final deriveRes =
-          await cryptoRepository.verifyAndDeriveKey(oldPassword, oldMetadata);
-      if (deriveRes is VaultFailure) {
-        return VaultFailure(
-          (deriveRes as VaultFailure).type,
-          message: (deriveRes as VaultFailure).message,
-        );
-      }
-      final oldKey = (deriveRes as VaultSuccess<Uint8List>).data;
-
-      final itemsData = await itemDataSource.getAllItems();
-
-      final encryptedItems = <String, Uint8List>{};
-      for (final item in itemsData) {
-        final bytes = await fileDataSource.readItem(item.itemId);
-        if (bytes != null) {
-          encryptedItems[item.itemId] = Uint8List.fromList(bytes);
-        }
-      }
-
-      final newInitRes = await cryptoRepository.initializeVault(newPassword);
-      if (newInitRes is VaultFailure) {
-        return VaultFailure(
-          (newInitRes as VaultFailure).type,
-          message: (newInitRes as VaultFailure).message,
-        );
-      }
-      final newMetadata = (newInitRes as VaultSuccess<VaultMetadata>).data;
-
-      final newKeyRes =
-          await cryptoRepository.verifyAndDeriveKey(newPassword, newMetadata);
-      if (newKeyRes is VaultFailure) {
-        return VaultFailure(
-          (newKeyRes as VaultFailure).type,
-          message: (newKeyRes as VaultFailure).message,
-        );
-      }
-      final newKey = (newKeyRes as VaultSuccess<Uint8List>).data;
-
-      final reencryptRes =
-          await cryptoRepository.reencryptAll(encryptedItems, oldKey, newKey);
-      if (reencryptRes is VaultFailure) {
-        return VaultFailure(
-          (reencryptRes as VaultFailure).type,
-          message: (reencryptRes as VaultFailure).message,
-        );
-      }
-      final newlyEncryptedItems =
-          (reencryptRes as VaultSuccess<Map<String, Uint8List>>).data;
-
-      for (final entry in newlyEncryptedItems.entries) {
-        await fileDataSource.writeItemToStaging(entry.key, entry.value);
-      }
-
-      final newMetaJson = {
-        'vaultId': newMetadata.vaultId,
-        'verificationToken': newMetadata.verificationToken,
-        'masterSalt': newMetadata.masterSalt,
-        'createdAt': newMetadata.createdAt.toIso8601String(),
-        'lastUnlockedAt': newMetadata.lastUnlockedAt.toIso8601String(),
-        'autoLockMinutes': newMetadata.autoLockMinutes,
-        'customDirectoryPath': newMetadata.customDirectoryPath,
-      };
-      await fileDataSource
-          .writeMetaToStaging(utf8.encode(jsonEncode(newMetaJson)));
-
-      // --- Mark committed (crash after here → recovery finishes commit) ---
-      await fileDataSource.markStagingCommitted();
-
-      // --- Commit: rename staged files into live locations ---
-      await fileDataSource.commitStagedPasswordChange();
-
-      return const VaultSuccess(null);
-    } catch (e) {
-      // Best-effort rollback: clean up any partial staging data.
-      await fileDataSource.cleanupStaging();
+    final metaRes = await getMetadata();
+    if (metaRes is VaultFailure) {
       return VaultFailure(
-        VaultFailureType.storageWriteError,
-        message: e.toString(),
+        (metaRes as VaultFailure).type,
+        message: (metaRes as VaultFailure).message,
       );
     }
+    final oldMetadata = (metaRes as VaultSuccess<VaultMetadata>).data;
+
+    final rewrapRes = await cryptoRepository.rewrap(
+      oldPassword,
+      newPassword,
+      oldMetadata,
+    );
+    if (rewrapRes is VaultFailure) {
+      return VaultFailure(
+        (rewrapRes as VaultFailure).type,
+        message: (rewrapRes as VaultFailure).message,
+      );
+    }
+    final newMetadata = (rewrapRes as VaultSuccess<VaultMetadata>).data;
+
+    return saveMetadata(newMetadata);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class GlobalBlocProviders extends StatelessWidget {
   const GlobalBlocProviders({
@@ -26,19 +26,21 @@ class GlobalBlocProviders extends StatelessWidget {
         BlocProvider<ChatGeneralDataListCubit>(
           create: (context) => ChatGeneralDataListCubit(
             chatRepository: sl.get<ChatGeneralDataListRepository>(),
-            keyStorageRepository: sl.get<KeyStorageRepository>(),
+            cryptoCoreService: sl.get<CryptoCoreService>(),
           )..fetchChats(),
         ),
         BlocProvider<FileProcessingCubit<FileEncryptionOption>>(
           create: (_) => FileProcessingCubit<FileEncryptionOption>(
             processingOption: const FileEncryptionOption(),
-            keyStorageRepository: sl.get<KeyStorageRepository>(),
+            cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
           ),
         ),
         BlocProvider<FileProcessingCubit<FileDecryptionOption>>(
           create: (_) => FileProcessingCubit<FileDecryptionOption>(
             processingOption: const FileDecryptionOption(),
-            keyStorageRepository: sl.get<KeyStorageRepository>(),
+            cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
           ),
         ),
         BlocProvider<ChatFileInjectorCubit>(

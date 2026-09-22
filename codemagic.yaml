@@ -1,0 +1,242 @@
+# Codemagic release pipeline — signed store builds (hardening decisions D-3 / D-6).
+#
+# GitHub Actions (.github/workflows/main.yaml) stays the CI: tests, the 16 KB gate, reproducibility and the
+# provenance attestation on every push and tag. Codemagic only produces the SIGNED artefacts that CI cannot:
+# a Play-signable Android build, a Mac App Store package and an App Store IPA. Everything secret lives in the
+# Codemagic UI — a keystore under Code signing identities, an App Store Connect API key under Team
+# integrations, and the variable groups referenced below. This file names them; it never carries a value.
+# What the owner enters in the UI: documents/security/RELEASE.md §6 "Codemagic".
+#
+# Field names follow https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app/ and the
+# code-signing docs (validated against https://codemagic.io/codemagic-schema.json). Builds run on `v*` tags
+# (webhook, see RELEASE.md) or when started by hand from the Codemagic UI.
+
+definitions:
+  # The Rust core (rust/fuzzy_crypto_core) is built by cargokit inside `flutter build`; Codemagic images
+  # ship no Rust, so rustup is installed per build with the toolchain rust-toolchain.toml pins. The
+  # targets are the ones cargokit asks for on each platform (the same lists as the GitHub jobs).
+  rust_toolchain: &rust_toolchain
+    name: Install Rust 1.98.1
+    script: |
+      set -euo pipefail
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.98.1
+      echo "PATH=$HOME/.cargo/bin:$PATH" >> "$CM_ENV"
+  # `fuzzzy_ui_kit` is a git dependency on the PRIVATE repo fuzzzy-bot/fuzzy_design (pubspec.yaml). A
+  # read-only deploy key is supplied as FUZZY_DESIGN_SSH_KEY (group fuzzy_chat_deps); Codemagic loads every
+  # `*_SSH_KEY` variable into the SSH agent, and this rewrite sends exactly that one URL over SSH.
+  pub_git_auth: &pub_git_auth
+    name: Route the private fuzzzy_ui_kit dependency over SSH
+    script: git config --global url."git@github.com:fuzzzy-bot/fuzzy_design.git".insteadOf "https://github.com/fuzzzy-bot/fuzzy_design.git"
+  pub_get: &pub_get
+    name: Flutter pub get
+    script: flutter pub get
+  triggering: &release_tags
+    events:
+      - tag
+    tag_patterns:
+      - pattern: 'v*'
+        include: true
+  email: &email
+    recipients:
+      - contact@fuzzzycore.com
+    notify:
+      success: true
+      failure: true
+
+workflows:
+  android-release:
+    name: Android release (production flavor, upload-key signed)
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      # Upload keystore uploaded in the Codemagic UI (Code signing identities > Android keystores) under
+      # this reference name; Codemagic exports CM_KEYSTORE_PATH / CM_KEYSTORE_PASSWORD / CM_KEY_ALIAS /
+      # CM_KEY_PASSWORD, which the step below maps onto the ANDROID_KEYSTORE_* names android/app/build.gradle reads.
+      android_signing:
+        - fuzzy_chat_upload
+      groups:
+        - fuzzy_chat_deps
+      flutter: 3.41.7
+      java: 17
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/.gradle/caches
+        - ~/.cargo/registry
+    triggering: *release_tags
+    scripts:
+      - *rust_toolchain
+      - name: Rust Android targets
+        script: rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
+      # cargokit resolves the NDK from android.ndkVersion under $ANDROID_SDK_ROOT/ndk — the Linux image does
+      # not ship 28.2.13676358 (GitHub's android job installs it the same way).
+      - name: Android NDK 28.2.13676358
+        script: '"$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358"'
+      - *pub_git_auth
+      - *pub_get
+      - name: Signing config from the Codemagic keystore
+        script: |
+          set -euo pipefail
+          {
+            echo "ANDROID_KEYSTORE_PATH=$CM_KEYSTORE_PATH"
+            echo "ANDROID_KEYSTORE_ALIAS=$CM_KEY_ALIAS"
+            echo "ANDROID_KEYSTORE_PASSWORD=$CM_KEYSTORE_PASSWORD"
+            echo "ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD=$CM_KEY_PASSWORD"
+            # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
+            # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
+            echo "CARGO_ENCODED_RUSTFLAGS=--remap-path-prefix=$HOME/.cargo/registry/src=/cargo/registry/src"
+          } >> "$CM_ENV"
+      - name: Build APK
+        script: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
+      - name: Build App Bundle
+        script: flutter build appbundle --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
+      - name: 16 KB page-size check
+        # Every LOAD segment of the crate's .so must be aligned >= 0x4000 on the 64-bit ABIs
+        # (Android's 16 KB requirement; armeabi-v7a is 32-bit and printed for information only).
+        script: |
+          set -euo pipefail
+          readelf=$ANDROID_SDK_ROOT/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf
+          unzip -o -q build/app/outputs/flutter-apk/app-production-release.apk 'lib/*' -d "$CM_BUILD_DIR/build/apk-libs"
+          find "$CM_BUILD_DIR/build/apk-libs/lib" -name 'libfuzzy_crypto_core.so' | sort
+          bad=0; checked=0
+          for abi in arm64-v8a x86_64; do
+            so="$CM_BUILD_DIR/build/apk-libs/lib/$abi/libfuzzy_crypto_core.so"
+            if [ ! -f "$so" ]; then echo "MISSING $so"; bad=1; continue; fi
+            echo "## $abi"
+            "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+            for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
+              if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $so"; bad=1; fi
+            done
+            checked=$((checked + 1))
+          done
+          so="$CM_BUILD_DIR/build/apk-libs/lib/armeabi-v7a/libfuzzy_crypto_core.so"
+          if [ -f "$so" ]; then echo "## armeabi-v7a (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'; fi
+          echo "checked=$checked bad=$bad"
+          [ "$checked" -eq 2 ] && [ "$bad" -eq 0 ]
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/**/*.aab
+      - build/app/outputs/**/mapping.txt
+    publishing:
+      email: *email
+
+  macos-release:
+    name: macOS release (production flavor, Mac App Store signed)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    # App Store Connect API key registered under Team integrations > Developer Portal with this name;
+    # it authenticates `app-store-connect fetch-signing-files` below. The certificate private key it
+    # signs with is CERTIFICATE_PRIVATE_KEY in the fuzzy_chat_signing group.
+    integrations:
+      app_store_connect: fuzzy_chat_asc
+    environment:
+      groups:
+        - fuzzy_chat_signing
+        - fuzzy_chat_deps
+      vars:
+        # macos/Runner.xcodeproj Release-production; the app sandbox + the user-selected file entitlement
+        # (macos/Runner/Release.entitlements) are what the Mac App Store profile must carry.
+        BUNDLE_ID: com.fuzzzycore.seal
+      flutter: 3.41.7
+      xcode: 26.5
+      cocoapods: default
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/Library/Caches/CocoaPods
+        - ~/.cargo/registry
+    triggering: *release_tags
+    scripts:
+      - *rust_toolchain
+      - name: Rust macOS targets
+        script: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - *pub_git_auth
+      - *pub_get
+      - name: Set up keychain to be used for code signing
+        script: keychain initialize
+      # MAC_APP_STORE = Mac App Store profile + Mac App Distribution certificate (the default here).
+      # For a notarized build distributed OUTSIDE the store use --type MAC_APP_DIRECT (Developer ID) and
+      # add the notarization step — both documented in RELEASE.md §6.
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --platform MAC_OS \
+            --type MAC_APP_STORE \
+            --create
+      - name: Fetch Mac Installer Distribution certificates
+        script: |
+          app-store-connect certificates list --type MAC_INSTALLER_DISTRIBUTION --save || \
+            app-store-connect certificates create --type MAC_INSTALLER_DISTRIBUTION --save
+      - name: Set up signing certificate
+        script: keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build Flutter macOS
+        script: flutter build macos --release --flavor production -t lib/main_production.dart
+      - name: Package application
+        # App Store Connect takes a .pkg signed with the Mac Installer Distribution certificate.
+        script: |
+          set -euo pipefail
+          cd build/macos/Build/Products/Release-production
+          xcrun productbuild --component "Fuzzzy Seal.app" /Applications/ unsigned.pkg
+          INSTALLER_CERT_NAME=$(keychain list-certificates \
+            | jq -r '.[] | select(.common_name | contains("Mac Developer Installer")) | .common_name' \
+            | head -n 1)
+          xcrun productsign --sign "$INSTALLER_CERT_NAME" unsigned.pkg "Fuzzzy Seal.pkg"
+          rm -f unsigned.pkg
+    artifacts:
+      - build/macos/Build/Products/Release-production/*.pkg
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email: *email
+
+  ios-release:
+    name: iOS release (production flavor, App Store signed)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: fuzzy_chat_asc
+    environment:
+      groups:
+        - fuzzy_chat_signing
+        - fuzzy_chat_deps
+      vars:
+        # ios/Runner.xcodeproj Release-production. No iOS entitlements file exists and none is needed:
+        # file_picker / share_plus use the system document picker and share sheet.
+        BUNDLE_ID: com.fuzzzycore.seal
+      flutter: 3.41.7
+      xcode: 26.5
+      cocoapods: default
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/Library/Caches/CocoaPods
+        - ~/.cargo/registry
+    triggering: *release_tags
+    scripts:
+      - *rust_toolchain
+      - name: Rust iOS target
+        script: rustup target add aarch64-apple-ios
+      - *pub_git_auth
+      - *pub_get
+      - name: Set up keychain to be used for code signing
+        script: keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --platform IOS \
+            --type IOS_APP_STORE \
+            --create
+      - name: Set up signing certificate
+        script: keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Build Flutter IPA
+        script: |
+          flutter build ipa --release --flavor production -t lib/main_production.dart \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email: *email

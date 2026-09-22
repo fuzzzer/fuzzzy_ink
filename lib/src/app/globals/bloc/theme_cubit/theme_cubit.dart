@@ -70,7 +70,8 @@ class ThemeCubit extends Cubit<ThemeState> with WidgetsBindingObserver {
         jsonDecode(rawBrightnessPreferences) as Map<String, dynamic>;
 
     final lastAppBrightness = _brightnessFromString(
-        (brightnessPreferences[_lastAppBrightnessKey] as String?) ?? '',);
+      (brightnessPreferences[_lastAppBrightnessKey] as String?) ?? '',
+    );
 
     return lastAppBrightness;
   }

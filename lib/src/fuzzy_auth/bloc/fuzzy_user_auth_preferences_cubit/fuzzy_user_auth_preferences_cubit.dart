@@ -1,25 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 part 'fuzzy_user_auth_preferences_state.dart';
 
 class FuzzyUserAuthPreferencesCubit
     extends Cubit<FuzzyUserAuthPreferencesState> {
   final ChatAuthRepository _chatAuthRepository;
-  final ChatGeneralDataListRepository _chatGeneralDataListRepository;
-  final KeyStorageRepository _keyStorageRepository;
   final FuzzyAuthStore _fuzzyAuthStore;
   final BiometricAuthRepository _biometricAuthRepository;
 
   FuzzyUserAuthPreferencesCubit({
     required ChatAuthRepository chatAuthRepository,
-    required ChatGeneralDataListRepository chatGeneralDataListRepository,
-    required KeyStorageRepository keyStorageRepository,
     required FuzzyAuthStore fuzzyAuthStore,
     required BiometricAuthRepository biometricAuthRepository,
   })  : _chatAuthRepository = chatAuthRepository,
-        _chatGeneralDataListRepository = chatGeneralDataListRepository,
-        _keyStorageRepository = keyStorageRepository,
         _fuzzyAuthStore = fuzzyAuthStore,
         _biometricAuthRepository = biometricAuthRepository,
         super(
@@ -29,20 +23,31 @@ class FuzzyUserAuthPreferencesCubit
         );
 
   Future<void> enableAuth(String password) async {
-    emit(state.copyWith(activationStatus: StateStatus.loading));
-    try {
-      final chatIds = await _allChatIds();
-      await _keyStorageRepository.reencryptAllKeys(
-        chatIds: chatIds,
-        oldPassword: '',
-        newPassword: password,
-      );
-      await _chatAuthRepository.setupPassword(password);
-      await _fuzzyAuthStore.onPasswordSetup(password);
-      emit(state.copyWith(
-        activationStatus: StateStatus.success,
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.loading,
         lastAction: AuthPreferencesAction.enable,
-      ),);
+      ),
+    );
+    try {
+      final isSetUp = await _chatAuthRepository.setupPassword(password);
+      if (!isSetUp) {
+        emit(
+          state.copyWith(
+            activationStatus: StateStatus.failed,
+            activationFailure: DefaultFailure(),
+          ),
+        );
+        return;
+      }
+
+      await _fuzzyAuthStore.onPasswordSetup(password);
+      emit(
+        state.copyWith(
+          activationStatus: StateStatus.success,
+          lastAction: AuthPreferencesAction.enable,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -57,21 +62,25 @@ class FuzzyUserAuthPreferencesCubit
     required String oldPassword,
     required String newPassword,
   }) async {
-    emit(state.copyWith(activationStatus: StateStatus.loading));
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.loading,
+        lastAction: AuthPreferencesAction.changePassword,
+      ),
+    );
     try {
-      final chatIds = await _allChatIds();
       final success = await _fuzzyAuthStore.changePassword(
         oldPassword: oldPassword,
         newPassword: newPassword,
-        chatIds: chatIds,
-        keyStorageRepository: _keyStorageRepository,
       );
 
       if (success) {
-        emit(state.copyWith(
-          activationStatus: StateStatus.success,
-          lastAction: AuthPreferencesAction.changePassword,
-        ),);
+        emit(
+          state.copyWith(
+            activationStatus: StateStatus.success,
+            lastAction: AuthPreferencesAction.changePassword,
+          ),
+        );
       } else {
         emit(
           state.copyWith(
@@ -93,7 +102,12 @@ class FuzzyUserAuthPreferencesCubit
   }
 
   Future<void> disableAuth(String currentPassword) async {
-    emit(state.copyWith(activationStatus: StateStatus.loading));
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.loading,
+        lastAction: AuthPreferencesAction.disable,
+      ),
+    );
     try {
       final isValid = await _chatAuthRepository.verifyPassword(currentPassword);
       if (!isValid) {
@@ -108,19 +122,25 @@ class FuzzyUserAuthPreferencesCubit
         return;
       }
 
-      final chatIds = await _allChatIds();
-      await _keyStorageRepository.reencryptAllKeys(
-        chatIds: chatIds,
-        oldPassword: currentPassword,
-        newPassword: '',
-      );
-      await _chatAuthRepository.disableAuth();
+      final isDisabled = await _chatAuthRepository.disableAuth(currentPassword);
+      if (!isDisabled) {
+        emit(
+          state.copyWith(
+            activationStatus: StateStatus.failed,
+            activationFailure: DefaultFailure(),
+          ),
+        );
+        return;
+      }
+
       await _biometricAuthRepository.disable(BiometricScope.chat);
       await _fuzzyAuthStore.checkAuthStatus();
-      emit(state.copyWith(
-        activationStatus: StateStatus.success,
-        lastAction: AuthPreferencesAction.disable,
-      ),);
+      emit(
+        state.copyWith(
+          activationStatus: StateStatus.success,
+          lastAction: AuthPreferencesAction.disable,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -132,7 +152,12 @@ class FuzzyUserAuthPreferencesCubit
   }
 
   Future<void> enableBiometric(String currentPassword) async {
-    emit(state.copyWith(activationStatus: StateStatus.loading));
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.loading,
+        lastAction: AuthPreferencesAction.enableBiometric,
+      ),
+    );
     try {
       final isValid = await _chatAuthRepository.verifyPassword(currentPassword);
       if (!isValid) {
@@ -148,12 +173,16 @@ class FuzzyUserAuthPreferencesCubit
       }
 
       await _biometricAuthRepository.enable(
-          BiometricScope.chat, currentPassword,);
+        BiometricScope.chat,
+        currentPassword,
+      );
       await _fuzzyAuthStore.setBiometricEnabled(enabled: true);
-      emit(state.copyWith(
-        activationStatus: StateStatus.success,
-        lastAction: AuthPreferencesAction.enableBiometric,
-      ),);
+      emit(
+        state.copyWith(
+          activationStatus: StateStatus.success,
+          lastAction: AuthPreferencesAction.enableBiometric,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -165,14 +194,21 @@ class FuzzyUserAuthPreferencesCubit
   }
 
   Future<void> disableBiometric() async {
-    emit(state.copyWith(activationStatus: StateStatus.loading));
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.loading,
+        lastAction: AuthPreferencesAction.disableBiometric,
+      ),
+    );
     try {
       await _biometricAuthRepository.disable(BiometricScope.chat);
       await _fuzzyAuthStore.setBiometricEnabled(enabled: false);
-      emit(state.copyWith(
-        activationStatus: StateStatus.success,
-        lastAction: AuthPreferencesAction.disableBiometric,
-      ),);
+      emit(
+        state.copyWith(
+          activationStatus: StateStatus.success,
+          lastAction: AuthPreferencesAction.disableBiometric,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -181,10 +217,5 @@ class FuzzyUserAuthPreferencesCubit
         ),
       );
     }
-  }
-
-  Future<List<String>> _allChatIds() async {
-    final chats = await _chatGeneralDataListRepository.getAllChats();
-    return chats.map((chat) => chat.chatId).toList();
   }
 }

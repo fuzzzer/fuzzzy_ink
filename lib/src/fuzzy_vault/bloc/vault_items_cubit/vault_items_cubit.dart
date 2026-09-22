@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 part 'vault_items_state.dart';
 
@@ -47,7 +47,7 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   Future<VaultResponse<VaultItem>> createItem(
     VaultItem item,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) async {
     emit(state.copyWith(status: StateStatus.loading));
@@ -71,7 +71,7 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   Future<VaultResponse<VaultItem>> updateItem(
     VaultItem item,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) async {
     emit(state.copyWith(status: StateStatus.loading));
@@ -143,7 +143,7 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   void autoSaveNote(
     VaultItem item,
-    Uint8List masterKey, {
+    VaultKey masterKey, {
     String? customPassword,
   }) {
     _autoSaveDebouncer.run(() async {

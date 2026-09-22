@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class VaultSearchBar extends StatelessWidget {
   const VaultSearchBar({super.key});
@@ -9,9 +10,9 @@ class VaultSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: FuzzyTextField(
-        labelText: currentContextLocalization.vaultSearchHint,
-        suffixIcon: const Icon(Icons.search),
+      child: FuzzzyTextField(
+        label: currentContextLocalization.vaultSearchHint,
+        suffix: const Icon(Icons.search),
         onChanged: (query) {
           context.read<VaultSearchCubit>().updateQuery(query);
         },

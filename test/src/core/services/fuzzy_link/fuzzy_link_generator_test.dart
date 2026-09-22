@@ -1,18 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+
+/// Opaque `Fuzz/` blobs as the core produces them; the link never looks inside.
+const _invitationBlob =
+    'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
+const _acceptanceBlob =
+    'Fuzz/RlVaWgECJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
+
+Map<String, dynamic> _decodePayload(String link) {
+  final encodedPayload = Uri.parse(link).pathSegments.first;
+  final jsonString =
+      utf8.decode(base64Url.decode(base64Url.normalize(encodedPayload)));
+  return jsonDecode(jsonString) as Map<String, dynamic>;
+}
 
 void main() {
   group('FuzzyLinkGenerator', () {
     group('generateInvitationLink', () {
       test('generates valid invitation URI', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
-        final invitationContent = jsonEncode({'I': chatId, 'P': publicKey});
-
-        final link =
-            FuzzyLinkGenerator.generateInvitationLink(invitationContent);
+        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
 
         expect(link, startsWith('fuzzylink://invite/'));
         final uri = Uri.parse(link);
@@ -23,12 +31,7 @@ void main() {
       });
 
       test('generated invitation link round-trips through parser', () {
-        final chatId = base64.encode(utf8.encode('round-trip-chat'));
-        final publicKey = base64.encode(utf8.encode('{"n":"123","e":"456"}'));
-        final invitationContent = jsonEncode({'I': chatId, 'P': publicKey});
-
-        final link =
-            FuzzyLinkGenerator.generateInvitationLink(invitationContent);
+        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
         final parsed = FuzzyLinkParser.parse(Uri.parse(link));
 
         expect(parsed, isA<InvitationLinkPayload>());
@@ -37,20 +40,21 @@ void main() {
         expect(invitation.type, FuzzyLinkType.invitation);
         expect(invitation.isExpired, isFalse);
 
-        // Verify the raw content preserves the original fields.
-        final rawJson =
-            jsonDecode(invitation.rawInvitationContent) as Map<String, dynamic>;
-        expect(rawJson['I'], chatId);
-        expect(rawJson['P'], publicKey);
+        // The blob comes back byte for byte.
+        expect(invitation.rawInvitationContent, _invitationBlob);
+      });
+
+      test('invitation link carries the blob as the single `b` field', () {
+        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
+        final json = _decodePayload(link);
+
+        expect(json['b'], _invitationBlob);
+        expect(json['t'], 'inv');
+        expect(json.keys, unorderedEquals(['v', 't', 'b', 'exp']));
       });
 
       test('invitation link includes expiration', () {
-        final chatId = base64.encode(utf8.encode('expiry-test'));
-        final publicKey = base64.encode(utf8.encode('{"n":"x","e":"y"}'));
-        final invitationContent = jsonEncode({'I': chatId, 'P': publicKey});
-
-        final link =
-            FuzzyLinkGenerator.generateInvitationLink(invitationContent);
+        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
         final parsed =
             FuzzyLinkParser.parse(Uri.parse(link))! as InvitationLinkPayload;
 
@@ -61,18 +65,7 @@ void main() {
 
     group('generateAcceptanceLink', () {
       test('generates valid acceptance URI', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
-        final encryptedKey =
-            base64.encode(utf8.encode('encrypted-symmetric-key'));
-        final acceptanceContent = jsonEncode({
-          'I': chatId,
-          'P': publicKey,
-          'E': encryptedKey,
-        });
-
-        final link =
-            FuzzyLinkGenerator.generateAcceptanceLink(acceptanceContent);
+        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
 
         expect(link, startsWith('fuzzylink://accept/'));
         final uri = Uri.parse(link);
@@ -81,17 +74,7 @@ void main() {
       });
 
       test('generated acceptance link round-trips through parser', () {
-        final chatId = base64.encode(utf8.encode('round-trip-acc'));
-        final publicKey = base64.encode(utf8.encode('{"n":"789","e":"012"}'));
-        final encryptedKey = base64.encode(utf8.encode('sym-key-data'));
-        final acceptanceContent = jsonEncode({
-          'I': chatId,
-          'P': publicKey,
-          'E': encryptedKey,
-        });
-
-        final link =
-            FuzzyLinkGenerator.generateAcceptanceLink(acceptanceContent);
+        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
         final parsed = FuzzyLinkParser.parse(Uri.parse(link));
 
         expect(parsed, isA<AcceptanceLinkPayload>());
@@ -100,11 +83,16 @@ void main() {
         expect(acceptance.type, FuzzyLinkType.acceptance);
         expect(acceptance.isExpired, isFalse);
 
-        final rawJson =
-            jsonDecode(acceptance.rawAcceptanceContent) as Map<String, dynamic>;
-        expect(rawJson['I'], chatId);
-        expect(rawJson['P'], publicKey);
-        expect(rawJson['E'], encryptedKey);
+        expect(acceptance.rawAcceptanceContent, _acceptanceBlob);
+      });
+
+      test('acceptance link carries the blob as the single `b` field', () {
+        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
+        final json = _decodePayload(link);
+
+        expect(json['b'], _acceptanceBlob);
+        expect(json['t'], 'acc');
+        expect(json.keys, unorderedEquals(['v', 't', 'b', 'exp']));
       });
     });
 
@@ -136,13 +124,9 @@ void main() {
 
       test('fuzz link has no expiration', () {
         final link = FuzzyLinkGenerator.generateFuzzLink('chat-1', 'msg');
-        final uri = Uri.parse(link);
 
         // Decode and check there's no 'exp' field
-        final encodedPayload = uri.pathSegments.first;
-        final jsonString =
-            utf8.decode(base64Url.decode(base64Url.normalize(encodedPayload)));
-        final json = jsonDecode(jsonString) as Map<String, dynamic>;
+        final json = _decodePayload(link);
 
         expect(json.containsKey('exp'), isFalse);
       });
@@ -151,7 +135,7 @@ void main() {
     group('generateShareableContent', () {
       test('generates hybrid share text with link and raw fuzz', () {
         const link = 'fuzzylink://invite/abc123';
-        const rawFuzz = '{"I":"encoded","P":"key"}';
+        const rawFuzz = _invitationBlob;
 
         final content = FuzzyLinkGenerator.generateShareableContent(
           link: link,
@@ -159,7 +143,7 @@ void main() {
           type: FuzzyLinkType.invitation,
         );
 
-        expect(content, contains('Fuzzy Chat Invitation'));
+        expect(content, contains('Fuzzzy Seal Invitation'));
         expect(content, contains(link));
         expect(content, contains(rawFuzz));
         expect(content, contains('────────────────────'));
