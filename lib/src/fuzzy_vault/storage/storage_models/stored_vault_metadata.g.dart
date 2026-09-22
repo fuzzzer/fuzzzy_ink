@@ -38,18 +38,13 @@ const StoredVaultMetadataSchema = CollectionSchema(
       name: r'lastUnlockedAt',
       type: IsarType.dateTime,
     ),
-    r'masterSaltBase64': PropertySchema(
-      id: 4,
-      name: r'masterSaltBase64',
-      type: IsarType.string,
-    ),
     r'vaultId': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'vaultId',
       type: IsarType.string,
     ),
     r'verificationTokenBase64': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'verificationTokenBase64',
       type: IsarType.string,
     )
@@ -80,7 +75,6 @@ int _storedVaultMetadataEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  bytesCount += 3 + object.masterSaltBase64.length * 3;
   bytesCount += 3 + object.vaultId.length * 3;
   bytesCount += 3 + object.verificationTokenBase64.length * 3;
   return bytesCount;
@@ -96,9 +90,8 @@ void _storedVaultMetadataSerialize(
   writer.writeDateTime(offsets[1], object.createdAt);
   writer.writeString(offsets[2], object.customDirectoryPath);
   writer.writeDateTime(offsets[3], object.lastUnlockedAt);
-  writer.writeString(offsets[4], object.masterSaltBase64);
-  writer.writeString(offsets[5], object.vaultId);
-  writer.writeString(offsets[6], object.verificationTokenBase64);
+  writer.writeString(offsets[4], object.vaultId);
+  writer.writeString(offsets[5], object.verificationTokenBase64);
 }
 
 StoredVaultMetadata _storedVaultMetadataDeserialize(
@@ -113,9 +106,8 @@ StoredVaultMetadata _storedVaultMetadataDeserialize(
   object.customDirectoryPath = reader.readStringOrNull(offsets[2]);
   object.id = id;
   object.lastUnlockedAt = reader.readDateTime(offsets[3]);
-  object.masterSaltBase64 = reader.readString(offsets[4]);
-  object.vaultId = reader.readString(offsets[5]);
-  object.verificationTokenBase64 = reader.readString(offsets[6]);
+  object.vaultId = reader.readString(offsets[4]);
+  object.verificationTokenBase64 = reader.readString(offsets[5]);
   return object;
 }
 
@@ -137,8 +129,6 @@ P _storedVaultMetadataDeserializeProp<P>(
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
-    case 6:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -620,142 +610,6 @@ extension StoredVaultMetadataQueryFilter on QueryBuilder<StoredVaultMetadata,
   }
 
   QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64EqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64GreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64LessThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64Between(
-    String lower,
-    String upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'masterSaltBase64',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64EndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64Contains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'masterSaltBase64',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64Matches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'masterSaltBase64',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'masterSaltBase64',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
-      masterSaltBase64IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'masterSaltBase64',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterFilterCondition>
       vaultIdEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1095,20 +949,6 @@ extension StoredVaultMetadataQuerySortBy
   }
 
   QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
-      sortByMasterSaltBase64() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'masterSaltBase64', Sort.asc);
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
-      sortByMasterSaltBase64Desc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'masterSaltBase64', Sort.desc);
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
       sortByVaultId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'vaultId', Sort.asc);
@@ -1210,20 +1050,6 @@ extension StoredVaultMetadataQuerySortThenBy
   }
 
   QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
-      thenByMasterSaltBase64() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'masterSaltBase64', Sort.asc);
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
-      thenByMasterSaltBase64Desc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'masterSaltBase64', Sort.desc);
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QAfterSortBy>
       thenByVaultId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'vaultId', Sort.asc);
@@ -1284,14 +1110,6 @@ extension StoredVaultMetadataQueryWhereDistinct
   }
 
   QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QDistinct>
-      distinctByMasterSaltBase64({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'masterSaltBase64',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, StoredVaultMetadata, QDistinct>
       distinctByVaultId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'vaultId', caseSensitive: caseSensitive);
@@ -1340,13 +1158,6 @@ extension StoredVaultMetadataQueryProperty
       lastUnlockedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastUnlockedAt');
-    });
-  }
-
-  QueryBuilder<StoredVaultMetadata, String, QQueryOperations>
-      masterSaltBase64Property() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'masterSaltBase64');
     });
   }
 

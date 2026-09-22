@@ -1,7 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+
+/// Opaque `Fuzz/` blobs as the core produces them; the link never looks inside.
+const _invitationBlob =
+    'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
+const _acceptanceBlob =
+    'Fuzz/RlVaWgECJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
 
 void main() {
   group('FuzzyLinkParser', () {
@@ -25,7 +31,7 @@ void main() {
     group('type validation', () {
       test('rejects unknown host/type segment', () {
         final payload =
-            _encodePayload({'v': 1, 't': 'inv', 'I': 'test', 'P': 'test'});
+            _encodePayload({'v': 1, 't': 'inv', 'b': _invitationBlob});
         final uri = Uri.parse('fuzzylink://unknown/$payload');
         expect(FuzzyLinkParser.parse(uri), isNull);
       });
@@ -33,7 +39,7 @@ void main() {
       test('rejects mismatched host and payload type', () {
         // Host says "invite" but payload type says "acc"
         final payload =
-            _encodePayload({'v': 1, 't': 'acc', 'I': 'test', 'P': 'test'});
+            _encodePayload({'v': 1, 't': 'acc', 'b': _acceptanceBlob});
         final uri = Uri.parse('fuzzylink://invite/$payload');
         expect(FuzzyLinkParser.parse(uri), isNull);
       });
@@ -41,14 +47,14 @@ void main() {
 
     group('version validation', () {
       test('rejects payload without version', () {
-        final payload = _encodePayload({'t': 'inv', 'I': 'test', 'P': 'test'});
+        final payload = _encodePayload({'t': 'inv', 'b': _invitationBlob});
         final uri = Uri.parse('fuzzylink://invite/$payload');
         expect(FuzzyLinkParser.parse(uri), isNull);
       });
 
       test('rejects payload with future version', () {
         final payload =
-            _encodePayload({'v': 999, 't': 'inv', 'I': 'test', 'P': 'test'});
+            _encodePayload({'v': 999, 't': 'inv', 'b': _invitationBlob});
         final uri = Uri.parse('fuzzylink://invite/$payload');
         expect(FuzzyLinkParser.parse(uri), isNull);
       });
@@ -56,8 +62,6 @@ void main() {
 
     group('invitation parsing', () {
       test('parses valid invitation link', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
         final exp = DateTime.now()
                 .add(const Duration(hours: 24))
                 .millisecondsSinceEpoch ~/
@@ -66,8 +70,7 @@ void main() {
         final payload = _encodePayload({
           'v': 1,
           't': 'inv',
-          'I': chatId,
-          'P': publicKey,
+          'b': _invitationBlob,
           'exp': exp,
         });
 
@@ -80,12 +83,10 @@ void main() {
         expect(invitation.type, FuzzyLinkType.invitation);
         expect(invitation.isExpired, isFalse);
         expect(invitation.isSupported, isTrue);
-        expect(invitation.rawInvitationContent, isNotEmpty);
+        expect(invitation.rawInvitationContent, _invitationBlob);
       });
 
       test('detects expired invitation', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
         // Expired 1 hour ago
         final exp = DateTime.now()
                 .subtract(const Duration(hours: 1))
@@ -95,8 +96,7 @@ void main() {
         final payload = _encodePayload({
           'v': 1,
           't': 'inv',
-          'I': chatId,
-          'P': publicKey,
+          'b': _invitationBlob,
           'exp': exp,
         });
 
@@ -107,13 +107,33 @@ void main() {
         expect(result!.isExpired, isTrue);
       });
 
-      test('rejects invitation missing required fields', () {
-        // Missing 'P' field
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
+      test('rejects invitation missing the blob', () {
         final payload = _encodePayload({
           'v': 1,
           't': 'inv',
-          'I': chatId,
+        });
+
+        final uri = Uri.parse('fuzzylink://invite/$payload');
+        expect(FuzzyLinkParser.parse(uri), isNull);
+      });
+
+      test('rejects invitation with an empty blob', () {
+        final payload = _encodePayload({
+          'v': 1,
+          't': 'inv',
+          'b': '',
+        });
+
+        final uri = Uri.parse('fuzzylink://invite/$payload');
+        expect(FuzzyLinkParser.parse(uri), isNull);
+      });
+
+      test('rejects the pre-blob I/P field layout', () {
+        final payload = _encodePayload({
+          'v': 1,
+          't': 'inv',
+          'I': 'chat',
+          'P': 'key',
         });
 
         final uri = Uri.parse('fuzzylink://invite/$payload');
@@ -123,9 +143,6 @@ void main() {
 
     group('acceptance parsing', () {
       test('parses valid acceptance link', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
-        final encryptedKey = base64.encode(utf8.encode('encrypted-key-data'));
         final exp = DateTime.now()
                 .add(const Duration(hours: 24))
                 .millisecondsSinceEpoch ~/
@@ -134,9 +151,7 @@ void main() {
         final payload = _encodePayload({
           'v': 1,
           't': 'acc',
-          'I': chatId,
-          'P': publicKey,
-          'E': encryptedKey,
+          'b': _acceptanceBlob,
           'exp': exp,
         });
 
@@ -148,13 +163,10 @@ void main() {
         expect(acceptance.version, 1);
         expect(acceptance.type, FuzzyLinkType.acceptance);
         expect(acceptance.isExpired, isFalse);
-        expect(acceptance.rawAcceptanceContent, isNotEmpty);
+        expect(acceptance.rawAcceptanceContent, _acceptanceBlob);
       });
 
       test('detects expired acceptance', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
-        final encryptedKey = base64.encode(utf8.encode('encrypted-key-data'));
         final exp = DateTime.now()
                 .subtract(const Duration(hours: 1))
                 .millisecondsSinceEpoch ~/
@@ -163,9 +175,7 @@ void main() {
         final payload = _encodePayload({
           'v': 1,
           't': 'acc',
-          'I': chatId,
-          'P': publicKey,
-          'E': encryptedKey,
+          'b': _acceptanceBlob,
           'exp': exp,
         });
 
@@ -176,15 +186,11 @@ void main() {
         expect(result!.isExpired, isTrue);
       });
 
-      test('rejects acceptance missing encrypted key', () {
-        final chatId = base64.encode(utf8.encode('test-chat-id'));
-        final publicKey = base64.encode(utf8.encode('{"n":"abc","e":"def"}'));
+      test('rejects acceptance missing the blob', () {
         final payload = _encodePayload({
           'v': 1,
           't': 'acc',
-          'I': chatId,
-          'P': publicKey,
-          // Missing 'E'
+          // Missing 'b'
         });
 
         final uri = Uri.parse('fuzzylink://accept/$payload');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyUserAuthPage extends StatelessWidget {
   const FuzzyUserAuthPage({super.key});
@@ -10,8 +11,6 @@ class FuzzyUserAuthPage extends StatelessWidget {
     return BlocProvider<FuzzyUserAuthPreferencesCubit>(
       create: (context) => FuzzyUserAuthPreferencesCubit(
         chatAuthRepository: sl.get<ChatAuthRepository>(),
-        chatGeneralDataListRepository: sl.get<ChatGeneralDataListRepository>(),
-        keyStorageRepository: sl.get<KeyStorageRepository>(),
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
       ),
@@ -112,8 +111,9 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     if (oldPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text(currentContextLocalization.chatAuthBiometricDescription),),
+          content:
+              Text(currentContextLocalization.chatAuthBiometricDescription),
+        ),
       );
       return;
     }
@@ -160,8 +160,8 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final localizations = context.fuzzyChatLocalizations;
+    final fuzzzyColors = context.fuzzzyColors;
+    final localizations = context.fuzzzySealLocalizations;
     final authStatus = context.watch<FuzzyAuthStore>().state.status;
     final isAuthEnabled = authStatus.isAuthenticated || authStatus.isLocked;
 
@@ -177,7 +177,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
             case AuthPreferencesAction.disable:
               message = localizations.chatAuthDisabled;
             case AuthPreferencesAction.changePassword:
-              message = localizations.chatAuthEnabled;
+              message = localizations.chatAuthPasswordChanged;
             case AuthPreferencesAction.enableBiometric:
               message = localizations.chatAuthBiometricEnabled;
             case AuthPreferencesAction.disableBiometric:
@@ -207,19 +207,22 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
               body: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child: FuzzyHeader(title: localizations.chatAuthSetupTitle),
+                    child:
+                        FuzzzyAppBar(title: localizations.chatAuthSetupTitle),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8,),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             localizations.chatAuthProtectionDescription,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: uiColors.secondaryTextColor,
+                              color: fuzzzyColors.inkMute,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -253,12 +256,14 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                               onEnableAuth: _onEnableAuth,
                             ),
                           const SizedBox(height: 32),
-                          Divider(color: uiColors.focusColor.withOpacity(0.2)),
+                          Divider(
+                            color: fuzzzyColors.focus.withValues(alpha: 0.2),
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             localizations.vaultAuthentication,
                             style: theme.textTheme.titleLarge?.copyWith(
-                              color: uiColors.primaryTextColor,
+                              color: fuzzzyColors.ink,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -266,7 +271,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                           Text(
                             localizations.vaultAuthenticationDescription,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: uiColors.secondaryTextColor,
+                              color: fuzzzyColors.inkMute,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -289,16 +294,18 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
             if (isLoading)
               Positioned.fill(
                 child: ColoredBox(
-                  color: Colors.black54,
+                  color: context.fuzzzyColors.ground.withValues(alpha: 0.54),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const CircularProgressIndicator(),
                       const SizedBox(height: 16),
                       Text(
-                        localizations.chatAuthMigratingKeys,
+                        state.lastAction == AuthPreferencesAction.changePassword
+                            ? localizations.chatAuthResecuringKeys
+                            : localizations.chatAuthMigratingKeys,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
+                          color: context.fuzzzyColors.ink,
                         ),
                       ),
                     ],
@@ -331,7 +338,7 @@ class _SetupPasswordSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = context.fuzzyChatLocalizations;
+    final localizations = context.fuzzzySealLocalizations;
 
     return BlocBuilder<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
@@ -341,34 +348,33 @@ class _SetupPasswordSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FuzzyTextField(
+            FuzzzyTextField(
               controller: passwordController,
-              labelText: localizations.chatAuthPassword,
-              obscureText: !isPasswordVisible,
-              suffixIcon: _PasswordVisibilityToggle(
+              label: localizations.chatAuthPassword,
+              obscure: !isPasswordVisible,
+              suffix: _PasswordVisibilityToggle(
                 isVisible: isPasswordVisible,
                 onPressed: onTogglePasswordVisibility,
               ),
             ),
             const SizedBox(height: 12),
-            FuzzyTextField(
+            FuzzzyTextField(
               controller: confirmPasswordController,
-              labelText: localizations.chatAuthConfirmPassword,
-              obscureText: !isPasswordVisible,
+              label: localizations.chatAuthConfirmPassword,
+              obscure: !isPasswordVisible,
               onSubmitted: (_) => onEnableAuth(),
             ),
             if (showMismatchError) ...[
               const SizedBox(height: 8),
               Text(
                 localizations.chatAuthPasswordsDoNotMatch,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: context.fuzzzyColors.destructiveText),
               ),
             ],
             const SizedBox(height: 24),
-            FuzzyButton(
-              text: localizations.chatAuthEnableProtection,
-              isEnabled: !isLoading,
-              onTap: !isLoading ? onEnableAuth : () {},
+            FuzzzyButton(
+              label: localizations.chatAuthEnableProtection,
+              onPressed: !isLoading ? onEnableAuth : null,
             ),
           ],
         );
@@ -400,10 +406,8 @@ class _ChangePasswordSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
-    final localizations = context.fuzzyChatLocalizations;
+    final fuzzzyColors = context.fuzzzyColors;
+    final localizations = context.fuzzzySealLocalizations;
 
     return BlocBuilder<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
@@ -415,50 +419,47 @@ class _ChangePasswordSection extends StatelessWidget {
           children: [
             _StatusBadge(
               text: localizations.chatAuthEnabled,
-              color: uiColors.focusColor,
-              uiTextStyles: uiTextStyles,
+              color: fuzzzyColors.focus,
             ),
             const SizedBox(height: 24),
-            FuzzyTextField(
+            FuzzzyTextField(
               controller: oldPasswordController,
-              labelText: localizations.chatAuthCurrentPassword,
-              obscureText: !isPasswordVisible,
+              label: localizations.chatAuthCurrentPassword,
+              obscure: !isPasswordVisible,
             ),
             const SizedBox(height: 12),
-            FuzzyTextField(
+            FuzzzyTextField(
               controller: passwordController,
-              labelText: localizations.chatAuthNewPassword,
-              obscureText: !isPasswordVisible,
-              suffixIcon: _PasswordVisibilityToggle(
+              label: localizations.chatAuthNewPassword,
+              obscure: !isPasswordVisible,
+              suffix: _PasswordVisibilityToggle(
                 isVisible: isPasswordVisible,
                 onPressed: onTogglePasswordVisibility,
               ),
             ),
             const SizedBox(height: 12),
-            FuzzyTextField(
+            FuzzzyTextField(
               controller: confirmPasswordController,
-              labelText: localizations.chatAuthConfirmPassword,
-              obscureText: !isPasswordVisible,
+              label: localizations.chatAuthConfirmPassword,
+              obscure: !isPasswordVisible,
               onSubmitted: (_) => onChangePassword(),
             ),
             if (showMismatchError) ...[
               const SizedBox(height: 8),
               Text(
                 localizations.chatAuthPasswordsDoNotMatch,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: context.fuzzzyColors.destructiveText),
               ),
             ],
             const SizedBox(height: 24),
-            FuzzyButton(
-              text: localizations.chatAuthSetPassword,
-              isEnabled: !isLoading,
-              onTap: !isLoading ? onChangePassword : () {},
+            FuzzzyButton(
+              label: localizations.chatAuthSetPassword,
+              onPressed: !isLoading ? onChangePassword : null,
             ),
             const SizedBox(height: 12),
-            FuzzyButton(
-              text: localizations.chatAuthDisableProtection,
-              isEnabled: !isLoading,
-              onTap: !isLoading ? onDisableAuth : () {},
+            FuzzzyButton(
+              label: localizations.chatAuthDisableProtection,
+              onPressed: !isLoading ? onDisableAuth : null,
             ),
           ],
         );
@@ -481,7 +482,7 @@ class _PasswordVisibilityToggle extends StatelessWidget {
     return IconButton(
       icon: Icon(
         isVisible ? Icons.visibility_off : Icons.visibility,
-        color: context.uiColors.secondaryTextColor,
+        color: context.fuzzzyColors.inkMute,
       ),
       onPressed: onPressed,
     );
@@ -519,9 +520,8 @@ class _BiometricSectionState extends State<_BiometricSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
-    final localizations = context.fuzzyChatLocalizations;
+    final fuzzzyColors = context.fuzzzyColors;
+    final localizations = context.fuzzzySealLocalizations;
     final biometricEnabled =
         context.watch<FuzzyAuthStore>().state.biometricEnabled;
     final canUse = _canUseBiometrics;
@@ -535,7 +535,7 @@ class _BiometricSectionState extends State<_BiometricSection> {
           return Text(
             localizations.chatAuthBiometricUnavailable,
             style: theme.textTheme.bodySmall
-                ?.copyWith(color: uiColors.secondaryTextColor),
+                ?.copyWith(color: fuzzzyColors.inkMute),
           );
         }
 
@@ -549,26 +549,23 @@ class _BiometricSectionState extends State<_BiometricSection> {
             if (biometricEnabled) ...[
               _StatusBadge(
                 text: localizations.chatAuthBiometricEnabled,
-                color: uiColors.focusColor,
-                uiTextStyles: uiTextStyles,
+                color: fuzzzyColors.focus,
               ),
               const SizedBox(height: 12),
-              FuzzyButton(
-                text: localizations.chatAuthBiometricDisable,
-                isEnabled: !isLoading,
-                onTap: !isLoading ? widget.onDisableBiometric : () {},
+              FuzzzyButton(
+                label: localizations.chatAuthBiometricDisable,
+                onPressed: !isLoading ? widget.onDisableBiometric : null,
               ),
             ] else ...[
               Text(
                 localizations.chatAuthBiometricDescription,
                 style: theme.textTheme.bodySmall
-                    ?.copyWith(color: uiColors.secondaryTextColor),
+                    ?.copyWith(color: fuzzzyColors.inkMute),
               ),
               const SizedBox(height: 12),
-              FuzzyButton(
-                text: localizations.chatAuthBiometricEnable,
-                isEnabled: !isLoading,
-                onTap: !isLoading ? widget.onEnableBiometric : () {},
+              FuzzzyButton(
+                label: localizations.chatAuthBiometricEnable,
+                onPressed: !isLoading ? widget.onEnableBiometric : null,
               ),
             ],
           ],
@@ -615,9 +612,8 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
-    final localizations = context.fuzzyChatLocalizations;
+    final fuzzzyColors = context.fuzzzyColors;
+    final localizations = context.fuzzzySealLocalizations;
     final vaultState = context.watch<VaultAuthCubit>().state;
     final biometricEnabled = vaultState.biometricEnabled;
     final hasVault = vaultState.authState != VaultAuthEnum.noVault &&
@@ -627,8 +623,7 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
     if (canUse == false) {
       return Text(
         localizations.vaultBiometricUnavailable,
-        style: theme.textTheme.bodySmall
-            ?.copyWith(color: uiColors.secondaryTextColor),
+        style: theme.textTheme.bodySmall?.copyWith(color: fuzzzyColors.inkMute),
       );
     }
 
@@ -639,8 +634,7 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
     if (!hasVault) {
       return Text(
         localizations.vaultNotCreated,
-        style: theme.textTheme.bodySmall
-            ?.copyWith(color: uiColors.secondaryTextColor),
+        style: theme.textTheme.bodySmall?.copyWith(color: fuzzzyColors.inkMute),
       );
     }
 
@@ -650,34 +644,33 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
         if (biometricEnabled) ...[
           _StatusBadge(
             text: localizations.vaultBiometricEnabled,
-            color: uiColors.focusColor,
-            uiTextStyles: uiTextStyles,
+            color: fuzzzyColors.focus,
           ),
           const SizedBox(height: 12),
-          FuzzyButton(
-            text: localizations.vaultBiometricDisable,
-            onTap: widget.onDisableBiometric,
+          FuzzzyButton(
+            label: localizations.vaultBiometricDisable,
+            onPressed: widget.onDisableBiometric,
           ),
         ] else ...[
           Text(
             localizations.vaultBiometricDescription,
             style: theme.textTheme.bodySmall
-                ?.copyWith(color: uiColors.secondaryTextColor),
+                ?.copyWith(color: fuzzzyColors.inkMute),
           ),
           const SizedBox(height: 12),
-          FuzzyTextField(
+          FuzzzyTextField(
             controller: widget.passwordController,
-            labelText: localizations.vaultPassword,
-            obscureText: !widget.isPasswordVisible,
-            suffixIcon: _PasswordVisibilityToggle(
+            label: localizations.vaultPassword,
+            obscure: !widget.isPasswordVisible,
+            suffix: _PasswordVisibilityToggle(
               isVisible: widget.isPasswordVisible,
               onPressed: widget.onTogglePasswordVisibility,
             ),
           ),
           const SizedBox(height: 12),
-          FuzzyButton(
-            text: localizations.vaultBiometricEnable,
-            onTap: widget.onEnableBiometric,
+          FuzzzyButton(
+            label: localizations.vaultBiometricEnable,
+            onPressed: widget.onEnableBiometric,
           ),
         ],
       ],
@@ -689,21 +682,19 @@ class _StatusBadge extends StatelessWidget {
   const _StatusBadge({
     required this.text,
     required this.color,
-    required this.uiTextStyles,
   });
 
   final String text;
   final Color color;
-  final UiTextStyles uiTextStyles;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -711,7 +702,7 @@ class _StatusBadge extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             text,
-            style: uiTextStyles.body16.copyWith(
+            style: context.fuzzzyTextStyles.body.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
             ),

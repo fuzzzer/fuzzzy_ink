@@ -1,0 +1,19 @@
+# Reproducible Rust core — see documents/security/RELEASE.md.
+#
+# The release library (`strip = true`, no debuginfo) embeds exactly one kind of build-machine path: the
+# panic-location strings of registry crates, which start with CARGO_HOME (the crate's own paths are
+# relative, std's are already `/rustc/<commit>/…`). Mapping the GitHub hosted-runner homes to one fixed
+# prefix makes the published hashes independent of the runner. On any other machine these prefixes do not
+# match (a no-op) — to rebuild a published hash locally pass your own mapping, which replaces this list:
+#   RUSTFLAGS="--remap-path-prefix=$HOME/.cargo/registry/src=/cargo/registry/src"
+# `[profile.release] trim-paths` would do this portably but is nightly-only on 1.98.1 (verified).
+#
+# Lives at the repo root because cargokit runs cargo from the platform build directory (not the crate),
+# and cargo discovers config from the working directory upwards. Android is the exception: cargokit sets
+# CARGO_ENCODED_RUSTFLAGS there, which overrides this list — the android CI job seeds the same mapping.
+[build]
+rustflags = [
+  "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src",
+  "--remap-path-prefix=/Users/runner/.cargo/registry/src=/cargo/registry/src",
+  "--remap-path-prefix=C:\\Users\\runneradmin\\.cargo\\registry\\src=/cargo/registry/src",
+]

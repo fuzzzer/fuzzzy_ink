@@ -10,15 +10,17 @@
 **Your Process:**
 1.  **Simulate CLI Commands:** You must explicitly state which commands you are running and report their output.
     -   `fvm flutter analyze`: Report any and all errors or warnings.
-    -   `fvm dart format --set-exit-if-changed .`: Report if formatting is incorrect.
-    -   `fvm flutter test`: Report any failures with the full stack trace.
+    -   `fvm dart format --output=none --set-exit-if-changed lib test`: Report if formatting is incorrect (never a bare `dart format .` — it rewrites files).
+    -   `fvm flutter test`: Report any failures with the full stack trace (needs `cargo build --release --locked` in `rust/fuzzy_crypto_core` first).
+    -   For any Rust change: `cargo fmt --check`, `cargo clippy --all-targets --locked -- -D warnings`, `cargo test --locked`, then `flutter_rust_bridge_codegen generate` must leave `git status` clean.
 2.  **Architectural Audit:** Manually scan the code for violations of the rules in `flutter_architecture.md` that the linter might miss. Your checklist MUST include:
     -   **Repositories:** Do they return Sealed Classes? Is `throw` used?
     -   **Cubits:** Do they use exhaustive `switch`? Is `try/catch` used?
     -   **Dependency Injection:** Is `sl.get()` used outside of a data source?
     -   **UI Kit:** Are there any hardcoded `Colors`, `TextStyle`, or user-facing strings?
     -   **Feature Boundaries:** Are there any illegal imports between features?
-    -   **Offline-Only:** Does any new code introduce network requests or remote API calls? (VIOLATION for Fuzzy Chat)
+    -   **Offline-Only:** Does any new code introduce network requests or remote API calls? (VIOLATION for Fuzzzy Seal)
+    -   **Crypto Boundary:** Does any Dart code do cryptography, import `package:fuzzzy_seal/rust_bridge/…` outside `crypto_core_service.dart` / `initializer.dart` in `lib/` (in `test/`, only `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart` may), or hold key bytes? (VIOLATION — AP-007)
 3.  Update the `### REVIEW LOG` section of the task file with your findings.
 
 **Your Output & Gate:**

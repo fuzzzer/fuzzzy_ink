@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -13,7 +13,9 @@ class AppRouter {
   static const chatAccept = '/chat/accept';
   static const chatAcceptanceExport = '/chat/acceptance-export';
   static const chatConnected = '/chat/connected';
+  static const chatVerify = '/chat/verify';
   static const settings = '/settings';
+  static const aboutEncryption = '/settings/about-encryption';
   static const auth = '/auth';
   static const basics = '/basics';
   static const vaultHome = '/vault';
@@ -23,6 +25,7 @@ class AppRouter {
     onboarding,
     chatUnlock,
     settings,
+    aboutEncryption,
     auth,
     basics,
   };
@@ -41,6 +44,10 @@ class AppRouter {
       navigatorKey: navigatorKey,
       initialLocation: sl.get<PreferencesService>().lastSelectedTab,
       redirect: (context, state) {
+        // A fuzzylink:// deep link reaches the router as a location too; it
+        // belongs to FuzzyLinkHandler, never to a page (T-0328).
+        if (state.uri.scheme == FuzzyLinkParser.scheme) return AppRouter.home;
+
         final hasSeenOnboarding =
             sl.get<PreferencesService>().hasSeenOnboarding;
         final isOnboarding = state.matchedLocation == onboarding;
@@ -52,7 +59,10 @@ class AppRouter {
         final matchedLocation = state.matchedLocation;
         final isUnprotected = _unprotectedRoutes.contains(matchedLocation);
 
-        if (!isUnprotected && authStatus.isLocked) {
+        // `initial` is the boot window while `openStore('')` still runs:
+        // gated like `locked`, so no chat is reachable before the store is
+        // open (T-0329).
+        if (!isUnprotected && !authStatus.hasAccess) {
           return chatUnlock;
         }
 
@@ -131,8 +141,19 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: chatVerify,
+          builder: (_, state) {
+            final chatGeneralData = state.extra! as ChatGeneralData;
+            return SafetyNumberPage(chatGeneralData: chatGeneralData);
+          },
+        ),
+        GoRoute(
           path: settings,
           builder: (_, __) => const SettingsPage(),
+        ),
+        GoRoute(
+          path: aboutEncryption,
+          builder: (_, __) => const AboutEncryptionPage(),
         ),
         GoRoute(
           path: auth,

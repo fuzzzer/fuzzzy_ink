@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class GlobalBlocListeners extends StatelessWidget {
   const GlobalBlocListeners({
@@ -57,12 +57,17 @@ class GlobalBlocListeners extends StatelessWidget {
           },
         ),
         BlocListener<ChatFileInjectorCubit, ChatFileInjectorState>(
+          // Every injected batch is a fresh list, so a new instance means a
+          // new batch; a length compare skipped every single-file failure
+          // (T-0334). The empty list of a clean batch never shows.
           listenWhen: (previous, current) =>
-              previous.failedToAddProcessedFiles != null &&
-              previous.failedToAddProcessedFiles?.length !=
-                  current.failedToAddProcessedFiles?.length,
+              !identical(
+                previous.failedToAddProcessedFiles,
+                current.failedToAddProcessedFiles,
+              ) &&
+              current.failedToAddProcessedFiles?.isNotEmpty == true,
           listener: (_, state) {
-            final localizations = FuzzyChatLocalizations.of(
+            final localizations = FuzzzySealLocalizations.of(
               navigatorKey.currentContext!,
             )!;
 
@@ -72,7 +77,10 @@ class GlobalBlocListeners extends StatelessWidget {
                 content: Text(
                   ' ${localizations.failedToProcessFiles}: ${state.failedToAddProcessedFiles?.map(
                     (file) {
-                      return file.inputFilePath.split('/').last;
+                      final name = file.inputFilePath.split('/').last;
+                      final reason =
+                          file.failure?.type.toUiMessage(localizations);
+                      return reason == null ? name : '$name ($reason)';
                     },
                   ).toList()}',
                 ),

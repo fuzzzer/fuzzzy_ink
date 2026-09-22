@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "marionette": {
+      "type": "stdio",
+      "command": "fvm",
+      "args": ["dart", "run", "marionette_mcp"]
+    }
+  }
+}

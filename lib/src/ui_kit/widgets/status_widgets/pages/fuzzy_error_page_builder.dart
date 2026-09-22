@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyErrorPageBuilder extends StatelessWidget {
   final String? message;
@@ -13,19 +14,19 @@ class FuzzyErrorPageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
+    final fuzzzyColors = context.fuzzzyColors;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
-    final localizations = context.fuzzyChatLocalizations;
+    final localizations = context.fuzzzySealLocalizations;
 
     return FuzzyScaffold(
       hasAutomaticBackButton: hasAutomaticBackButton,
       body: Center(
         child: Text(
           message ?? localizations.unexpectedFailureOccuredPleaseContactUs,
-          style: uiTextStyles.bodyBold16.copyWith(
-            color: uiColors.errorColor,
+          style: fuzzzyTextStyles.body.copyWith(
+            fontWeight: FontWeight.w600,
+            color: fuzzzyColors.destructiveText,
           ),
         ),
       ),

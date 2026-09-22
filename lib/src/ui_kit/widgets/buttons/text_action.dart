@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class TextAction extends StatelessWidget {
   const TextAction({
@@ -16,9 +16,8 @@ class TextAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
+    final fuzzzyColors = context.fuzzzyColors;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
     const defaultRadius = Radius.circular(12);
 
@@ -35,7 +34,7 @@ class TextAction extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          color: uiColors.backgroundSecondaryColor,
+          color: fuzzzyColors.surface,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -44,7 +43,10 @@ class TextAction extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: uiTextStyles.bodyBold16,
+            style: fuzzzyTextStyles.body.copyWith(
+              fontWeight: FontWeight.w600,
+              color: fuzzzyColors.ink,
+            ),
           ),
         ),
       ),

@@ -1,0 +1,4 @@
+rust_input: crate::api
+rust_root: rust/fuzzy_crypto_core/
+dart_output: lib/rust_bridge
+dart_entrypoint_class_name: FuzzyCryptoCoreLib

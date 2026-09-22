@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/src/ui_kit/ui_kit.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyHeader extends StatelessWidget {
   final String title;
@@ -18,8 +18,7 @@ class FuzzyHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -32,7 +31,9 @@ class FuzzyHeader extends StatelessWidget {
           const Spacer(),
           Text(
             title,
-            style: uiTextStyles.bodyLarge20,
+            style: fuzzzyTextStyles.titleM.copyWith(
+              color: context.fuzzzyColors.ink,
+            ),
             textAlign: textAlign,
           ),
           const Spacer(),

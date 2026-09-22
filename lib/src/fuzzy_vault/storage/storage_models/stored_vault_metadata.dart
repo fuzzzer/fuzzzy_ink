@@ -8,7 +8,6 @@ class StoredVaultMetadata {
 
   late String vaultId;
   late String verificationTokenBase64;
-  late String masterSaltBase64;
   late DateTime createdAt;
   late DateTime lastUnlockedAt;
   late int autoLockMinutes;

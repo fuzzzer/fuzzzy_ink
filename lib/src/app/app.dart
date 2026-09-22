@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 export 'app_router.dart';
 export 'components/components.dart';
@@ -27,10 +28,10 @@ class App extends StatelessWidget {
         child: FuzzyLinkListener(
           child: MaterialApp.router(
             scaffoldMessengerKey: scaffoldMessengerKey,
-            theme: UiKitTheme.dark(),
+            theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
             localizationsDelegates:
-                FuzzyChatLocalizations.localizationsDelegates,
-            supportedLocales: FuzzyChatLocalizations.supportedLocales,
+                FuzzzySealLocalizations.localizationsDelegates,
+            supportedLocales: FuzzzySealLocalizations.supportedLocales,
             routerConfig: AppRouter.router(
               navigatorKey: navigatorKey,
               scaffoldMessengerKey: scaffoldMessengerKey,

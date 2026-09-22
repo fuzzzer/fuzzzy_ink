@@ -17,3 +17,11 @@ Updated documentation files.
 
 **Your Gate:**
 Your final output is to report back to the Orchestrator that the lifecycle is complete.
+
+## Owner comms — plain names, never codes (owner rule, 2026-09-18)
+
+Anything you write for the owner or the business partner names things by what they are:
+no wave or phase labels, no unit codes (E3, C2, U1), no ticket, decision-record or session
+ids. Describe order in words ("first X, then Y, because Y needs X"). A code may follow once,
+in brackets, only if they will need to quote it. The owner has not read our documents; a
+message that needs them to make sense is wrong. Standard: `~/FuzzyCore_HQ/company/OWNER_COMMS.md` §1.

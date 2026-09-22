@@ -1,1 +1,252 @@
-name: fuzzy_chat
+name: fuzzzy_seal
+on:
+  push:
+    branches: [main, 'agent/**']
+    tags: ['v*']
+  pull_request:
+env:
+  FLUTTER_VERSION: 3.41.7
+  CARGO_TERM_COLOR: always
+  CRATE: rust/fuzzy_crypto_core
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.98.1
+        with: { components: "clippy, rustfmt" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - run: cargo fmt --manifest-path $CRATE/Cargo.toml --all -- --check
+      - run: cargo clippy --manifest-path $CRATE/Cargo.toml --all-targets --locked -- -D warnings
+      - run: cargo test --manifest-path $CRATE/Cargo.toml --locked
+      - uses: taiki-e/install-action@v2
+        with: { tool: "cargo-audit@0.22.2,cargo-cyclonedx@0.5.9" }
+      - run: cargo audit --file $CRATE/Cargo.lock
+      - name: sbom-rust
+        # Regenerates the Rust SBOM (cargo-cyclonedx 0.5.9, --target all) and fails if it differs from the
+        # committed documents/security/sbom/rust.cdx.json — a dependency bump must ship its SBOM (`./sbom.sh rust`).
+        run: ./sbom.sh rust --check
+      - uses: actions/upload-artifact@v7
+        with: { name: sbom-rust, path: documents/security/sbom/rust.cdx.json }
+  flutter-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.98.1
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - uses: ./.github/actions/pub-git-auth
+        with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: cargo build --release --locked --manifest-path $CRATE/Cargo.toml   # for the Dart tests' ExternalLibrary
+      - run: flutter pub get
+      - run: dart format --set-exit-if-changed --output=none lib test
+      - run: flutter analyze --fatal-infos --fatal-warnings
+      - run: flutter test
+      - name: sbom-flutter
+        # Same drift gate for the Dart half (cdxgen 12.8.4 via npx, from pubspec.lock): `./sbom.sh flutter` after a bump.
+        run: ./sbom.sh flutter --check
+      - uses: actions/upload-artifact@v7
+        with: { name: sbom-flutter, path: documents/security/sbom/flutter.cdx.json }
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with: { distribution: temurin, java-version: '17' }
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager "ndk;28.2.13676358"
+      - uses: dtolnay/rust-toolchain@1.98.1
+        with: { targets: "aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - uses: ./.github/actions/pub-git-auth
+        with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - name: Throwaway signing key for the release build type
+        # android/app/build.gradle's `release` signingConfig requires a keystore
+        # (`SigningConfig "release" is missing required property "storeFile"` without one).
+        # CI proves the release build with a key generated here and discarded with the runner;
+        # the distributable key is a release-time secret wired by F5-4 through these same variables.
+        run: |
+          set -euo pipefail
+          keytool -genkeypair -keystore "$RUNNER_TEMP/ci-throwaway.jks" -storetype JKS -alias ci-throwaway \
+            -keyalg RSA -keysize 2048 -validity 1 -storepass ci-throwaway -keypass ci-throwaway \
+            -dname "CN=fuzzzy_seal CI throwaway, O=FuzzyCore"
+          {
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/ci-throwaway.jks"
+            echo "ANDROID_KEYSTORE_ALIAS=ci-throwaway"
+            echo "ANDROID_KEYSTORE_PASSWORD=ci-throwaway"
+            echo "ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD=ci-throwaway"
+          } >> "$GITHUB_ENV"
+      - run: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
+        # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
+        # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
+        env: { CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src" }
+      - name: 16 KB page-size check
+        # Every LOAD segment of the crate's .so must be aligned >= 0x4000 on the 64-bit ABIs
+        # (Android's 16 KB requirement; armeabi-v7a is 32-bit and printed for information only).
+        run: |
+          set -euo pipefail
+          readelf=$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf
+          unzip -o -q build/app/outputs/flutter-apk/app-production-release.apk 'lib/*' -d "$RUNNER_TEMP/apk"
+          find "$RUNNER_TEMP/apk/lib" -name 'libfuzzy_crypto_core.so' | sort
+          bad=0; checked=0
+          for abi in arm64-v8a x86_64; do
+            so="$RUNNER_TEMP/apk/lib/$abi/libfuzzy_crypto_core.so"
+            if [ ! -f "$so" ]; then echo "MISSING $so"; bad=1; continue; fi
+            echo "## $abi"
+            "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+            for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
+              if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $so"; bad=1; fi
+            done
+            checked=$((checked + 1))
+          done
+          so="$RUNNER_TEMP/apk/lib/armeabi-v7a/libfuzzy_crypto_core.so"
+          if [ -f "$so" ]; then echo "## armeabi-v7a (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'; fi
+          echo "checked=$checked bad=$bad"
+          [ "$checked" -eq 2 ] && [ "$bad" -eq 0 ]
+      - uses: actions/upload-artifact@v7
+        with: { name: android-apk, path: build/app/outputs/flutter-apk/*.apk }
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev libsecret-1-dev
+      - uses: dtolnay/rust-toolchain@1.98.1
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - uses: ./.github/actions/pub-git-auth
+        with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter build linux --release -t lib/main_production.dart
+      - uses: actions/upload-artifact@v7
+        with: { name: linux-bundle, path: build/linux/x64/release/bundle }
+  windows:
+    # windows-2022 (VS 2022): on windows-latest (= windows-2025-vs2026) the VS 2026 STL turns
+    # <experimental/coroutine> into a hard error, and permission_handler_windows (C++/WinRT under
+    # Flutter's C++17 runner) still includes it — an upstream plugin issue, not a cargokit one.
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.98.1
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - uses: ./.github/actions/pub-git-auth
+        with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter build windows --release -t lib/main_production.dart
+      - uses: actions/upload-artifact@v7
+        with: { name: windows-bundle, path: build/windows/x64/runner/Release }
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.98.1
+        with: { targets: "aarch64-apple-darwin,x86_64-apple-darwin" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: "${{ env.CRATE }}" }
+      - uses: ./.github/actions/pub-git-auth
+        with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      # The Xcode project only has flavored configurations (Release-production), and the Runner is
+      # signed with team 7W88HRQFXP, which the runner does not have — build unsigned (compile+link proof).
+      - run: flutter build macos --release --flavor production -t lib/main_production.dart
+        env:
+          FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
+          FLUTTER_XCODE_CODE_SIGNING_REQUIRED: "NO"
+          FLUTTER_XCODE_CODE_SIGN_IDENTITY: ""
+      # upload-artifact drops symlinks and file modes, which a .app bundle needs (Frameworks/*/Versions/Current);
+      # ditto keeps them, and the zip is the one file SHA256SUMS + the attestation can name.
+      - run: ditto -c -k --keepParent "build/macos/Build/Products/Release-production/Fuzzzy Seal.app" build/macos/fuzzzy_seal-macos.zip
+      - uses: actions/upload-artifact@v7
+        with: { name: macos-app, path: build/macos/fuzzzy_seal-macos.zip }
+  # ios: optional, `flutter build ios --release --no-codesign` on macos-latest; allowed to be added in Phase 5.
+  rust-repro:
+    # Reproducibility proof for the Rust core (documents/security/RELEASE.md): the same commit is built twice on
+    # two separate runners — deliberately without Swatinem/rust-cache, so nothing compiled is shared between the
+    # two — and rust-repro-compare fails unless every hash matches. Host = the linux-bundle target, arm64-v8a =
+    # the Android target, both `--locked --release` with the path remap from .cargo/config.toml.
+    strategy:
+      matrix: { run: [1, 2] }
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager "ndk;28.2.13676358"
+      - uses: dtolnay/rust-toolchain@1.98.1
+        with: { targets: aarch64-linux-android }
+      - run: cargo install cargo-ndk --version 4.1.2 --locked
+      # Same invocation shape as cargokit's (explicit --target; Android API level = Flutter's default minSdk 24,
+      # cargo-ndk would otherwise pick 21) so the result is comparable with the core inside the shipped bundles.
+      - run: cargo build --release --locked --target x86_64-unknown-linux-gnu
+        working-directory: ${{ env.CRATE }}
+      - run: ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358 cargo ndk -t arm64-v8a -P 24 build --release --locked
+        working-directory: ${{ env.CRATE }}
+        # cargokit's arm64 link flags (android_environment.dart `_libGccWorkaround`), so the result is byte-comparable
+        # with the core inside the APK; RUSTFLAGS replaces .cargo/config.toml's list, hence the remap is repeated.
+        env: { RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src -C link-arg=-Wl,--hash-style=both -C link-arg=-Wl,-z,max-page-size=16384" }
+      - name: hashes
+        run: |
+          set -euo pipefail
+          mkdir -p out/host out/android
+          cp $CRATE/target/x86_64-unknown-linux-gnu/release/libfuzzy_crypto_core.{so,a} out/host/
+          cp $CRATE/target/aarch64-linux-android/release/libfuzzy_crypto_core.{so,a} out/android/
+          # What the APK carries is this .so after AGP's packaging strip (llvm-strip --strip-debug rewrites
+          # .shstrtab only, no loaded byte changes); hash the same form so it can be compared with the APK.
+          $ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip --strip-debug out/android/libfuzzy_crypto_core.so
+          (cd out && sha256sum host/* android/* | tee SHA256SUMS)
+      - uses: actions/upload-artifact@v7
+        with: { name: "rust-repro-${{ matrix.run }}", path: out }
+  rust-repro-compare:
+    needs: rust-repro
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with: { pattern: "rust-repro-*" }
+      - run: |
+          set -euo pipefail
+          echo "## run 1"; cat rust-repro-1/SHA256SUMS
+          echo "## run 2"; cat rust-repro-2/SHA256SUMS
+          diff rust-repro-1/SHA256SUMS rust-repro-2/SHA256SUMS   # a mismatch fails the step (own line: `&&` would exempt it from -e)
+          echo IDENTICAL
+          # The remap must have taken effect: no runner-specific path may survive in the built code.
+          if grep -aq /home/runner rust-repro-1/host/libfuzzy_crypto_core.so rust-repro-1/android/libfuzzy_crypto_core.so; then
+            echo "runner path embedded: .cargo/config.toml remap not applied"; exit 1
+          fi
+  attest:
+    # Tag runs only: SHA256SUMS over the four platform artifacts + the Rust core inside the linux/windows
+    # bundles, published as an artifact and used as the subject list of the provenance attestation
+    # (verify: `gh attestation verify <file> -R fuzzzy-bot/fuzzy_chat`). Release procedure: documents/security/RELEASE.md.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [rust, flutter-test, android, linux, windows, macos, rust-repro-compare]
+    runs-on: ubuntu-latest
+    permissions: { id-token: write, attestations: write, contents: read }
+    steps:
+      - uses: actions/download-artifact@v7
+      - run: |
+          set -euo pipefail
+          sha256sum android-apk/app-production-release.apk windows-bundle/fuzzzy_seal.exe linux-bundle/fuzzzy_seal \
+            macos-app/fuzzzy_seal-macos.zip linux-bundle/lib/libfuzzy_crypto_core.so windows-bundle/fuzzy_crypto_core.dll \
+            | tee SHA256SUMS
+          # No build-machine path may survive in a shipped core (.cargo/config.toml remap).
+          ! grep -aqE '/home/runner|/Users/runner|runneradmin' linux-bundle/lib/libfuzzy_crypto_core.so windows-bundle/fuzzy_crypto_core.dll
+      - name: shipped cores are the reproducible cores
+        # The Rust core inside the Linux bundle and the APK must hash exactly as the independent rust-repro rebuild.
+        run: |
+          set -euo pipefail
+          unzip -o -q android-apk/app-production-release.apk lib/arm64-v8a/libfuzzy_crypto_core.so -d apk
+          cat rust-repro-1/SHA256SUMS
+          grep -q "$(sha256sum linux-bundle/lib/libfuzzy_crypto_core.so | cut -d' ' -f1)  host/libfuzzy_crypto_core.so" rust-repro-1/SHA256SUMS
+          grep -q "$(sha256sum apk/lib/arm64-v8a/libfuzzy_crypto_core.so | cut -d' ' -f1)  android/libfuzzy_crypto_core.so" rust-repro-1/SHA256SUMS
+          echo "shipped linux + android cores == rust-repro"
+      - uses: actions/upload-artifact@v7
+        with: { name: sha256sums, path: SHA256SUMS }
+      - uses: actions/attest-build-provenance@v4
+        with: { subject-checksums: SHA256SUMS }

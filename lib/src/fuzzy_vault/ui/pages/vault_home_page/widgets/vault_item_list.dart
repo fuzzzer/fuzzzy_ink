@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 class VaultItemList extends StatelessWidget {
@@ -103,12 +104,12 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 48, color: context.uiColors.secondaryTextColor),
+          Icon(icon, size: 48, color: context.fuzzzyColors.inkMute),
           const SizedBox(height: 12),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(color: context.uiColors.secondaryTextColor),
+            style: TextStyle(color: context.fuzzzyColors.inkMute),
           ),
         ],
       ),
@@ -141,15 +142,15 @@ class _VaultItemCardState extends State<VaultItemCard> {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.uiColors.secondaryColor,
+        color: context.fuzzzyColors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
-        leading: Icon(icon, color: context.uiColors.primaryColor),
+        leading: Icon(icon, color: context.fuzzzyColors.ink),
         title: Text(
           title,
           style: TextStyle(
-            color: context.uiColors.primaryTextColor,
+            color: context.fuzzzyColors.ink,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -159,7 +160,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
               : isFile
                   ? currentContextLocalization.vaultFileLabel
                   : currentContextLocalization.vaultNoteLabel,
-          style: TextStyle(color: context.uiColors.secondaryTextColor),
+          style: TextStyle(color: context.fuzzzyColors.inkMute),
         ),
         trailing: _isLoading
             ? const SizedBox(
@@ -170,7 +171,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
             : IconButton(
                 icon: Icon(
                   Icons.copy,
-                  color: context.uiColors.secondaryTextColor,
+                  color: context.fuzzzyColors.inkMute,
                 ),
                 onPressed: () {
                   // Need to fetch full item and decrypt to copy. For now just placeholder
@@ -221,9 +222,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
                   if (mounted) setState(() => _isLoading = false);
                 }
               },
-        onLongPress: _isLoading
-            ? null
-            : () => _showMoveToGroupSheet(context),
+        onLongPress: _isLoading ? null : () => _showMoveToGroupSheet(context),
       ),
     );
   }
@@ -231,18 +230,17 @@ class _VaultItemCardState extends State<VaultItemCard> {
   void _showMoveToGroupSheet(BuildContext context) {
     final groups = context.read<VaultGroupsCubit>().state.groups;
     final currentGroupId = widget.itemMetadata.groupId;
-    final localizations = context.fuzzyChatLocalizations;
-    final uiColors = context.uiColors;
-    final titleStyle = context.uiTextStyles.bodyLargeBold20.copyWith(
-      color: uiColors.primaryTextColor,
+    final localizations = context.fuzzzySealLocalizations;
+    final fuzzzyColors = context.fuzzzyColors;
+    final titleStyle = context.fuzzzyTextStyles.titleM.copyWith(
+      color: fuzzzyColors.ink,
     );
 
-    final otherGroups =
-        groups.where((g) => g.id != currentGroupId).toList();
+    final otherGroups = groups.where((g) => g.id != currentGroupId).toList();
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: uiColors.backgroundSecondaryColor,
+      backgroundColor: fuzzzyColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -263,7 +261,7 @@ class _VaultItemCardState extends State<VaultItemCard> {
               padding: const EdgeInsets.all(16),
               child: Text(
                 localizations.vaultNoOtherGroups,
-                style: TextStyle(color: uiColors.secondaryTextColor),
+                style: TextStyle(color: fuzzzyColors.inkMute),
               ),
             ),
           );
@@ -273,11 +271,11 @@ class _VaultItemCardState extends State<VaultItemCard> {
               ListTile(
                 leading: Icon(
                   Icons.folder_outlined,
-                  color: uiColors.primaryColor,
+                  color: fuzzzyColors.ink,
                 ),
                 title: Text(
                   group.name,
-                  style: TextStyle(color: uiColors.primaryTextColor),
+                  style: TextStyle(color: fuzzzyColors.ink),
                 ),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);

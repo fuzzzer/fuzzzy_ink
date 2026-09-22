@@ -1,0 +1,29 @@
+name: pub git auth
+description: >-
+  Lets `flutter pub get` clone the private `fuzzzy_ui_kit` git dependency
+  (github.com/fuzzzy-bot/fuzzy_design) through a read-only deploy key. Only that
+  one URL is rewritten to SSH; everything else keeps using HTTPS.
+  GitHub-hosted runners only: the key file and the two --global git settings are
+  never removed (composite actions have no `post:` step) — a fresh VM per job
+  discards them; a self-hosted runner would need an explicit cleanup step.
+inputs:
+  deploy-key:
+    description: Private half of the read-only deploy key registered on fuzzzy-bot/fuzzy_design.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        DEPLOY_KEY: ${{ inputs.deploy-key }}
+      run: |
+        set -euo pipefail
+        key_file="$HOME/.ssh/fuzzy_design_deploy_key"
+        mkdir -p "$HOME/.ssh"
+        chmod 700 "$HOME/.ssh"
+        printf '%s\n' "$DEPLOY_KEY" > "$key_file"
+        chmod 600 "$key_file"
+        # GitHub's published SSH host key (https://docs.github.com/en/authentication/keychain-security/githubs-ssh-key-fingerprints).
+        echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' >> "$HOME/.ssh/known_hosts"
+        git config --global core.sshCommand "ssh -i \"$key_file\" -o IdentitiesOnly=yes"
+        git config --global url."git@github.com:fuzzzy-bot/fuzzy_design.git".insteadOf "https://github.com/fuzzzy-bot/fuzzy_design.git"

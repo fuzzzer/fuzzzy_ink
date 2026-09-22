@@ -36,8 +36,10 @@ class ServiceLocatorGetit implements ServiceLocator {
       );
 
   @override
-  void registerFactory<T extends Object>(FactoryFunc<T> factoryFunc,
-          {String? instanceName,}) =>
+  void registerFactory<T extends Object>(
+    FactoryFunc<T> factoryFunc, {
+    String? instanceName,
+  }) =>
       getit.registerFactory<T>(
         factoryFunc,
         instanceName: instanceName,
@@ -99,10 +101,12 @@ class ServiceLocatorGetit implements ServiceLocator {
     DisposingFunc<T>? dispose,
   }) {
     if (!isRegistered<T>(instanceName: instanceName, instance: instance)) {
-      registerSingleton<T>(instance,
-          instanceName: instanceName,
-          signalsReady: signalsReady,
-          dispose: dispose,);
+      registerSingleton<T>(
+        instance,
+        instanceName: instanceName,
+        signalsReady: signalsReady,
+        dispose: dispose,
+      );
     }
   }
 }

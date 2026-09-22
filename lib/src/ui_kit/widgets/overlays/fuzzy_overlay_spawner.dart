@@ -9,6 +9,8 @@ class FuzzyOverlaySpawner<T> extends StatefulWidget {
     this.splashRadius,
     this.splashColor,
     this.offset,
+    this.targetAnchor = Alignment.topLeft,
+    this.followerAnchor = Alignment.topLeft,
   });
 
   final Widget Function(BuildContext context, VoidCallback closeOverlay)
@@ -18,6 +20,12 @@ class FuzzyOverlaySpawner<T> extends StatefulWidget {
   final BorderRadius? splashRadius;
   final Color? splashColor;
   final Offset? offset;
+
+  /// Which corner of the child the overlay hangs from, and which corner of
+  /// the overlay is pinned there — a right-aligned bubble anchors its pill
+  /// at its top-right so the pill grows into the screen, not off it.
+  final Alignment targetAnchor;
+  final Alignment followerAnchor;
 
   @override
   State<FuzzyOverlaySpawner<T>> createState() => _FuzzyOverlaySpawnerState<T>();
@@ -76,6 +84,8 @@ class _FuzzyOverlaySpawnerState<T> extends State<FuzzyOverlaySpawner<T>> {
             CompositedTransformFollower(
               link: _layerLink,
               offset: widget.offset ?? Offset.zero,
+              targetAnchor: widget.targetAnchor,
+              followerAnchor: widget.followerAnchor,
               showWhenUnlinked: false,
               child: Material(
                 color: Colors.transparent,

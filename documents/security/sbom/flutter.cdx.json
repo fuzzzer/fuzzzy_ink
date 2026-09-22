@@ -1,0 +1,7649 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:ed55c862-fb39-45f8-bed8-5537e648bce6",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-13T15:00:34Z",
+    "tools": {
+      "components": [
+        {
+          "group": "@cyclonedx",
+          "name": "cdxgen",
+          "version": "12.8.4",
+          "purl": "pkg:npm/%40cyclonedx/cdxgen@12.8.4",
+          "type": "application",
+          "bom-ref": "pkg:npm/@cyclonedx/cdxgen@12.8.4",
+          "publisher": "OWASP Foundation",
+          "authors": [
+            {
+              "name": "OWASP Foundation"
+            }
+          ]
+        }
+      ]
+    },
+    "authors": [
+      {
+        "name": "OWASP Foundation"
+      }
+    ],
+    "lifecycles": [
+      {
+        "phase": "build"
+      }
+    ],
+    "component": {
+      "name": "fuzzzy_seal",
+      "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
+      "version": "1.1.0+2",
+      "purl": "pkg:pub/fuzzzy_seal@1.1.0%2B2",
+      "bom-ref": "pkg:pub/fuzzzy_seal@1.1.0+2",
+      "type": "application"
+    },
+    "properties": [
+      {
+        "name": "cdx:bom:componentTypes",
+        "value": "pub"
+      },
+      {
+        "name": "cdx:bom:componentSrcFiles",
+        "value": "pubspec.lock\\nrust_builder/cargokit/build_tool/pubspec.lock"
+      }
+    ]
+  },
+  "components": [
+    {
+      "group": "",
+      "name": "fuzzzy_seal",
+      "version": "1.1.0+2",
+      "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
+      "purl": "pkg:pub/fuzzzy_seal@1.1.0%2B2",
+      "type": "application",
+      "bom-ref": "pkg:pub/fuzzzy_seal@1.1.0+2"
+    },
+    {
+      "group": "",
+      "name": "fuzzy_crypto_core",
+      "version": "0.0.1",
+      "description": "Utility to build Rust code",
+      "scope": "required",
+      "purl": "pkg:pub/fuzzy_crypto_core@0.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/fuzzy_crypto_core@0.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "build_tool",
+      "version": "1.0.0",
+      "description": "Cargokit build_tool. Facilitates the build of Rust crate during Flutter application build.",
+      "purl": "pkg:pub/build_tool@1.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/build_tool@1.0.0"
+    },
+    {
+      "group": "",
+      "name": "_fe_analyzer_shared",
+      "version": "93.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8d7ff3948166b8ec5da0fbb5962000926b8e02f2ed9b3e51d1738905fbd4c98d"
+        }
+      ],
+      "purl": "pkg:pub/_fe_analyzer_shared@93.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/_fe_analyzer_shared@93.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "analyzer",
+      "version": "10.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "de7148ed2fcec579b19f122c1800933dfa028f6d9fd38a152b04b1516cec120b"
+        }
+      ],
+      "purl": "pkg:pub/analyzer@10.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/analyzer@10.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "app_links",
+      "version": "7.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3462d9defc61565fde4944858b59bec5be2b9d5b05f20aed190adb3ad08a7abc"
+        }
+      ],
+      "purl": "pkg:pub/app_links@7.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/app_links@7.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "app_links_linux",
+      "version": "1.0.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f5f7173a78609f3dfd4c2ff2c95bd559ab43c80a87dc6a095921d96c05688c81"
+        }
+      ],
+      "purl": "pkg:pub/app_links_linux@1.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/app_links_linux@1.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "app_links_platform_interface",
+      "version": "2.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "05f5379577c513b534a29ddea68176a4d4802c46180ee8e2e966257158772a3f"
+        }
+      ],
+      "purl": "pkg:pub/app_links_platform_interface@2.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/app_links_platform_interface@2.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "app_links_web",
+      "version": "1.0.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "af060ed76183f9e2b87510a9480e56a5352b6c249778d07bd2c95fc35632a555"
+        }
+      ],
+      "purl": "pkg:pub/app_links_web@1.0.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/app_links_web@1.0.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "archive",
+      "version": "4.0.9",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a96e8b390886ee8abb49b7bd3ac8df6f451c621619f52a26e815fdcf568959ff"
+        }
+      ],
+      "purl": "pkg:pub/archive@4.0.9",
+      "type": "library",
+      "bom-ref": "pkg:pub/archive@4.0.9",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "args",
+      "version": "2.7.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d0481093c50b1da8910eb0bb301626d4d8eb7284aa739614d2b394ee09e3ea04"
+        }
+      ],
+      "purl": "pkg:pub/args@2.7.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/args@2.7.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "async",
+      "version": "2.11.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "947bfcf187f74dbc5e146c9eb9c0f10c9f8b30743e341481c1e2ed3ecc18c20c"
+        }
+      ],
+      "purl": "pkg:pub/async@2.11.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/async@2.11.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "biometric_storage",
+      "version": "5.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2cc569f2dbab39950812a6ae7fefa28c7d1c1eb07d2035c88f5e27da09022f5f"
+        }
+      ],
+      "purl": "pkg:pub/biometric_storage@5.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/biometric_storage@5.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "bloc",
+      "version": "8.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "106842ad6569f0b60297619e9e0b1885c2fb9bf84812935490e6c5275777804e"
+        }
+      ],
+      "purl": "pkg:pub/bloc@8.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/bloc@8.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "bloc_test",
+      "version": "9.1.7",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "165a6ec950d9252ebe36dc5335f2e6eb13055f33d56db0eeb7642768849b43d2"
+        }
+      ],
+      "purl": "pkg:pub/bloc_test@9.1.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/bloc_test@9.1.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "boolean_selector",
+      "version": "2.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6cfb5af12253eaf2b368f07bacc5a80d1301a071c73360d746b7f2e32d762c66"
+        }
+      ],
+      "purl": "pkg:pub/boolean_selector@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/boolean_selector@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "build_cli_annotations",
+      "version": "2.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e563c2e01de8974566a1998410d3f6f03521788160a02503b0b1f1a46c7b3d95"
+        }
+      ],
+      "purl": "pkg:pub/build_cli_annotations@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/build_cli_annotations@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "characters",
+      "version": "1.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "faf38497bda5ead2a8c7615f4f7939df04333478bf32e4173fcb06d428b5716b"
+        }
+      ],
+      "purl": "pkg:pub/characters@1.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/characters@1.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "checked_yaml",
+      "version": "2.0.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "feb6bed21949061731a7a75fc5d2aa727cf160b91af9a3e464c5e3a32e28b5ff"
+        }
+      ],
+      "purl": "pkg:pub/checked_yaml@2.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/checked_yaml@2.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cli_config",
+      "version": "0.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ac20a183a07002b700f0c25e61b7ee46b23c309d76ab7b7640a028f18e4d99ec"
+        }
+      ],
+      "purl": "pkg:pub/cli_config@0.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/cli_config@0.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cli_util",
+      "version": "0.4.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ff6785f7e9e3c38ac98b2fb035701789de90154024a75b6cb926445e83197d1c"
+        }
+      ],
+      "purl": "pkg:pub/cli_util@0.4.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/cli_util@0.4.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "clock",
+      "version": "1.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fddb70d9b5277016c77a80201021d40a2247104d9f4aa7bab7157b7e3f05b84b"
+        }
+      ],
+      "purl": "pkg:pub/clock@1.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/clock@1.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "collection",
+      "version": "1.19.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2f5709ae4d3d59dd8f7cd309b4e023046b57d8a6c82130785d2b0e5868084e76"
+        }
+      ],
+      "purl": "pkg:pub/collection@1.19.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/collection@1.19.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "convert",
+      "version": "3.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b30acd5944035672bc15c6b7a8b47d773e41e2f17de064350988c5d02adb1c68"
+        }
+      ],
+      "purl": "pkg:pub/convert@3.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/convert@3.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "coverage",
+      "version": "1.15.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5da775aa218eaf2151c721b16c01c7676fbfdd99cebba2bf64e8b807a28ff94d"
+        }
+      ],
+      "purl": "pkg:pub/coverage@1.15.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/coverage@1.15.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cross_file",
+      "version": "0.3.4+2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7caf6a750a0c04effbb52a676dce9a4a592e10ad35c34d6d2d0e4811160d5670"
+        }
+      ],
+      "purl": "pkg:pub/cross_file@0.3.4%2B2",
+      "type": "library",
+      "bom-ref": "pkg:pub/cross_file@0.3.4+2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "crypto",
+      "version": "3.0.7",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf"
+        }
+      ],
+      "purl": "pkg:pub/crypto@3.0.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/crypto@3.0.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "desktop_drop",
+      "version": "0.6.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "927511f590ce01ee90d0d80f79bc71b9c919d8522d01e495e89a00c6f4a4fb5b"
+        }
+      ],
+      "purl": "pkg:pub/desktop_drop@0.6.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/desktop_drop@0.6.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "device_info_plus",
+      "version": "11.3.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "72d146c6d7098689ff5c5f66bcf593ac11efc530095385356e131070333e64da"
+        }
+      ],
+      "purl": "pkg:pub/device_info_plus@11.3.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/device_info_plus@11.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "device_info_plus_platform_interface",
+      "version": "7.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0b04e02b30791224b31969eb1b50d723498f402971bff3630bca2ba839bd1ed2"
+        }
+      ],
+      "purl": "pkg:pub/device_info_plus_platform_interface@7.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/device_info_plus_platform_interface@7.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "diff_match_patch",
+      "version": "0.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2efc9e6e8f449d0abe15be240e2c2a3bcd977c8d126cfd70598aee60af35c0a4"
+        }
+      ],
+      "purl": "pkg:pub/diff_match_patch@0.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/diff_match_patch@0.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "fake_async",
+      "version": "1.3.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44"
+        }
+      ],
+      "purl": "pkg:pub/fake_async@1.3.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/fake_async@1.3.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "ffi",
+      "version": "2.1.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "16ed7b077ef01ad6170a3d0c57caa4a112a38d7a2ed5602e0aca9ca6f3d98da6"
+        }
+      ],
+      "purl": "pkg:pub/ffi@2.1.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/ffi@2.1.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      },
+      "tags": [
+        "native"
+      ]
+    },
+    {
+      "group": "",
+      "name": "file",
+      "version": "7.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4"
+        }
+      ],
+      "purl": "pkg:pub/file@7.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/file@7.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "file_picker",
+      "version": "8.3.7",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ab13ae8ef5580a411c458d6207b6774a6c237d77ac37011b13994879f68a8810"
+        }
+      ],
+      "purl": "pkg:pub/file_picker@8.3.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/file_picker@8.3.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "fixnum",
+      "version": "1.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be"
+        }
+      ],
+      "purl": "pkg:pub/fixnum@1.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/fixnum@1.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter",
+      "version": "0.0.0",
+      "scope": "required",
+      "purl": "pkg:pub/flutter@0.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter@0.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_bloc",
+      "version": "8.1.6",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b594505eac31a0518bdcb4b5b79573b8d9117b193cc80cc12e17d639b10aa27a"
+        }
+      ],
+      "purl": "pkg:pub/flutter_bloc@8.1.6",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_bloc@8.1.6",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_dropzone",
+      "version": "4.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d0917c4e366ebb3a98c9c02faac79223d119af5e236967c70e7e4002cdfb20d3"
+        }
+      ],
+      "purl": "pkg:pub/flutter_dropzone@4.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_dropzone@4.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_dropzone_platform_interface",
+      "version": "2.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "96d2c51c86063ba150551c3b40fd26c5a18785bee071c0c751502d28a545df3b"
+        }
+      ],
+      "purl": "pkg:pub/flutter_dropzone_platform_interface@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_dropzone_platform_interface@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_dropzone_web",
+      "version": "4.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03b216f9443add6ad1d075ab513a354a47edf3d1b87d830a8ed314f0d3a2beac"
+        }
+      ],
+      "purl": "pkg:pub/flutter_dropzone_web@4.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_dropzone_web@4.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_launcher_icons",
+      "version": "0.13.1",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "526faf84284b86a4cb36d20a5e45147747b7563d921373d4ee0559c54fcdbcea"
+        }
+      ],
+      "purl": "pkg:pub/flutter_launcher_icons@0.13.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_launcher_icons@0.13.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_localizations",
+      "version": "0.0.0",
+      "scope": "required",
+      "purl": "pkg:pub/flutter_localizations@0.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_localizations@0.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_plugin_android_lifecycle",
+      "version": "2.0.26",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1c2b787f99bdca1f3718543f81d38aa1b124817dfeb9fb196201bea85b6134bf"
+        }
+      ],
+      "purl": "pkg:pub/flutter_plugin_android_lifecycle@2.0.26",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_plugin_android_lifecycle@2.0.26",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_rust_bridge",
+      "version": "2.13.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ec69331e2335ab4d456c0a9fc700892c2c85b72b9c0cb39df3ecfe8833d5d5c8"
+        }
+      ],
+      "purl": "pkg:pub/flutter_rust_bridge@2.13.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_rust_bridge@2.13.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage",
+      "version": "9.2.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage@9.2.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage@9.2.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage_linux",
+      "version": "1.2.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "be76c1d24a97d0b98f8b54bce6b481a380a6590df992d0098f868ad54dc8f688"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage_linux@1.2.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage_linux@1.2.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage_macos",
+      "version": "3.1.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6c0a2795a2d1de26ae202a0d78527d163f4acbb11cde4c75c670f3a0fc064247"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage_macos@3.1.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage_macos@3.1.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage_platform_interface",
+      "version": "1.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage_platform_interface@1.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage_platform_interface@1.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage_web",
+      "version": "1.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f4ebff989b4f07b2656fb16b47852c0aab9fed9b4ec1c70103368337bc1886a9"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage_web@1.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage_web@1.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_secure_storage_windows",
+      "version": "3.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b20b07cb5ed4ed74fc567b78a72936203f587eba460af1df11281c9326cd3709"
+        }
+      ],
+      "purl": "pkg:pub/flutter_secure_storage_windows@3.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_secure_storage_windows@3.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_test",
+      "version": "0.0.0",
+      "scope": "optional",
+      "purl": "pkg:pub/flutter_test@0.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_test@0.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "scope": "required",
+      "purl": "pkg:pub/flutter_web_plugins@0.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/flutter_web_plugins@0.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "frontend_server_client",
+      "version": "4.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f64a0333a82f30b0cca061bc3d143813a486dc086b574bfb233b7c1372427694"
+        }
+      ],
+      "purl": "pkg:pub/frontend_server_client@4.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/frontend_server_client@4.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "fuzzzy_ui_kit",
+      "version": "0.1.0",
+      "scope": "required",
+      "purl": "pkg:pub/fuzzzy_ui_kit@0.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/fuzzzy_ui_kit@0.1.0",
+      "properties": [
+        {
+          "name": "cdx:pub:registry",
+          "value": "https://github.com/fuzzzy-bot/fuzzy_design.git"
+        },
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "get_it",
+      "version": "8.3.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ae78de7c3f2304b8d81f2bb6e320833e5e81de942188542328f074978cc0efa9"
+        }
+      ],
+      "purl": "pkg:pub/get_it@8.3.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/get_it@8.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "glob",
+      "version": "2.1.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c3f1ee72c96f8f78935e18aa8cecced9ab132419e8625dc187e1c2408efc20de"
+        }
+      ],
+      "purl": "pkg:pub/glob@2.1.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/glob@2.1.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "go_router",
+      "version": "13.2.5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b465e99ce64ba75e61c8c0ce3d87b66d8ac07f0b35d0a7e0263fcfc10f99e836"
+        }
+      ],
+      "purl": "pkg:pub/go_router@13.2.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/go_router@13.2.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "google_fonts",
+      "version": "6.3.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba03d03bcaa2f6cb7bd920e3b5027181db75ab524f8891c8bc3aa603885b8055"
+        }
+      ],
+      "purl": "pkg:pub/google_fonts@6.3.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/google_fonts@6.3.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "gtk",
+      "version": "2.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4ff85b2a16724029dd9e5bbb5a94b6918f9973f74ba571c949d2002801879cf5"
+        }
+      ],
+      "purl": "pkg:pub/gtk@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/gtk@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "http",
+      "version": "1.6.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
+        }
+      ],
+      "purl": "pkg:pub/http@1.6.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/http@1.6.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "http_multi_server",
+      "version": "3.2.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "aa6199f908078bb1c5efb8d8638d4ae191aac11b311132c3ef48ce352fb52ef8"
+        }
+      ],
+      "purl": "pkg:pub/http_multi_server@3.2.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/http_multi_server@3.2.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "http_parser",
+      "version": "4.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2aa08ce0341cc9b354a498388e30986515406668dbcc4f7c950c3e715496693b"
+        }
+      ],
+      "purl": "pkg:pub/http_parser@4.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/http_parser@4.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      },
+      "tags": [
+        "parse"
+      ]
+    },
+    {
+      "group": "",
+      "name": "image",
+      "version": "4.8.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f9881ff4998044947ec38d098bc7c8316ae1186fa786eddffdb867b9bc94dfce"
+        }
+      ],
+      "purl": "pkg:pub/image@4.8.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/image@4.8.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "intl",
+      "version": "0.20.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+        }
+      ],
+      "purl": "pkg:pub/intl@0.20.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/intl@0.20.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "io",
+      "version": "1.0.5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dfd5a80599cf0165756e3181807ed3e77daf6dd4137caaad72d0b7931597650b"
+        }
+      ],
+      "purl": "pkg:pub/io@1.0.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/io@1.0.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "isar",
+      "version": "3.1.0+1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "99165dadb2cf2329d3140198363a7e7bff9bbd441871898a87e26914d25cf1ea"
+        }
+      ],
+      "purl": "pkg:pub/isar@3.1.0%2B1",
+      "type": "library",
+      "bom-ref": "pkg:pub/isar@3.1.0+1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "isar_flutter_libs",
+      "version": "3.1.0+1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bc6768cc4b9c61aabff77152e7f33b4b17d2fc93134f7af1c3dd51500fe8d5e8"
+        }
+      ],
+      "purl": "pkg:pub/isar_flutter_libs@3.1.0%2B1",
+      "type": "library",
+      "bom-ref": "pkg:pub/isar_flutter_libs@3.1.0+1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "js",
+      "version": "0.6.7",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3"
+        }
+      ],
+      "purl": "pkg:pub/js@0.6.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/js@0.6.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "json_annotation",
+      "version": "4.9.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
+        }
+      ],
+      "purl": "pkg:pub/json_annotation@4.9.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/json_annotation@4.9.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "leak_tracker",
+      "version": "11.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de"
+        }
+      ],
+      "purl": "pkg:pub/leak_tracker@11.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/leak_tracker@11.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "leak_tracker_flutter_testing",
+      "version": "3.0.10",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1dbc140bb5a23c75ea9c4811222756104fbcd1a27173f0c34ca01e16bea473c1"
+        }
+      ],
+      "purl": "pkg:pub/leak_tracker_flutter_testing@3.0.10",
+      "type": "library",
+      "bom-ref": "pkg:pub/leak_tracker_flutter_testing@3.0.10",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "leak_tracker_testing",
+      "version": "3.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8d5a2d49f4a66b49744b23b018848400d23e54caf9463f4eb20df3eb8acb2eb1"
+        }
+      ],
+      "purl": "pkg:pub/leak_tracker_testing@3.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/leak_tracker_testing@3.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "logger",
+      "version": "2.7.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25aee487596a6257655a1e091ec2ae66bc30e7af663592cc3a27e6591e05035c"
+        }
+      ],
+      "purl": "pkg:pub/logger@2.7.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/logger@2.7.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "logging",
+      "version": "1.3.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61"
+        }
+      ],
+      "purl": "pkg:pub/logging@1.3.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/logging@1.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "marionette_flutter",
+      "version": "0.6.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9bf6aa531157edeb3d94f7c4972367240a1d704bbe9f4ac558ef1a125c4d1a6d"
+        }
+      ],
+      "purl": "pkg:pub/marionette_flutter@0.6.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/marionette_flutter@0.6.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "marionette_mcp",
+      "version": "0.6.0",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "24a2b3277c659367e3d6c306d35d35600fc78c5d28512f06bc843cb2e65e21b3"
+        }
+      ],
+      "purl": "pkg:pub/marionette_mcp@0.6.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/marionette_mcp@0.6.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "cdx:mcp:package",
+          "value": "true"
+        },
+        {
+          "name": "cdx:mcp:official",
+          "value": "false"
+        },
+        {
+          "name": "cdx:mcp:role",
+          "value": "sdk"
+        },
+        {
+          "name": "cdx:mcp:catalogSource",
+          "value": "heuristic"
+        },
+        {
+          "name": "cdx:mcp:packageName",
+          "value": "marionette_mcp"
+        }
+      ],
+      "tags": [
+        "mcp",
+        "mcp-sdk"
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "matcher",
+      "version": "0.12.19",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861"
+        }
+      ],
+      "purl": "pkg:pub/matcher@0.12.19",
+      "type": "library",
+      "bom-ref": "pkg:pub/matcher@0.12.19",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "material_color_utilities",
+      "version": "0.13.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9c337007e82b1889149c82ed242ed1cb24a66044e30979c44912381e9be4c48b"
+        }
+      ],
+      "purl": "pkg:pub/material_color_utilities@0.13.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/material_color_utilities@0.13.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "mcp_dart",
+      "version": "2.4.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5a185c1c02e90239e6f3ebca05ef51e04ac0f9c2b1b7ec7ffbb1a671a6379729"
+        }
+      ],
+      "purl": "pkg:pub/mcp_dart@2.4.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/mcp_dart@2.4.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "cdx:mcp:package",
+          "value": "true"
+        },
+        {
+          "name": "cdx:mcp:official",
+          "value": "false"
+        },
+        {
+          "name": "cdx:mcp:role",
+          "value": "sdk"
+        },
+        {
+          "name": "cdx:mcp:catalogSource",
+          "value": "heuristic"
+        },
+        {
+          "name": "cdx:mcp:packageName",
+          "value": "mcp_dart"
+        }
+      ],
+      "tags": [
+        "mcp",
+        "mcp-sdk"
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "meta",
+      "version": "1.17.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+        }
+      ],
+      "purl": "pkg:pub/meta@1.17.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/meta@1.17.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "mime",
+      "version": "2.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+        }
+      ],
+      "purl": "pkg:pub/mime@2.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/mime@2.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "mocktail",
+      "version": "1.0.5",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5e1bf53cc7baa8062a33b84424deb61513858ea05c601b8509e683815b5914aa"
+        }
+      ],
+      "purl": "pkg:pub/mocktail@1.0.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/mocktail@1.0.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "nested",
+      "version": "1.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+        }
+      ],
+      "purl": "pkg:pub/nested@1.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/nested@1.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "node_preamble",
+      "version": "2.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6e7eac89047ab8a8d26cf16127b5ed26de65209847630400f9aefd7cd5c730db"
+        }
+      ],
+      "purl": "pkg:pub/node_preamble@2.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/node_preamble@2.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "package_config",
+      "version": "2.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f096c55ebb7deb7e384101542bfba8c52696c1b56fca2eb62827989ef2353bbc"
+        }
+      ],
+      "purl": "pkg:pub/package_config@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/package_config@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path",
+      "version": "1.9.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
+        }
+      ],
+      "purl": "pkg:pub/path@1.9.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/path@1.9.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider",
+      "version": "2.1.5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
+        }
+      ],
+      "purl": "pkg:pub/path_provider@2.1.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider@2.1.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider_android",
+      "version": "2.2.15",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4adf4fd5423ec60a29506c76581bc05854c55e3a0b72d35bb28d661c9686edf2"
+        }
+      ],
+      "purl": "pkg:pub/path_provider_android@2.2.15",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider_android@2.2.15",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider_foundation",
+      "version": "2.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4843174df4d288f5e29185bd6e72a6fbdf5a4a4602717eed565497429f179942"
+        }
+      ],
+      "purl": "pkg:pub/path_provider_foundation@2.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider_foundation@2.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider_linux",
+      "version": "2.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f7a1fe3a634fe7734c8d3f2766ad746ae2a2884abe22e241a8b301bf5cac3279"
+        }
+      ],
+      "purl": "pkg:pub/path_provider_linux@2.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider_linux@2.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider_platform_interface",
+      "version": "2.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "88f5779f72ba699763fa3a3b06aa4bf6de76c8e5de842cf6f29e2e06476c2334"
+        }
+      ],
+      "purl": "pkg:pub/path_provider_platform_interface@2.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider_platform_interface@2.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path_provider_windows",
+      "version": "2.3.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bd6f00dbd873bfb70d0761682da2b3a2c2fccc2b9e84c495821639601d81afe7"
+        }
+      ],
+      "purl": "pkg:pub/path_provider_windows@2.3.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/path_provider_windows@2.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler",
+      "version": "12.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler@12.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler@12.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler_android",
+      "version": "13.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1e3bc410ca1bf84662104b100eb126e066cb55791b7451307f9708d4007350e6"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler_android@13.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler_android@13.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler_apple",
+      "version": "9.4.7",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f000131e755c54cf4d84a5d8bd6e4149e262cc31c5a8b1d698de1ac85fa41023"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler_apple@9.4.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler_apple@9.4.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler_html",
+      "version": "0.1.3+5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "38f000e83355abb3392140f6bc3030660cfaef189e1f87824facb76300b4ff24"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler_html@0.1.3%2B5",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler_html@0.1.3+5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler_platform_interface",
+      "version": "4.3.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "eb99b295153abce5d683cac8c02e22faab63e50679b937fa1bf67d58bb282878"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler_platform_interface@4.3.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler_platform_interface@4.3.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "permission_handler_windows",
+      "version": "0.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1a790728016f79a41216d88672dbc5df30e686e811ad4e698bfc51f76ad91f1e"
+        }
+      ],
+      "purl": "pkg:pub/permission_handler_windows@0.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/permission_handler_windows@0.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "petitparser",
+      "version": "6.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c15605cd28af66339f8eb6fbe0e541bfe2d1b72d5825efc6598f3e0a31b9ad27"
+        }
+      ],
+      "purl": "pkg:pub/petitparser@6.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/petitparser@6.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      },
+      "tags": [
+        "parse"
+      ]
+    },
+    {
+      "group": "",
+      "name": "platform",
+      "version": "3.1.6",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5d6b1b0036a5f331ebc77c850ebc8506cbc1e9416c27e59b439f917a902a4984"
+        }
+      ],
+      "purl": "pkg:pub/platform@3.1.6",
+      "type": "library",
+      "bom-ref": "pkg:pub/platform@3.1.6",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
+        }
+      ],
+      "purl": "pkg:pub/plugin_platform_interface@2.1.8",
+      "type": "library",
+      "bom-ref": "pkg:pub/plugin_platform_interface@2.1.8",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pool",
+      "version": "1.5.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "978783255c543aa3586a1b3c21f6e9d720eb315376a915872c61ef8b5c20177d"
+        }
+      ],
+      "purl": "pkg:pub/pool@1.5.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/pool@1.5.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "posix",
+      "version": "6.5.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "185ef7606574f789b40f289c233efa52e96dead518aed988e040a10737febb07"
+        }
+      ],
+      "purl": "pkg:pub/posix@6.5.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/posix@6.5.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "provider",
+      "version": "6.1.5+1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4e82183fa20e5ca25703ead7e05de9e4cceed1fbd1eadc1ac3cb6f565a09f272"
+        }
+      ],
+      "purl": "pkg:pub/provider@6.1.5%2B1",
+      "type": "library",
+      "bom-ref": "pkg:pub/provider@6.1.5+1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pub_semver",
+      "version": "2.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5bfcf68ca79ef689f8990d1160781b4bad40a3bd5e5218ad4076ddb7f4081585"
+        }
+      ],
+      "purl": "pkg:pub/pub_semver@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/pub_semver@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "share_plus",
+      "version": "10.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fce43200aa03ea87b91ce4c3ac79f0cecd52e2a7a56c7a4185023c271fbfa6da"
+        }
+      ],
+      "purl": "pkg:pub/share_plus@10.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/share_plus@10.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "share_plus_platform_interface",
+      "version": "5.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cc012a23fc2d479854e6c80150696c4a5f5bb62cb89af4de1c505cf78d0a5d0b"
+        }
+      ],
+      "purl": "pkg:pub/share_plus_platform_interface@5.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/share_plus_platform_interface@5.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences",
+      "version": "2.5.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences@2.5.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences@2.5.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_android",
+      "version": "2.4.7",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9f9f3d372d4304723e6136663bb291c0b93f5e4c8a4a6314347f481a33bda2b1"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_android@2.4.7",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_android@2.4.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_foundation",
+      "version": "2.5.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6a52cfcdaeac77cad8c97b539ff688ccfc458c007b4db12be584fbe5c0e49e03"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_foundation@2.5.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_foundation@2.5.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_linux",
+      "version": "2.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "580abfd40f415611503cae30adf626e6656dfb2f0cee8f465ece7b6defb40f2f"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_linux@2.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_linux@2.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_platform_interface",
+      "version": "2.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "57cbf196c486bc2cf1f02b85784932c6094376284b3ad5779d1b1c6c6a816b80"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_platform_interface@2.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_platform_interface@2.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_web",
+      "version": "2.4.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c49bd060261c9a3f0ff445892695d6212ff603ef3115edbb448509d407600019"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_web@2.4.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_web@2.4.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shared_preferences_windows",
+      "version": "2.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "94ef0f72b2d71bc3e700e025db3710911bd51a71cefb65cc609dd0d9a982e3c1"
+        }
+      ],
+      "purl": "pkg:pub/shared_preferences_windows@2.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/shared_preferences_windows@2.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf",
+      "version": "1.4.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ad29c505aee705f41a4d8963641f91ac4cee3c8fad5947e033390a7bd8180fa4"
+        }
+      ],
+      "purl": "pkg:pub/shelf@1.4.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf@1.4.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf_packages_handler",
+      "version": "3.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "89f967eca29607c933ba9571d838be31d67f53f6e4ee15147d5dc2934fee1b1e"
+        }
+      ],
+      "purl": "pkg:pub/shelf_packages_handler@3.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf_packages_handler@3.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf_static",
+      "version": "1.1.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c87c3875f91262785dade62d135760c2c69cb217ac759485334c5857ad89f6e3"
+        }
+      ],
+      "purl": "pkg:pub/shelf_static@1.1.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf_static@1.1.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf_web_socket",
+      "version": "2.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cc36c297b52866d203dbf9332263c94becc2fe0ceaa9681d07b6ef9807023b67"
+        }
+      ],
+      "purl": "pkg:pub/shelf_web_socket@2.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf_web_socket@2.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shimmer",
+      "version": "3.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
+        }
+      ],
+      "purl": "pkg:pub/shimmer@3.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/shimmer@3.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "sky_engine",
+      "version": "0.0.0",
+      "scope": "required",
+      "purl": "pkg:pub/sky_engine@0.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/sky_engine@0.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "source_map_stack_trace",
+      "version": "2.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c0713a43e323c3302c2abe2a1cc89aa057a387101ebd280371d6a6c9fa68516b"
+        }
+      ],
+      "purl": "pkg:pub/source_map_stack_trace@2.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/source_map_stack_trace@2.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "source_maps",
+      "version": "0.10.13",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "190222579a448b03896e0ca6eca5998fa810fda630c1d65e2f78b3f638f54812"
+        }
+      ],
+      "purl": "pkg:pub/source_maps@0.10.13",
+      "type": "library",
+      "bom-ref": "pkg:pub/source_maps@0.10.13",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "source_span",
+      "version": "1.10.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "53e943d4206a5e30df338fd4c6e7a077e02254531b138a15aec3bd143c1a8b3c"
+        }
+      ],
+      "purl": "pkg:pub/source_span@1.10.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/source_span@1.10.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "stack_trace",
+      "version": "1.12.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8b27215b45d22309b5cddda1aa2b19bdfec9df0e765f2de506401c071d38d1b1"
+        }
+      ],
+      "purl": "pkg:pub/stack_trace@1.12.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/stack_trace@1.12.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "stream_channel",
+      "version": "2.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "969e04c80b8bcdf826f8f16579c7b14d780458bd97f56d107d3950fdbeef059d"
+        }
+      ],
+      "purl": "pkg:pub/stream_channel@2.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/stream_channel@2.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "string_scanner",
+      "version": "1.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "556692adab6cfa87322a115640c11f13cb77b3f076ddcc5d6ae3c20242bedcde"
+        }
+      ],
+      "purl": "pkg:pub/string_scanner@1.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/string_scanner@1.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "term_glyph",
+      "version": "1.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a29248a84fbb7c79282b40b8c72a1209db169a2e0542bce341da992fe1bc7e84"
+        }
+      ],
+      "purl": "pkg:pub/term_glyph@1.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/term_glyph@1.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        },
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test",
+      "version": "1.30.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "280d6d890011ca966ad08df7e8a4ddfab0fb3aa49f96ed6de56e3521347a9ae7"
+        }
+      ],
+      "purl": "pkg:pub/test@1.30.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/test@1.30.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test_api",
+      "version": "0.7.10",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
+        }
+      ],
+      "purl": "pkg:pub/test_api@0.7.10",
+      "type": "library",
+      "bom-ref": "pkg:pub/test_api@0.7.10",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test_core",
+      "version": "0.6.16",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0381bd1585d1a924763c308100f2138205252fb90c9d4eeaf28489ee65ccde51"
+        }
+      ],
+      "purl": "pkg:pub/test_core@0.6.16",
+      "type": "library",
+      "bom-ref": "pkg:pub/test_core@0.6.16",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "typed_data",
+      "version": "1.4.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f9049c039ebfeb4cf7a7104a675823cd72dba8297f264b6637062516699fa006"
+        }
+      ],
+      "purl": "pkg:pub/typed_data@1.4.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/typed_data@1.4.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "universal_platform",
+      "version": "1.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "64e16458a0ea9b99260ceb5467a214c1f298d647c659af1bff6d3bf82536b1ec"
+        }
+      ],
+      "purl": "pkg:pub/universal_platform@1.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/universal_platform@1.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher",
+      "version": "6.3.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9d06212b1362abc2f0f0d78e6f09f726608c74e3b9462e8368bb03314aa8d603"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher@6.3.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher@6.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_android",
+      "version": "6.3.14",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6fc2f56536ee873eeb867ad176ae15f304ccccc357848b351f6f0d8d4a40d193"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_android@6.3.14",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_android@6.3.14",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_ios",
+      "version": "6.3.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7f2022359d4c099eea7df3fdf739f7d3d3b9faf3166fb1dd390775176e0b76cb"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_ios@6.3.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_ios@6.3.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_linux",
+      "version": "3.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4e9ba368772369e3e08f231d2301b4ef72b9ff87c31192ef471b380ef29a4935"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_linux@3.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_linux@3.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_macos",
+      "version": "3.2.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "17ba2000b847f334f16626a574c702b196723af2a289e7a93ffcb79acff855c2"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_macos@3.2.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_macos@3.2.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_platform_interface",
+      "version": "2.3.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "552f8a1e663569be95a8190206a38187b531910283c3e982193e4f2733f01029"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_platform_interface@2.3.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_platform_interface@2.3.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_web",
+      "version": "2.3.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "772638d3b34c779ede05ba3d38af34657a05ac55b06279ea6edd409e323dca8e"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_web@2.3.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_web@2.3.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "url_launcher_windows",
+      "version": "3.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3284b6d2ac454cf34f114e1d3319866fdd1e19cdc329999057e44ffe936cfa77"
+        }
+      ],
+      "purl": "pkg:pub/url_launcher_windows@3.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/url_launcher_windows@3.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "uuid",
+      "version": "4.5.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1fef9e8e11e2991bb773070d4656b7bd5d850967a2456cfc83cf47925ba79489"
+        }
+      ],
+      "purl": "pkg:pub/uuid@4.5.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/uuid@4.5.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vector_math",
+      "version": "2.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b"
+        }
+      ],
+      "purl": "pkg:pub/vector_math@2.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/vector_math@2.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "very_good_analysis",
+      "version": "5.1.0",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9ae7f3a3bd5764fb021b335ca28a34f040cd0ab6eec00a1b213b445dae58a4b8"
+        }
+      ],
+      "purl": "pkg:pub/very_good_analysis@5.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/very_good_analysis@5.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vibration",
+      "version": "2.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3b08a0579c2f9c18d5d78cb5c74f1005f731e02eeca6d72561a2e8059bf98ec3"
+        }
+      ],
+      "purl": "pkg:pub/vibration@2.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/vibration@2.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vibration_platform_interface",
+      "version": "0.0.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6ffeee63547562a6fef53c05a41d4fdcae2c0595b83ef59a4813b0612cd2bc36"
+        }
+      ],
+      "purl": "pkg:pub/vibration_platform_interface@0.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/vibration_platform_interface@0.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vm_service",
+      "version": "14.2.5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5c5f338a667b4c644744b661f309fb8080bb94b18a7e91ef1dbd343bed00ed6d"
+        }
+      ],
+      "purl": "pkg:pub/vm_service@14.2.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/vm_service@14.2.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "watcher",
+      "version": "1.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1398c9f081a753f9226febe8900fce8f7d0a67163334e1c94a2438339d79d635"
+        }
+      ],
+      "purl": "pkg:pub/watcher@1.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/watcher@1.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "web",
+      "version": "1.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
+        }
+      ],
+      "purl": "pkg:pub/web@1.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/web@1.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "web_socket",
+      "version": "1.0.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "34d64019aa8e36bf9842ac014bb5d2f5586ca73df5e4d9bf5c936975cae6982c"
+        }
+      ],
+      "purl": "pkg:pub/web_socket@1.0.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/web_socket@1.0.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "web_socket_channel",
+      "version": "3.0.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d645757fb0f4773d602444000a8131ff5d48c9e47adfe9772652dd1a4f2d45c8"
+        }
+      ],
+      "purl": "pkg:pub/web_socket_channel@3.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/web_socket_channel@3.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "webkit_inspection_protocol",
+      "version": "1.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "87d3f2333bb240704cd3f1c6b5b7acd8a10e7f0bc28c28dcf14e782014f4a572"
+        }
+      ],
+      "purl": "pkg:pub/webkit_inspection_protocol@1.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/webkit_inspection_protocol@1.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "win32",
+      "version": "5.10.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "daf97c9d80197ed7b619040e86c8ab9a9dad285e7671ee7390f9180cc828a51e"
+        }
+      ],
+      "purl": "pkg:pub/win32@5.10.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/win32@5.10.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "win32_registry",
+      "version": "1.1.5",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "21ec76dfc731550fd3e2ce7a33a9ea90b828fdf19a5c3bcf556fa992cfa99852"
+        }
+      ],
+      "purl": "pkg:pub/win32_registry@1.1.5",
+      "type": "library",
+      "bom-ref": "pkg:pub/win32_registry@1.1.5",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "xdg_directories",
+      "version": "1.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
+        }
+      ],
+      "purl": "pkg:pub/xdg_directories@1.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/xdg_directories@1.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "xml",
+      "version": "6.5.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226"
+        }
+      ],
+      "purl": "pkg:pub/xml@6.5.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/xml@6.5.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "yaml",
+      "version": "3.1.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce"
+        }
+      ],
+      "purl": "pkg:pub/yaml@3.1.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/yaml@3.1.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "_fe_analyzer_shared",
+      "version": "64.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "eb376e9acf6938204f90eb3b1f00b578640d3188b4c8a8ec054f9f479af8d051"
+        }
+      ],
+      "purl": "pkg:pub/_fe_analyzer_shared@64.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/_fe_analyzer_shared@64.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "adaptive_number",
+      "version": "1.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3a567544e9b5c9c803006f51140ad544aedc79604fd4f3f2c1380003f97c1d77"
+        }
+      ],
+      "purl": "pkg:pub/adaptive_number@1.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/adaptive_number@1.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "analyzer",
+      "version": "6.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "69f54f967773f6c26c7dcb13e93d7ccee8b17a641689da39e878d5cf13b06893"
+        }
+      ],
+      "purl": "pkg:pub/analyzer@6.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/analyzer@6.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "args",
+      "version": "2.4.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "eef6c46b622e0494a36c5a12d10d77fb4e855501a91c1b9ef9339326e58f0596"
+        }
+      ],
+      "purl": "pkg:pub/args@2.4.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/args@2.4.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "collection",
+      "version": "1.18.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ee67cb0715911d28db6bf4af1026078bd6f0128b07a5f66fb2ed94ec6783c09a"
+        }
+      ],
+      "purl": "pkg:pub/collection@1.18.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/collection@1.18.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "convert",
+      "version": "3.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
+        }
+      ],
+      "purl": "pkg:pub/convert@3.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/convert@3.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "coverage",
+      "version": "1.6.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2fb815080e44a09b85e0f2ca8a820b15053982b2e714b59267719e8a9ff17097"
+        }
+      ],
+      "purl": "pkg:pub/coverage@1.6.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/coverage@1.6.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "crypto",
+      "version": "3.0.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab"
+        }
+      ],
+      "purl": "pkg:pub/crypto@3.0.3",
+      "type": "library",
+      "bom-ref": "pkg:pub/crypto@3.0.3",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "ed25519_edwards",
+      "version": "0.3.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6ce0112d131327ec6d42beede1e5dfd526069b18ad45dcf654f15074ad9276cd"
+        }
+      ],
+      "purl": "pkg:pub/ed25519_edwards@0.3.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/ed25519_edwards@0.3.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "file",
+      "version": "6.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1b92bec4fc2a72f59a8e15af5f52cd441e4a7860b49499d69dfa817af20e925d"
+        }
+      ],
+      "purl": "pkg:pub/file@6.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/file@6.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "fixnum",
+      "version": "1.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
+        }
+      ],
+      "purl": "pkg:pub/fixnum@1.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/fixnum@1.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "frontend_server_client",
+      "version": "3.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "408e3ca148b31c20282ad6f37ebfa6f4bdc8fede5b74bc2f08d9d92b55db3612"
+        }
+      ],
+      "purl": "pkg:pub/frontend_server_client@3.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/frontend_server_client@3.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "github",
+      "version": "9.17.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9966bc13bf612342e916b0a343e95e5f046c88f602a14476440e9b75d2295411"
+        }
+      ],
+      "purl": "pkg:pub/github@9.17.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/github@9.17.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "glob",
+      "version": "2.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0e7014b3b7d4dac1ca4d6114f82bf1782ee86745b9b42a92c9289c23d8a0ab63"
+        }
+      ],
+      "purl": "pkg:pub/glob@2.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/glob@2.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "hex",
+      "version": "0.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4e7cd54e4b59ba026432a6be2dd9d96e4c5205725194997193bf871703b82c4a"
+        }
+      ],
+      "purl": "pkg:pub/hex@0.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/hex@0.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "http",
+      "version": "1.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
+        }
+      ],
+      "purl": "pkg:pub/http@1.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/http@1.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "http_multi_server",
+      "version": "3.2.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "97486f20f9c2f7be8f514851703d0119c3596d14ea63227af6f7a481ef2b2f8b"
+        }
+      ],
+      "purl": "pkg:pub/http_multi_server@3.2.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/http_multi_server@3.2.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "io",
+      "version": "1.0.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2ec25704aba361659e10e3e5f5d672068d332fc8ac516421d483a11e5cbd061e"
+        }
+      ],
+      "purl": "pkg:pub/io@1.0.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/io@1.0.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "json_annotation",
+      "version": "4.8.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467"
+        }
+      ],
+      "purl": "pkg:pub/json_annotation@4.8.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/json_annotation@4.8.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "lints",
+      "version": "2.1.1",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0a217c6c989d21039f1498c3ed9f3ed71b354e69873f13a8dfc3c9fe76f1b452"
+        }
+      ],
+      "purl": "pkg:pub/lints@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/lints@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "logging",
+      "version": "1.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+        }
+      ],
+      "purl": "pkg:pub/logging@1.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/logging@1.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "matcher",
+      "version": "0.12.16",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1803e76e6653768d64ed8ff2e1e67bea3ad4b923eb5c56a295c3e634bad5960e"
+        }
+      ],
+      "purl": "pkg:pub/matcher@0.12.16",
+      "type": "library",
+      "bom-ref": "pkg:pub/matcher@0.12.16",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "meta",
+      "version": "1.9.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3c74dbf8763d36539f114c799d8a2d87343b5067e9d796ca22b5eb8437090ee3"
+        }
+      ],
+      "purl": "pkg:pub/meta@1.9.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/meta@1.9.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "mime",
+      "version": "1.0.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e4ff8e8564c03f255408decd16e7899da1733852a9110a58fe6d1b817684a63e"
+        }
+      ],
+      "purl": "pkg:pub/mime@1.0.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/mime@1.0.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "package_config",
+      "version": "2.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1c5b77ccc91e4823a5af61ee74e6b972db1ef98c2ff5a18d3161c982a55448bd"
+        }
+      ],
+      "purl": "pkg:pub/package_config@2.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/package_config@2.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "path",
+      "version": "1.8.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2ad4cddff7f5cc0e2d13069f2a3f7a73ca18f66abd6f5ecf215219cdb3638edb"
+        }
+      ],
+      "purl": "pkg:pub/path@1.8.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/path@1.8.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "petitparser",
+      "version": "5.4.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cb3798bef7fc021ac45b308f4b51208a152792445cce0448c9a4ba5879dd8750"
+        }
+      ],
+      "purl": "pkg:pub/petitparser@5.4.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/petitparser@5.4.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      },
+      "tags": [
+        "parse"
+      ]
+    },
+    {
+      "group": "",
+      "name": "pool",
+      "version": "1.5.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "20fe868b6314b322ea036ba325e6fc0711a22948856475e2c2b6306e8ab39c2a"
+        }
+      ],
+      "purl": "pkg:pub/pool@1.5.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/pool@1.5.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "pub_semver",
+      "version": "2.1.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "40d3ab1bbd474c4c2328c91e3a7df8c6dd629b79ece4c4bd04bee496a224fb0c"
+        }
+      ],
+      "purl": "pkg:pub/pub_semver@2.1.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/pub_semver@2.1.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf_static",
+      "version": "1.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a41d3f53c4adf0f57480578c1d61d90342cd617de7fc8077b1304643c2d85c1e"
+        }
+      ],
+      "purl": "pkg:pub/shelf_static@1.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf_static@1.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "shelf_web_socket",
+      "version": "1.0.4",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9ca081be41c60190ebcb4766b2486a7d50261db7bd0f5d9615f2d653637a84c1"
+        }
+      ],
+      "purl": "pkg:pub/shelf_web_socket@1.0.4",
+      "type": "library",
+      "bom-ref": "pkg:pub/shelf_web_socket@1.0.4",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "source_map_stack_trace",
+      "version": "2.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "84cf769ad83aa6bb61e0aa5a18e53aea683395f196a6f39c4c881fb90ed4f7ae"
+        }
+      ],
+      "purl": "pkg:pub/source_map_stack_trace@2.1.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/source_map_stack_trace@2.1.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "source_maps",
+      "version": "0.10.12",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "708b3f6b97248e5781f493b765c3337db11c5d2c81c3094f10904bfa8004c703"
+        }
+      ],
+      "purl": "pkg:pub/source_maps@0.10.12",
+      "type": "library",
+      "bom-ref": "pkg:pub/source_maps@0.10.12",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "stack_trace",
+      "version": "1.11.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "73713990125a6d93122541237550ee3352a2d84baad52d375a4cad2eb9b7ce0b"
+        }
+      ],
+      "purl": "pkg:pub/stack_trace@1.11.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/stack_trace@1.11.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "stream_channel",
+      "version": "2.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba2aa5d8cc609d96bbb2899c28934f9e1af5cddbd60a827822ea467161eb54e7"
+        }
+      ],
+      "purl": "pkg:pub/stream_channel@2.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/stream_channel@2.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test",
+      "version": "1.24.6",
+      "scope": "optional",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9b0dd8e36af4a5b1569029949d50a52cb2a2a2fdaa20cebb96e6603b9ae241f9"
+        }
+      ],
+      "purl": "pkg:pub/test@1.24.6",
+      "type": "library",
+      "bom-ref": "pkg:pub/test@1.24.6",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test_api",
+      "version": "0.6.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5c2f730018264d276c20e4f1503fd1308dfbbae39ec8ee63c5236311ac06954b"
+        }
+      ],
+      "purl": "pkg:pub/test_api@0.6.1",
+      "type": "library",
+      "bom-ref": "pkg:pub/test_api@0.6.1",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "test_core",
+      "version": "0.5.6",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4bef837e56375537055fdbbbf6dd458b1859881f4c7e6da936158f77d61ab265"
+        }
+      ],
+      "purl": "pkg:pub/test_core@0.5.6",
+      "type": "library",
+      "bom-ref": "pkg:pub/test_core@0.5.6",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "toml",
+      "version": "0.14.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "157c5dca5160fced243f3ce984117f729c788bb5e475504f3dbcda881accee44"
+        }
+      ],
+      "purl": "pkg:pub/toml@0.14.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/toml@0.14.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "typed_data",
+      "version": "1.3.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "facc8d6582f16042dd49f2463ff1bd6e2c9ef9f3d5da3d9b087e244a7b564b3c"
+        }
+      ],
+      "purl": "pkg:pub/typed_data@1.3.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/typed_data@1.3.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "version",
+      "version": "3.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2307e23a45b43f96469eeab946208ed63293e8afca9c28cd8b5241ff31c55f55"
+        }
+      ],
+      "purl": "pkg:pub/version@3.0.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/version@3.0.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "vm_service",
+      "version": "11.9.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0fae432c85c4ea880b33b497d32824b97795b04cdaa74d270219572a1f50268d"
+        }
+      ],
+      "purl": "pkg:pub/vm_service@11.9.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/vm_service@11.9.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "watcher",
+      "version": "1.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3d2ad6751b3c16cf07c7fca317a1413b3f26530319181b37e3b9039b84fc01d8"
+        }
+      ],
+      "purl": "pkg:pub/watcher@1.1.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/watcher@1.1.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "web_socket_channel",
+      "version": "2.4.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b"
+        }
+      ],
+      "purl": "pkg:pub/web_socket_channel@2.4.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/web_socket_channel@2.4.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "webkit_inspection_protocol",
+      "version": "1.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "67d3a8b6c79e1987d19d848b0892e582dbb0c66c57cc1fef58a177dd2aa2823d"
+        }
+      ],
+      "purl": "pkg:pub/webkit_inspection_protocol@1.2.0",
+      "type": "library",
+      "bom-ref": "pkg:pub/webkit_inspection_protocol@1.2.0",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "yaml",
+      "version": "3.1.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "75769501ea3489fca56601ff33454fe45507ea3bfb014161abc3b43ae25989d5"
+        }
+      ],
+      "purl": "pkg:pub/yaml@3.1.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/yaml@3.1.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "rust_builder/cargokit/build_tool/pubspec.lock"
+              }
+            ],
+            "concludedValue": "rust_builder/cargokit/build_tool/pubspec.lock"
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:pub/fuzzzy_seal@1.1.0+2",
+      "dependsOn": [
+        "pkg:pub/app_links@7.0.0",
+        "pkg:pub/args@2.4.2",
+        "pkg:pub/biometric_storage@5.0.1",
+        "pkg:pub/bloc@8.1.4",
+        "pkg:pub/collection@1.18.0",
+        "pkg:pub/convert@3.1.1",
+        "pkg:pub/crypto@3.0.3",
+        "pkg:pub/desktop_drop@0.6.1",
+        "pkg:pub/ed25519_edwards@0.3.1",
+        "pkg:pub/file_picker@8.3.7",
+        "pkg:pub/flutter@0.0.0",
+        "pkg:pub/flutter_bloc@8.1.6",
+        "pkg:pub/flutter_dropzone@4.2.1",
+        "pkg:pub/flutter_localizations@0.0.0",
+        "pkg:pub/flutter_rust_bridge@2.13.0",
+        "pkg:pub/flutter_secure_storage@9.2.4",
+        "pkg:pub/fuzzy_crypto_core@0.0.1",
+        "pkg:pub/fuzzzy_ui_kit@0.1.0",
+        "pkg:pub/get_it@8.3.0",
+        "pkg:pub/github@9.17.0",
+        "pkg:pub/go_router@13.2.5",
+        "pkg:pub/hex@0.2.0",
+        "pkg:pub/http@1.1.0",
+        "pkg:pub/isar@3.1.0+1",
+        "pkg:pub/isar_flutter_libs@3.1.0+1",
+        "pkg:pub/logger@2.7.0",
+        "pkg:pub/logging@1.2.0",
+        "pkg:pub/marionette_flutter@0.6.0",
+        "pkg:pub/path@1.8.0",
+        "pkg:pub/path@1.9.1",
+        "pkg:pub/path_provider@2.1.5",
+        "pkg:pub/permission_handler@12.0.1",
+        "pkg:pub/share_plus@10.1.4",
+        "pkg:pub/shared_preferences@2.5.3",
+        "pkg:pub/source_span@1.10.0",
+        "pkg:pub/toml@0.14.0",
+        "pkg:pub/url_launcher@6.3.1",
+        "pkg:pub/uuid@4.5.3",
+        "pkg:pub/version@3.0.0",
+        "pkg:pub/vibration@2.1.0",
+        "pkg:pub/yaml@3.1.2"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "bom-ref": "metadata-annotations",
+      "subjects": [
+        "pkg:pub/fuzzzy_seal@1.1.0+2"
+      ],
+      "annotator": {
+        "component": {
+          "group": "@cyclonedx",
+          "name": "cdxgen",
+          "version": "12.8.4",
+          "purl": "pkg:npm/%40cyclonedx/cdxgen@12.8.4",
+          "type": "application",
+          "bom-ref": "pkg:npm/@cyclonedx/cdxgen@12.8.4",
+          "publisher": "OWASP Foundation",
+          "authors": [
+            {
+              "name": "OWASP Foundation"
+            }
+          ]
+        }
+      },
+      "timestamp": "2026-09-13T15:00:34Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, September 13, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_seal' with version '1.1.0+2'."
+    }
+  ]
+}

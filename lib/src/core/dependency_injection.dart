@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +37,6 @@ class DependencyInjection {
       [
         StoredChatGeneralDataSchema,
         StoredChatPreferencesSchema,
-        StoredChatSecurityDataSchema,
         StoredMessageDataSchema,
         StoredUserAuthPreferencesSchema,
         StoredVaultItemSchema,
@@ -51,38 +50,66 @@ class DependencyInjection {
 
     sl.safeRegisterSingleton<FuzzyLinkService>(FuzzyLinkService());
 
+    sl.safeRegisterSingleton<UserFileStore>(UserFileStore());
+
     sl.safeRegisterSingleton<UserAuthPreferencesRepository>(
       UserAuthPreferencesRepository(
-          localDataSource: UserAuthPreferencesLocalDataSource(isar: sl.get()),),
+        localDataSource: UserAuthPreferencesLocalDataSource(isar: sl.get()),
+      ),
+    );
+
+    sl.safeRegisterSingleton<CryptoCoreService>(
+      CryptoCoreService(
+        storeDirectoryPath: sl.get<AppSupportDirectory>().directory.path,
+      ),
+    );
+
+    sl.safeRegisterSingleton<CryptoStoreKeyRepository>(
+      CryptoStoreKeyRepository(
+        cryptoCoreService: sl.get<CryptoCoreService>(),
+      ),
     );
 
     sl.safeRegisterSingleton<ChatAuthRepository>(
       ChatAuthRepository(
         userAuthPreferencesRepository: sl.get<UserAuthPreferencesRepository>(),
+        cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
       ),
     );
 
     sl.safeRegisterSingleton<BiometricAuthRepository>(
-        BiometricAuthRepository(),);
+      BiometricAuthRepository(),
+    );
 
     sl.safeRegisterSingleton<FuzzyAuthStore>(
       FuzzyAuthStore(
         chatAuthRepository: sl.get<ChatAuthRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
       ),
     );
 
-    sl.safeRegisterSingleton<KeyStorageRepository>(KeyStorageRepository());
-    await sl.get<KeyStorageRepository>().recoverStagedMigration();
-
     sl.safeRegisterSingleton<ChatGeneralDataListRepository>(
       ChatGeneralDataListRepository(
-          localDataSource: ChatGeneralDataLocalDataSource(isar: sl.get()),),
+        localDataSource: ChatGeneralDataLocalDataSource(isar: sl.get()),
+      ),
     );
 
     sl.safeRegisterSingleton<MessageDataRepository>(
       MessageDataRepository(
-          localDataSource: MessageDataLocalDataSource(isar: sl.get()),),
+        localDataSource: MessageDataLocalDataSource(isar: sl.get()),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
+      ),
+    );
+
+    sl.safeRegisterSingleton<ChatArchiveRepository>(
+      ChatArchiveRepository(
+        messageDataRepository: sl.get<MessageDataRepository>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
+        workingDirectoryPath: sl.get<AppSupportDirectory>().directory.path,
+      ),
     );
 
     sl.safeRegisterSingleton<FuzzyLinkHandler>(
@@ -90,19 +117,20 @@ class DependencyInjection {
         linkService: sl.get<FuzzyLinkService>(),
         chatRepository: sl.get<ChatGeneralDataListRepository>(),
         authStore: sl.get<FuzzyAuthStore>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
       ),
     );
 
     // Vault Dependencies
     sl.safeRegisterSingleton<PasswordStrengthService>(
-        PasswordStrengthService(),);
+      PasswordStrengthService(),
+    );
 
     sl.safeRegisterSingleton<VaultFileDataSource>(
       VaultFileDataSource(
-          vaultDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,),
+        vaultDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+      ),
     );
-
-    await sl.get<VaultFileDataSource>().recoverStagedChangesIfNeeded();
 
     sl.safeRegisterSingleton<VaultItemLocalDataSource>(
       VaultItemLocalDataSource(isar: sl.get<Isar>()),
@@ -115,6 +143,7 @@ class DependencyInjection {
     sl.safeRegisterSingleton<VaultCryptoRepository>(
       VaultCryptoRepository(
         passwordStrengthService: sl.get<PasswordStrengthService>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
       ),
     );
 

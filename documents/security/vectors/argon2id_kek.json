@@ -1,0 +1,11 @@
+{
+  "argon2": {
+    "algorithm": "Argon2id v0x13",
+    "m_cost_kib": 65536,
+    "output_len": 32,
+    "p_cost": 1,
+    "t_cost": 4
+  },
+  "password": "pw",
+  "salt": "11111111111111111111111111111111"
+}

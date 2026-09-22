@@ -1,0 +1,12 @@
+# App icon — development (steel blue, DEV tag). ANDROID ONLY; see flutter_launcher_icons.yaml for why iOS is not
+# here and for the regeneration order.
+#
+# The flavour name comes from this file's name: flutter_launcher_icons-development.yaml maps to the
+# Android product flavour `development` (android/app/build.gradle) and writes
+# android/app/src/development/res. The matching iOS set is DevelopmentAppIcon.appiconset,
+# filled by scripts/ios_app_icons.py.
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/launcher_icons/development/ios/AppIcon-1024.png"
+  adaptive_icon_foreground: "assets/launcher_icons/development/android/ic_launcher_foreground.png"
+  adaptive_icon_background: "assets/launcher_icons/development/android/ic_launcher_background.png"

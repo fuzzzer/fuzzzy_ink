@@ -42,47 +42,33 @@ class FuzzyLinkParser {
   }
 
   static FuzzyLinkPayload? _parseInvitation(
-      Map<String, dynamic> json, int version,) {
-    final chatIdEncoded = json['I'] as String?;
-    final publicKeyEncoded = json['P'] as String?;
-    if (chatIdEncoded == null || publicKeyEncoded == null) return null;
+    Map<String, dynamic> json,
+    int version,
+  ) {
+    final blob = json['b'] as String?;
+    if (blob == null || blob.isEmpty) return null;
 
     final exp = json['exp'] as int?;
 
-    final rawContent = jsonEncode({
-      'I': chatIdEncoded,
-      'P': publicKeyEncoded,
-    });
-
     return InvitationLinkPayload(
       version: version,
-      rawInvitationContent: rawContent,
+      rawInvitationContent: blob,
       expiresAt: exp,
     );
   }
 
   static FuzzyLinkPayload? _parseAcceptance(
-      Map<String, dynamic> json, int version,) {
-    final chatIdEncoded = json['I'] as String?;
-    final publicKeyEncoded = json['P'] as String?;
-    final encryptedKeyEncoded = json['E'] as String?;
-    if (chatIdEncoded == null ||
-        publicKeyEncoded == null ||
-        encryptedKeyEncoded == null) {
-      return null;
-    }
+    Map<String, dynamic> json,
+    int version,
+  ) {
+    final blob = json['b'] as String?;
+    if (blob == null || blob.isEmpty) return null;
 
     final exp = json['exp'] as int?;
 
-    final rawContent = jsonEncode({
-      'I': chatIdEncoded,
-      'P': publicKeyEncoded,
-      'E': encryptedKeyEncoded,
-    });
-
     return AcceptanceLinkPayload(
       version: version,
-      rawAcceptanceContent: rawContent,
+      rawAcceptanceContent: blob,
       expiresAt: exp,
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyToolbox extends StatelessWidget {
   final List<Widget> children;
@@ -11,14 +11,13 @@ class FuzzyToolbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiColors = theme.extension<UiColors>()!;
+    final fuzzzyColors = context.fuzzzyColors;
 
     return Material(
       elevation: 4,
       clipBehavior: Clip.antiAlias,
       borderRadius: BorderRadius.circular(12),
-      color: uiColors.backgroundSecondaryColor,
+      color: fuzzzyColors.surface,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: children,

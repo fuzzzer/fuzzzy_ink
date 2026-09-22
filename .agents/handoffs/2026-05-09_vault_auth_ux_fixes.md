@@ -1,3 +1,5 @@
+> **HISTORICAL (pre-hardening).** This file describes the pure-Dart crypto stack — `KeyStorageRepository`, `reencryptAllKeys`, the salt + AES verification token, PBE under the app-lock password — all **removed in v1.0.0-rc.1** (F4-4). Kept as the design record of the chat-auth gate; the current gate (store key wrapped by Argon2id in the Rust core, one `rewrap` on password change) is `.agents/project_guide/architecture_state.md` §4. Do not implement anything from this file.
+
 # Session Handoff — Vault & Auth UX Fixes
 **Date:** 2026-05-09
 
@@ -46,7 +48,7 @@ The user reverted the file-action bottom sheet from `vault_item_list.dart`. The 
 
 ## Outstanding / Must Verify
 
-> **FVM could not install Flutter 3.24.3 during this session**, so `dart analyze` and `flutter gen-l10n` could not be run. The generated localization files (`fuzzy_chat_localizations.dart`, `_en.dart`, `_ka.dart`) were updated **manually**. The next session MUST run:
+> **FVM could not install Flutter 3.24.3 during this session** (the toolchain of that era — removed in v1.0.0-rc.1, which moved the repo to Flutter 3.41.7 / Dart 3.11.5), so `dart analyze` and `flutter gen-l10n` could not be run. The generated localization files (`fuzzzy_seal_localizations.dart`, `_en.dart`, `_ka.dart`) were updated **manually**. The next session MUST run:
 > ```bash
 > fvm flutter gen-l10n
 > fvm dart analyze lib/src/fuzzy_auth/ lib/src/app/

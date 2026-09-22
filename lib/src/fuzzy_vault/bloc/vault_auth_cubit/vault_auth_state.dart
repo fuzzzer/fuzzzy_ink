@@ -14,7 +14,7 @@ class VaultAuthState {
 
   final StateStatus status;
   final VaultAuthEnum authState;
-  final Uint8List? masterKey;
+  final VaultKey? masterKey;
   final VaultFailureType? failureType;
   final bool biometricEnabled;
   final bool biometricInvalidated;
@@ -22,7 +22,7 @@ class VaultAuthState {
   VaultAuthState copyWith({
     StateStatus? status,
     VaultAuthEnum? authState,
-    Uint8List? masterKey,
+    VaultKey? masterKey,
     VaultFailureType? failureType,
     bool? biometricEnabled,
     bool? biometricInvalidated,

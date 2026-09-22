@@ -1,6 +1,7 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FileDropArea extends StatefulWidget {
   final Widget child;
@@ -35,11 +36,13 @@ class _FileDropAreaState extends State<FileDropArea> {
           widget.child,
           if (_dragging)
             ColoredBox(
-              color: Colors.black.withOpacity(0.4),
+              color: context.fuzzzyColors.ground.withValues(alpha: 0.4),
               child: Center(
                 child: Text(
-                  context.fuzzyChatLocalizations.dropFilesHere,
-                  style: context.uiTextStyles.bodyLargeBold20,
+                  context.fuzzzySealLocalizations.dropFilesHere,
+                  style: context.fuzzzyTextStyles.titleM.copyWith(
+                    color: context.fuzzzyColors.ink,
+                  ),
                 ),
               ),
             ),

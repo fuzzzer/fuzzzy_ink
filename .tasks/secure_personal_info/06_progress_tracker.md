@@ -79,7 +79,7 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-05-09 | Module named `fuzzy_vault` | Consistent with `fuzzy_chat`, `fuzzy_auth`, `fuzzy_basics` naming |
+| 2026-05-09 | Module named `fuzzy_vault` | Consistent with `fuzzzy_seal`, `fuzzy_auth`, `fuzzy_basics` naming |
 | 2026-05-09 | Encrypted blobs on file system, metadata in Isar | Better performance, atomic writes, multi-directory support |
 | 2026-05-09 | Custom password = double encryption (custom + master) | Master password always required; custom password is additive |
 | 2026-05-09 | Export decrypts from master key, re-encrypts with export password | Simpler cross-device workflow — user only needs export password to import |

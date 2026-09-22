@@ -8,7 +8,7 @@
 
 ## 1. What Is Fuzzy Vault?
 
-Fuzzy Vault is a new section of Fuzzy Chat that provides a **fully offline, encrypted personal information manager**. It has two primary capabilities:
+Fuzzy Vault is a new section of Fuzzzy Seal that provides a **fully offline, encrypted personal information manager**. It has two primary capabilities:
 
 1. **Password Manager** — Store, search, organize, and quickly copy credentials (username/password pairs, URLs, notes per entry).
 2. **Secure Notes** — Rich-text notes with formatting (bold, italic, headings, lists, code blocks), organized in groups, with extreme data durability guarantees.
@@ -22,7 +22,7 @@ All data is encrypted at rest using the app's existing `PasswordBasedEncryptionS
 | Principle | Description |
 |-----------|-------------|
 | **Never Lose Data** | Notes contain sensitive info. We use write-ahead journaling, atomic file operations, and periodic auto-save to guarantee no data loss on crash, kill, or power loss. |
-| **Offline-Only** | Zero network. Zero servers. Same constraint as the rest of Fuzzy Chat. |
+| **Offline-Only** | Zero network. Zero servers. Same constraint as the rest of Fuzzzy Seal. |
 | **One Master Password** | Single password unlocks the entire vault. Derived key is held in memory only while unlocked; never persisted in plaintext. |
 | **Optional Custom Passwords** | Individual notes/passwords or entire groups can have an additional custom password. This is an opt-in layer on top of the master password. |
 | **Searchable & Snappy** | Metadata (titles, tags, group names) is indexed in Isar for fast search. Encrypted content is decrypted on-demand when opened. |
@@ -33,7 +33,7 @@ All data is encrypted at rest using the app's existing `PasswordBasedEncryptionS
 
 ## 3. Architecture Fit
 
-Fuzzy Vault follows the exact same architecture as `fuzzy_chat/` and `fuzzy_auth/`:
+Fuzzy Vault follows the exact same architecture as `fuzzzy_seal/` and `fuzzy_auth/`:
 
 ```
 lib/src/fuzzy_vault/

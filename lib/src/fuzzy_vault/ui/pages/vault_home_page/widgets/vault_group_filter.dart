@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:uuid/uuid.dart';
 
 class VaultGroupFilter extends StatelessWidget {
@@ -61,24 +62,23 @@ class VaultGroupFilter extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: context.uiColors.backgroundSecondaryColor,
+          backgroundColor: context.fuzzzyColors.surface,
           title: Text(
             currentContextLocalization.vaultNewGroup,
-            style: TextStyle(color: context.uiColors.primaryTextColor),
+            style: TextStyle(color: context.fuzzzyColors.ink),
           ),
           content: TextField(
             controller: nameController,
             autofocus: true,
-            style: TextStyle(color: context.uiColors.primaryTextColor),
+            style: TextStyle(color: context.fuzzzyColors.ink),
             decoration: InputDecoration(
               hintText: currentContextLocalization.vaultGroupName,
-              hintStyle: TextStyle(color: context.uiColors.secondaryTextColor),
+              hintStyle: TextStyle(color: context.fuzzzyColors.inkMute),
               enabledBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: context.uiColors.secondaryTextColor),
+                borderSide: BorderSide(color: context.fuzzzyColors.inkMute),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: context.uiColors.primaryColor),
+                borderSide: BorderSide(color: context.fuzzzyColors.focusBorder),
               ),
             ),
             onSubmitted: (_) =>
@@ -88,7 +88,7 @@ class VaultGroupFilter extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
               style: TextButton.styleFrom(
-                foregroundColor: context.uiColors.secondaryTextColor,
+                foregroundColor: context.fuzzzyColors.inkMute,
               ),
               child: Text(currentContextLocalization.cancel),
             ),
@@ -96,7 +96,7 @@ class VaultGroupFilter extends StatelessWidget {
               onPressed: () =>
                   _submitGroup(context, dialogContext, nameController),
               style: TextButton.styleFrom(
-                foregroundColor: context.uiColors.primaryColor,
+                foregroundColor: context.fuzzzyColors.ink,
               ),
               child: Text(currentContextLocalization.create),
             ),
@@ -161,8 +161,8 @@ class _GroupChip extends StatelessWidget {
         title,
         style: TextStyle(
           color: isSelected
-              ? context.uiColors.backgroundPrimaryColor
-              : context.uiColors.primaryTextColor,
+              ? context.fuzzzyColors.ground
+              : context.fuzzzyColors.ink,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
@@ -171,13 +171,13 @@ class _GroupChip extends StatelessWidget {
               icon,
               size: 16,
               color: isSelected
-                  ? context.uiColors.backgroundPrimaryColor
-                  : context.uiColors.primaryTextColor,
+                  ? context.fuzzzyColors.ground
+                  : context.fuzzzyColors.ink,
             )
           : null,
       backgroundColor: isSelected
-          ? context.uiColors.primaryColor
-          : context.uiColors.secondaryColor,
+          ? context.fuzzzyColors.actionPrimaryBg
+          : context.fuzzzyColors.surface,
       onPressed: onTap,
     );
   }

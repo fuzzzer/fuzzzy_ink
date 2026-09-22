@@ -1,1 +1,29 @@
 version: 2
+# flutter_rust_bridge is pinned three ways and must move as one: the Rust crate (Cargo.toml `=2.13.0`),
+# the Dart package (pubspec.yaml `2.13.0`) and the codegen that wrote lib/rust_bridge/ (`codegenVersion`).
+# frb refuses to build on any mismatch, and a dependabot group cannot span two ecosystems, so every
+# frb bump — patch included — is ignored here and done by hand (playbooks/rust-flutter-bridge.md §8).
+# The `flutter-rust-bridge` groups only take effect if that ignore is ever lifted.
+updates:
+  - package-ecosystem: cargo
+    directory: /rust/fuzzy_crypto_core
+    schedule:
+      interval: weekly
+    groups:
+      flutter-rust-bridge:
+        patterns: ["flutter_rust_bridge*"]
+    ignore:
+      - dependency-name: "flutter_rust_bridge*"
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      flutter-rust-bridge:
+        patterns: ["flutter_rust_bridge*"]
+    ignore:
+      - dependency-name: "flutter_rust_bridge*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

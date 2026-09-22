@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
 
 class {{name.pascalCase()}}LoadedContent extends StatelessWidget {
   const {{name.pascalCase()}}LoadedContent({

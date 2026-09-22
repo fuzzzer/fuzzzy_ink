@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class FileSelectorWidget extends StatefulWidget {
@@ -94,9 +95,8 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final uiTextStyles = theme.extension<UiTextStyles>()!;
-    final uiColors = theme.extension<UiColors>()!;
+    final fuzzzyTextStyles = context.fuzzzyTextStyles;
+    final fuzzzyColors = context.fuzzzyColors;
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -111,7 +111,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: uiColors.diffColor,
+            color: fuzzzyColors.inkFaint,
           ),
         ),
         child: Center(
@@ -121,7 +121,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: uiColors.diffColor,
+                    color: fuzzzyColors.inkFaint,
                   ),
                 )
               : hasSelectedFiles
@@ -131,18 +131,21 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
                         Icon(
                           Icons.close,
                           size: 30,
-                          color: uiColors.diffColor,
+                          color: fuzzzyColors.inkFaint,
                         ),
                         Text(
                           widget.selectedFilePaths?.length.toString() ?? '',
-                          style: uiTextStyles.bodySmallBold12,
+                          style: fuzzzyTextStyles.bodyS.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: fuzzzyColors.ink,
+                          ),
                         ),
                       ],
                     )
                   : Icon(
                       Icons.upload,
                       size: 30,
-                      color: uiColors.diffColor,
+                      color: fuzzzyColors.inkFaint,
                     ),
         ),
       ),

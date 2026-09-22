@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android ≤ 11 (API ≤ 30). The crypto store (files/fuzzy_crypto_store/), the Isar
+     database and the wrapped store key (sharedpref) never leave the device:
+     THREAT_MODEL.md §2.8 / R34. Belt and braces under android:allowBackup="false". -->
+<full-backup-content>
+    <exclude domain="root" path="." />
+    <exclude domain="file" path="." />
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="external" path="." />
+</full-backup-content>

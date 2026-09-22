@@ -1,4 +1,5 @@
 enum AuthStateStatus {
+  /// Boot: the store is still opening. No access yet, like [locked].
   initial,
 
   noAuthRequired,

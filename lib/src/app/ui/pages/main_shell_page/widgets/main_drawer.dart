@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -7,7 +8,7 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = context.fuzzyChatLocalizations;
+    final loc = context.fuzzzySealLocalizations;
     final prefs = sl.get<PreferencesService>();
     final currentLoc = GoRouterState.of(context).uri.toString();
 
@@ -15,7 +16,7 @@ class MainDrawer extends StatelessWidget {
     final isVault = currentLoc.startsWith('/vault');
 
     return Drawer(
-      backgroundColor: context.uiColors.backgroundPrimaryColor,
+      backgroundColor: context.fuzzzyColors.ground,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -26,7 +27,7 @@ class MainDrawer extends StatelessWidget {
                 loc.menu,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: context.uiColors.primaryTextColor,
+                      color: context.fuzzzyColors.ink,
                     ),
               ),
             ),
@@ -34,15 +35,15 @@ class MainDrawer extends StatelessWidget {
               leading: Icon(
                 Icons.chat_bubble_outline,
                 color: isChat
-                    ? context.uiColors.primaryColor
-                    : context.uiColors.secondaryTextColor,
+                    ? context.fuzzzyColors.ink
+                    : context.fuzzzyColors.inkMute,
               ),
               title: Text(
-                loc.fuzzyChat,
+                loc.fuzzzySeal,
                 style: TextStyle(
                   color: isChat
-                      ? context.uiColors.primaryColor
-                      : context.uiColors.primaryTextColor,
+                      ? context.fuzzzyColors.ink
+                      : context.fuzzzyColors.ink,
                   fontWeight: isChat ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -56,15 +57,15 @@ class MainDrawer extends StatelessWidget {
               leading: Icon(
                 Icons.lock_outline,
                 color: isVault
-                    ? context.uiColors.primaryColor
-                    : context.uiColors.secondaryTextColor,
+                    ? context.fuzzzyColors.ink
+                    : context.fuzzzyColors.inkMute,
               ),
               title: Text(
                 loc.fuzzyVault,
                 style: TextStyle(
                   color: isVault
-                      ? context.uiColors.primaryColor
-                      : context.uiColors.primaryTextColor,
+                      ? context.fuzzzyColors.ink
+                      : context.fuzzzyColors.ink,
                   fontWeight: isVault ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -77,12 +78,12 @@ class MainDrawer extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.settings_outlined,
-                color: context.uiColors.secondaryTextColor,
+                color: context.fuzzzyColors.inkMute,
               ),
               title: Text(
                 loc.settings,
                 style: TextStyle(
-                  color: context.uiColors.primaryTextColor,
+                  color: context.fuzzzyColors.ink,
                 ),
               ),
               onTap: () {

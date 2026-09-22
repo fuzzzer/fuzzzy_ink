@@ -4,4 +4,4 @@ This directory contains guides for specific, automated workflows, like using cus
 
 | File | Purpose |
 |------|---------|
-| `scripts_reference.md` | Complete reference for all project shell scripts (`exp.sh`, `loc.sh`, `m.sh`, `buildrunner.sh`) and FVM usage |
+| `scripts_reference.md` | Complete reference for all project shell scripts (`exp.sh`, `loc.sh`, `m.sh`, `buildrunner.sh`, `sbom.sh`), FVM usage, the Rust core commands (`cargo test/build/bench`, `flutter_rust_bridge_codegen generate`) and CI |

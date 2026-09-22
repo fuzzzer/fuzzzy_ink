@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy_chat/lib.dart';
+import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyActionsRow extends StatelessWidget {
   const FuzzyActionsRow({
@@ -34,10 +35,9 @@ class FuzzyActionsRow extends StatelessWidget {
         if (onMainActionPressed != null) const SizedBox(width: 8),
         if (onMainActionPressed != null)
           Expanded(
-            child: FuzzyButton(
-              text: mainActionLabel ?? '',
-              onTap: onMainActionPressed!,
-              isEnabled: isMainActionEnabled,
+            child: FuzzzyButton(
+              label: mainActionLabel ?? '',
+              onPressed: isMainActionEnabled ? onMainActionPressed : null,
             ),
           ),
       ],

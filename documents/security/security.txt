@@ -1,0 +1,9 @@
+# Fuzzzy Seal — security.txt (RFC 9116)
+# Served at https://fuzzzycore.com/.well-known/security.txt; source of truth is this file in
+# https://github.com/fuzzzy-bot/fuzzy_chat. Re-issue before Expires.
+Contact: mailto:contact@fuzzzycore.com
+Contact: https://github.com/fuzzzy-bot/fuzzy_chat/security/advisories/new
+Expires: 2027-09-12T00:00:00.000Z
+Preferred-Languages: en, ka
+Canonical: https://fuzzzycore.com/.well-known/security.txt
+Policy: https://github.com/fuzzzy-bot/fuzzy_chat/blob/main/SECURITY.md
