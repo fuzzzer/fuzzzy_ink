@@ -208,7 +208,7 @@ jobs:
     needs: rust-repro
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with: { pattern: "rust-repro-*" }
       - run: |
           set -euo pipefail
@@ -229,7 +229,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: { id-token: write, attestations: write, contents: read }
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
       - run: |
           set -euo pipefail
           sha256sum android-apk/app-production-release.apk windows-bundle/fuzzzy_seal.exe linux-bundle/fuzzzy_seal \
