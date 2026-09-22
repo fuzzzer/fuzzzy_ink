@@ -46,7 +46,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<!-- The files the app produces stay in Documents, which the Files app shows
-	     as "On My iPhone › Fuzzzy Seal"; "Show" opens it there (T-0366). -->
+	     as "On My iPhone › Fuzzzy Ink"; "Show" opens it there (T-0366). -->
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
@@ -77,6 +77,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Authenticate to unlock your Fuzzzy Seal password.</string>
+	<string>Authenticate to unlock your Fuzzzy Ink password.</string>
 </dict>
 </plist>

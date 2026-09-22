@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Lessons Learned (Long-Term AI Memory)
+# Fuzzzy Ink — Lessons Learned (Long-Term AI Memory)
 
 > This document contains hard-won knowledge from past bugs and architectural decisions. The [DOER] and [REVIEWER] personas MUST consult this file before any action to avoid repeating historical mistakes.
 > FN-006 … FN-013 were added by the 2026 hardening build (v1.0.0-rc.1); `log/F*.md` references point at the build record in FuzzyCore HQ, `flow/fuzzy-chat-hardening/log/`.
@@ -18,9 +18,9 @@
 **Rule:** Constructor injection for repos and cubits. Service locator only at data source boundary.
 
 ### AP-003: Never Import Feature Files Directly
-**Problem:** Importing `package:fuzzzy_seal/src/fuzzzy_seal/data/models/some_model.dart` creates tight coupling.
-**Resolution:** Always import through the root barrel: `import 'package:fuzzzy_seal/lib.dart';` (it re-exports `src/src.dart`).
-**Rule:** One import. `import 'package:fuzzzy_seal/lib.dart';` is the only project import you write. Two sanctioned exceptions: `package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart` where a kit widget is used, and `package:fuzzzy_seal/rust_bridge/…` **only** in `lib/` inside `crypto_core_service.dart` and `initializer.dart`; in `test/`, only `test/helpers/crypto_core_test_init.dart` and `test/src/core/rust_bridge_smoke_test.dart` (the bridge smoke test imports the generated API directly by design).
+**Problem:** Importing `package:fuzzzy_ink/src/fuzzzy_ink/data/models/some_model.dart` creates tight coupling.
+**Resolution:** Always import through the root barrel: `import 'package:fuzzzy_ink/lib.dart';` (it re-exports `src/src.dart`).
+**Rule:** One import. `import 'package:fuzzzy_ink/lib.dart';` is the only project import you write. Two sanctioned exceptions: `package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart` where a kit widget is used, and `package:fuzzzy_ink/rust_bridge/…` **only** in `lib/` inside `crypto_core_service.dart` and `initializer.dart`; in `test/`, only `test/helpers/crypto_core_test_init.dart` and `test/src/core/rust_bridge_smoke_test.dart` (the bridge smoke test imports the generated API directly by design).
 
 ### AP-004: Never Skip Barrel Files
 **Problem:** Missing barrel exports cause "undefined" errors.
@@ -33,7 +33,7 @@
 **Rule:** If you type `Color(`, `TextStyle(`, or a magic number for padding, you are violating the architecture.
 
 ### AP-006: Never Introduce Network Dependencies
-**Problem:** Fuzzzy Seal is designed as a 100% offline, zero-server encryption tool. Network dependencies break the security model.
+**Problem:** Fuzzzy Ink is designed as a 100% offline, zero-server encryption tool. Network dependencies break the security model.
 **Resolution:** All data operations use local storage (Isar, SecureStorage, SharedPreferences, file system). Encrypted outputs are shared via external channels by the user.
 **Rule:** If you import `dio`, `http`, or any networking package, you are violating the architecture.
 

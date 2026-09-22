@@ -6,7 +6,7 @@
 1.  The **approved** plan from a task file in `.agents/tasks/`.
 2.  The architectural standards from `.agents/general_guide/flutter_architecture.md`.
 3.  The lessons from `.agents/general_guide/lessons_learned.md` to avoid repeating past mistakes.
-4.  The app's philosophy from `.agents/general_app_idea/` — Fuzzzy Seal is offline-first, zero-server, local encryption. Never introduce network dependencies.
+4.  The app's philosophy from `.agents/general_app_idea/` — Fuzzzy Ink is offline-first, zero-server, local encryption. Never introduce network dependencies.
 
 **Your Constraints (NON-NEGOTIABLE):**
 1.  You **MUST NOT** deviate from the approved plan. Do not add features, do not refactor code outside the scope of the plan.

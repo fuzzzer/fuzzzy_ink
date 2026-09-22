@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Scripts Reference
+# Fuzzzy Ink — Scripts Reference
 
 > Quick reference for every project script and the commands the build actually uses. AI personas should use these instead of manual operations. Every command below was run on 2026-09-13 against the v1.0.0-rc.1 line; the ones marked **BROKEN** fail as described — use the recipe next to them.
 
@@ -28,7 +28,7 @@ fvm flutter gen-l10n
 **Why:** it calls `python`, which is not on PATH on this Mac (only `python3`). **It still exits 0** after `python: command not found`, so a caller cannot trust its exit code — check for the output file instead.
 **Recipe:**
 ```bash
-python3 scripts/merge_contents.py lib/src/fuzzzy_seal     # → scripts/outputs/fuzzzy_seal.txt (gitignored)
+python3 scripts/merge_contents.py lib/src/fuzzzy_ink     # → scripts/outputs/fuzzzy_ink.txt (gitignored)
 ```
 
 ### `./buildrunner.sh` — Isar Codegen — **BROKEN (twice)**

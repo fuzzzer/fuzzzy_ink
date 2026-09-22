@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:path/path.dart' as path;
 
 // ignore_for_file: avoid_redundant_argument_values

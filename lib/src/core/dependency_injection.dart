@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

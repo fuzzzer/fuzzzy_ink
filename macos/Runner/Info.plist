@@ -45,6 +45,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Authenticate to unlock your Fuzzzy Seal password.</string>
+	<string>Authenticate to unlock your Fuzzzy Ink password.</string>
 </dict>
 </plist>

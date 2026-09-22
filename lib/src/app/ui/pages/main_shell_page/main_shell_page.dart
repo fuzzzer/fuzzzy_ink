@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,13 +16,13 @@ class MainShellPage extends StatelessWidget {
     final currentLoc = GoRouterState.of(context).uri.toString();
     final isChat = currentLoc == AppRouter.home;
     final isVault = currentLoc.startsWith('/vault');
-    final loc = context.fuzzzySealLocalizations;
+    final loc = context.fuzzzyInkLocalizations;
 
     String title = '';
     Widget? rightAction;
 
     if (isChat) {
-      title = loc.fuzzzySeal;
+      title = loc.fuzzzyInk;
       rightAction = const BasicEncryptionNavigatorAction();
     } else if (isVault) {
       title = loc.fuzzyVault;

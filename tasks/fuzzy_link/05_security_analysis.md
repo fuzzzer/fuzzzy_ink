@@ -1,6 +1,6 @@
 # 🔐 Security Analysis — FuzzyLink Threat Model
 
-> This document analyzes the security implications of adding deep link support to Fuzzzy Seal, an offline-first encryption app.
+> This document analyzes the security implications of adding deep link support to Fuzzzy Ink, an offline-first encryption app.
 
 ---
 
@@ -28,7 +28,7 @@ This is the most important thing to understand: FuzzyLinks don't weaken security
 
 **Verdict:** Same risk as current copy-paste approach. No degradation.
 
-**Mitigation:** The encryption itself is the mitigation. This is by design — the whole point of Fuzzzy Seal is that the encrypted data is safe to share over any channel.
+**Mitigation:** The encryption itself is the mitigation. This is by design — the whole point of Fuzzzy Ink is that the encrypted data is safe to share over any channel.
 
 ---
 
@@ -136,7 +136,7 @@ static FuzzyLinkPayload? parse(Uri uri) {
 
 ### 1.5 Attack: URI Scheme Hijacking
 
-**Scenario:** A malicious app registers the same `fuzzylink://` custom scheme and intercepts links intended for Fuzzzy Seal.
+**Scenario:** A malicious app registers the same `fuzzylink://` custom scheme and intercepts links intended for Fuzzzy Ink.
 
 **Risk:** On Android, multiple apps can register the same custom scheme. The OS shows a disambiguation dialog. On iOS, behavior is undefined (last-installed app wins in some cases).
 
@@ -148,7 +148,7 @@ static FuzzyLinkPayload? parse(Uri uri) {
    - Users will see a disambiguation dialog and can choose the correct app
 
 2. **Long-term (if needed):**
-   - Migrate to Android App Links (`https://fuzzzyseal.app/.well-known/assetlinks.json`) + iOS Universal Links
+   - Migrate to Android App Links (`https://fuzzzyink.app/.well-known/assetlinks.json`) + iOS Universal Links
    - This requires hosting a domain but provides verified app association
    - **Only pursue this if scheme hijacking becomes a real-world concern**
 
@@ -163,7 +163,7 @@ static FuzzyLinkPayload? parse(Uri uri) {
 | Method | Clipboard Exposure | Risk |
 |--------|-------------------|------|
 | Copy-paste (current) | Encrypted text sits in clipboard — accessible to any app with clipboard access | 🟡 Medium |
-| Deep link (new) | Data goes directly to Fuzzzy Seal via OS intent — never touches clipboard | 🟢 Low |
+| Deep link (new) | Data goes directly to Fuzzzy Ink via OS intent — never touches clipboard | 🟢 Low |
 
 **FuzzyLinks reduce clipboard exposure**, which is a meaningful privacy improvement on platforms where apps can read the clipboard (notably pre-Android 12 and pre-iOS 14).
 
@@ -180,7 +180,7 @@ static FuzzyLinkPayload? parse(Uri uri) {
 3. URI scheme hijacking is a theoretical risk, not a practical one for this app's audience
 4. Universal links require domain hosting (infrastructure cost + complexity)
 
-**Revisit if:** Fuzzzy Seal gains mainstream adoption and custom scheme collision becomes a real issue.
+**Revisit if:** Fuzzzy Ink gains mainstream adoption and custom scheme collision becomes a real issue.
 
 ### 2.2 Do We Need End-to-End Signing?
 
@@ -243,7 +243,7 @@ An attacker who sees the chat ID in a fuzz link can't:
 
 | Question | Answer |
 |----------|--------|
-| Does FuzzyLink weaken Fuzzzy Seal's security? | **No** — same data, different format |
+| Does FuzzyLink weaken Fuzzzy Ink's security? | **No** — same data, different format |
 | Does it introduce network dependencies? | **No** — zero network calls |
 | Does it require server infrastructure? | **No** — custom URI scheme, no domain needed |
 | Is it more secure than copy-paste? | **Yes** — avoids clipboard exposure |

@@ -2,7 +2,7 @@
     package="com.fuzzzycore.seal">
 
     <!-- Permissions -->
-    <!-- API 24–28 only: writing Downloads/Fuzzzy Seal/ directly (UserFiles.kt).
+    <!-- API 24–28 only: writing Downloads/Fuzzzy Ink/ directly (UserFiles.kt).
          API 29+ goes through MediaStore and needs no storage permission. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />

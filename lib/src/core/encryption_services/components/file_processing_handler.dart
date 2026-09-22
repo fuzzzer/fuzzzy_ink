@@ -1,4 +1,4 @@
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 class FileProcessingHandler {
   final Stream<FileProcessingProgress> progressStream;

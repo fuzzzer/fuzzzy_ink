@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_seal/src/core/services/password_strength_service/password_strength_service.dart';
-import 'package:fuzzzy_seal/src/fuzzy_vault/data/models/password_strength.dart';
+import 'package:fuzzzy_ink/src/core/services/password_strength_service/password_strength_service.dart';
+import 'package:fuzzzy_ink/src/fuzzy_vault/data/models/password_strength.dart';
 
 void main() {
   late PasswordStrengthService service;

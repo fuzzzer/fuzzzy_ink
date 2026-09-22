@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'package:fuzzzy_seal/rust_bridge/frb_generated.dart';
+import 'package:fuzzzy_ink/rust_bridge/frb_generated.dart';
 
 bool _initialized = false;
 

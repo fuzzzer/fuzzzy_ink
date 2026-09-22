@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Project Context
+# Fuzzzy Ink — Project Context
 
 > This document provides a complete understanding of the project without looking at the code. It is maintained by the [DOCUMENTER] persona. Refreshed for the 2026 cryptographic hardening (v1.0.0-rc.1 line, branch `agent/chat-harden-rust-crypto-core`).
 
@@ -8,8 +8,8 @@
 
 | Field              | Value |
 |--------------------|-------|
-| **Project Name**   | Fuzzzy Seal |
-| **Package Name**   | `fuzzzy_seal` (app) + `fuzzy_crypto_core` (Rust crate, `rust/fuzzy_crypto_core`) |
+| **Project Name**   | Fuzzzy Ink |
+| **Package Name**   | `fuzzzy_ink` (app) + `fuzzy_crypto_core` (Rust crate, `rust/fuzzy_crypto_core`) |
 | **Target Platforms**| Android, Windows, macOS, Linux (shipped by CI). iOS builds but is not in the App Store. **Web is unsupported at runtime** — the encryption core is native code. |
 | **SDK Constraint** | Dart `>=3.3.0 <4.0.0` (frb's generated web shim needs `extension type`) |
 | **Flutter Version**| `3.41.7` / Dart `3.11.5` (managed via FVM — `.fvmrc`; every command is `fvm flutter …` / `fvm dart …`) |
@@ -23,7 +23,7 @@
 ### Two halves, one bridge
 
 - **Dart / Flutter (`lib/`)** — UI, BLoC state, Isar persistence, secure-storage plumbing. **No cryptographic code is written in Dart.**
-- **Rust (`rust/fuzzy_crypto_core/`)** — every primitive and every protocol step. Reached through `flutter_rust_bridge` 2.13.0; the generated Dart binding is `lib/rust_bridge/` (codegen output, analyzer-excluded), the generated Rust side is `src/frb_generated.rs`. The only `lib/` importer of `package:fuzzzy_seal/rust_bridge/…` is the adapter `lib/src/core/encryption_services/crypto_core_service/*` (plus `initializer.dart` for `FuzzyCryptoCoreLib.init()`); in `test/`, only `test/helpers/crypto_core_test_init.dart` and `test/src/core/rust_bridge_smoke_test.dart`.
+- **Rust (`rust/fuzzy_crypto_core/`)** — every primitive and every protocol step. Reached through `flutter_rust_bridge` 2.13.0; the generated Dart binding is `lib/rust_bridge/` (codegen output, analyzer-excluded), the generated Rust side is `src/frb_generated.rs`. The only `lib/` importer of `package:fuzzzy_ink/rust_bridge/…` is the adapter `lib/src/core/encryption_services/crypto_core_service/*` (plus `initializer.dart` for `FuzzyCryptoCoreLib.init()`); in `test/`, only `test/helpers/crypto_core_test_init.dart` and `test/src/core/rust_bridge_smoke_test.dart`.
 - **Key material never crosses the bridge.** Keys live in `#[frb(opaque)]` handles (`CryptoCore`, `VaultKey`, `FileJob`); Dart holds only ciphertext, wrapped blobs and the plaintext the user asked for.
 - **`rust_builder/`** is the frb plugin shell that compiles the crate per platform through vendored **cargokit** (CMake on Linux/Windows, CocoaPods on macOS/iOS, Gradle on Android). Nothing in it is hand-maintained.
 - **Version lockstep (three places, all `2.13.0`):** `pubspec.yaml` `flutter_rust_bridge: 2.13.0`, `Cargo.toml` `flutter_rust_bridge = "=2.13.0"`, and the codegen that wrote `lib/rust_bridge/` (`codegenVersion` in `frb_generated.dart`). Bump all three together or nothing builds.
@@ -109,7 +109,7 @@ graph TB
     end
 
     subgraph Features["Feature Modules — lib/src/"]
-        FC[fuzzzy_seal/ — pairing, connected chat, files, safety number]
+        FC[fuzzzy_ink/ — pairing, connected chat, files, safety number]
         FA[fuzzy_auth/ — app lock, biometrics]
         FV[fuzzy_vault/ — encrypted notes / passwords / files]
         FB[fuzzy_basics/ — password-only text & file fuzzing]
@@ -145,9 +145,9 @@ graph TB
 
 ## 4. Key Architectural Differences from General Guide
 
-The general architecture guide (`.agents/general_guide/flutter_architecture.md`) is written for a typical client-server Flutter app. Fuzzzy Seal deviates in these critical ways:
+The general architecture guide (`.agents/general_guide/flutter_architecture.md`) is written for a typical client-server Flutter app. Fuzzzy Ink deviates in these critical ways:
 
-| Aspect | General Guide | Fuzzzy Seal Reality |
+| Aspect | General Guide | Fuzzzy Ink Reality |
 |--------|--------------|-------------------|
 | **Network Layer** | HTTP Client stack with Dio, interceptors, API endpoints | **NONE.** Fully offline. No HTTP clients, no remote API. |
 | **Data Sources** | Remote data sources hitting APIs | **Local only.** Isar DB + `flutter_secure_storage` + `biometric_storage` + `shared_preferences` + the Rust store directory |
@@ -155,7 +155,7 @@ The general architecture guide (`.agents/general_guide/flutter_architecture.md`)
 | **Cryptography** | (none) | A **Rust crate behind FFI**. Dart never holds a key; `CryptoCoreService` is the single adapter; everything else is documented in `documents/security/PROTOCOL.md`. |
 | **Routing** | GoRouter with named routes | GoRouter, path constants on `AppRouter`, redirect-based auth gate (`architecture_state.md` §4) |
 | **UI Kit** | Separate `packages/ui_kit/` package | Two layers: the in-tree `lib/src/ui_kit/` (theme extensions, Fuzzy* widgets) **and** the pinned git dep `fuzzzy_ui_kit` (imported directly as `package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart` where a kit widget is used — the one sanctioned second import) |
-| **Imports** | per-feature | One barrel: `import 'package:fuzzzy_seal/lib.dart';` (re-exports `src/src.dart`). In `lib/`, only `crypto_core_service.dart` and `initializer.dart` may import `package:fuzzzy_seal/rust_bridge/…` (in `test/`: `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart`); `package:isar` is imported only by `dependency_injection.dart`, the `storage_models/` and the `local_data_sources/`. |
+| **Imports** | per-feature | One barrel: `import 'package:fuzzzy_ink/lib.dart';` (re-exports `src/src.dart`). In `lib/`, only `crypto_core_service.dart` and `initializer.dart` may import `package:fuzzzy_ink/rust_bridge/…` (in `test/`: `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart`); `package:isar` is imported only by `dependency_injection.dart`, the `storage_models/` and the `local_data_sources/`. |
 | **Code Generators** | Mason bricks for feature scaffolding | `code_generators/bricks/` exists (local / single-entity / remote bricks); Isar `.g.dart` files are committed and there is **no build_runner in the pubspec** (`scripts_reference.md`) |
 | **QA** | manual | Marionette-instrumented dev entrypoint + `.mcp.json`; benchmark tile in Settings gated on the `development` flavor |
 

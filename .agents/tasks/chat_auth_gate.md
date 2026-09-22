@@ -56,7 +56,7 @@
 | `lib/src/fuzzy_auth/data/repositories/repositories.dart` | Added `chat_auth_repository.dart` export |
 | `lib/src/fuzzy_auth/ui/pages/pages.dart` | Added `chat_unlock_page` export |
 | `lib/src/fuzzy_auth/ui/pages/fuzzy_user_auth_page/fuzzy_user_auth_page.dart` | **Rewritten** — full settings page with enable/change/disable sections |
-| `lib/src/fuzzzy_seal/data/repositories/keys_repository/key_storage_repository.dart` | Added two-phase commit `reencryptAllKeys()` + `recoverStagedMigration()` |
+| `lib/src/fuzzzy_ink/data/repositories/keys_repository/key_storage_repository.dart` | Added two-phase commit `reencryptAllKeys()` + `recoverStagedMigration()` |
 | `lib/src/app/app_router.dart` | Added `/chat-unlock` route + auth redirect in `redirect()` |
 | `lib/src/app/globals/global_bloc_listeners.dart` | Two auth listeners: unlock→home, lock→unlock page |
 | `lib/src/app/globals/global_bloc_providers.dart` | Calls `checkAuthStatus()` on `FuzzyAuthStore` at startup |

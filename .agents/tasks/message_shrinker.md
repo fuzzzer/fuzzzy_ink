@@ -52,7 +52,7 @@ standard-base64 legacy handling (the core uses base64url no-pad).
   captured before the change.
 - Profile and auto-threshold are chosen in Settings and persist across restart; the per-message
   override works.
-- No diff under `rust/`, `lib/rust_bridge/`, `lib/src/fuzzzy_seal/storage/`.
+- No diff under `rust/`, `lib/rust_bridge/`, `lib/src/fuzzzy_ink/storage/`.
 - `fvm flutter analyze` clean, tests pass, character-count table for a 100/500/2000-byte
   message per profile recorded in the review log.
 

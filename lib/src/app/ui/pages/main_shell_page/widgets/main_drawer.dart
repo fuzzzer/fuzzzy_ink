@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,7 +8,7 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loc = context.fuzzzySealLocalizations;
+    final loc = context.fuzzzyInkLocalizations;
     final prefs = sl.get<PreferencesService>();
     final currentLoc = GoRouterState.of(context).uri.toString();
 
@@ -39,7 +39,7 @@ class MainDrawer extends StatelessWidget {
                     : context.fuzzzyColors.inkMute,
               ),
               title: Text(
-                loc.fuzzzySeal,
+                loc.fuzzzyInk,
                 style: TextStyle(
                   color: isChat
                       ? context.fuzzzyColors.ink

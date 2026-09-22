@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 /// What a file bubble prints instead of a path (T-0366): the file's name and
-/// where the user finds it, e.g. `Downloads › Fuzzzy Seal › Fz bot`.
+/// where the user finds it, e.g. `Downloads › Fuzzzy Ink › Fz bot`.
 class UserFileLocation {
   const UserFileLocation({
     required this.fileName,
@@ -46,7 +46,7 @@ class UserFileLocation {
   static const separator = ' › ';
 
   static const _documents = 'Documents';
-  static const _iosDocumentsLabel = 'On My iPhone › Fuzzzy Seal';
+  static const _iosDocumentsLabel = 'On My iPhone › Fuzzzy Ink';
 
   /// Checked in order; `Download` is Android's public folder, `app_flutter`
   /// the app's private documents directory on Android.

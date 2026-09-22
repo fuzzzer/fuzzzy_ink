@@ -19,8 +19,8 @@
     -   **Dependency Injection:** Is `sl.get()` used outside of a data source?
     -   **UI Kit:** Are there any hardcoded `Colors`, `TextStyle`, or user-facing strings?
     -   **Feature Boundaries:** Are there any illegal imports between features?
-    -   **Offline-Only:** Does any new code introduce network requests or remote API calls? (VIOLATION for Fuzzzy Seal)
-    -   **Crypto Boundary:** Does any Dart code do cryptography, import `package:fuzzzy_seal/rust_bridge/…` outside `crypto_core_service.dart` / `initializer.dart` in `lib/` (in `test/`, only `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart` may), or hold key bytes? (VIOLATION — AP-007)
+    -   **Offline-Only:** Does any new code introduce network requests or remote API calls? (VIOLATION for Fuzzzy Ink)
+    -   **Crypto Boundary:** Does any Dart code do cryptography, import `package:fuzzzy_ink/rust_bridge/…` outside `crypto_core_service.dart` / `initializer.dart` in `lib/` (in `test/`, only `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart` may), or hold key bytes? (VIOLATION — AP-007)
 3.  Update the `### REVIEW LOG` section of the task file with your findings.
 
 **Your Output & Gate:**

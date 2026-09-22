@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:archive/archive_io.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 class VaultExportRepository {
   const VaultExportRepository({

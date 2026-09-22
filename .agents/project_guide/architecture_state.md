@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Architecture State
+# Fuzzzy Ink — Architecture State
 
 > This is the living snapshot of the application's implementation. Updated by the [DOCUMENTER] persona after each lifecycle. Snapshot: tip of `agent/chat-harden-rust-crypto-core` (v1.0.0-rc.1 line, 2026-09-13). The cryptography itself is specified in `documents/security/PROTOCOL.md` — this file names the Dart/Rust pieces and where they live, it does not restate the protocol.
 
@@ -6,7 +6,7 @@
 
 ## 1. Feature Implementation Status
 
-### fuzzzy_seal/ (Core Feature)
+### fuzzzy_ink/ (Core Feature)
 - [x] **Chat Creation** — `bloc/chat_creation_cubit/`, `ui/pages/chat_creation_page/`
 - [x] **Chat List** — `bloc/chat_general_data_list_cubit/`, `ui/pages/chat_list_page/` (invited vs connected tiles, floating toolbox)
 - [x] **Connected Chat (Message View)** — `bloc/connected_chat_cubit/`, `ui/pages/connected_chat_page/` (header, settings toolbox, message input, sent/received text + file areas)
@@ -61,17 +61,17 @@
 |-------|-------|---------|------|
 | `ThemeCubit` | `ThemeState` | app | `lib/src/app/globals/bloc/theme_cubit/` |
 | `LocalizationCubit` | `LocalizationState` | app | `lib/src/app/globals/bloc/localization_cubit/` |
-| `ChatCreationCubit` | `ChatCreationState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/chat_creation_cubit/` |
-| `ChatGeneralDataListCubit` | `ChatGeneralDataListState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/chat_general_data_list_cubit/` |
-| `ConnectedChatCubit` | `ConnectedChatState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/connected_chat_cubit/` |
-| `HandshakeCubit` | `HandshakeState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/handshake_cubit/` |
-| `InvitationReaderCubit` | `InvitationReaderState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/invitation_reader_cubit/` |
-| `InvitationAcceptanceCubit` | `InvitationAcceptanceState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/invitation_acceptance_cubit/` |
-| `AcceptanceReaderCubit` | `AcceptanceReaderState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/acceptance_reader_cubit/` |
-| `SafetyNumberCubit` | `SafetyNumberState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/safety_number_cubit/` |
-| `ChatFileInjectorCubit` | `ChatFileInjectorState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/chat_file_injector_cubit/` |
-| `FileProcessingCubit<T>` | `FileProcessingState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/file_processing_cubit/` |
-| `FileBenchmarkCubit` | `FileBenchmarkState` | fuzzzy_seal | `lib/src/fuzzzy_seal/bloc/file_benchmark_cubit/` |
+| `ChatCreationCubit` | `ChatCreationState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/chat_creation_cubit/` |
+| `ChatGeneralDataListCubit` | `ChatGeneralDataListState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/chat_general_data_list_cubit/` |
+| `ConnectedChatCubit` | `ConnectedChatState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/connected_chat_cubit/` |
+| `HandshakeCubit` | `HandshakeState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/handshake_cubit/` |
+| `InvitationReaderCubit` | `InvitationReaderState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/invitation_reader_cubit/` |
+| `InvitationAcceptanceCubit` | `InvitationAcceptanceState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/invitation_acceptance_cubit/` |
+| `AcceptanceReaderCubit` | `AcceptanceReaderState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/acceptance_reader_cubit/` |
+| `SafetyNumberCubit` | `SafetyNumberState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/safety_number_cubit/` |
+| `ChatFileInjectorCubit` | `ChatFileInjectorState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/chat_file_injector_cubit/` |
+| `FileProcessingCubit<T>` | `FileProcessingState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/file_processing_cubit/` |
+| `FileBenchmarkCubit` | `FileBenchmarkState` | fuzzzy_ink | `lib/src/fuzzzy_ink/bloc/file_benchmark_cubit/` |
 | `FuzzyAuthStore` | `FuzzyAuthState` | fuzzy_auth | `lib/src/fuzzy_auth/bloc/fuzzy_auth_store/` (class in `fuzzy_auth_cubit.dart`) |
 | `FuzzyUserAuthPreferencesCubit` | `FuzzyUserAuthPreferencesState` | fuzzy_auth | `lib/src/fuzzy_auth/bloc/fuzzy_user_auth_preferences_cubit/` |
 | `VaultAuthCubit` | `VaultAuthState` | fuzzy_vault | `lib/src/fuzzy_vault/bloc/vault_auth_cubit/` |
@@ -91,10 +91,10 @@ Registered as singletons in `dependency_injection.dart`: `FuzzyAuthStore`, `Vaul
 | Repository / Service | Feature | File | Talks to |
 |-----------|---------|------|------|
 | `CryptoCoreService` | core | `lib/src/core/encryption_services/crypto_core_service/crypto_core_service.dart` | `lib/rust_bridge/api/*` (the Rust core) |
-| `CryptoStoreKeyRepository` | fuzzzy_seal | `lib/src/fuzzzy_seal/data/repositories/crypto_store_key_repository/` | `flutter_secure_storage` key `crypto_store_key_v1` (wrapped store key, `0x10`, base64) + `CryptoCoreService` (`read`, `write`, `ensureStoreKey`, `rewrap`) |
-| `ChatGeneralDataListRepository` | fuzzzy_seal | `lib/src/fuzzzy_seal/data/repositories/chat_general_data_list_repository/` | Isar `StoredChatGeneralData` |
-| `MessageDataRepository` | fuzzzy_seal | `lib/src/fuzzzy_seal/data/repositories/message_data_repository/` | Isar `StoredMessageData` — stores `encryptedMessage` **and** `sealedPlaintext` (a `0x20` local seal under the chat's own history key, base64) so history is readable without re-decrypting; seals with `CryptoCoreService.sealLocal(chatId:, bytes:)` and opens with `openLocal(chatId:, blob:)` (owner decision D-1, F2-12) |
-| `ChatPreferencesRepository` | fuzzzy_seal | `lib/src/fuzzzy_seal/storage/local_data_sources/chat_preferences_repository.dart` | Isar `StoredChatPreferences` |
+| `CryptoStoreKeyRepository` | fuzzzy_ink | `lib/src/fuzzzy_ink/data/repositories/crypto_store_key_repository/` | `flutter_secure_storage` key `crypto_store_key_v1` (wrapped store key, `0x10`, base64) + `CryptoCoreService` (`read`, `write`, `ensureStoreKey`, `rewrap`) |
+| `ChatGeneralDataListRepository` | fuzzzy_ink | `lib/src/fuzzzy_ink/data/repositories/chat_general_data_list_repository/` | Isar `StoredChatGeneralData` |
+| `MessageDataRepository` | fuzzzy_ink | `lib/src/fuzzzy_ink/data/repositories/message_data_repository/` | Isar `StoredMessageData` — stores `encryptedMessage` **and** `sealedPlaintext` (a `0x20` local seal under the chat's own history key, base64) so history is readable without re-decrypting; seals with `CryptoCoreService.sealLocal(chatId:, bytes:)` and opens with `openLocal(chatId:, blob:)` (owner decision D-1, F2-12) |
+| `ChatPreferencesRepository` | fuzzzy_ink | `lib/src/fuzzzy_ink/storage/local_data_sources/chat_preferences_repository.dart` | Isar `StoredChatPreferences` |
 | `UserAuthPreferencesRepository` | fuzzy_auth | `lib/src/fuzzy_auth/data/repositories/user_auth_preferences_repository.dart` | Isar `StoredUserAuthPreferences` (a cache of the lock state — the blob is the truth) |
 | `ChatAuthRepository` | fuzzy_auth | `lib/src/fuzzy_auth/data/repositories/chat_auth_repository.dart` | `CryptoStoreKeyRepository` + `CryptoCoreService` (`isChatAuthEnabled`, `setupPassword`, `verifyPassword`, `changePassword`, `disableAuth`) |
 | `BiometricAuthRepository` | fuzzy_auth | `lib/src/fuzzy_auth/data/repositories/biometric_auth_repository.dart` | `biometric_storage` (`fuzzy_biometric_password_{chat,vault}`) + secure-storage flags `biometric_enabled_{chat,vault}` |

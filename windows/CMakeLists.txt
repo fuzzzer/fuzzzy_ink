@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(fuzzzy_seal LANGUAGES CXX)
+project(fuzzzy_ink LANGUAGES CXX)
 
-set(BINARY_NAME "fuzzzy_seal")
+set(BINARY_NAME "fuzzzy_ink")
 
 cmake_policy(SET CMP0063 NEW)
 

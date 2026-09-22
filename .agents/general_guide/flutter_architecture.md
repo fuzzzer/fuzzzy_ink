@@ -1,14 +1,14 @@
-# Fuzzzy Seal — Architecture & Standards Guide
+# Fuzzzy Ink — Architecture & Standards Guide
 
-> This is the canonical, production-grade architecture and standards document for **Fuzzzy Seal**. All AI personas MUST adhere to these rules without exception. This is the single source of truth for "how we build things."
+> This is the canonical, production-grade architecture and standards document for **Fuzzzy Ink**. All AI personas MUST adhere to these rules without exception. This is the single source of truth for "how we build things."
 
 ---
 
 ## 1. High-Level System Design
 
-### Critical Context: Fuzzzy Seal is 100% Offline
+### Critical Context: Fuzzzy Ink is 100% Offline
 
-Fuzzzy Seal has **NO remote API, NO HTTP client, NO server connectivity**. All data lives on-device. The "network" is the user manually copy-pasting encrypted text or sharing encrypted files via external channels.
+Fuzzzy Ink has **NO remote API, NO HTTP client, NO server connectivity**. All data lives on-device. The "network" is the user manually copy-pasting encrypted text or sharing encrypted files via external channels.
 
 ### Visual Map — System Architecture
 ```mermaid
@@ -53,7 +53,7 @@ graph TB
     end
 
     subgraph Features["Feature Modules — lib/src/"]
-        subgraph FuzzzySeal["fuzzzy_seal/ — Core Feature (also fuzzy_auth/, fuzzy_vault/, fuzzy_basics/)"]
+        subgraph FuzzzyInk["fuzzzy_ink/ — Core Feature (also fuzzy_auth/, fuzzy_vault/, fuzzy_basics/)"]
             FC_STORAGE[storage/ — Isar models + local data sources]
             FC_REPOS[data/repositories/]
             FC_BLOCS[bloc/]
@@ -115,7 +115,7 @@ sequenceDiagram
 ## 2. Directory Structure & Module Responsibilities
 
 ```
-fuzzzy_seal/
+fuzzzy_ink/
 ├── lib/
 │   ├── lib.dart                        # THE import: `export 'src/src.dart';`
 │   ├── main_development.dart           # Flavor entry points (development = Marionette-instrumented)
@@ -126,7 +126,7 @@ fuzzzy_seal/
 │       ├── src.dart                    # Feature barrel
 │       ├── app/                        # App Shell: Routing, Theme, Globals, Init, MainShellPage
 │       ├── core/                       # Core: DI, CryptoCoreService (bridge adapter), Errors, Services, Utils, l10n
-│       ├── fuzzzy_seal/                 # Core feature: chats, pairing, messages, files, safety number
+│       ├── fuzzzy_ink/                 # Core feature: chats, pairing, messages, files, safety number
 │       ├── fuzzy_auth/                 # App lock: store-key password + biometrics
 │       ├── fuzzy_vault/                # Encrypted vault: notes, passwords, files
 │       ├── fuzzy_basics/               # Standalone password-only encryption tool
@@ -193,7 +193,7 @@ The app's core value is its cryptography, and **none of it is written in Dart**.
 
 | Layer | Where | Purpose |
 |---------|---------|---------|
-| `CryptoCoreService` | `lib/src/core/encryption_services/crypto_core_service/` | The single adapter: owns the `CryptoCore` handle, maps every Rust `CoreError` to `CryptoCoreResponse` (`CryptoCoreSuccess | CryptoCoreFailure`), serialises Argon2id calls. **The only `lib/` importer of `package:fuzzzy_seal/rust_bridge/…`** (plus `initializer.dart`; in `test/`, only `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart`). |
+| `CryptoCoreService` | `lib/src/core/encryption_services/crypto_core_service/` | The single adapter: owns the `CryptoCore` handle, maps every Rust `CoreError` to `CryptoCoreResponse` (`CryptoCoreSuccess | CryptoCoreFailure`), serialises Argon2id calls. **The only `lib/` importer of `package:fuzzzy_ink/rust_bridge/…`** (plus `initializer.dart`; in `test/`, only `helpers/crypto_core_test_init.dart` and `src/core/rust_bridge_smoke_test.dart`). |
 | `lib/rust_bridge/` | generated | `api/{core,pairing,files,passwords,vault,formats,health}.dart` (messages, safety and local seals are methods on `CryptoCore` in `core.dart`) + `error.dart` + `frb_generated*.dart` — codegen output, committed, never edited |
 | `rust/fuzzy_crypto_core/src/api/` | Rust | The frb surface; keys stay in `#[frb(opaque)]` handles (`CryptoCore`, `VaultKey`, `FileJob`) |
 | Crates | `Cargo.toml`, `=`-pinned + `Cargo.lock` | `vodozemac` (Olm), `chacha20poly1305` + `aead-stream` (AEAD, STREAM), `argon2` (Argon2id), `sha2` (safety number), `subtle`/`zeroize`/`getrandom` |

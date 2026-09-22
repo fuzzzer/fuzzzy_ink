@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 class FuzzyLinkListener extends StatefulWidget {
   const FuzzyLinkListener({

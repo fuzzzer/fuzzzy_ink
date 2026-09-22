@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,8 +60,8 @@ void main() {
         child: MaterialApp(
           navigatorKey: navigatorKey,
           theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
-          localizationsDelegates: FuzzzySealLocalizations.localizationsDelegates,
-          supportedLocales: FuzzzySealLocalizations.supportedLocales,
+          localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+          supportedLocales: FuzzzyInkLocalizations.supportedLocales,
           home: const VaultHomePage(),
         ),
       ),
@@ -69,7 +69,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
 
-    final l10n = FuzzzySealLocalizations.of(navigatorKey.currentContext!)!;
+    final l10n = FuzzzyInkLocalizations.of(navigatorKey.currentContext!)!;
     for (final label in [
       l10n.vaultPasswords,
       l10n.vaultNotes,

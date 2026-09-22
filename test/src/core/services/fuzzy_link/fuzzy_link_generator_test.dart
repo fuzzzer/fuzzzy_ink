@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 /// Opaque `Fuzz/` blobs as the core produces them; the link never looks inside.
 const _invitationBlob =
@@ -143,7 +143,7 @@ void main() {
           type: FuzzyLinkType.invitation,
         );
 
-        expect(content, contains('Fuzzzy Seal Invitation'));
+        expect(content, contains('Fuzzzy Ink Invitation'));
         expect(content, contains(link));
         expect(content, contains(rawFuzz));
         expect(content, contains('────────────────────'));

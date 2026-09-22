@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Protocol Specification, format version 1
+# Fuzzzy Ink — Protocol Specification, format version 1
 
 **Status:** normative for the code in `rust/fuzzy_crypto_core` (crate `fuzzy_crypto_core` 0.1.0) on the
 `agent/chat-harden-rust-crypto-core` branch. Where this document and the code disagree, the code is the
@@ -44,7 +44,7 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 
 **Non-goals.**
 
-- No transport. Fuzzzy Seal is 100 % offline: every blob travels by copy and paste through whatever channel
+- No transport. Fuzzzy Ink is 100 % offline: every blob travels by copy and paste through whatever channel
   the users choose (SMS, e-mail, another messenger, a QR code). The protocol never sees that channel and
   makes no assumption about it beyond "an attacker may read, modify, replay and reorder anything on it".
 - No server, no directory, no key server, no push. There is nothing to be online for.
@@ -694,7 +694,7 @@ then exactly one of `text` (the row's opened local seal, §10.4), `fileName` (th
 file — **never file bytes**; the file itself is a plain file on the device, §10.5) or `"unreadable": true`
 (a text row whose local seal did not open: absent, malformed, or `Corrupt` / `UnknownChat` / `StoreLocked`
 at the core). The crate sees nothing but a password-mode file job: the lines are produced by the app
-(`lib/src/fuzzzy_seal/data/repositories/chat_archive_repository/`), so no vector covers them — the container
+(`lib/src/fuzzzy_ink/data/repositories/chat_archive_repository/`), so no vector covers them — the container
 is the `0x04` of §9.1 and the JSON is application data. The archive opens in Basics → file decryption under
 the same password. **No import path exists** and none is planned: it is a human-readable backup, not a
 state transfer, and a restored install cannot turn it back into a chat.
@@ -725,7 +725,7 @@ Isar (app database)     StoredVaultMetadata.verificationTokenBase64      the wra
 vault item files        one file per item (VaultFileDataSource)          a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
 <application documents directory>/<chat name>/<name>                     unfuzzed FILES in the clear (§10.5) — plain files, not sealed; fuzzed containers <name>.fuzz sit beside them.
-                                                                        Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Seal/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
+                                                                        Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Ink/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
 ```
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
@@ -831,8 +831,8 @@ secure storage (Keychain / Keystore / DPAPI / libsecret) as a `0x10` blob.
 
 **Unfuzzed files are written in the clear.** A received file's plaintext is delivered as an ordinary file at
 `<application documents directory>/<chat name>/<original name>` — on desktop that is the user's Documents
-folder; on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Seal"; on
-Android the file is written there and then moved to the public `Downloads/Fuzzzy Seal/<chat name>/` through
+folder; on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Ink"; on
+Android the file is written there and then moved to the public `Downloads/Fuzzzy Ink/<chat name>/` through
 MediaStore (T-0366, so the user finds it with any file manager) — and the fuzzed containers the user produced
 sit beside it as `<name>.fuzz` (ciphertext). The plaintext file is **not sealed, not gated by the app lock, and
 not removed when the chat is deleted**; anyone who can read the device's file system reads it, and only text
@@ -929,7 +929,7 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 
 ## 13. Trust boundaries
 
-Fuzzzy Seal is a Flutter app; the crate is reached through `flutter_rust_bridge` 2.13.0 (frb). The boundary
+Fuzzzy Ink is a Flutter app; the crate is reached through `flutter_rust_bridge` 2.13.0 (frb). The boundary
 is drawn so that **no key material ever crosses it**.
 
 **Crosses the FFI, Dart → Rust:** passwords (as strings; moved into wiped buffers immediately), the wrapped

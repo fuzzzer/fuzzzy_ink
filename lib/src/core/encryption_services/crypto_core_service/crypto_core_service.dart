@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:fuzzzy_seal/lib.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/core.dart' as rust_core;
-import 'package:fuzzzy_seal/rust_bridge/api/files.dart' as rust_files;
-import 'package:fuzzzy_seal/rust_bridge/api/formats.dart' as rust_formats;
-import 'package:fuzzzy_seal/rust_bridge/api/passwords.dart' as rust_passwords;
-import 'package:fuzzzy_seal/rust_bridge/api/vault.dart' as rust_vault;
-import 'package:fuzzzy_seal/rust_bridge/error.dart';
+import 'package:fuzzzy_ink/lib.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/core.dart' as rust_core;
+import 'package:fuzzzy_ink/rust_bridge/api/files.dart' as rust_files;
+import 'package:fuzzzy_ink/rust_bridge/api/formats.dart' as rust_formats;
+import 'package:fuzzzy_ink/rust_bridge/api/passwords.dart' as rust_passwords;
+import 'package:fuzzzy_ink/rust_bridge/api/vault.dart' as rust_vault;
+import 'package:fuzzzy_ink/rust_bridge/error.dart';
 import 'package:path/path.dart' as path;
 
 export 'components/components.dart';
@@ -17,7 +17,7 @@ export 'components/components.dart';
 /// `storeLocked`), `dispose()` frees the handle.
 typedef VaultKey = rust_vault.VaultKey;
 
-/// The only importer of `package:fuzzzy_seal/rust_bridge/...` besides
+/// The only importer of `package:fuzzzy_ink/rust_bridge/...` besides
 /// `initializer.dart`. Owns the single `CryptoCore` handle of the process and
 /// maps every `CoreError` onto a [CryptoCoreResponse].
 class CryptoCoreService {

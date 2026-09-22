@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 /// A vault that was just created: the unlocked master-key handle for this
 /// session and its wrapping (a 0x10 blob under the vault password), which the

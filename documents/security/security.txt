@@ -1,4 +1,4 @@
-# Fuzzzy Seal — security.txt (RFC 9116)
+# Fuzzzy Ink — security.txt (RFC 9116)
 # Served at https://fuzzzycore.com/.well-known/security.txt; source of truth is this file in
 # https://github.com/fuzzzy-bot/fuzzy_chat. Re-issue before Expires.
 Contact: mailto:contact@fuzzzycore.com

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 /// The actions a bubble spawns, as stacked pills of at most [maxPerRow]

@@ -6,7 +6,7 @@
 
 ## Symptom
 On Android, pressing **Show** on a sent or received file bubble brings up the system share
-popup instead of showing the file in its place (Downloads/Fuzzzy Seal/<chat>).
+popup instead of showing the file in its place (Downloads/Fuzzzy Ink/<chat>).
 
 ## Where it comes from
 `lib/src/core/utils/reveal_file.dart` → `DeviceFileInteractor.revealFile` on Android calls

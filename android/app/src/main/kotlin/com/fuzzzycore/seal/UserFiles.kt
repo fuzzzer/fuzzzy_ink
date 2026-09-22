@@ -24,7 +24,7 @@ import java.io.FileNotFoundException
 
 /**
  * The files the app produces (a fuzzed `.fuzz` on send, the unfuzzed file on
- * receive) land in `Downloads/Fuzzzy Seal/<chat name>/`, where the user finds
+ * receive) land in `Downloads/Fuzzzy Ink/<chat name>/`, where the user finds
  * them with any file manager, and are opened, shown and shared from there by
  * content URI (T-0366).
  *
@@ -36,7 +36,7 @@ class UserFiles(private val activity: Activity) : MethodChannel.MethodCallHandle
 
     companion object {
         const val CHANNEL = "com.fuzzzycore.seal/user_files"
-        private const val ROOT_FOLDER = "Fuzzzy Seal"
+        private const val ROOT_FOLDER = "Fuzzzy Ink"
         private const val BINARY_MIME_TYPE = "application/octet-stream"
         private const val EXTERNAL_DOCUMENTS_AUTHORITY = "com.android.externalstorage.documents"
     }
@@ -80,7 +80,7 @@ class UserFiles(private val activity: Activity) : MethodChannel.MethodCallHandle
     // Landing the file
     // ---------------------------------------------------------------------
 
-    /** Moves [sourcePath] into `Downloads/Fuzzzy Seal/<chatName>/` and answers the public path (and the MediaStore URI on API 29+). */
+    /** Moves [sourcePath] into `Downloads/Fuzzzy Ink/<chatName>/` and answers the public path (and the MediaStore URI on API 29+). */
     private fun saveToDownloads(sourcePath: String, chatName: String): Map<String, String?> {
         val source = File(sourcePath)
         if (!source.isFile) throw FileNotFoundException(sourcePath)

@@ -1,4 +1,4 @@
-name: fuzzzy_seal
+name: fuzzzy_ink
 description: End to End encripted chat, It's content is stored locally only and can be read only by chat members
 version: 1.1.0+2
 publish_to: none

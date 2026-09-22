@@ -1,4 +1,4 @@
-# Fuzzzy Seal — Threat Model
+# Fuzzzy Ink — Threat Model
 
 **Status:** describes the code in `rust/fuzzy_crypto_core` (crate 0.1.0) and the Flutter app around it on the
 `agent/chat-harden-rust-crypto-core` branch, format version 1. Its companion is [`PROTOCOL.md`](PROTOCOL.md),
@@ -36,7 +36,7 @@ What an attacker wants, in the order the product cares about it.
 | A9 | **Metadata**: chat names, chat ids, timestamps, message counts and ordering, file names, sizes and the on-disk paths of unfuzzed files (A12), the ciphertext blobs themselves, vault item titles/tags/groups/types | plaintext columns of the Isar database | **not protected** — an explicit non-goal (§7.4, `PROTOCOL.md` §10.5) |
 | A10 | **Peer authenticity** — that the person at the other end of a chat is the person the user thinks | the safety number (`PROTOCOL.md` §5) | the users' out-of-band comparison |
 | A11 | **Availability of history**: that a blob a user already read stays readable | the local seal (A7) | the app lock; the ratchet makes the blob itself single-use by design (§7.6) |
-| A12 | **Unfuzzed file plaintext at rest** — every file a user has unfuzzed (chat or Basics) | an ordinary file at `<app documents directory>/<chat name>/<original name>` (desktop: the user's Documents folder; iOS: Documents, shown in the Files app; Android: moved to the public `Downloads/Fuzzzy Seal/<chat name>/`, T-0366), beside the `.fuzz` containers the user produced (`PROTOCOL.md` §10.5) | **nothing in the app** — not sealed, not gated by the app lock, not deleted with the chat; only the OS user account and device encryption (§2.5, §7.13, R36). The archive export (A7 as a file, `PROTOCOL.md` §9.5) is the same class: plaintext under a user-chosen password, outside forward secrecy (R35) |
+| A12 | **Unfuzzed file plaintext at rest** — every file a user has unfuzzed (chat or Basics) | an ordinary file at `<app documents directory>/<chat name>/<original name>` (desktop: the user's Documents folder; iOS: Documents, shown in the Files app; Android: moved to the public `Downloads/Fuzzzy Ink/<chat name>/`, T-0366), beside the `.fuzz` containers the user produced (`PROTOCOL.md` §10.5) | **nothing in the app** — not sealed, not gated by the app lock, not deleted with the chat; only the OS user account and device encryption (§2.5, §7.13, R36). The archive export (A7 as a file, `PROTOCOL.md` §9.5) is the same class: plaintext under a user-chosen password, outside forward secrecy (R35) |
 
 Not an asset of this model: the users' real-world identities (the protocol has no notion of them), the
 existence of the app on a device, or the fact that two people exchange blobs (§7.4).
@@ -148,7 +148,7 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
 - **Unfuzzed files are plain files (A12).** The plaintext of every received file — and of every file
   decrypted in Basics — is written where the user's app puts it: `<app documents directory>/<chat name>/<original
   name>`, which on macOS, Windows and Linux is the user's Documents folder, on iOS the app's Documents folder
-  (exposed to the Files app) and on Android the public `Downloads/Fuzzzy Seal/<chat name>/` folder, readable by any
+  (exposed to the Files app) and on Android the public `Downloads/Fuzzzy Ink/<chat name>/` folder, readable by any
   app the user grants file access to (T-0366). It is never sealed, the app lock does not gate it, deleting the chat does not remove it, and the
   database row that names it (`encryptedMessage` = its path) is plaintext (§2.4). The fuzzed containers the
   user produced sit beside it as `<name>.fuzz` (ciphertext). Only *text* rows get a local seal (A7). Whoever can
@@ -176,13 +176,13 @@ Blobs move by copy and paste. While a `Fuzz/` text is on the clipboard it is rea
 read the clipboard; the app does not clear it. Plaintext shown on screen is readable by anything that can
 read or capture the screen. Both are outside the model (§7.2, §7.3). The app never decrypts a blob
 automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
-(`lib/src/fuzzzy_seal/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
+(`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
 the user picks it. A `fuzzylink://` deep link **prefills** the input field and navigates; it decrypts
 nothing (§7.5).
 
 ### 2.7 The transport channel — the app has none
 
-Fuzzzy Seal has no network code, no server, no directory, no push, no key server (`PROTOCOL.md` §1, §13:
+Fuzzzy Ink has no network code, no server, no directory, no push, no key server (`PROTOCOL.md` §1, §13:
 "the crate never reads … the network"). Every blob travels by whatever channel the users choose — SMS,
 e-mail, another messenger, a QR code, paper. The model therefore assumes the strongest channel adversary:
 **everything on the channel can be read, modified, replayed, reordered, delayed or dropped**, and says
@@ -292,7 +292,7 @@ An adversary who controls the victim's OS is not on this list (§7.1).
   received a new ratchet key from the victim (§4.3, R32) — the passive observer never has such a snapshot, which is why it appears under the device
   adversaries and not here.
 - **Nothing in the clear on a message blob but the Olm ciphertext**: no chat id, no counter, no sender
-  (`PROTOCOL.md` §6.5). The observer learns "a Fuzzzy Seal message of this length was sent" and nothing more
+  (`PROTOCOL.md` §6.5). The observer learns "a Fuzzzy Ink message of this length was sent" and nothing more
   from the bytes.
 - **What ADV-1 still gets:** the existence, timing, length and channel metadata of every blob; the pairing
   blobs' public keys and the chat id inside them (`PROTOCOL.md` §6.3–6.4; nothing secret is in a pairing
@@ -614,7 +614,7 @@ from before the hardening; it is recorded as R12 for the owner (decision D-7), w
 
 Olm v1 truncates HMAC-SHA256 to 8 bytes per message (`PROTOCOL.md` §4, §17.6). A forgery attack on a
 truncated MAC needs an **oracle** that answers "did this ciphertext verify?" quickly and many times — the
-classic setting is a server that decrypts on arrival. Fuzzzy Seal has none:
+classic setting is a server that decrypts on arrival. Fuzzzy Ink has none:
 
 1. **The user is the oracle.** The only way a message blob reaches `decrypt_text`, or a container reaches
    `prepare_file_receive`, is a human pasting it into the open chat and pressing send, or picking a file
@@ -748,7 +748,7 @@ to this repository).
   `StoredMessageData.sealedPlaintext`; the row also keeps the blob text. File rows carry no seal — the received
   file is a plain file on disk (§2.5, §7.13) and the row holds its path. A tag failure, a chat the store does
   not know, or a locked store reads the row as an empty message (flagged `isUnreadable` since F2-10), never a throw
-  (`test/src/fuzzzy_seal/data/repositories/message_data_repository_test.dart`, incl. "sealed in chat A … reads
+  (`test/src/fuzzzy_ink/data/repositories/message_data_repository_test.dart`, incl. "sealed in chat A … reads
   as empty in chat B"; Rust `api::local::tests::{history_key_differs_per_chat, cross_chat_seal_rejected,
   history_key_survives_reload, delete_chat_makes_history_unreadable}`).
 - **"Derived from the chat's initial key material", as built:** the key is drawn from the CSPRNG at the same

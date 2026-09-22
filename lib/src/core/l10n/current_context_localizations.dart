@@ -1,9 +1,9 @@
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
-FuzzzySealLocalizations get currentContextLocalization {
+FuzzzyInkLocalizations get currentContextLocalization {
   if (navigatorKey.currentContext == null) {
-    return FuzzzySealLocalizationsEn();
+    return FuzzzyInkLocalizationsEn();
   }
 
-  return FuzzzySealLocalizations.of(navigatorKey.currentContext!)!;
+  return FuzzzyInkLocalizations.of(navigatorKey.currentContext!)!;
 }

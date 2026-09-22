@@ -1,4 +1,4 @@
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 /// Why a file job ended in [FileProcessingStatus.failed]. The chat-receive
 /// prepare step consumes the container's key message, so a failure *after*
@@ -17,7 +17,7 @@ enum FileProcessingFailureType {
   unknown;
 
   String toUiMessage(
-    FuzzzySealLocalizations localizations, {
+    FuzzzyInkLocalizations localizations, {
     String? customUnknownMessage,
   }) {
     return switch (this) {

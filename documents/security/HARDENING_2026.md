@@ -1,4 +1,4 @@
-# Fuzzzy Seal — the 2026 cryptographic hardening: what changed and why
+# Fuzzzy Ink — the 2026 cryptographic hardening: what changed and why
 
 **Written:** 2026-09-13 · **State of the code:** branch `agent/chat-harden-rust-crypto-core`, release candidate
 tag `v1.0.0-rc.1` (commit `64615a7`) plus the fixes listed in §7 · **Companion documents:**
@@ -6,7 +6,7 @@ tag `v1.0.0-rc.1` (commit `64615a7`) plus the fixes listed in §7 · **Companion
 defended), [`RELEASE.md`](RELEASE.md) (build provenance and reproducibility), [`../../SECURITY.md`](../../SECURITY.md)
 (disclosure policy), [`sbom/`](sbom/) (CycloneDX bills of materials), [`vectors/`](vectors/) (byte-exact test vectors).
 
-This document is the supporting material for an independent security audit of Fuzzzy Seal. It is written to be
+This document is the supporting material for an independent security audit of Fuzzzy Ink. It is written to be
 read by someone who has not seen the code: it says what the app's cryptography looked like before September 2026,
 what the nine diagnosed weaknesses were, what replaced them, what was measured, which product decisions are
 still the owner's to make, and what was deliberately left out. Where a number is given, the artifact that
@@ -16,7 +16,7 @@ produced it is named; the CI runs are public.
 
 ## 1. Why this work exists
 
-Fuzzzy Seal is an **offline** encryption app, not a messenger. Two people pair once by exchanging an invitation
+Fuzzzy Ink is an **offline** encryption app, not a messenger. Two people pair once by exchanging an invitation
 code and an acceptance code by hand; after that either side "fuzzes" (encrypts) text or files into a blob and
 sends it over any channel — e-mail, a chat app, a USB stick — and the other side pastes it back to "unfuzz" it.
 There are no servers, no accounts and no transport. Two consequences drove every decision below:
@@ -77,7 +77,7 @@ numbered as in the owner brief. "Where" points at the specification section and 
 | # | Finding (before) | Fix (after) | Where | Status |
 |---|---|---|---|---|
 | **F-1** | **No forward secrecy.** One long-lived symmetric key per chat, RSA-wrapped in the acceptance blob: one device compromise decrypts the whole history and every future message. | Olm double ratchet: a fresh message key per blob, derived from a chain that ratchets on every direction change; the receiver deletes a key on use and persists the deletion **before** returning plaintext. A blob decrypts once, on one device, never again — not even by the sender. Proved at the Olm layer, not just at the API: `api::messages::tests::forward_secrecy`, `api::files::tests::forward_secrecy_for_files` (a state snapshot taken after message N−1 yields `MissingMessageKey` for N−1 and earlier). | `PROTOCOL.md` §8.1, §14; `rust/fuzzy_crypto_core/src/api/messages.rs` | **Closed.** Product consequence (single-use blobs, local history) is owner decision D-1 — §5: text history is kept readable on the device, sealed under a random per-chat history key that lives inside the chat's state file (F2-12); unfuzzed files are plain files, not sealed |
-| **F-2** | **Unauthenticated handshake.** No fingerprint or safety number anywhere; the README asked users to verify out of band in prose. | Both pairing blobs carry a 64-byte Ed25519 signature by their author over every preceding byte (envelope included, `verify_strict`); the handshake header binds both identity keys into the 3DH; a **60-digit safety number** (SHA-512 over both Ed25519 keys and the chat id, Signal's 5-digit-group encoding) is shown on a verification page with a persisted "verified" flag and a shield indicator in the chat header. | `PROTOCOL.md` §4.1, §5; `pairing.rs`, `safety.rs`; `lib/src/fuzzzy_seal/ui/pages/safety_number_page` | **Closed.** The brief named vodozemac's emoji SAS; a safety number ships instead — owner decision D-2, §5 |
+| **F-2** | **Unauthenticated handshake.** No fingerprint or safety number anywhere; the README asked users to verify out of band in prose. | Both pairing blobs carry a 64-byte Ed25519 signature by their author over every preceding byte (envelope included, `verify_strict`); the handshake header binds both identity keys into the 3DH; a **60-digit safety number** (SHA-512 over both Ed25519 keys and the chat id, Signal's 5-digit-group encoding) is shown on a verification page with a persisted "verified" flag and a shield indicator in the chat header. | `PROTOCOL.md` §4.1, §5; `pairing.rs`, `safety.rs`; `lib/src/fuzzzy_ink/ui/pages/safety_number_page` | **Closed.** The brief named vodozemac's emoji SAS; a safety number ships instead — owner decision D-2, §5 |
 | **F-3** | **Empty AAD.** `Uint8List(0)` as associated data: ciphertext bound to nothing. | Every message carries an inner header *inside* the Olm plaintext — version, chat id, sender and recipient identity keys, direction, 64-bit counter, content type — checked field by field on receipt (a blob from chat A dies in chat B at the MAC, and again at the header). Every local and password-sealed format has AAD: file chunks bind the 55-byte header and the chunk index; wrapped keys use role-separated AAD (`store-key` / `vault-key`); state files bind `chat-state ‖ chat_id`. | `PROTOCOL.md` §7.1–7.2, §6.6–6.9, §9.1 | **Closed** |
 | **F-4** | **No replay or ordering protection.** No sequence numbers; a captured blob re-decrypts forever. | Two layers: Olm's consumed-key store (a used key is gone) and, per chat and per direction, a 64-bit counter window (`recv_highest` + a 64-bit seen bitmap): a seen counter → `Replay`, more than 63 behind the newest accepted → `TooOld`, both surfaced as distinct user copy. Out-of-order arrival is served by Olm's 40 skipped keys per chain. | `PROTOCOL.md` §8.2–8.3; `counters.rs` | **Closed.** The 63-behind rule is stricter than Olm's own store (a documented product limit, `THREAT_MODEL.md` §7.7) |
 | **F-5** | **File decryption released unverified plaintext.** One GCM blob streamed to disk; the tag was checked after the last chunk had been written. | STREAM container: 1 MiB chunks, each XChaCha20-Poly1305 with its own tag, nonce = `prefix ‖ chunk index ‖ last flag`, AAD = header ‖ index; the last chunk carries an explicit last-flag so truncation, appended bytes, reordering and duplication are all detected; **a chunk is written only after its tag verifies**, into `<out>.part` (mode 0600), renamed on success and deleted on any failure. Tests flip every chunk's first byte, byte 17 and tag byte, truncate mid-chunk and at a boundary, append and reorder — no output path exists after any of them. | `PROTOCOL.md` §9.1–9.3; `files.rs` (`tamper_leaves_no_partial_output`, `truncated_*`, `appended_bytes_detected`, `reordered_or_duplicated_chunks_detected`) | **Closed** |
@@ -238,7 +238,7 @@ over the APK, the Linux and Windows executables and crate libraries and the macO
 rc.1: [attestation 47099408](https://github.com/fuzzzy-bot/fuzzy_chat/attestations/47099408)). What that does
 *not* prove: the **macOS app is unsigned and not notarized** (the Xcode project is signed for a team whose
 certificate CI does not hold — owner decision D-3); the **Android APK is signed with a throwaway key generated
-per run** (`CN=fuzzzy_seal CI throwaway`, validity 1 day) because the release build type refuses to build
+per run** (`CN=fuzzzy_ink CI throwaway`, validity 1 day) because the release build type refuses to build
 without one — it installs and runs and is a faithful attested build of the commit, but it is **not a store
 build** and cannot update an installation signed with the real key (owner decision D-6); **iOS is not built**;
 Windows and Linux have no signing at all. Provenance says who built the bytes, not that the code is correct.

@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/core.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/files.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/formats.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/health.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/pairing.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/passwords.dart';
-import 'package:fuzzzy_seal/rust_bridge/api/vault.dart';
-import 'package:fuzzzy_seal/rust_bridge/error.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/core.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/files.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/formats.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/health.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/pairing.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/passwords.dart';
+import 'package:fuzzzy_ink/rust_bridge/api/vault.dart';
+import 'package:fuzzzy_ink/rust_bridge/error.dart';
 
 import '../../helpers/crypto_core_test_init.dart';
 

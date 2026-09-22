@@ -1,7 +1,7 @@
-# Fuzzzy Seal: General Aspirational Tool Vision
+# Fuzzzy Ink: General Aspirational Tool Vision
 
 ## The Ultimate Goal
-Fuzzzy Seal aspires to be the world's most accessible, ultra-secure steganography and cryptography utility, disguised under the incredibly familiar paradigm of daily instant messaging. It aims to tear down the high technical barrier of entry for operational security, making PGP-level encryption available and easily understandable to any human with a smartphone or computer.
+Fuzzzy Ink aspires to be the world's most accessible, ultra-secure steganography and cryptography utility, disguised under the incredibly familiar paradigm of daily instant messaging. It aims to tear down the high technical barrier of entry for operational security, making PGP-level encryption available and easily understandable to any human with a smartphone or computer.
 
 ## Aspirational Features & Evolution
 1. **Pervasive Security, Effortless Interaction**: Users shouldn't feel like they are doing "cryptography." It should feel like they are chatting naturally, while the app ensures their data never accidentally spills into plaintext.

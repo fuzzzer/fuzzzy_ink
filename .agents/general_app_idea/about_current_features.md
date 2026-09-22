@@ -1,4 +1,4 @@
-# Fuzzzy Seal: About Current Features
+# Fuzzzy Ink: About Current Features
 
 ## 1. Local Chat Spaces
 - **Offline Generation**: The app creates isolated data environments representing a "chat" with a specific person. Each chat's keys and ratchet state live in one sealed file in the Rust core's store (`fuzzy_crypto_store/<chatId>.state`).

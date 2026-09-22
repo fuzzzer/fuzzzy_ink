@@ -9,8 +9,8 @@ environment:
 vars:
   parentFeatureName:
     type: string
-    description: Parent folder name in which the feature is created (e.g., 'fuzzzy_seal')
-    default: fuzzzy_seal
+    description: Parent folder name in which the feature is created (e.g., 'fuzzzy_ink')
+    default: fuzzzy_ink
     prompt: What is the name of your parent folder?
   name:
     type: string

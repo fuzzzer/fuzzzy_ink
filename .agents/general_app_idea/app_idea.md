@@ -1,7 +1,7 @@
-# Fuzzzy Seal: App Idea
+# Fuzzzy Ink: App Idea
 
 ## The Core Concept
-Fuzzzy Seal is not a traditional chat app that connects directly over a network or server. Instead, it is a **personal, offline encryption system** disguised as a chat interface. 
+Fuzzzy Ink is not a traditional chat app that connects directly over a network or server. Instead, it is a **personal, offline encryption system** disguised as a chat interface. 
 
 It provides secure, local "message spaces" between two parties to manage encrypted text and files. Users "fuzz" (encrypt) their messages into unreadable blocks of text offline, which can then be safely shared across **any public or unsecure channel** (e.g., SMS, email, social media, USB sticks). Only the intended recipient, who has established a local link with the sender, can "unfuzz" (decrypt) the content back into its original form.
 

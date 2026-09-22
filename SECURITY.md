@@ -1,6 +1,6 @@
 # Security Policy
 
-Fuzzzy Seal is an offline encryption app: it has no servers, no accounts and no network path of its own.
+Fuzzzy Ink is an offline encryption app: it has no servers, no accounts and no network path of its own.
 Its security is the security of the code in this repository — the Rust cryptographic core
 (`rust/fuzzy_crypto_core`), the Flutter app around it, and the release builds we publish.
 
@@ -52,7 +52,7 @@ Out of scope:
 
 - the `development` flavor's file-encryption benchmark tile and its Marionette test instrumentation
   — neither exists in a release build;
-- vulnerabilities in third-party dependencies with no Fuzzzy Seal-specific impact (report them
+- vulnerabilities in third-party dependencies with no Fuzzzy Ink-specific impact (report them
   upstream; a note to us is still welcome);
 - attacks that require a compromised or rooted device, or physical access to an unlocked one —
   see the threat model for what the app does and does not defend against.

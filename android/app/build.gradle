@@ -82,17 +82,17 @@ android {
         production {
             dimension "default"
             applicationIdSuffix ""
-            manifestPlaceholders = [appName: "Fuzzzy Seal"]
+            manifestPlaceholders = [appName: "Fuzzzy Ink"]
         }
         staging {
             dimension "default"
             applicationIdSuffix ".stg"
-            manifestPlaceholders = [appName: "[STG] Fuzzzy Seal"]
+            manifestPlaceholders = [appName: "[STG] Fuzzzy Ink"]
         }
         development {
             dimension "default"
             applicationIdSuffix ".dev"
-            manifestPlaceholders = [appName: "[DEV] Fuzzzy Seal"]
+            manifestPlaceholders = [appName: "[DEV] Fuzzzy Ink"]
         }
     }
 

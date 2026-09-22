@@ -1,4 +1,4 @@
-This directory is the AI's living memory of the **Fuzzzy Seal** Flutter project. It is continuously updated by the [DOCUMENTER] persona to reflect the exact state of the codebase.
+This directory is the AI's living memory of the **Fuzzzy Ink** Flutter project. It is continuously updated by the [DOCUMENTER] persona to reflect the exact state of the codebase.
 
 ## Contents
 

@@ -1,6 +1,6 @@
 arb-dir: lib/src/core/l10n
 template-arb-file: app_en.arb
-output-localization-file: fuzzzy_seal_localizations.dart
-output-class: FuzzzySealLocalizations
+output-localization-file: fuzzzy_ink_localizations.dart
+output-class: FuzzzyInkLocalizations
 output-dir: lib/src/core/l10n/generated_localizations
 synthetic-package: false

@@ -48,7 +48,7 @@ The user reverted the file-action bottom sheet from `vault_item_list.dart`. The 
 
 ## Outstanding / Must Verify
 
-> **FVM could not install Flutter 3.24.3 during this session** (the toolchain of that era — removed in v1.0.0-rc.1, which moved the repo to Flutter 3.41.7 / Dart 3.11.5), so `dart analyze` and `flutter gen-l10n` could not be run. The generated localization files (`fuzzzy_seal_localizations.dart`, `_en.dart`, `_ka.dart`) were updated **manually**. The next session MUST run:
+> **FVM could not install Flutter 3.24.3 during this session** (the toolchain of that era — removed in v1.0.0-rc.1, which moved the repo to Flutter 3.41.7 / Dart 3.11.5), so `dart analyze` and `flutter gen-l10n` could not be run. The generated localization files (`fuzzzy_ink_localizations.dart`, `_en.dart`, `_ka.dart`) were updated **manually**. The next session MUST run:
 > ```bash
 > fvm flutter gen-l10n
 > fvm dart analyze lib/src/fuzzy_auth/ lib/src/app/

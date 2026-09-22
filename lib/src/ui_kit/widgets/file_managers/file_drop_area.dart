@@ -1,6 +1,6 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FileDropArea extends StatefulWidget {
@@ -39,7 +39,7 @@ class _FileDropAreaState extends State<FileDropArea> {
               color: context.fuzzzyColors.ground.withValues(alpha: 0.4),
               child: Center(
                 child: Text(
-                  context.fuzzzySealLocalizations.dropFilesHere,
+                  context.fuzzzyInkLocalizations.dropFilesHere,
                   style: context.fuzzzyTextStyles.titleM.copyWith(
                     color: context.fuzzzyColors.ink,
                   ),

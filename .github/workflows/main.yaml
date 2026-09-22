@@ -1,4 +1,4 @@
-name: fuzzzy_seal
+name: fuzzzy_ink
 on:
   push:
     branches: [main, 'agent/**']
@@ -75,7 +75,7 @@ jobs:
           set -euo pipefail
           keytool -genkeypair -keystore "$RUNNER_TEMP/ci-throwaway.jks" -storetype JKS -alias ci-throwaway \
             -keyalg RSA -keysize 2048 -validity 1 -storepass ci-throwaway -keypass ci-throwaway \
-            -dname "CN=fuzzzy_seal CI throwaway, O=FuzzyCore"
+            -dname "CN=fuzzzy_ink CI throwaway, O=FuzzyCore"
           {
             echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/ci-throwaway.jks"
             echo "ANDROID_KEYSTORE_ALIAS=ci-throwaway"
@@ -164,9 +164,9 @@ jobs:
           FLUTTER_XCODE_CODE_SIGN_IDENTITY: ""
       # upload-artifact drops symlinks and file modes, which a .app bundle needs (Frameworks/*/Versions/Current);
       # ditto keeps them, and the zip is the one file SHA256SUMS + the attestation can name.
-      - run: ditto -c -k --keepParent "build/macos/Build/Products/Release-production/Fuzzzy Seal.app" build/macos/fuzzzy_seal-macos.zip
+      - run: ditto -c -k --keepParent "build/macos/Build/Products/Release-production/Fuzzzy Ink.app" build/macos/fuzzzy_ink-macos.zip
       - uses: actions/upload-artifact@v7
-        with: { name: macos-app, path: build/macos/fuzzzy_seal-macos.zip }
+        with: { name: macos-app, path: build/macos/fuzzzy_ink-macos.zip }
   # ios: optional, `flutter build ios --release --no-codesign` on macos-latest; allowed to be added in Phase 5.
   rust-repro:
     # Reproducibility proof for the Rust core (documents/security/RELEASE.md): the same commit is built twice on
@@ -232,8 +232,8 @@ jobs:
       - uses: actions/download-artifact@v7
       - run: |
           set -euo pipefail
-          sha256sum android-apk/app-production-release.apk windows-bundle/fuzzzy_seal.exe linux-bundle/fuzzzy_seal \
-            macos-app/fuzzzy_seal-macos.zip linux-bundle/lib/libfuzzy_crypto_core.so windows-bundle/fuzzy_crypto_core.dll \
+          sha256sum android-apk/app-production-release.apk windows-bundle/fuzzzy_ink.exe linux-bundle/fuzzzy_ink \
+            macos-app/fuzzzy_ink-macos.zip linux-bundle/lib/libfuzzy_crypto_core.so windows-bundle/fuzzy_crypto_core.dll \
             | tee SHA256SUMS
           # No build-machine path may survive in a shipped core (.cargo/config.toml remap).
           ! grep -aqE '/home/runner|/Users/runner|runneradmin' linux-bundle/lib/libfuzzy_crypto_core.so windows-bundle/fuzzy_crypto_core.dll

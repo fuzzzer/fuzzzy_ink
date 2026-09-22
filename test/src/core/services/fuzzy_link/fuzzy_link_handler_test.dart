@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:mocktail/mocktail.dart';
 
 // ---------------------------------------------------------------------------
@@ -67,8 +67,8 @@ void main() {
       MaterialApp(
         navigatorKey: navigatorKey,
         scaffoldMessengerKey: scaffoldMessengerKey,
-        localizationsDelegates: FuzzzySealLocalizations.localizationsDelegates,
-        supportedLocales: FuzzzySealLocalizations.supportedLocales,
+        localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+        supportedLocales: FuzzzyInkLocalizations.supportedLocales,
         home: const Scaffold(body: Text('chat list')),
       ),
     );

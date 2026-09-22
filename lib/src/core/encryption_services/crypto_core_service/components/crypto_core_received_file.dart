@@ -1,4 +1,4 @@
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 /// A chat-mode file receive that has started: the output path (the sender's
 /// original file name inside the directory the caller chose — known only once

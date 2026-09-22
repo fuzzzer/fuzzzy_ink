@@ -34,11 +34,11 @@
       }
     ],
     "component": {
-      "name": "fuzzzy_seal",
+      "name": "fuzzzy_ink",
       "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
       "version": "1.1.0+2",
-      "purl": "pkg:pub/fuzzzy_seal@1.1.0%2B2",
-      "bom-ref": "pkg:pub/fuzzzy_seal@1.1.0+2",
+      "purl": "pkg:pub/fuzzzy_ink@1.1.0%2B2",
+      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.0+2",
       "type": "application"
     },
     "properties": [
@@ -55,12 +55,12 @@
   "components": [
     {
       "group": "",
-      "name": "fuzzzy_seal",
+      "name": "fuzzzy_ink",
       "version": "1.1.0+2",
       "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
-      "purl": "pkg:pub/fuzzzy_seal@1.1.0%2B2",
+      "purl": "pkg:pub/fuzzzy_ink@1.1.0%2B2",
       "type": "application",
-      "bom-ref": "pkg:pub/fuzzzy_seal@1.1.0+2"
+      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.0+2"
     },
     {
       "group": "",
@@ -7574,7 +7574,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:pub/fuzzzy_seal@1.1.0+2",
+      "ref": "pkg:pub/fuzzzy_ink@1.1.0+2",
       "dependsOn": [
         "pkg:pub/app_links@7.0.0",
         "pkg:pub/args@2.4.2",
@@ -7624,7 +7624,7 @@
     {
       "bom-ref": "metadata-annotations",
       "subjects": [
-        "pkg:pub/fuzzzy_seal@1.1.0+2"
+        "pkg:pub/fuzzzy_ink@1.1.0+2"
       ],
       "annotator": {
         "component": {
@@ -7643,7 +7643,7 @@
         }
       },
       "timestamp": "2026-09-13T15:00:34Z",
-      "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, September 13, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_seal' with version '1.1.0+2'."
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, September 13, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.0+2'."
     }
   ]
 }

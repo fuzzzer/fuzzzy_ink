@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 class GlobalBlocListeners extends StatelessWidget {
   const GlobalBlocListeners({
@@ -67,7 +67,7 @@ class GlobalBlocListeners extends StatelessWidget {
               ) &&
               current.failedToAddProcessedFiles?.isNotEmpty == true,
           listener: (_, state) {
-            final localizations = FuzzzySealLocalizations.of(
+            final localizations = FuzzzyInkLocalizations.of(
               navigatorKey.currentContext!,
             )!;
 

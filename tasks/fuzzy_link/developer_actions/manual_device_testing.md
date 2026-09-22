@@ -61,9 +61,9 @@
 | # | Scenario | Steps | Expected | Android | iOS |
 |---|----------|-------|----------|---------|-----|
 | E1 | **Invalid URI** | Open a browser and navigate to `fuzzylink://invite/garbage123`. | App opens → shows "Invalid or unsupported link" snackbar. | ⬜ | ⬜ |
-| E2 | **Unsupported version** | Craft a link with `"v": 999` in the payload. | Shows "This link requires a newer version of Fuzzzy Seal" snackbar. | ⬜ | ⬜ |
+| E2 | **Unsupported version** | Craft a link with `"v": 999` in the payload. | Shows "This link requires a newer version of Fuzzzy Ink" snackbar. | ⬜ | ⬜ |
 | E3 | **Fallback text works** | Share an invitation via "Share as Link". On the receiving device, copy the raw fuzz text from the share (below the separator line) instead of tapping the link. Paste it into the manual accept flow. | Manual copy-paste flow still works as before. | ⬜ | ⬜ |
-| E4 | **Non-fuzzylink URI** | Tap a regular `https://` link. | Fuzzzy Seal does NOT intercept it. System browser opens. | ⬜ | ⬜ |
+| E4 | **Non-fuzzylink URI** | Tap a regular `https://` link. | Fuzzzy Ink does NOT intercept it. System browser opens. | ⬜ | ⬜ |
 
 ---
 

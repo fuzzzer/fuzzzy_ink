@@ -20,7 +20,7 @@ $ flutter run --flavor staging --target lib/main_staging.dart
 $ flutter run --flavor production --target lib/main_production.dart
 ```
 
-Fuzzzy Seal ships on Android, Windows, macOS and Linux (see `.github/workflows/main.yaml`). iOS builds
+Fuzzzy Ink ships on Android, Windows, macOS and Linux (see `.github/workflows/main.yaml`). iOS builds
 (`flutter build ios --flavor development -t lib/main_development.dart`) but is not in the App Store; the
 web build is unsupported because the encryption core is native code.
 
@@ -41,15 +41,15 @@ no cryptographic code is written in Dart. The protocol and every wire format are
 
 `fuzzzy_ui_kit` (from the [fuzzy_design](https://github.com/fuzzzy-bot/fuzzy_design) repo) is pinned in `pubspec.yaml` as a **git** dependency, so a plain `flutter pub get` works for everyone — no local `fuzzy_design` checkout required.
 
-If you're actively changing `fuzzy_design` and want fuzzzy_seal to pick up your local edits immediately (no commit/push/re-pin loop), clone it as a sibling of this repo and add a local override:
+If you're actively changing `fuzzy_design` and want fuzzzy_ink to pick up your local edits immediately (no commit/push/re-pin loop), clone it as a sibling of this repo and add a local override:
 
 ```sh
-# from the parent directory of fuzzzy_seal
+# from the parent directory of fuzzzy_ink
 $ git clone https://github.com/fuzzzy-bot/fuzzy_design.git
 ```
 
 ```yaml
-# fuzzzy_seal/pubspec_overrides.yaml  (create this file — it's git-ignored, never commit it)
+# fuzzzy_ink/pubspec_overrides.yaml  (create this file — it's git-ignored, never commit it)
 dependency_overrides:
   fuzzzy_ui_kit:
     path: ../fuzzy_design
@@ -59,7 +59,7 @@ dependency_overrides:
 $ flutter pub get
 ```
 
-Delete `pubspec_overrides.yaml` (or just don't create one) to go back to the pinned git version. When you want fuzzzy_seal's pinned kit version to move forward, push your `fuzzy_design` changes, then update the `ref:` under `fuzzzy_ui_kit` in `pubspec.yaml` to the new commit hash and run `flutter pub get` again.
+Delete `pubspec_overrides.yaml` (or just don't create one) to go back to the pinned git version. When you want fuzzzy_ink's pinned kit version to move forward, push your `fuzzy_design` changes, then update the `ref:` under `fuzzzy_ui_kit` in `pubspec.yaml` to the new commit hash and run `flutter pub get` again.
 
 ---
 

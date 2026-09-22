@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyErrorPageBuilder extends StatelessWidget {
@@ -17,7 +17,7 @@ class FuzzyErrorPageBuilder extends StatelessWidget {
     final fuzzzyColors = context.fuzzzyColors;
     final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
 
     return FuzzyScaffold(
       hasAutomaticBackButton: hasAutomaticBackButton,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class FuzzyUserAuthPage extends StatelessWidget {
@@ -161,7 +161,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fuzzzyColors = context.fuzzzyColors;
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
     final authStatus = context.watch<FuzzyAuthStore>().state.status;
     final isAuthEnabled = authStatus.isAuthenticated || authStatus.isLocked;
 
@@ -338,7 +338,7 @@ class _SetupPasswordSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
 
     return BlocBuilder<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
@@ -407,7 +407,7 @@ class _ChangePasswordSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fuzzzyColors = context.fuzzzyColors;
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
 
     return BlocBuilder<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
@@ -521,7 +521,7 @@ class _BiometricSectionState extends State<_BiometricSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fuzzzyColors = context.fuzzzyColors;
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
     final biometricEnabled =
         context.watch<FuzzyAuthStore>().state.biometricEnabled;
     final canUse = _canUseBiometrics;
@@ -613,7 +613,7 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fuzzzyColors = context.fuzzzyColors;
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
     final vaultState = context.watch<VaultAuthCubit>().state;
     final biometricEnabled = vaultState.biometricEnabled;
     final hasVault = vaultState.authState != VaultAuthEnum.noVault &&

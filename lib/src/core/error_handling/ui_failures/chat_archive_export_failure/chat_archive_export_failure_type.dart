@@ -1,4 +1,4 @@
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 /// Why a chat archive export produced no file. History is readable only
 /// while the store is open, so a locked store fails before anything is
@@ -9,7 +9,7 @@ enum ChatArchiveExportFailureType {
   unknown;
 
   String toUiMessage(
-    FuzzzySealLocalizations localizations, {
+    FuzzzyInkLocalizations localizations, {
     String? customUnknownMessage,
   }) {
     return switch (this) {

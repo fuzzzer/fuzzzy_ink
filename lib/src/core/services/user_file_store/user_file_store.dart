@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 export 'user_file_location.dart';
@@ -13,11 +13,11 @@ export 'user_files_channel.dart';
 /// (`AppDocumentsDirectory/<chat name>/`); [publish] then moves the finished
 /// file to its user-visible place and answers the path the message row keeps:
 ///
-/// * Android — `Downloads/Fuzzzy Seal/<chat name>/`, through MediaStore on
+/// * Android — `Downloads/Fuzzzy Ink/<chat name>/`, through MediaStore on
 ///   API 29+ and the public Downloads folder (with the storage permission)
 ///   on API 24–28.
 /// * iOS — the file stays in Documents, which `Info.plist` exposes to the
-///   Files app as "On My iPhone › Fuzzzy Seal".
+///   Files app as "On My iPhone › Fuzzzy Ink".
 /// * Desktop — the file stays in the user's Documents folder.
 class UserFileStore {
   UserFileStore({UserFilesChannel channel = const UserFilesChannel()})

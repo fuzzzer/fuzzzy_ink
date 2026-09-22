@@ -518,7 +518,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "Fuzzzy Seal";
+				FLAVOR_APP_NAME = "Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -614,7 +614,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "Fuzzzy Seal";
+				FLAVOR_APP_NAME = "Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -705,7 +705,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "Fuzzzy Seal";
+				FLAVOR_APP_NAME = "Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -801,7 +801,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[DEV] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[DEV] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -895,7 +895,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[DEV] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[DEV] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -988,7 +988,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[DEV] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[DEV] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1084,7 +1084,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[STG] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[STG] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1180,7 +1180,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[STG] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[STG] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1271,7 +1271,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 7W88HRQFXP;
 				ENABLE_BITCODE = NO;
-				FLAVOR_APP_NAME = "[STG] Fuzzzy Seal";
+				FLAVOR_APP_NAME = "[STG] Fuzzzy Ink";
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -1,4 +1,4 @@
-# Fuzzzy Seal — signed builds for Google Play, TestFlight and the Mac App Store.
+# Fuzzzy Ink — signed builds for Google Play, TestFlight and the Mac App Store.
 # This repository is public: credentials are referenced by name and injected by Codemagic at build
 # time. No secret value belongs in this file, ever.
 
@@ -375,7 +375,7 @@ workflows:
       - name: Build macOS app
         script: flutter build macos --release --flavor production -t lib/main_production.dart
       - name: Package and sign the installer
-        script: ./scripts/package_macos_installer.sh build/macos/Build/Products/Release-production "Fuzzzy Seal"
+        script: ./scripts/package_macos_installer.sh build/macos/Build/Products/Release-production "Fuzzzy Ink"
     artifacts:
       - build/macos/Build/Products/Release-production/*.pkg
       - /tmp/xcodebuild_logs/*.log

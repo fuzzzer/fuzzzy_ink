@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 class CopyGuard {
@@ -9,7 +9,7 @@ class CopyGuard {
     required String textToCopy,
   }) async {
     final prefs = sl.get<PreferencesService>();
-    final localizations = context.fuzzzySealLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
 
     if (prefs.copySecurityLevel == CopySecurityLevel.strict) {
       final confirm = await showDialog<bool>(

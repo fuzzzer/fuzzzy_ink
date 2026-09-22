@@ -2,7 +2,7 @@
 
 import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fuzzzy_seal/lib.dart';
+import 'package:fuzzzy_ink/lib.dart';
 
 enum BiometricScope { chat, vault }
 
@@ -22,7 +22,7 @@ extension on BiometricScope {
   String get _androidTitle {
     switch (this) {
       case BiometricScope.chat:
-        return 'Unlock Fuzzzy Seal';
+        return 'Unlock Fuzzzy Ink';
       case BiometricScope.vault:
         return 'Unlock Fuzzy Vault';
     }

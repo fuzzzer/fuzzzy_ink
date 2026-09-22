@@ -1,12 +1,12 @@
 # 🔗 FuzzyLink — How It Works
 
-> A concise guide to the FuzzyLink deep link system in Fuzzzy Seal.
+> A concise guide to the FuzzyLink deep link system in Fuzzzy Ink.
 
 ---
 
 ## What Is FuzzyLink?
 
-FuzzyLink turns encrypted Fuzzzy Seal data (invitations, acceptances, messages) into **tappable links**. Instead of copy-pasting encrypted blobs between apps, users share links that auto-open Fuzzzy Seal and process the payload.
+FuzzyLink turns encrypted Fuzzzy Ink data (invitations, acceptances, messages) into **tappable links**. Instead of copy-pasting encrypted blobs between apps, users share links that auto-open Fuzzzy Ink and process the payload.
 
 ```
 Before: 6 manual copy-pastes to connect
@@ -103,13 +103,13 @@ When a user taps "Share as Link":
 1. `FuzzyLinkGenerator.generateInvitationLink(content)` creates the `fuzzylink://` URI
 2. `FuzzyLinkGenerator.generateShareableContent(...)` wraps it in hybrid text:
    ```
-   🔐 Fuzzzy Seal Invitation
+   🔐 Fuzzzy Ink Invitation
    
    Tap to connect:
    fuzzylink://invite/eyJ2...
    
    ────────────────────
-   Can't tap? Copy and paste into Fuzzzy Seal:
+   Can't tap? Copy and paste into Fuzzzy Ink:
    {"I":"aGVsbG8t...","P":"eyJuIjoi..."}
    ```
 3. `Share.share(shareableText)` opens the native share sheet
