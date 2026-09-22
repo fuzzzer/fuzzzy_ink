@@ -429,8 +429,9 @@ the build itself to go green and the last step to go red until that has been don
   that must be filled first.
 - iOS has no entitlements file and needs none: `file_picker` and `share_plus` use the system document picker and
   share sheet. The Rust core is built by cargokit for `aarch64-apple-ios` inside `flutter build ipa`.
-- The Android job runs the same 16 KB page-size gate as GitHub and seeds the `CARGO_ENCODED_RUSTFLAGS` path
-  remap with Codemagic's home (`/home/builder`), so no builder path is embedded in the core. Whether the
+- The Android job seeds the `CARGO_ENCODED_RUSTFLAGS` path remap with Codemagic's home (`/home/builder`), so
+  no builder path is embedded in the core. It does **not** run a 16 KB page-size gate: that check lives only
+  in GitHub Actions (§ above), and Play reports a misaligned library at upload. Whether the
   Codemagic-built core hashes identically to the tag's `rust-repro` core (same Linux x86_64 + NDK + rustc, so it
   should) is not gated — compare `unzip -p app-production-release.apk lib/arm64-v8a/libfuzzy_crypto_core.so | sha256sum`
   with the tag run's `rust-repro-1/SHA256SUMS` by hand.
