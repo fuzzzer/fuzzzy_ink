@@ -84,7 +84,7 @@ which workflow produced these exact bytes* — nothing more.
 **Not proven, and stated here so nobody assumes it:**
 
 - **macOS is unsigned and not notarized.** The macOS job builds with code signing disabled
-  (`FLUTTER_XCODE_CODE_SIGNING_ALLOWED=NO`): the Xcode project is signed for team `C9387PQ63V` and CI
+  (`FLUTTER_XCODE_CODE_SIGNING_ALLOWED=NO`): the Xcode project is signed for team `7W88HRQFXP` and CI
   has no certificate. Gatekeeper will refuse the app unless the user overrides it. Signing needs an Apple
   Developer certificate as a CI secret or a signing step on a Mac that holds it — an owner decision
   (hardening decision D-3); signed builds come from Codemagic, §6.
@@ -251,34 +251,81 @@ Rust core at this tag (unchanged since the measurement run
 ## 6. Codemagic — signed store builds (D-3 / D-6)
 
 GitHub Actions stays the CI (tests, 16 KB gate, reproducibility, provenance). The **signed** artefacts —
-a Play-signable Android build, a Mac App Store package, an App Store IPA — come from `codemagic.yaml` at the
-repo root: three workflows, `android-release`, `macos-release`, `ios-release`, each pinned to Flutter 3.41.7,
-Rust 1.98.1 (installed per build; the images ship none) and triggered by `v*` tags or by hand. **Nothing secret
-is in the file**: it names a keystore reference, an App Store Connect integration and two variable groups that
-exist only in the Codemagic UI. The file parses (Ruby Psych, PyYAML) and validates against Codemagic's own JSON
-schema (<https://codemagic.io/codemagic-schema.json>, 0 errors); it has **not been run** — Codemagic has no
-account for this app yet, so the first build is the owner's, after the steps below.
+Play-signable Android builds, an App Store IPA, a Mac App Store package — come from `codemagic.yaml` at the
+repo root: **seven workflows**, development / staging / production on Android and on iOS plus production on
+macOS, each pinned to Flutter 3.41.7 and Rust 1.98.1 (installed per build; the images ship none). **Nothing
+secret is in the file**: it names two keystore references, one App Store Connect integration and four variable
+groups, all of which exist only in the Codemagic vault. The file parses (Ruby Psych, PyYAML) and validates
+against Codemagic's own JSON schema (<https://codemagic.io/codemagic-schema.json>, 0 errors); it has **not been
+run** — Codemagic has no account for this app yet, so the first build is the owner's, after the steps below.
+
+Where each build goes, what signs it, and what starts it — read straight off `codemagic.yaml`:
+
+| Workflow | Builds | Signed with | Goes to | Started by |
+|---|---|---|---|---|
+| `android-development` | `development` flavor, `com.fuzzzycore.seal.dev` | keystore `seal_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.dev`, internal testing track | push to `production-preparation` |
+| `android-staging` | `staging` flavor, `com.fuzzzycore.seal.stg` | keystore `seal_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.stg`, internal testing track | a `staging-*` tag |
+| `android-production` | `production` flavor, `com.fuzzzycore.seal` | keystore `seal_upload` | Play internal testing track only — promotion to production is done by hand in the Play Console | a `v*` tag |
+| `ios-development` | `development` flavor, `com.fuzzzycore.seal.dev`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | push to `production-preparation` |
+| `ios-staging` | `staging` flavor, `com.fuzzzycore.seal.stg`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | a `staging-*` tag |
+| `ios-production` | `production` flavor, `com.fuzzzycore.seal`, App Store signed | App Store Connect integration (automatic signing) | TestFlight, beta group `Internal testers` — submission to App Store review stays manual | a `v*` tag |
+| `macos-production` | `production` flavor, `com.fuzzzycore.seal`, signed `.pkg` | App Store Connect integration + group `seal_macos_signing` | Mac App Store (App Store Connect) | a `v*` tag |
+
+There is deliberately no development or staging macOS workflow: macOS ships through the store alone.
+
+**The publishing trunk on the owner's repository is `production-preparation`, not `main`.** That is the branch
+whose pushes start the two development workflows, and it is the branch to scan when adding the app to Codemagic.
+
+⚠️ **The first build of every publishing workflow will fail at the publish step, and that is expected — not a
+broken configuration.** Codemagic cannot upload the *first* version of an app to a brand-new App Store Connect
+or Play Console record; Apple and Google both require that first binary to be uploaded by hand. So for each
+store record — the Play records for `com.fuzzzycore.seal`, `.stg` and `.dev`, the App Store Connect records for
+iOS and for macOS — the very first build has to be built here, downloaded from the Codemagic build page (or
+from the email it sends), and uploaded manually once. Every build after that publishes automatically. Expect
+the build itself to go green and the last step to go red until that has been done.
 
 ### 6.1 What the owner enters in the Codemagic UI (once)
 
-1. **Add the app** — Applications → *Add application* → GitHub → `fuzzzy-bot/fuzzy_chat` (project type
+1. **Add the app** — Applications → *Add application* → GitHub → `fuzzzer/fuzzzy_seal` (project type
    Flutter). `codemagic.yaml` is detected from the branch you scan. For tag-triggered builds Codemagic needs its
    **webhook** on the repository (app settings → *Webhooks* shows the URL; GitHub → Settings → Webhooks → add it
    for *push* + *tag* events). Manual starts from the UI work without it.
-2. **Android upload keystore** — Team settings → *codemagic.yaml settings* → *Code signing identities* →
-   *Android keystores*: upload the `.jks`/`.keystore`, enter the **keystore password**, **key alias** and
-   **key password**, and set the reference name **`fuzzy_chat_upload`** (the name `codemagic.yaml` lists under
-   `android_signing`). Keep an independent copy of the keystore — Codemagic never lets it be downloaded, and
-   every later Play release must be signed with the same key. Codemagic exports it as `CM_KEYSTORE_PATH`,
-   `CM_KEYSTORE_PASSWORD`, `CM_KEY_ALIAS`, `CM_KEY_PASSWORD`; the workflow maps those onto the
-   `ANDROID_KEYSTORE_PATH / _ALIAS / _PASSWORD / _PRIVATE_KEY_PASSWORD` names `android/app/build.gradle` reads,
-   so the gradle file is unchanged.
+2. **Android keystores — there are two of them** — Team settings → *codemagic.yaml settings* →
+   *Code signing identities* → *Android keystores*. Upload each `.jks`/`.keystore`, enter its **keystore
+   password**, **key alias** and **key password**, and give it the reference name `codemagic.yaml` lists under
+   `android_signing`:
+   - **`seal_upload`** — the Play upload key. Used by `android-production` only.
+   - **`seal_internal`** — used by `android-development` and `android-staging`. A `--release` build of the
+     development flavor still needs a key (the gradle file has no usable fallback, below), and it must not be
+     the upload key.
+
+   Keep an independent copy of **both** keystores before uploading them. Codemagic never lets a keystore be
+   downloaded again, and every later Play release must be signed with the same upload key.
+
+   **The keystore is mapped declaratively; no `CM_*` variable is involved.** Each `android_signing` entry in
+   `codemagic.yaml` names the four environment variables Codemagic must export:
+
+   ```yaml
+   android_signing:
+     - keystore: seal_upload            # or seal_internal
+       keystore_environment_variable: ANDROID_KEYSTORE_PATH
+       keystore_password_environment_variable: ANDROID_KEYSTORE_PASSWORD
+       key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
+       key_password_environment_variable: ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
+   ```
+
+   Those are exactly the names `android/app/build.gradle` reads in `signingConfigs.release` —
+   `ANDROID_KEYSTORE_PATH` (store file), `ANDROID_KEYSTORE_ALIAS`, `ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD`
+   (key password) and `ANDROID_KEYSTORE_PASSWORD` (store password). Nothing key-shaped is ever handled in a
+   script and the gradle file is unchanged. Its only other branch reads `rootProject.file('key.properties')`,
+   which does not exist on a build machine: if `ANDROID_KEYSTORE_PATH` is unset the release build fails rather
+   than falling back to anything.
 3. **App Store Connect API key** — App Store Connect → Users and Access → Integrations → App Store Connect API →
    *Generate API key* (role **App Manager**), download the `.p8` (one-time download), note the **Key ID** and
    the **Issuer ID**. Then Codemagic Team settings → *Team integrations* → *Developer Portal* → *Connect*: name
-   **`fuzzy_chat_asc`** (the name under `integrations.app_store_connect`), Issuer ID, Key ID, upload the `.p8`.
-   Team: **`C9387PQ63V`**.
-4. **Variable group `fuzzy_chat_signing`** (app or team *Environment variables*, every value marked *Secret*):
+   **`fuzzzycore_appstore_codemagic_key`** (the name under `integrations.app_store_connect`), Issuer ID, Key ID, upload the `.p8`.
+   Team: **`7W88HRQFXP`**.
+4. **Variable group `seal_macos_signing`** (app or team *Environment variables*, every value marked *Secret*):
    - `CERTIFICATE_PRIVATE_KEY` — an RSA-2048 private key in PEM (`ssh-keygen -t rsa -b 2048 -m PEM -f mac_distribution_private_key -q -N ""`,
      paste the file's content including the `-----BEGIN/END RSA PRIVATE KEY-----` lines). `app-store-connect
      fetch-signing-files … --create` creates the *Mac App Distribution* / *Apple Distribution* certificates from
@@ -286,14 +333,38 @@ account for this app yet, so the first build is the owner's, after the steps bel
      MAC_INSTALLER_DISTRIBUTION` the installer certificate. To reuse an existing certificate instead, export its
      private key from Keychain Access as described in Codemagic's macOS signing guide and paste that.
    - `CERTIFICATE_PRIVATE_KEY_PASSWORD` — only if that key is encrypted.
-5. **Variable group `fuzzy_chat_deps`** — `FUZZY_DESIGN_SSH_KEY` (*Secret*): the private half of a **new**,
-   passphrase-less deploy key whose public half is added read-only to `fuzzzy-bot/fuzzy_design` (Settings →
-   Deploy keys). `fuzzzy_ui_kit` is a git dependency on that private repo; Codemagic adds every `*_SSH_KEY`
-   variable to the SSH agent and the workflow routes exactly that URL over SSH. The GitHub Actions deploy key
-   cannot be reused — its private half exists only as the Actions secret `FUZZY_DESIGN_DEPLOY_KEY`.
-   Alternative: make `fuzzy_design` public and delete the group and the "Route the private fuzzzy_ui_kit
-   dependency over SSH" step from all three workflows.
-6. **Store records** must exist before a build can be uploaded (Codemagic's note: upload the very first version
+5. **Variable group `fuzzzycore_deps`** — create it at **team** level, not on the app. It holds a single
+   value that every Fuzzzy app needs identically (Fuzzzy Music uses the same one), so it is company-wide rather
+   than app-scoped. `FUZZY_DESIGN_SSH_KEY` (*Secret*): the private half of a **new**, passphrase-less deploy
+   key whose public half is added read-only to `fuzzzy-bot/fuzzy_design` (Settings → Deploy keys).
+   `fuzzzy_ui_kit` is a git dependency on that private repo; Codemagic adds every `*_SSH_KEY` variable to the
+   SSH agent and the workflow routes exactly that URL over SSH. **All seven workflows** include the group and
+   the rewrite step, which must run before `flutter pub get`. The GitHub Actions deploy key cannot be reused —
+   its private half exists only as the Actions secret `FUZZY_DESIGN_DEPLOY_KEY`.
+   Alternative: make `fuzzy_design` public, then drop the group and the "Route the private fuzzzy_ui_kit
+   dependency over SSH" step from all seven workflows here — and from Fuzzzy Music's workflows too, since the
+   group is shared with that app.
+6. **Variable group `fuzzzycore_firebase`** — team level as well; Firebase App Distribution is shared across
+   the apps. Used by `android-development`, `android-staging`, `ios-development` and `ios-staging`:
+   - `FIREBASE_SERVICE_ACCOUNT` (*Secret*) — the JSON key of a Google service account holding the Firebase App
+     Distribution Admin role. One value serves all four workflows.
+   - `FIREBASE_APP_ID_SEAL_ANDROID_DEV`, `FIREBASE_APP_ID_SEAL_ANDROID_STG`, `FIREBASE_APP_ID_SEAL_IOS_DEV`,
+     `FIREBASE_APP_ID_SEAL_IOS_STG` — one Firebase application id per workflow, spelled exactly as written
+     here. Production distributes through the stores, not Firebase, and has no id.
+
+   All four push to the tester group `testers`, which must exist in Firebase App Distribution; the two Android
+   workflows upload the **APK** (`artifact_type: apk`), so testers install directly.
+   ⚠️ **These four Firebase applications do not exist yet** (as of 2026-09-22 the Firebase project has no apps
+   registered). Until they are created the ids cannot be filled in, and the four development/staging workflows
+   will build but fail to distribute.
+7. **Variable group `fuzzzycore_play`** — team level. `GCLOUD_SERVICE_ACCOUNT_CREDENTIALS` (*Secret*): the JSON
+   key of a Google Cloud service account that has been invited into the Play Console and granted release
+   permission on the Fuzzzy Seal records. Used by all three Android workflows, as
+   `publishing.google_play.credentials`. **Mind the name** — it is `GCLOUD_SERVICE_ACCOUNT_CREDENTIALS`;
+   there is no `GOOGLE_PLAY_*` variable anywhere in this configuration.
+   ⚠️ Inviting the service account and accepting Google's developer agreement are acts only the owner can
+   perform — an agent must not sign in to the console or accept an agreement.
+8. **Store records** must exist before a build can be uploaded (Codemagic's note: upload the very first version
    by hand): an App Store Connect app for the macOS bundle id and one for iOS, a Play Console app for the
    Android application id — see the table.
 
@@ -337,14 +408,25 @@ account for this app yet, so the first build is the owner's, after the steps bel
    (`notarytool` wants the `.p8` as a file; write `$APP_STORE_CONNECT_PRIVATE_KEY` to one first.) Both paths
    need the sandbox entitlement above; only Developer ID needs the hardened runtime.
 
-### 6.3 Publishing, and what is deliberately not wired
+### 6.3 Publishing — what is wired, and what is deliberately left manual
 
-- Every workflow emails `contact@fuzzzycore.com` on success and failure with the artefacts attached
-  (`build/app/outputs/flutter-apk/*.apk`, `bundle/**/*.aab`, `Release-production/*.pkg`, `build/ios/ipa/*.ipa`).
-  Store upload is **not** automated: once the store records exist, add
-  `publishing.app_store_connect: { auth: integration }` (macOS/iOS; add `submit_to_testflight: true` for
-  TestFlight) and `publishing.google_play: { credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS, track: internal }`
-  with a Play service-account JSON as a secret variable.
+- **Store upload IS automated — every workflow publishes.** Read straight off `publishing:` in
+  `codemagic.yaml`:
+  - **Google Play** — `android-development`, `android-staging` and `android-production`, each with
+    `credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS`, `track: internal`, `submit_as_draft: false`. All three
+    land on the **internal testing track** of their own Play record (`.dev`, `.stg`, and the production id);
+    promotion to any wider track is a deliberate act in the Play Console.
+  - **App Store Connect** — `ios-production` with `auth: integration` and `submit_to_testflight: true` to the
+    beta group `Internal testers`; `macos-production` with `auth: integration` alone (no TestFlight group — it
+    goes to App Store Connect for the Mac App Store). Submission to App Store review stays manual in both.
+  - **Firebase App Distribution** — `android-development`, `android-staging`, `ios-development` and
+    `ios-staging`, each with `firebase_service_account: $FIREBASE_SERVICE_ACCOUNT` and its own
+    `FIREBASE_APP_ID_SEAL_*` id, to the tester group `testers`. `android-production` and the two production
+    Apple workflows do not distribute through Firebase.
+  - **Email** — every one of the seven workflows notifies `contact@fuzzzycore.com` on success and on failure.
+
+  None of this has ever run: see the first-upload warning at the top of §6, and the variable groups in §6.1
+  that must be filled first.
 - iOS has no entitlements file and needs none: `file_picker` and `share_plus` use the system document picker and
   share sheet. The Rust core is built by cargokit for `aarch64-apple-ios` inside `flutter build ipa`.
 - The Android job runs the same 16 KB page-size gate as GitHub and seeds the `CARGO_ENCODED_RUSTFLAGS` path
@@ -353,3 +435,31 @@ account for this app yet, so the first build is the owner's, after the steps bel
   should) is not gated — compare `unzip -p app-production-release.apk lib/arm64-v8a/libfuzzy_crypto_core.so | sha256sum`
   with the tag run's `rust-repro-1/SHA256SUMS` by hand.
 - `xcode: 26.5` is pinned to the Xcode this repo was last built with locally (F1-3); move it deliberately.
+
+### 6.4 Export compliance (iOS / macOS) — OPEN QUESTION, do not answer it in the plist
+
+`ios/Runner/Info.plist` contains **no `ITSAppUsesNonExemptEncryption` key at all** — the key appears nowhere
+under `ios/` or `macos/` (verified by grep). The consequence is concrete and it is not limited to App Store
+submissions: **every** upload to App Store Connect stops on Apple's export-compliance questionnaire and waits
+for a human answer before the build can be processed, **internal TestFlight builds included**. So
+`ios-production` cannot put a usable build in front of a tester until this is settled.
+
+**The correct value has not been determined, and nobody should set the key until it has been.** Fuzzzy Seal is
+not the ordinary case that self-declares in one line:
+
+- the app is end-to-end encrypted — encryption is its purpose, not an incidental transport detail;
+- it ships a **custom cryptographic implementation**, the Rust core `rust/fuzzy_crypto_core`, rather than using
+  only the platform's crypto. That combination is what takes it out of the self-declaration lane most apps sit
+  in, and it makes the answer a legal question rather than a build setting.
+
+FuzzyCore HQ has **escalated this for qualified export-control review**, to come back before the first
+TestFlight build. Until it does:
+
+- do **not** add `ITSAppUsesNonExemptEncryption` to any plist, in either value;
+- do **not** read the absence of the key as an exemption — it is an unanswered question, not a "no";
+- do **not** reason by analogy with Fuzzzy Music, which sets the key to `false` for a genuinely different app
+  that ships no cryptography of its own.
+
+The review also has to cover the obligations that do not follow from the plist key at all — notably France's
+separate declaration, flagged in FuzzyCore HQ's `playbooks/codemagic.md` §8. Record the answer here and in that
+playbook when it arrives.

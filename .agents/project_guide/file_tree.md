@@ -348,7 +348,7 @@ fuzzzy_seal/
 │   ├── main_production.dart
 │   └── main_staging.dart
 ├── linux/ … (10 files) # Linux host (CMake)
-├── macos/ … (70 files) # macOS host (flavored Xcode configs, Manual signing team C9387PQ63V)
+├── macos/ … (70 files) # macOS host (flavored Xcode configs, Manual signing team 7W88HRQFXP)
 ├── packages/
 │   └── readme.md  # empty; `packages/` holds nothing else (pointycastle fork removed in v1.0.0-rc.1)
 ├── rust/

@@ -156,7 +156,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
       # The Xcode project only has flavored configurations (Release-production), and the Runner is
-      # signed with team C9387PQ63V, which the runner does not have — build unsigned (compile+link proof).
+      # signed with team 7W88HRQFXP, which the runner does not have — build unsigned (compile+link proof).
       - run: flutter build macos --release --flavor production -t lib/main_production.dart
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
