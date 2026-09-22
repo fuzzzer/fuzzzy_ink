@@ -263,13 +263,13 @@ Where each build goes, what signs it, and what starts it — read straight off `
 
 | Workflow | Builds | Signed with | Goes to | Started by |
 |---|---|---|---|---|
-| `android-development` | `development` flavor, `com.fuzzzycore.seal.dev` | keystore `seal_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.dev`, internal testing track | push to `production-preparation` |
-| `android-staging` | `staging` flavor, `com.fuzzzycore.seal.stg` | keystore `seal_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.stg`, internal testing track | a `staging-*` tag |
-| `android-production` | `production` flavor, `com.fuzzzycore.seal` | keystore `seal_upload` | Play internal testing track only — promotion to production is done by hand in the Play Console | a `v*` tag |
-| `ios-development` | `development` flavor, `com.fuzzzycore.seal.dev`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | push to `production-preparation` |
-| `ios-staging` | `staging` flavor, `com.fuzzzycore.seal.stg`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | a `staging-*` tag |
-| `ios-production` | `production` flavor, `com.fuzzzycore.seal`, App Store signed | App Store Connect integration (automatic signing) | TestFlight, beta group `Internal testers` — submission to App Store review stays manual | a `v*` tag |
-| `macos-production` | `production` flavor, `com.fuzzzycore.seal`, signed `.pkg` | App Store Connect integration + group `seal_macos_signing` | Mac App Store (App Store Connect) | a `v*` tag |
+| `android-development` | `development` flavor, `com.fuzzzycore.ink.dev` | keystore `ink_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.dev`, internal testing track | push to `production-preparation` |
+| `android-staging` | `staging` flavor, `com.fuzzzycore.ink.stg` | keystore `ink_internal` | Firebase App Distribution (group `testers`) **and** the Play Console record for `.stg`, internal testing track | a `staging-*` tag |
+| `android-production` | `production` flavor, `com.fuzzzycore.ink` | keystore `ink_upload` | Play internal testing track only — promotion to production is done by hand in the Play Console | a `v*` tag |
+| `ios-development` | `development` flavor, `com.fuzzzycore.ink.dev`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | push to `production-preparation` |
+| `ios-staging` | `staging` flavor, `com.fuzzzycore.ink.stg`, ad-hoc signed | App Store Connect integration (automatic signing) | Firebase App Distribution (group `testers`) | a `staging-*` tag |
+| `ios-production` | `production` flavor, `com.fuzzzycore.ink`, App Store signed | App Store Connect integration (automatic signing) | TestFlight, beta group `Internal testers` — submission to App Store review stays manual | a `v*` tag |
+| `macos-production` | `production` flavor, `com.fuzzzycore.ink`, signed `.pkg` | App Store Connect integration + group `ink_macos_signing` | Mac App Store (App Store Connect) | a `v*` tag |
 
 There is deliberately no development or staging macOS workflow: macOS ships through the store alone.
 
@@ -279,7 +279,7 @@ whose pushes start the two development workflows, and it is the branch to scan w
 ⚠️ **The first build of every publishing workflow will fail at the publish step, and that is expected — not a
 broken configuration.** Codemagic cannot upload the *first* version of an app to a brand-new App Store Connect
 or Play Console record; Apple and Google both require that first binary to be uploaded by hand. So for each
-store record — the Play records for `com.fuzzzycore.seal`, `.stg` and `.dev`, the App Store Connect records for
+store record — the Play records for `com.fuzzzycore.ink`, `.stg` and `.dev`, the App Store Connect records for
 iOS and for macOS — the very first build has to be built here, downloaded from the Codemagic build page (or
 from the email it sends), and uploaded manually once. Every build after that publishes automatically. Expect
 the build itself to go green and the last step to go red until that has been done.
@@ -294,8 +294,8 @@ the build itself to go green and the last step to go red until that has been don
    *Code signing identities* → *Android keystores*. Upload each `.jks`/`.keystore`, enter its **keystore
    password**, **key alias** and **key password**, and give it the reference name `codemagic.yaml` lists under
    `android_signing`:
-   - **`seal_upload`** — the Play upload key. Used by `android-production` only.
-   - **`seal_internal`** — used by `android-development` and `android-staging`. A `--release` build of the
+   - **`ink_upload`** — the Play upload key. Used by `android-production` only.
+   - **`ink_internal`** — used by `android-development` and `android-staging`. A `--release` build of the
      development flavor still needs a key (the gradle file has no usable fallback, below), and it must not be
      the upload key.
 
@@ -307,7 +307,7 @@ the build itself to go green and the last step to go red until that has been don
 
    ```yaml
    android_signing:
-     - keystore: seal_upload            # or seal_internal
+     - keystore: ink_upload            # or ink_internal
        keystore_environment_variable: ANDROID_KEYSTORE_PATH
        keystore_password_environment_variable: ANDROID_KEYSTORE_PASSWORD
        key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
@@ -325,7 +325,7 @@ the build itself to go green and the last step to go red until that has been don
    the **Issuer ID**. Then Codemagic Team settings → *Team integrations* → *Developer Portal* → *Connect*: name
    **`fuzzzycore_appstore_codemagic_key`** (the name under `integrations.app_store_connect`), Issuer ID, Key ID, upload the `.p8`.
    Team: **`7W88HRQFXP`**.
-4. **Variable group `seal_macos_signing`** (app or team *Environment variables*, every value marked *Secret*):
+4. **Variable group `ink_macos_signing`** (app or team *Environment variables*, every value marked *Secret*):
    - `CERTIFICATE_PRIVATE_KEY` — an RSA-2048 private key in PEM (`ssh-keygen -t rsa -b 2048 -m PEM -f mac_distribution_private_key -q -N ""`,
      paste the file's content including the `-----BEGIN/END RSA PRIVATE KEY-----` lines). `app-store-connect
      fetch-signing-files … --create` creates the *Mac App Distribution* / *Apple Distribution* certificates from
@@ -370,12 +370,12 @@ the build itself to go green and the last step to go red until that has been don
 
 | Platform | Flavor | Identifier (as committed) | Source |
 |---|---|---|---|
-| Android | production | `com.fuzzzycore.seal` | `android/app/build.gradle` `applicationId` + `applicationIdSuffix ""` |
-| Android | staging / development | `com.fuzzzycore.seal.stg` / `com.fuzzzycore.seal.dev` | same file, suffixes |
-| macOS | production | `com.fuzzzycore.seal` | `macos/Runner.xcodeproj` (`Release-production`); `Configs/AppInfo.xcconfig` carries the same id as the default |
-| macOS | staging / development | `com.fuzzzycore.seal.stg` / `com.fuzzzycore.seal.dev` | same project |
-| iOS | production | `com.fuzzzycore.seal` | `ios/Runner.xcodeproj` (`Release-production`) |
-| iOS | staging / development | `com.fuzzzycore.seal.stg` / `com.fuzzzycore.seal.dev` | same project |
+| Android | production | `com.fuzzzycore.ink` | `android/app/build.gradle` `applicationId` + `applicationIdSuffix ""` |
+| Android | staging / development | `com.fuzzzycore.ink.stg` / `com.fuzzzycore.ink.dev` | same file, suffixes |
+| macOS | production | `com.fuzzzycore.ink` | `macos/Runner.xcodeproj` (`Release-production`); `Configs/AppInfo.xcconfig` carries the same id as the default |
+| macOS | staging / development | `com.fuzzzycore.ink.stg` / `com.fuzzzycore.ink.dev` | same project |
+| iOS | production | `com.fuzzzycore.ink` | `ios/Runner.xcodeproj` (`Release-production`) |
+| iOS | staging / development | `com.fuzzzycore.ink.stg` / `com.fuzzzycore.ink.dev` | same project |
 
 ### 6.2 What a signed macOS build needs
 

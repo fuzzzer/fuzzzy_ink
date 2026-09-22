@@ -299,7 +299,7 @@ emulator; covered by a router test).
 
 | Item | Why not now | Where it is tracked |
 |---|---|---|
-| **Post-quantum key agreement** | Olm is X25519-based; adding a hybrid ML-KEM step over the pairing exchange is a distinct protocol migration and should not be stacked on top of the Olm migration before that has been audited. The product's long-lived public ciphertext makes this matter *more* than for a transport messenger, which is exactly why it gets its own project. | `THREAT_MODEL.md` §7.9, R22; the next-milestone plan (internal `fuzzzy_seal_future_plans.md` §3) |
+| **Post-quantum key agreement** | Olm is X25519-based; adding a hybrid ML-KEM step over the pairing exchange is a distinct protocol migration and should not be stacked on top of the Olm migration before that has been audited. The product's long-lived public ciphertext makes this matter *more* than for a transport messenger, which is exactly why it gets its own project. | `THREAT_MODEL.md` §7.9, R22; the next-milestone plan (internal `fuzzzy_ink_future_plans.md` §3) |
 | **Formal verification of the handshake** (Tamarin) | An academic-collaboration-sized project; worth doing after the audit, not before. | future plans §4 |
 | **iOS / App Store** | `ios/` builds but there is no store presence and no signing; ordinary store-readiness work, unrelated to the crypto (the chosen stack is Apache-2.0/MIT, so the AGPL/App Store question that libsignal would have raised does not arise). | future plans §5; `RELEASE.md` §2 |
 | **Web build** | Unsupported: the core is native code and the trust boundary is the FFI; a web build would need a WASM port and a different key-storage story. | `THREAT_MODEL.md` §7.12 |

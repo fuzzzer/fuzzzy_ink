@@ -723,7 +723,7 @@ as F2-12, `PROTOCOL.md` §3, §10.4). The record below is quoted verbatim from t
 to this repository).
 
 > ## D-1 · Plaintext at rest (the decision the brief reserved for the owner)
-> Full text: `plans/fuzzzy_seal_hardening_plan_2026-09-11.md` §B.8. Short form:
+> Full text: `plans/fuzzzy_ink_hardening_plan_2026-09-11.md` §B.8. Short form:
 > - The ratchet makes every blob single-use: decrypt once, on one device, never again (that is F-1 closed).
 > - Sent messages MUST be stored locally regardless (a sender cannot decrypt its own output) — not optional.
 > - Recommended (a): store received plaintext too, sealed with XChaCha20-Poly1305 under a per-install key

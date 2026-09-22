@@ -1,4 +1,4 @@
-package com.fuzzzycore.seal
+package com.fuzzzycore.ink
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine

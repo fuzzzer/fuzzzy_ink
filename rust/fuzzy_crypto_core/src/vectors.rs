@@ -597,7 +597,7 @@ fn all_vectors() -> Vec<Vector> {
             "chat_id": CHAT_ID,
             "key_1": hex(&SAFETY_KEY_A),
             "key_2": hex(&SAFETY_KEY_B),
-            "digest": "SHA-512(\"FUZZZYSEAL_SAFETY_NUMBER_V1\" | 0x00 | chat_id | 0x00 | min(key_1, key_2) | max(key_1, key_2))",
+            "digest": "SHA-512(\"FUZZZYINK_SAFETY_NUMBER_V1\" | 0x00 | chat_id | 0x00 | min(key_1, key_2) | max(key_1, key_2))",
             "encoding": "12 groups: big-endian u40 of digest[5i .. 5i+5] mod 100000, zero-padded to 5 digits, space-joined",
         }),
         extra: None,

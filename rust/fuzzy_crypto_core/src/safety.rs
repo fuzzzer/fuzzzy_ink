@@ -17,7 +17,7 @@ use crate::error::CoreError;
 use crate::state::ChatState;
 
 /// Domain separator of the digest; the version suffix is the format version.
-const DOMAIN: &[u8] = b"FUZZZYSEAL_SAFETY_NUMBER_V1";
+const DOMAIN: &[u8] = b"FUZZZYINK_SAFETY_NUMBER_V1";
 /// 12 groups × 5 digits = 60 digits (~199 bits of the 512-bit digest).
 const GROUPS: usize = 12;
 /// Each group is read from 5 digest bytes (< 2^40, so the `u64` never overflows).
@@ -116,10 +116,10 @@ mod tests {
         }
 
         /// Pinned from PROTOCOL.md §5 by an independent implementation (python
-        /// `hashlib`, scratchpad `golden_seal.py` — never from this crate) for
+        /// `hashlib`, scratchpad `golden_ink.py` — never from this crate) for
         /// `CHAT_X` and the two fixed keys above.
         const GOLDEN: &str =
-            "24835 61545 97204 74992 49860 78334 62260 58331 41944 79659 59505 37321";
+            "77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132";
 
         #[test]
         fn golden() {
@@ -133,7 +133,7 @@ mod tests {
             let number = safety_number_for(CHAT_X, &key_a(), &key_b());
             assert_eq!(number.len(), 60 + 11);
             assert!(is_well_formed(&number), "{number}");
-            // Zero-padding is pinned by the `09850` group in `changes_with_either_key`.
+            // Zero-padding is pinned by the `05772` group in `changes_with_either_key`.
         }
 
         #[test]
@@ -144,11 +144,11 @@ mod tests {
             b_flipped[31] = 0x00;
             assert_eq!(
                 safety_number_for(CHAT_X, &a_flipped, &key_b()),
-                "63023 92614 62877 53375 11212 61544 34079 61520 43844 14845 78629 95861"
+                "13690 27442 64231 84405 12670 18278 89890 97745 53804 71814 57421 09264"
             );
             assert_eq!(
                 safety_number_for(CHAT_X, &key_a(), &b_flipped),
-                "11658 54586 29532 91048 15816 53044 24008 53996 26920 68131 39039 09850"
+                "60953 62734 80082 05772 31738 09599 75752 10469 95036 61569 13865 34898"
             );
         }
 
@@ -156,7 +156,7 @@ mod tests {
         fn changes_with_chat_id() {
             assert_eq!(
                 safety_number_for(CHAT_Y, &key_a(), &key_b()),
-                "56850 94211 75997 68979 51055 28801 74331 80835 97063 96578 63451 14427"
+                "25991 71854 84013 76256 64546 75321 84213 77751 07033 33610 09869 10002"
             );
         }
     }

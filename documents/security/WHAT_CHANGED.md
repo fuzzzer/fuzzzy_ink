@@ -11,7 +11,7 @@ This is the bridge from the app *you* built to the app that exists now. It is wr
 [`HARDENING_2026.md`](HARDENING_2026.md) is the public write-up. Every claim below points at a file (old paths are
 given as `5090f2c:path`, readable with `git show 5090f2c:<path>`; new paths are links into this branch) or at a log
 in the studio repository (`flow/fuzzy-chat-hardening/log/F*.md`, abbreviated `log/F*.md`). Where the work quotes one of
-your nine original findings, it is quoted as you wrote it in `plans/fuzzzy_seal_hardening_prompt.md`.
+your nine original findings, it is quoted as you wrote it in `plans/fuzzzy_ink_hardening_prompt.md`.
 
 **Contents:** 1 Summary · 2 Mind-map · 3 Before → after, component by component · 4 What did not change ·
 5 Glossary · 6 Decisions · 7 Numbers · 8 Where to look
@@ -526,4 +526,4 @@ blobs. Its README carries the restore proof and the difference table.
 
 Studio-side records (not in this repository): `flow/fuzzy-chat-hardening/{FACTS.md,OWNER_DECISIONS.md,HANDOFF.md,LIVE_QA_SWEEP.md}`,
 one log per feature in `flow/fuzzy-chat-hardening/log/`, the live-QA proofs in `qa-reports/fuzzy-chat-hardening_*`, and your
-original brief in `plans/fuzzzy_seal_hardening_prompt.md`.
+original brief in `plans/fuzzzy_ink_hardening_prompt.md`.

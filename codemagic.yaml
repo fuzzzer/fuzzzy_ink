@@ -77,14 +77,14 @@ definitions:
   internal_keystore: &internal_keystore
     # android/app/build.gradle builds signingConfigs.release from these four names and has no CI
     # fallback, so a development release build needs a keystore just as much as a production one.
-    - keystore: seal_internal
+    - keystore: ink_internal
       keystore_environment_variable: ANDROID_KEYSTORE_PATH
       keystore_password_environment_variable: ANDROID_KEYSTORE_PASSWORD
       key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
       key_password_environment_variable: ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD
 
   upload_keystore: &upload_keystore
-    - keystore: seal_upload
+    - keystore: ink_upload
       keystore_environment_variable: ANDROID_KEYSTORE_PATH
       keystore_password_environment_variable: ANDROID_KEYSTORE_PASSWORD
       key_alias_environment_variable: ANDROID_KEYSTORE_ALIAS
@@ -268,7 +268,7 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
       vars:
-        BUNDLE_ID: com.fuzzzycore.seal.dev
+        BUNDLE_ID: com.fuzzzycore.ink.dev
     triggering: *on_trunk_push
     scripts:
       - *install_rust
@@ -299,7 +299,7 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
       vars:
-        BUNDLE_ID: com.fuzzzycore.seal.stg
+        BUNDLE_ID: com.fuzzzycore.ink.stg
     triggering: *on_staging_tag
     scripts:
       - *install_rust
@@ -329,7 +329,7 @@ workflows:
       groups:
         - fuzzzycore_deps
       vars:
-        BUNDLE_ID: com.fuzzzycore.seal
+        BUNDLE_ID: com.fuzzzycore.ink
     triggering: *on_release_tag
     scripts:
       - *install_rust
@@ -356,11 +356,11 @@ workflows:
     environment:
       <<: *apple_environment
       groups:
-        # seal_macos_signing carries CERTIFICATE_PRIVATE_KEY, which `keychain add-certificates` needs.
-        - seal_macos_signing
+        # ink_macos_signing carries CERTIFICATE_PRIVATE_KEY, which `keychain add-certificates` needs.
+        - ink_macos_signing
         - fuzzzycore_deps
       vars:
-        BUNDLE_ID: com.fuzzzycore.seal
+        BUNDLE_ID: com.fuzzzycore.ink
     triggering: *on_release_tag
     scripts:
       - *install_rust

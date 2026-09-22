@@ -229,18 +229,18 @@ chat id ([`safety.rs#L31`](../../rust/fuzzy_crypto_core/src/safety.rs#L31)):
 
 ```
 low, high = sort_lexicographic(key_1, key_2)                     // byte-wise on the two [u8; 32]
-digest    = SHA-512( "FUZZZYSEAL_SAFETY_NUMBER_V1" ‖ 0x00 ‖ chat_id_utf8 ‖ 0x00 ‖ low ‖ high )
+digest    = SHA-512( "FUZZZYINK_SAFETY_NUMBER_V1" ‖ 0x00 ‖ chat_id_utf8 ‖ 0x00 ‖ low ‖ high )
 group[i]  = ( u40 BE of digest[5i .. 5i+5] ) mod 100000            for i in 0..12
 text      = zero-padded 5-digit groups joined by single spaces      // 60 digits, 71 characters
 ```
 
-Constants: domain `FUZZZYSEAL_SAFETY_NUMBER_V1` ([`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20)),
+Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20)),
 12 groups ([`#L22`](../../rust/fuzzy_crypto_core/src/safety.rs#L22)) of 5 digest bytes each
 ([`#L24`](../../rust/fuzzy_crypto_core/src/safety.rs#L24)), modulus 100 000
 ([`#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25)); the last 4 bytes of the digest are unused. This
 is libsignal's `DisplayableFingerprint` group encoding (5 bytes → `% 100000`), applied to one combined
 digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-…`, keys `00 01 … 1f` and
-`ff fe … e0` → `24835 61545 97204 74992 49860 78334 62260 58331 41944 79659 59505 37321`).
+`ff fe … e0` → `77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132`).
 
 - **Symmetry.** The sort makes the argument order irrelevant, so A (who calls it with `(our, peer)`) and B (who
   calls it with the same two keys the other way round) get the same string.
@@ -1204,7 +1204,7 @@ a file job's terminal event carries.
 | state file extensions | `.state`, `.state.tmp` | [`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44) |
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
-| safety-number domain / groups / bytes / modulus | `FUZZZYSEAL_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20) |
+| safety-number domain / groups / bytes / modulus | `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20) |
 | original name limit | 255 bytes | [`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261) |
 | longest header read | 65 568 | [`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53) |
 | pause poll | 50 ms | [`files.rs#L50`](../../rust/fuzzy_crypto_core/src/files.rs#L50) |

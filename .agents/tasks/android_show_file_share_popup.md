@@ -12,7 +12,7 @@ popup instead of showing the file in its place (Downloads/Fuzzzy Ink/<chat>).
 `lib/src/core/utils/reveal_file.dart` → `DeviceFileInteractor.revealFile` on Android calls
 `UserFilesChannel.showInFiles(path)`; when that throws a `PlatformException` it silently falls
 back to `shareFile` (the share sheet). The Kotlin side is
-`android/app/src/main/kotlin/com/fuzzzycore/seal/UserFiles.kt`. So either `showInFiles`
+`android/app/src/main/kotlin/com/fuzzzycore/ink/UserFiles.kt`. So either `showInFiles`
 throws on the owner's device (no matching intent / unresolvable content URI for the new
 Downloads location) or the fallback is reached for every row.
 

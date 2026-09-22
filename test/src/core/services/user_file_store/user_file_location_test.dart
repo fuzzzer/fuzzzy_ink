@@ -36,7 +36,7 @@ void main() {
     test(
         'a row from before files were public names app storage, not the '
         'private path', () {
-      const privatePath = '/data/user/0/com.fuzzzycore.seal'
+      const privatePath = '/data/user/0/com.fuzzzycore.ink'
           '/app_flutter/Fz bot/null-20260920-WA0000.jpg.fuzz';
       final location = UserFileLocation.of(privatePath, isIOS: false);
 

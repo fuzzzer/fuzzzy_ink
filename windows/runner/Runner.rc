@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.fuzzzycore.seal" "\0"
+            VALUE "CompanyName", "com.fuzzzycore.ink" "\0"
             VALUE "FileDescription", "fuzzzy_ink" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "fuzzzy_ink" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.fuzzzycore.seal. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 com.fuzzzycore.ink. All rights reserved." "\0"
             VALUE "OriginalFilename", "fuzzzy_ink.exe" "\0"
             VALUE "ProductName", "Fuzzzy Ink" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

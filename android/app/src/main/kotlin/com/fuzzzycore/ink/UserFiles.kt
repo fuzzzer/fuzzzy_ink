@@ -1,4 +1,4 @@
-package com.fuzzzycore.seal
+package com.fuzzzycore.ink
 
 import android.Manifest
 import android.app.Activity
@@ -35,7 +35,7 @@ import java.io.FileNotFoundException
 class UserFiles(private val activity: Activity) : MethodChannel.MethodCallHandler {
 
     companion object {
-        const val CHANNEL = "com.fuzzzycore.seal/user_files"
+        const val CHANNEL = "com.fuzzzycore.ink/user_files"
         private const val ROOT_FOLDER = "Fuzzzy Ink"
         private const val BINARY_MIME_TYPE = "application/octet-stream"
         private const val EXTERNAL_DOCUMENTS_AUTHORITY = "com.android.externalstorage.documents"

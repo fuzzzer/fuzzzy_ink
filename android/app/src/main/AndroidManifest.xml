@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fuzzzycore.seal">
+    package="com.fuzzzycore.ink">
 
     <!-- Permissions -->
     <!-- API 24–28 only: writing Downloads/Fuzzzy Ink/ directly (UserFiles.kt).

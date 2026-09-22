@@ -11,7 +11,7 @@
 | URI scheme name | `fuzzylink://` |
 | Deep link package | `app_links` (^6.4.0) |
 | GoRouter migration | Full migration — all `Navigator.push` replaced |
-| iOS bundle identifier | `com.fuzzzycore.seal` |
+| iOS bundle identifier | `com.fuzzzycore.ink` |
 | Payload expiration | 24h for invitations & acceptances, no expiration for fuzz messages |
 | QR code support | Deferred to V2 |
 | Georgian translations | Core keys added in both EN + KA |
@@ -31,7 +31,7 @@ Deep links behave differently on real devices vs simulators. This is the **prima
 # Android (via adb)
 adb shell am start -a android.intent.action.VIEW \
   -d "fuzzylink://invite/YOUR_PAYLOAD" \
-  com.fuzzzycore.seal
+  com.fuzzzycore.ink
 
 # iOS (via simulator)
 xcrun simctl openurl booted "fuzzylink://invite/YOUR_PAYLOAD"

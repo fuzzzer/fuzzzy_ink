@@ -9,7 +9,7 @@ class UserFilesChannel {
   const UserFilesChannel();
 
   static const _channel =
-      MethodChannel('com.fuzzzycore.seal/user_files');
+      MethodChannel('com.fuzzzycore.ink/user_files');
 
   /// Moves [sourcePath] into `Downloads/Fuzzzy Ink/[chatName]/` and answers
   /// the public path the message row keeps.
