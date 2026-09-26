@@ -1,3 +1,11 @@
+# file_picker: the app only calls pickFiles()/saveFile() with FileType.any, so
+# compile out the photo-library (DKImagePickerController) and Apple Music
+# (MPMediaPickerController) pickers. Linking them without
+# NSPhotoLibraryUsageDescription / NSAppleMusicUsageDescription gets the upload
+# rejected (ITMS-90683). Flag names per file_picker 8.3.7's ios/file_picker.podspec.
+Pod::PICKER_MEDIA = false
+Pod::PICKER_AUDIO = false
+
 # Uncomment this line to define a global platform for your project
 # platform :ios, '13.0'
 

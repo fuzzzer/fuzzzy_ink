@@ -6,7 +6,10 @@
          API 29+ goes through MediaStore and needs no storage permission. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Requested alongside WRITE by permission_handler's Permission.storage
+         (UserFileStore, API 24–28). Capped: it is a no-op from API 33 on. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:label="${appName}"

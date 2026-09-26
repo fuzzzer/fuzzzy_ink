@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class FileSelectorWidget extends StatefulWidget {
   final void Function(List<String> filePaths) onSelected;
@@ -28,38 +25,13 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
   bool get hasSelectedFiles =>
       widget.selectedFilePaths != null && widget.selectedFilePaths!.isNotEmpty;
 
-  Future<bool> _requestStoragePermissionByPlatform() async {
-    bool isGranted = true;
-
-    if (Platform.isIOS || Platform.isAndroid) {
-      isGranted = await _requestStoragePermission();
-    }
-
-    if (!isGranted) {
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(
-            currentContextLocalization.storagePermissionDenied,
-          ),
-        ),
-      );
-      return false;
-    }
-
-    return isGranted;
-  }
-
-  Future<bool> _requestStoragePermission() async {
-    final status = await Permission.storage.request();
-    return status.isGranted || status.isLimited;
-  }
-
   Future<void> _pickFiles() async {
     setState(() => _isRequesting = true);
 
     try {
-      await _requestStoragePermissionByPlatform();
-
+      // No storage permission: file_picker opens the system document picker
+      // and hands back a copy in the app's cache, which needs none on any
+      // Android API level (and iOS has no storage permission at all).
       final result = await FilePicker.platform.pickFiles(
         allowMultiple: widget.allowMultiple,
       );

@@ -28,6 +28,7 @@ dependencies:
       ref: f6f08b2b6616ff0669f8e17e5c67a9ebcc7522b1 # CP47 — Ink Night lifted (T-0361)
   get_it: ^8.0.0
   go_router: ^13.0.1
+  google_fonts: ^6.3.2
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   logger: ^2.4.0
@@ -53,4 +54,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  # The exact Google Fonts files fuzzzy_ui_kit's Ink packs request (Inter 400/600,
+  # Space Grotesk 700, Space Mono 400), named <Family>-<Weight>.ttf so google_fonts
+  # finds them in the bundle; runtime fetching is off (bootstrap.dart). Each folder
+  # carries its family's OFL.txt.
+  assets:
+    - assets/fonts/Inter/
+    - assets/fonts/SpaceGrotesk/
+    - assets/fonts/SpaceMono/
 

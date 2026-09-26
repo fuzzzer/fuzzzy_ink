@@ -76,6 +76,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Export compliance: the app ships its own non-Apple cryptography (Rust core:
+	     Olm double ratchet, XChaCha20-Poly1305, Argon2id), so this MUST stay true.
+	     ITSEncryptionExportComplianceCode is deliberately absent: it is issued by
+	     App Store Connect after the export-compliance review and is added then. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Authenticate to unlock your Fuzzzy Ink password.</string>
 </dict>

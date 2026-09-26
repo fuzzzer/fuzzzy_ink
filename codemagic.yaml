@@ -268,6 +268,7 @@ workflows:
       <<: *apple_environment
       groups:
         - fuzzzycore_deps
+        - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.dev
     triggering: *on_trunk_push
@@ -293,6 +294,7 @@ workflows:
       <<: *apple_environment
       groups:
         - fuzzzycore_deps
+        - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.stg
     triggering: *on_staging_tag
@@ -318,6 +320,7 @@ workflows:
       <<: *apple_environment
       groups:
         - fuzzzycore_deps
+        - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink
     triggering: *on_release_tag
@@ -342,8 +345,8 @@ workflows:
     environment:
       <<: *apple_environment
       groups:
-        # ink_macos_signing carries CERTIFICATE_PRIVATE_KEY, which `keychain add-certificates` needs.
-        - ink_macos_signing
+        # fuzzzycore_apple_signing carries CERTIFICATE_PRIVATE_KEY, which `keychain add-certificates` needs.
+        - fuzzzycore_apple_signing
         - fuzzzycore_deps
       vars:
         BUNDLE_ID: com.fuzzzycore.ink

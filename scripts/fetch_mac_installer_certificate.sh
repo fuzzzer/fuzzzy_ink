@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 #
 # Makes a Mac Installer Distribution certificate available to `keychain add-certificates`, which
-# reads .p12 files out of $HOME/Library/MobileDevice/Certificates.
+# reads the .p12 files the `app-store-connect` tools save.
 #
 # `app-store-connect certificates list` prints "did not find any" and exits 0 on an empty result,
 # so an `||` fallback would never fire. Success is measured by whether a file actually landed on
 # disk, counted before and after because the Mac App Store fetch that runs first has already saved
-# its own certificate into the same directory.
+# its own certificate into the same directory. Older tool versions save to MobileDevice/Certificates,
+# newer ones to Xcode/UserData/Certificates, so both are counted.
 
 set -euo pipefail
 
-cert_dir="$HOME/Library/MobileDevice/Certificates"
-mkdir -p "$cert_dir"
+cert_dirs=(
+  "$HOME/Library/MobileDevice/Certificates"
+  "$HOME/Library/Developer/Xcode/UserData/Certificates"
+)
+mkdir -p "${cert_dirs[@]}"
 
 count_certificates() {
-  find "$cert_dir" -name '*.p12' | wc -l | tr -d ' '
+  find "${cert_dirs[@]}" -name '*.p12' | wc -l | tr -d ' '
 }
 
 before=$(count_certificates)
@@ -32,4 +36,4 @@ if [ "$after" -eq "$before" ]; then
   exit 1
 fi
 
-find "$cert_dir" -name '*.p12' -print
+find "${cert_dirs[@]}" -name '*.p12' -print
