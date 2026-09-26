@@ -58,10 +58,6 @@ definitions:
     name: Apply the provisioning profiles to the Xcode project
     script: xcode-project use-profiles
 
-  fetch_ios_adhoc_profile: &fetch_ios_adhoc_profile
-    name: Fetch the ad-hoc signing files
-    script: app-store-connect fetch-signing-files "$BUNDLE_ID" --platform IOS --type IOS_APP_ADHOC --create
-
   fetch_ios_appstore_profile: &fetch_ios_appstore_profile
     name: Fetch the App Store signing files
     script: app-store-connect fetch-signing-files "$BUNDLE_ID" --platform IOS --type IOS_APP_STORE --create
@@ -166,6 +162,12 @@ definitions:
     track: internal
     submit_as_draft: false
 
+  testflight_internal: &testflight_internal
+    auth: integration
+    submit_to_testflight: true
+    beta_groups:
+      - Internal testers
+
 workflows:
 
   android-development:
@@ -261,12 +263,11 @@ workflows:
 
   ios-development:
     <<: *ios_workflow
-    name: iOS development (.dev, ad-hoc, Firebase App Distribution)
+    name: iOS development (.dev, App Store signed, TestFlight internal testing)
     environment:
       <<: *apple_environment
       groups:
         - fuzzzycore_deps
-        - fuzzzycore_firebase
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.dev
     triggering: *on_trunk_push
@@ -276,28 +277,22 @@ workflows:
       - *route_design_kit_over_ssh
       - *pub_get
       - *initialize_keychain
-      - *fetch_ios_adhoc_profile
+      - *fetch_ios_appstore_profile
       - *add_certificates
       - *apply_profiles
       - name: Build IPA
         script: flutter build ipa --release --flavor development -t lib/main_development.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
       email: *notify_by_email
-      firebase:
-        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
-        ios:
-          app_id: $FIREBASE_APP_ID_INK_IOS_DEV
-          groups:
-            - testers
+      app_store_connect: *testflight_internal
 
   ios-staging:
     <<: *ios_workflow
-    name: iOS staging (.stg, ad-hoc, Firebase App Distribution)
+    name: iOS staging (.stg, App Store signed, TestFlight internal testing)
     environment:
       <<: *apple_environment
       groups:
         - fuzzzycore_deps
-        - fuzzzycore_firebase
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.stg
     triggering: *on_staging_tag
@@ -307,19 +302,14 @@ workflows:
       - *route_design_kit_over_ssh
       - *pub_get
       - *initialize_keychain
-      - *fetch_ios_adhoc_profile
+      - *fetch_ios_appstore_profile
       - *add_certificates
       - *apply_profiles
       - name: Build IPA
         script: flutter build ipa --release --flavor staging -t lib/main_staging.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
       email: *notify_by_email
-      firebase:
-        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
-        ios:
-          app_id: $FIREBASE_APP_ID_INK_IOS_STG
-          groups:
-            - testers
+      app_store_connect: *testflight_internal
 
   ios-production:
     <<: *ios_workflow
@@ -344,11 +334,7 @@ workflows:
         script: flutter build ipa --release --flavor production -t lib/main_production.dart --export-options-plist=/Users/builder/export_options.plist
     publishing:
       email: *notify_by_email
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
-        beta_groups:
-          - Internal testers
+      app_store_connect: *testflight_internal
 
   macos-production:
     <<: *apple_workflow
