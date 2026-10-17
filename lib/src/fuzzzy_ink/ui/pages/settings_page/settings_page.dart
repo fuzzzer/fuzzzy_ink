@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -18,6 +19,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late CopySecurityLevel _securityLevel;
   late final FileBenchmarkCubit? _fileBenchmarkCubit;
+  final PackageInfo _packageInfo = sl.get<PackageInfo>();
 
   @override
   void initState() {
@@ -99,6 +101,15 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         );
       },
+    );
+  }
+
+  Future<void> _openExternalLink(Uri uri) async {
+    final isOpened = await ExternalLinks.open(uri);
+    if (isOpened || !mounted) return;
+    FuzzzyToast.show(
+      context,
+      message: context.fuzzzyInkLocalizations.couldNotOpenLink,
     );
   }
 
@@ -210,6 +221,74 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ],
+                  const SizedBox(height: 32),
+                  Text(
+                    localizations.legalAndSupport,
+                    style: fuzzzyTextStyles.titleM.copyWith(
+                      color: fuzzzyColors.ink,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    localizations.legalAndSupportDescription,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: fuzzzyColors.inkMute,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _SettingsLinkTile(
+                    icon: Icons.privacy_tip_outlined,
+                    title: localizations.privacyPolicy,
+                    subtitle: localizations.privacyPolicyDescription,
+                    trailingIcon: Icons.open_in_new,
+                    onTap: () => _openExternalLink(ExternalLinks.privacyPolicy),
+                    fuzzzyColors: fuzzzyColors,
+                    fuzzzyTextStyles: fuzzzyTextStyles,
+                  ),
+                  const SizedBox(height: 12),
+                  _SettingsLinkTile(
+                    icon: Icons.description_outlined,
+                    title: localizations.termsOfUse,
+                    subtitle: localizations.termsOfUseDescription,
+                    trailingIcon: Icons.open_in_new,
+                    onTap: () => _openExternalLink(ExternalLinks.terms),
+                    fuzzzyColors: fuzzzyColors,
+                    fuzzzyTextStyles: fuzzzyTextStyles,
+                  ),
+                  const SizedBox(height: 12),
+                  _SettingsLinkTile(
+                    icon: Icons.help_outline,
+                    title: localizations.support,
+                    subtitle: localizations.supportDescription,
+                    trailingIcon: Icons.open_in_new,
+                    onTap: () => _openExternalLink(ExternalLinks.support),
+                    fuzzzyColors: fuzzzyColors,
+                    fuzzzyTextStyles: fuzzzyTextStyles,
+                  ),
+                  const SizedBox(height: 12),
+                  _SettingsLinkTile(
+                    icon: Icons.delete_outline,
+                    title: localizations.dataDeletion,
+                    subtitle: localizations.dataDeletionDescription,
+                    trailingIcon: Icons.open_in_new,
+                    onTap: () => _openExternalLink(ExternalLinks.dataDeletion),
+                    fuzzzyColors: fuzzzyColors,
+                    fuzzzyTextStyles: fuzzzyTextStyles,
+                  ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Text(
+                      localizations.appVersion(
+                        _packageInfo.version,
+                        _packageInfo.buildNumber,
+                      ),
+                      style: fuzzzyTextStyles.bodyS.copyWith(
+                        color: fuzzzyColors.inkMute,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -228,12 +307,14 @@ class _SettingsLinkTile extends StatelessWidget {
     required this.onTap,
     required this.fuzzzyColors,
     required this.fuzzzyTextStyles,
+    this.trailingIcon = Icons.chevron_right,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
+  final IconData trailingIcon;
   final FuzzzyColors fuzzzyColors;
   final FuzzzyTextStyles fuzzzyTextStyles;
 
@@ -280,7 +361,7 @@ class _SettingsLinkTile extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_right,
+              trailingIcon,
               color: fuzzzyColors.inkMute,
               size: 22,
             ),

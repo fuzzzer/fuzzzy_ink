@@ -27,4 +27,37 @@ void main() {
       }
     }
   });
+
+  /// Keys whose Georgian text is, on purpose, the same as the English: brand
+  /// and product names stay in Latin letters, and "Fuzz" / "Defuzz" are the
+  /// app's own technical terms (Georgian writes "Fuzz-ის კოპირება").
+  const sameInBothLanguages = {
+    'fuzzzyInk', // "Fuzzzy Ink" — the brand
+    'fuzzyVault', // "Fuzzy Vault" — the product name of the vault
+    'fuzz', // "Fuzz" — the encrypted text, a technical term
+    'defuzz', // "Defuzz" — its inverse, a technical term
+  };
+
+  test('every Georgian string is translated (T-0413)', () {
+    final en = readArb('en');
+    final ka = readArb('ka');
+
+    final untranslated = [
+      for (final key in en.keys)
+        if (!key.startsWith('@') &&
+            !sameInBothLanguages.contains(key) &&
+            ka[key] == en[key])
+          key,
+    ];
+    expect(untranslated, isEmpty, reason: 'still English in app_ka.arb');
+  });
+
+  test('the allowlist only names keys that exist and are still identical', () {
+    final en = readArb('en');
+    final ka = readArb('ka');
+    for (final key in sameInBothLanguages) {
+      expect(en[key], isNotNull, reason: key);
+      expect(ka[key], en[key], reason: '$key is translated now: drop it');
+    }
+  });
 }

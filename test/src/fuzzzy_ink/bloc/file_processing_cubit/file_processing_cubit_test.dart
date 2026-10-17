@@ -56,10 +56,13 @@ class _FakeHandler {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late MockCryptoCoreService mockService;
   late _FakeUserFileStore userFileStore;
   late Directory documents;
   late File input;
+  final markedForBackupExclusion = <String>[];
 
   /// Time for the fire-and-forget `_processFile` and its stream to settle.
   const settle = Duration(milliseconds: 150);
@@ -69,6 +72,7 @@ void main() {
       FileProcessingCubit.inputStabilityProbeDuration + settle;
 
   setUp(() {
+    markedForBackupExclusion.clear();
     mockService = MockCryptoCoreService();
     userFileStore = _FakeUserFileStore();
     documents = Directory.systemTemp.createTempSync('file_processing_cubit_');
@@ -156,6 +160,34 @@ void main() {
   // encrypt (send)
   // -----------------------------------------------------------------------
   group('FileEncryptionOption', () {
+    blocTest<FileProcessingCubit<FileEncryptionOption>, FileProcessingState>(
+      'a new chat folder is kept out of iCloud / Time Machine backups on '
+      'Apple platforms (T-0432)',
+      setUp: () {
+        stubEncrypt(CryptoCoreSuccess(completingHandler()));
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(BackupExclusion.channel, (call) async {
+          markedForBackupExclusion
+              .add((call.arguments as Map)['path'] as String);
+          return true;
+        });
+      },
+      tearDown: () => TestDefaultBinaryMessengerBinding
+          .instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(BackupExclusion.channel, null),
+      build: buildEncrypt,
+      act: (cubit) => cubit.addFilesToProcess(
+        chatId: _chatId,
+        chatName: _chatName,
+        filePaths: [input.path],
+      ),
+      wait: settle,
+      verify: (_) => expect(
+        markedForBackupExclusion,
+        Platform.isIOS || Platform.isMacOS ? [chatFolder()] : isEmpty,
+      ),
+    );
+
     blocTest<FileProcessingCubit<FileEncryptionOption>, FileProcessingState>(
       'fuzzes through encryptFileForChat into <chat>/<name>.fuzz, streams '
       'progress, completes with the output path',

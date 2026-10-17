@@ -412,6 +412,7 @@ Future<String> _buildOutputPathInChatFolder({
 
   if (!await chatIdFolder.exists()) {
     await chatIdFolder.create(recursive: true);
+    await const BackupExclusion().exclude(chatIdFolder.path);
   }
 
   final fileName = path.basename(inputFilePath);

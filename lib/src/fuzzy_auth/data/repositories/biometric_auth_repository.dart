@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_redundant_argument_values
 
 import 'package:biometric_storage/biometric_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -9,24 +10,36 @@ enum BiometricScope { chat, vault }
 extension on BiometricScope {
   String get _flagKey => 'biometric_enabled_$name';
   String get _storageName => 'fuzzy_biometric_password_$name';
+}
 
-  String get _accessTitle {
-    switch (this) {
-      case BiometricScope.chat:
-        return 'Authenticate to unlock chats';
-      case BiometricScope.vault:
-        return 'Authenticate to unlock vault';
-    }
-  }
-
-  String get _androidTitle {
-    switch (this) {
-      case BiometricScope.chat:
-        return 'Unlock Fuzzzy Ink';
-      case BiometricScope.vault:
-        return 'Unlock Fuzzy Vault';
-    }
-  }
+/// The system fingerprint / Face ID prompt in the app's language (T-0413).
+/// Chats reuse the unlock screen's title; the Android cancel button reuses
+/// the dialogs' Cancel.
+@visibleForTesting
+PromptInfo biometricPromptInfo(
+  BiometricScope scope,
+  FuzzzyInkLocalizations localizations,
+) {
+  final accessTitle = switch (scope) {
+    BiometricScope.chat => localizations.biometricUnlockChats,
+    BiometricScope.vault => localizations.biometricUnlockVault,
+  };
+  final darwinPromptInfo = IosPromptInfo(
+    saveTitle: localizations.biometricSavePassword,
+    accessTitle: accessTitle,
+  );
+  return PromptInfo(
+    iosPromptInfo: darwinPromptInfo,
+    macOsPromptInfo: darwinPromptInfo,
+    androidPromptInfo: AndroidPromptInfo(
+      title: switch (scope) {
+        BiometricScope.chat => localizations.chatUnlockTitle,
+        BiometricScope.vault => localizations.biometricUnlockVaultTitle,
+      },
+      subtitle: accessTitle,
+      negativeButton: localizations.cancel,
+    ),
+  );
 }
 
 class BiometricAuthRepository {
@@ -83,16 +96,7 @@ class BiometricAuthRepository {
         androidBiometricOnly: true,
         darwinBiometricOnly: true,
       ),
-      promptInfo: PromptInfo(
-        iosPromptInfo: IosPromptInfo(
-          saveTitle: 'Authenticate to save password',
-          accessTitle: scope._accessTitle,
-        ),
-        androidPromptInfo: AndroidPromptInfo(
-          title: scope._androidTitle,
-          subtitle: scope._accessTitle,
-        ),
-      ),
+      promptInfo: biometricPromptInfo(scope, currentContextLocalization),
     );
   }
 }

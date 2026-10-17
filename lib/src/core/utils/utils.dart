@@ -1,5 +1,6 @@
 export 'copy_guard.dart';
 export 'debouncer.dart';
+export 'external_links.dart';
 export 'file_reader.dart';
 export 'fuzzy_navigator.dart';
 export 'id_generator.dart';

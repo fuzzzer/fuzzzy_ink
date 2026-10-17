@@ -587,5 +587,42 @@
   "export": "Export",
   "@export": {},
   "couldNotOpenFile": "Could not open file.",
-  "@couldNotOpenFile": {}
+  "@couldNotOpenFile": {},
+  "legalAndSupport": "Legal and support",
+  "@legalAndSupport": {},
+  "legalAndSupportDescription": "These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.",
+  "@legalAndSupportDescription": {},
+  "privacyPolicy": "Privacy policy",
+  "@privacyPolicy": {},
+  "privacyPolicyDescription": "What the app keeps, and where",
+  "@privacyPolicyDescription": {},
+  "termsOfUse": "Terms of use",
+  "@termsOfUse": {},
+  "termsOfUseDescription": "The rules for using Fuzzzy Ink",
+  "@termsOfUseDescription": {},
+  "support": "Support",
+  "@support": {},
+  "supportDescription": "Help, questions and reporting a problem",
+  "@supportDescription": {},
+  "dataDeletion": "Deleting your data",
+  "@dataDeletion": {},
+  "dataDeletionDescription": "How to remove everything the app keeps",
+  "@dataDeletionDescription": {},
+  "couldNotOpenLink": "Could not open the link.",
+  "@couldNotOpenLink": {},
+  "appVersion": "Version {version} (build {build})",
+  "@appVersion": {
+    "placeholders": {
+      "version": {},
+      "build": {}
+    }
+  },
+  "biometricUnlockChats": "Authenticate to unlock chats",
+  "@biometricUnlockChats": {},
+  "biometricUnlockVault": "Authenticate to unlock vault",
+  "@biometricUnlockVault": {},
+  "biometricUnlockVaultTitle": "Unlock Fuzzy Vault",
+  "@biometricUnlockVaultTitle": {},
+  "biometricSavePassword": "Authenticate to save password",
+  "@biometricSavePassword": {}
 }

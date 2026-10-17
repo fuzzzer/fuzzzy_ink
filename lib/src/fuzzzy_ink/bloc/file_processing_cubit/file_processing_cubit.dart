@@ -452,6 +452,7 @@ Future<String> _ensureChatFolder({
 
   if (!await chatIdFolder.exists()) {
     await chatIdFolder.create(recursive: true);
+    await const BackupExclusion().exclude(chatIdFolder.path);
   }
 
   return chatIdFolder.path;
