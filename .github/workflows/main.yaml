@@ -50,6 +50,17 @@ jobs:
         run: ./sbom.sh flutter --check
       - uses: actions/upload-artifact@v7
         with: { name: sbom-flutter, path: documents/security/sbom/flutter.cdx.json }
+  law-drift:
+    # The SHARED-LAW:fuzzzy_handbook block in .agents/LAWS.md must equal what the handbook generates
+    # (.agents/LAWS.md, Repo facts "CI"). The handbook repository is private: the read-only deploy key
+    # lives in the repository secret FUZZZY_HANDBOOK_DEPLOY_KEY; without it this job fails at checkout.
+    # ref: master — the handbook's GitHub default branch is not master.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with: { repository: fuzzzy-bot/fuzzzy_handbook, ref: master, path: .handbook, ssh-key: "${{ secrets.FUZZZY_HANDBOOK_DEPLOY_KEY }}" }
+      - run: python3 .handbook/tools/check_law_drift.py --only fuzzy_chat --repo fuzzy_chat=.
   android:
     runs-on: ubuntu-latest
     steps:
