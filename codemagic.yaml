@@ -128,28 +128,6 @@ definitions:
     xcode: 26.5
     cocoapods: default
 
-  on_trunk_push: &on_trunk_push
-    events:
-      - push
-    branch_patterns:
-      - pattern: production-preparation
-        include: true
-    cancel_previous_builds: true
-
-  on_staging_tag: &on_staging_tag
-    events:
-      - tag
-    tag_patterns:
-      - pattern: 'staging-*'
-        include: true
-
-  on_release_tag: &on_release_tag
-    events:
-      - tag
-    tag_patterns:
-      - pattern: 'v*'
-        include: true
-
   notify_by_email: &notify_by_email
     recipients:
       - contact@fuzzzycore.com
@@ -180,7 +158,6 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-    triggering: *on_trunk_push
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -213,7 +190,6 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-    triggering: *on_staging_tag
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -245,7 +221,6 @@ workflows:
       groups:
         - fuzzzycore_deps
         - fuzzzycore_play
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -271,7 +246,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.dev
-    triggering: *on_trunk_push
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -297,7 +271,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.stg
-    triggering: *on_staging_tag
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -323,7 +296,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -350,7 +322,6 @@ workflows:
         - fuzzzycore_deps
       vars:
         BUNDLE_ID: com.fuzzzycore.ink
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_macos_targets
