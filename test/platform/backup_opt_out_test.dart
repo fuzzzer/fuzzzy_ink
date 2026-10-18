@@ -61,9 +61,45 @@ void main() {
         expect(source, contains('isExcludedFromBackup = true'), reason: path);
         expect(
           source,
-          contains('excludeApplicationSupportFromBackup()'),
+          contains('excludeAppFoldersFromBackup()'),
           reason: path,
         );
+      }
+    });
+
+    // T-0432: Documents holds every chat's folder (decrypted files in the
+    // clear) and the vault; Caches holds temporary copies.
+    test('Documents, the folders already in it, and Caches are excluded too',
+        () {
+      final ios = File('ios/Runner/AppDelegate.swift').readAsStringSync();
+      expect(ios, contains('.documentDirectory'));
+      expect(ios, contains('.cachesDirectory'));
+      expect(ios, contains('excludeChildFoldersFromBackup(of: url)'));
+
+      final macos =
+          File('macos/Runner/MainFlutterWindow.swift').readAsStringSync();
+      expect(macos, contains('.documentDirectory'));
+      expect(macos, contains('.cachesDirectory'));
+      expect(macos, contains('excludeChildFoldersFromBackup(of: documents)'));
+      // Outside the sandbox Documents would be the user's own folder.
+      expect(macos, contains('APP_SANDBOX_CONTAINER_ID'));
+      for (final name in ['Release', 'DebugProfile']) {
+        expect(
+          File('macos/Runner/$name.entitlements').readAsStringSync(),
+          contains('<key>com.apple.security.app-sandbox</key>\n\t<true/>'),
+        );
+      }
+    });
+
+    test('folders created later are marked through the backup channel', () {
+      for (final path in [
+        'ios/Runner/AppDelegate.swift',
+        'macos/Runner/MainFlutterWindow.swift',
+      ]) {
+        final source = File(path).readAsStringSync();
+        expect(source, contains('"com.fuzzzycore.ink/backup"'), reason: path);
+        expect(source, contains('"excludeFromBackup"'), reason: path);
+        expect(source, contains('registerBackupChannel('), reason: path);
       }
     });
   });

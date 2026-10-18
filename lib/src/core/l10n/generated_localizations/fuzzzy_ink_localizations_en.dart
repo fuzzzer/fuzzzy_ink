@@ -924,4 +924,56 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get couldNotOpenFile => 'Could not open file.';
+
+  @override
+  String get legalAndSupport => 'Legal and support';
+
+  @override
+  String get legalAndSupportDescription =>
+      'These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get privacyPolicyDescription => 'What the app keeps, and where';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get termsOfUseDescription => 'The rules for using Fuzzzy Ink';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get supportDescription => 'Help, questions and reporting a problem';
+
+  @override
+  String get dataDeletion => 'Deleting your data';
+
+  @override
+  String get dataDeletionDescription =>
+      'How to remove everything the app keeps';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link.';
+
+  @override
+  String appVersion(Object version, Object build) {
+    return 'Version $version (build $build)';
+  }
+
+  @override
+  String get biometricUnlockChats => 'Authenticate to unlock chats';
+
+  @override
+  String get biometricUnlockVault => 'Authenticate to unlock vault';
+
+  @override
+  String get biometricUnlockVaultTitle => 'Unlock Fuzzy Vault';
+
+  @override
+  String get biometricSavePassword => 'Authenticate to save password';
 }

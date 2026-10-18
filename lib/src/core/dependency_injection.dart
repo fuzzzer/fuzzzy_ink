@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:isar/isar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,13 +12,17 @@ class DependencyInjection {
     late final Directory supportDirectory;
 
     late final SharedPreferences prefs;
+    late final PackageInfo packageInfo;
 
     await Future.wait<void>([
       (() async =>
           documentsDirectory = await getApplicationDocumentsDirectory())(),
       (() async => supportDirectory = await getApplicationSupportDirectory())(),
       (() async => prefs = await SharedPreferences.getInstance())(),
+      (() async => packageInfo = await PackageInfo.fromPlatform())(),
     ]);
+
+    sl.safeRegisterSingleton<PackageInfo>(packageInfo);
 
     sl.safeRegisterSingleton<PreferencesService>(PreferencesService(prefs));
 

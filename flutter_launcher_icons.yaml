@@ -2,7 +2,7 @@
 # ANDROID ONLY, on purpose.
 #
 # Artwork is owner-approved and lives in the brand kit:
-#   ~/FuzzyCore_HQ/company/brand/logo/fuzzycore/v1/prod/night/
+#   /Volumes/Fuzzzity 2/fuzzzy_company/company/brand/logo/fuzzycore/v1/prod/night
 # This app uses the standard company mark, not an app-specific one (owner decision 2026-09-22:
 # the bespoke chat mark read as a plain red blob at icon size).
 # The copies under assets/launcher_icons/ are build inputs only — never edit them by hand and

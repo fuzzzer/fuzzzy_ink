@@ -9,172 +9,175 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   FuzzzyInkLocalizationsKa([String locale = 'ka']) : super(locale);
 
   @override
-  String get chat => 'Chat';
+  String get chat => 'ჩատი';
 
   @override
   String get fuzzzyInk => 'Fuzzzy Ink';
 
   @override
-  String get failedToLoadChats => 'Failed to load chats.';
+  String get failedToLoadChats => 'ჩატების ჩატვირთვა ვერ მოხერხდა.';
 
   @override
-  String get newChat => 'New Chat';
+  String get newChat => 'ახალი ჩატი';
 
   @override
-  String get acceptInvitation => 'Accept Invitation';
+  String get acceptInvitation => 'მოწვევის მიღება';
 
   @override
-  String get createANewChat => 'Create a New Chat';
+  String get createANewChat => 'ახალი ჩატის შექმნა';
 
   @override
-  String get enterChatName => 'Enter Chat Name';
+  String get enterChatName => 'შეიყვანეთ ჩატის სახელი';
 
   @override
-  String get eg => 'e.g.';
+  String get eg => 'მაგ.';
 
   @override
-  String get back => 'Back';
+  String get back => 'უკან';
 
   @override
-  String get create => 'Create';
+  String get create => 'შექმნა';
 
   @override
-  String get chatWithAlice => 'Chat with Alice';
+  String get chatWithAlice => 'ჩატი ანასთან';
 
   @override
-  String get failedToCreateChat => 'Failed to create chat.';
+  String get failedToCreateChat => 'ჩატის შექმნა ვერ მოხერხდა.';
 
   @override
-  String get pleaseEnterAChatName => 'Please enter a chat name.';
+  String get pleaseEnterAChatName => 'გთხოვთ, შეიყვანოთ ჩატის სახელი.';
 
   @override
   String get pleasePasteTheAcceptanceContent =>
-      'Please paste the acceptance content.';
+      'გთხოვთ, ჩასვათ მიღების ტექსტი.';
 
   @override
-  String get failedToCompleteHandshake => 'Failed to complete handshake.';
+  String get failedToCompleteHandshake =>
+      'ხელის ჩამორთმევის დასრულება ვერ მოხერხდა.';
 
   @override
-  String get sendInvitation => 'Send Invitation';
+  String get sendInvitation => 'მოწვევის გაგზავნა';
 
   @override
-  String get copyInvitation => 'Copy Invitation';
+  String get copyInvitation => 'მოწვევის კოპირება';
 
   @override
-  String get invitationCopiedToClipboard => 'Invitation copied to clipboard.';
+  String get invitationCopiedToClipboard => 'მოწვევა კოპირებულია ბუფერში.';
 
   @override
-  String get provideAcceptance => 'Provide Acceptance';
+  String get provideAcceptance => 'მიღების ტექსტის მიწოდება';
 
   @override
-  String get pasteAcceptanceText => 'Paste Acceptance Text';
+  String get pasteAcceptanceText => 'ჩასვით მიღების ტექსტი';
 
   @override
-  String get accept => 'Accept';
+  String get accept => 'მიღება';
 
   @override
   String get unexpectedFailureOccuredPleaseContactUs =>
-      'Unexpected failure occurred, please contact us.';
+      'მოხდა მოულოდნელი შეცდომა. გთხოვთ, დაგვიკავშირდეთ.';
 
   @override
-  String get failedToGenerateInvitation => 'Failed to generate invitation.';
+  String get failedToGenerateInvitation => 'მოწვევის შექმნა ვერ მოხერხდა.';
 
   @override
   String get inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages =>
-      'To start a chat with someone, they must first import the invitation and provide the acceptance text generated in their chat. This will allow them to send and unlock messages.';
+      'ჩატის დასაწყებად მეორე ადამიანმა ჯერ უნდა შემოიტანოს მოწვევა და გამოგიგზავნოთ მის ჩატში შექმნილი მიღების ტექსტი. ამის შემდეგ ისიც შეძლებს შეტყობინებების გაგზავნას და გახსნას.';
 
   @override
   String get theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere =>
-      'The acceptance that you get from the invited person should be pasted here:';
+      'მოწვეული ადამიანისგან მიღებული მიღების ტექსტი აქ ჩასვით:';
 
   @override
-  String get failedToAcceptInvitation => 'Failed to accept invitation.';
+  String get failedToAcceptInvitation => 'მოწვევის მიღება ვერ მოხერხდა.';
 
   @override
   String get pleaseProvideInvitationTextAndChatName =>
-      'Please provide invitation text and chat name.';
+      'გთხოვთ, მიუთითოთ მოწვევის ტექსტი და ჩატის სახელი.';
 
   @override
-  String get acceptChatInvitation => 'Accept Chat Invitation';
+  String get acceptChatInvitation => 'ჩატის მოწვევის მიღება';
 
   @override
-  String get pasteInvitationText => 'Paste Invitation Text';
+  String get pasteInvitationText => 'ჩასვით მოწვევის ტექსტი';
 
   @override
-  String get failedToGenerateAcceptance => 'Failed to generate acceptance.';
+  String get failedToGenerateAcceptance =>
+      'მიღების ტექსტის შექმნა ვერ მოხერხდა.';
 
   @override
-  String get failedToReadAcceptance => 'Failed to read acceptance.';
+  String get failedToReadAcceptance => 'მიღების ტექსტის წაკითხვა ვერ მოხერხდა.';
 
   @override
-  String get goToChat => 'Go to Chat';
+  String get goToChat => 'ჩატზე გადასვლა';
 
   @override
-  String get copyAcceptance => 'Copy Acceptance';
+  String get copyAcceptance => 'მიღების კოპირება';
 
   @override
   String get yourAcceptanceHasBeenGeneratedSuccessfully =>
-      'Your acceptance has been generated successfully.';
+      'თქვენი მიღების ტექსტი წარმატებით შეიქმნა.';
 
   @override
-  String get exportAcceptance => 'Export Acceptance';
+  String get exportAcceptance => 'მიღების ექსპორტი';
 
   @override
-  String get acceptanceCopiedToClipboard => 'Acceptance copied to clipboard.';
+  String get acceptanceCopiedToClipboard => 'მიღება კოპირებულია ბუფერში.';
 
   @override
-  String get tapToViewChat => 'Tap to view chat.';
+  String get tapToViewChat => 'შეეხეთ ჩატის სანახავად.';
 
   @override
-  String get waitingForAcceptance => 'Waiting for acceptance.';
+  String get waitingForAcceptance => 'ველოდებით მიღებას.';
 
   @override
-  String get deleteChat => 'Delete Chat';
+  String get deleteChat => 'ჩატის წაშლა';
 
   @override
   String get areYouSureYouWantToDeleteThisChat =>
-      'Are you sure you want to delete this chat?';
+      'დარწმუნებული ხართ, რომ გსურთ ამ ჩატის წაშლა?';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'გაუქმება';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'წაშლა';
 
   @override
-  String get textGoesHere => 'Text goes here.';
+  String get textGoesHere => 'აქ ჩაწერეთ ტექსტი.';
 
   @override
-  String get encrypting => 'Encrypting';
+  String get encrypting => 'მიმდინარეობს დაშიფვრა';
 
   @override
-  String get decrypting => 'Decrypting';
+  String get decrypting => 'მიმდინარეობს გაშიფვრა';
 
   @override
-  String get copiedToTheClipboard => 'Copied to the clipboard.';
+  String get copiedToTheClipboard => 'კოპირებულია ბუფერში.';
 
   @override
-  String get copy => 'Copy';
+  String get copy => 'კოპირება';
 
   @override
-  String get share => 'Share';
+  String get share => 'გაზიარება';
 
   @override
   String areYouSureYouWantToDeleteChatWith(Object personName) {
-    return 'Are you sure you want to delete chat with $personName';
+    return 'დარწმუნებული ხართ, რომ გსურთ ჩატის წაშლა: $personName?';
   }
 
   @override
-  String get failedToGetAcceptance => 'Failed to get acceptance';
+  String get failedToGetAcceptance => 'მიღების ტექსტის აღება ვერ მოხერხდა';
 
   @override
-  String get storagePermissionDenied => 'Storage permission denied.';
+  String get storagePermissionDenied =>
+      'მეხსიერებაზე წვდომის ნებართვა არ არის მიცემული.';
 
   @override
-  String get errorPickingFiles => 'Error picking files.';
+  String get errorPickingFiles => 'ფაილების არჩევისას მოხდა შეცდომა.';
 
   @override
-  String get loading => 'Loading';
+  String get loading => 'იტვირთება';
 
   @override
   String get fuzz => 'Fuzz';
@@ -183,29 +186,29 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get defuzz => 'Defuzz';
 
   @override
-  String get failedToProcessFiles => 'Failed to process files';
+  String get failedToProcessFiles => 'ფაილების დამუშავება ვერ მოხერხდა';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
-      'Chat with indicated name already exists';
+      'ამ სახელით ჩატი უკვე არსებობს';
 
   @override
-  String get reveal => 'Reveal';
+  String get reveal => 'ჩვენება';
 
   @override
-  String get show => 'Show';
+  String get show => 'ჩვენება';
 
   @override
-  String get open => 'Open';
+  String get open => 'გახსნა';
 
   @override
-  String get dropFilesHere => 'Drop files here';
+  String get dropFilesHere => 'გადმოიტანეთ ფაილები აქ';
 
   @override
-  String get shareInvitation => 'Share invitation';
+  String get shareInvitation => 'მოწვევის გაზიარება';
 
   @override
-  String get acceptanceText => 'Acceptance Text';
+  String get acceptanceText => 'მიღების ტექსტი';
 
   @override
   String get basicEncryption => 'მარტივი დაშიფრვა';
@@ -933,4 +936,57 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get couldNotOpenFile => 'ფაილის გახსნა ვერ მოხერხდა.';
+
+  @override
+  String get legalAndSupport => 'სამართლებრივი ინფორმაცია და მხარდაჭერა';
+
+  @override
+  String get legalAndSupportDescription =>
+      'ეს ბმულები fuzzzycore.com-ს ბრაუზერში გახსნის. თავად Fuzzzy Ink ინტერნეტს არასოდეს უკავშირდება.';
+
+  @override
+  String get privacyPolicy => 'კონფიდენციალურობის პოლიტიკა';
+
+  @override
+  String get privacyPolicyDescription => 'რას ინახავს აპლიკაცია და სად';
+
+  @override
+  String get termsOfUse => 'გამოყენების პირობები';
+
+  @override
+  String get termsOfUseDescription => 'Fuzzzy Ink-ის გამოყენების წესები';
+
+  @override
+  String get support => 'მხარდაჭერა';
+
+  @override
+  String get supportDescription =>
+      'დახმარება, კითხვები და პრობლემის შეტყობინება';
+
+  @override
+  String get dataDeletion => 'მონაცემების წაშლა';
+
+  @override
+  String get dataDeletionDescription =>
+      'როგორ წაშალოთ ყველაფერი, რასაც აპლიკაცია ინახავს';
+
+  @override
+  String get couldNotOpenLink => 'ბმულის გახსნა ვერ მოხერხდა.';
+
+  @override
+  String appVersion(Object version, Object build) {
+    return 'ვერსია $version (ანაწყობი $build)';
+  }
+
+  @override
+  String get biometricUnlockChats => 'ჩატების განსაბლოკად დაადასტურეთ ვინაობა';
+
+  @override
+  String get biometricUnlockVault => 'საცავის განსაბლოკად დაადასტურეთ ვინაობა';
+
+  @override
+  String get biometricUnlockVaultTitle => 'Fuzzy Vault-ის განბლოკვა';
+
+  @override
+  String get biometricSavePassword => 'პაროლის შესანახად დაადასტურეთ ვინაობა';
 }

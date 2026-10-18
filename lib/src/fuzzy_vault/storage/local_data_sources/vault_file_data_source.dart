@@ -1,9 +1,17 @@
 import 'dart:io';
+
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:path/path.dart' as path;
 
 class VaultFileDataSource {
-  const VaultFileDataSource({required this.vaultDirectoryPath});
+  const VaultFileDataSource({
+    required this.vaultDirectoryPath,
+    this.backupExclusion = const BackupExclusion(),
+  });
   final String vaultDirectoryPath;
+
+  /// The vault's folders are kept out of iCloud / Time Machine (T-0432).
+  final BackupExclusion backupExclusion;
 
   Directory get _vaultDir => Directory(vaultDirectoryPath);
   Directory get _itemsDir => Directory(path.join(vaultDirectoryPath, 'items'));
@@ -11,9 +19,11 @@ class VaultFileDataSource {
   File get _metaFile => File(path.join(vaultDirectoryPath, 'vault.meta'));
 
   Future<void> initDirectories() async {
-    if (!await _vaultDir.exists()) await _vaultDir.create(recursive: true);
-    if (!await _itemsDir.exists()) await _itemsDir.create(recursive: true);
-    if (!await _tmpDir.exists()) await _tmpDir.create(recursive: true);
+    for (final directory in [_vaultDir, _itemsDir, _tmpDir]) {
+      if (await directory.exists()) continue;
+      await directory.create(recursive: true);
+      await backupExclusion.exclude(directory.path);
+    }
   }
 
   Future<void> writeMetaAtomic(List<int> bytes) async {

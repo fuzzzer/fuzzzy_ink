@@ -6,6 +6,11 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
 ## [Unreleased]
 
 ### Changed
+- **The app is called Fuzzzy Ink** (was Fuzzzy Seal) wherever a person sees the name: the home-screen and window
+  titles on every platform, the welcome and unlock screens, the Face ID and biometric prompts, and the text sent with a
+  shared invitation, acceptance or message, in English and Georgian. Identifiers stay as they were — the app id
+  `com.fuzzzycore.seal`, the Dart package, the safety-number domain separator. New files on Android now land in
+  `Downloads/Fuzzzy Ink/`; files saved earlier stay in `Downloads/Fuzzzy Seal/` and are not moved.
 - **Files land where the user can find them.** A fuzzed file (on send) and an unfuzzed file (on receive) go to
   `Downloads/Fuzzzy Ink/<chat name>/` on Android (MediaStore, no storage permission on API 29+) and to the app's
   Documents folder on iOS, now visible in the Files app. The bubble shows the file's name and that place instead

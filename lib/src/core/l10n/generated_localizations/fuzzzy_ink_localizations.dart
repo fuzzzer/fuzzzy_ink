@@ -1782,6 +1782,102 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Could not open file.'**
   String get couldNotOpenFile;
+
+  /// No description provided for @legalAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal and support'**
+  String get legalAndSupport;
+
+  /// No description provided for @legalAndSupportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.'**
+  String get legalAndSupportDescription;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyPolicyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'What the app keeps, and where'**
+  String get privacyPolicyDescription;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// No description provided for @termsOfUseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The rules for using Fuzzzy Ink'**
+  String get termsOfUseDescription;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @supportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Help, questions and reporting a problem'**
+  String get supportDescription;
+
+  /// No description provided for @dataDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your data'**
+  String get dataDeletion;
+
+  /// No description provided for @dataDeletionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How to remove everything the app keeps'**
+  String get dataDeletionDescription;
+
+  /// No description provided for @couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get couldNotOpenLink;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} (build {build})'**
+  String appVersion(Object version, Object build);
+
+  /// No description provided for @biometricUnlockChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to unlock chats'**
+  String get biometricUnlockChats;
+
+  /// No description provided for @biometricUnlockVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to unlock vault'**
+  String get biometricUnlockVault;
+
+  /// No description provided for @biometricUnlockVaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Fuzzy Vault'**
+  String get biometricUnlockVaultTitle;
+
+  /// No description provided for @biometricSavePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to save password'**
+  String get biometricSavePassword;
 }
 
 class _FuzzzyInkLocalizationsDelegate

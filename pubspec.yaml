@@ -33,6 +33,7 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1
   logger: ^2.4.0
   marionette_flutter: ^0.6.0
+  package_info_plus: ^8.3.0
   path: ^1.9.0
   path_provider: ^2.0.11
   permission_handler: ^12.0.0
@@ -49,6 +50,8 @@ dev_dependencies:
     sdk: flutter
   marionette_mcp: ^0.6.0
   mocktail: ^1.0.0
+  plugin_platform_interface: ^2.1.8
+  url_launcher_platform_interface: ^2.3.2
   very_good_analysis: ^5.1.0
 
 flutter:
