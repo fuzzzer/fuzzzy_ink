@@ -7,3 +7,4 @@ This directory is the AI's living memory of the **Fuzzzy Ink** Flutter project. 
 | `project_context.md` | Core overview, tech stack, architecture diagrams, deviations from general guide |
 | `architecture_state.md` | Feature status, cubit/repo registries, navigation map, tech debt |
 | `file_tree.md` | Directory tree of the repo (`lib/`, `rust/fuzzy_crypto_core/`, `rust_builder/`, `documents/security/`, tests, scripts) generated from `git ls-files` |
+| `repo_facts.md` | Checks and commands, CI, localisation, the Rust core and bridge, Isar storage, tests, kit widgets, generators, and the legacy patterns not to copy |
