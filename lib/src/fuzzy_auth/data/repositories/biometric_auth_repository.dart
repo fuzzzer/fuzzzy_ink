@@ -22,6 +22,10 @@ extension on BiometricScope {
       : _legacyStorageName;
 
   String get _legacyStorageName => 'fuzzy_biometric_password_$name';
+
+  /// Set while the old Android copy still has to be deleted; cleared once it
+  /// is gone, so a failed delete is tried again at the next start.
+  String get _legacyCleanupKey => 'biometric_legacy_cleanup_$name';
 }
 
 /// Copies written before this version sit, on Android, under a Keystore key
@@ -97,8 +101,10 @@ class BiometricAuthRepository {
   /// One-time upgrade: deletes an Android copy made before
   /// [biometricKeyVersion] (its key cannot be changed in place) and turns the
   /// scope off, so the user turns biometrics on again once. Returns whether a
-  /// copy was dropped. Never throws.
+  /// copy was dropped. An old copy whose delete failed is deleted on a later
+  /// call (the next start). Never throws.
   Future<bool> discardOutdatedCopy(BiometricScope scope) async {
+    await _retryLegacyCleanup(scope);
     try {
       if (await _secureStorage.read(key: scope._flagKey) != 'true') {
         return false;
@@ -115,6 +121,8 @@ class BiometricAuthRepository {
         return false;
       }
       logger.i('Biometric copy predates biometric-only keys: scope=$scope');
+      // Noted before the flag goes, so the clean-up is never forgotten.
+      await _secureStorage.write(key: scope._legacyCleanupKey, value: 'true');
       await _secureStorage.delete(key: scope._flagKey);
     } catch (e) {
       logger.w('Outdated biometric copy not checked: scope=$scope, $e');
@@ -122,16 +130,35 @@ class BiometricAuthRepository {
     }
     // The flag is gone, so the old copy is never read again; deleting its
     // file and key is clean-up.
+    await _deleteLegacyCopy(scope);
+    return true;
+  }
+
+  Future<void> _retryLegacyCleanup(BiometricScope scope) async {
+    try {
+      if (await _secureStorage.read(key: scope._legacyCleanupKey) != 'true') {
+        return;
+      }
+    } catch (e) {
+      logger.w('Outdated biometric clean-up not checked: scope=$scope, $e');
+      return;
+    }
+    await _deleteLegacyCopy(scope);
+  }
+
+  /// Deletes the old copy's file and key, then the pending note; on failure
+  /// the note stays for the next try.
+  Future<void> _deleteLegacyCopy(BiometricScope scope) async {
     try {
       final legacy = await _biometricStorage.getStorage(
         scope._legacyStorageName,
         options: storageOptions,
       );
       await legacy.delete();
+      await _secureStorage.delete(key: scope._legacyCleanupKey);
     } catch (e) {
       logger.w('Outdated biometric copy not deleted: scope=$scope, $e');
     }
-    return true;
   }
 
   /// Never throws. On Android a key that needs strong biometrics on every

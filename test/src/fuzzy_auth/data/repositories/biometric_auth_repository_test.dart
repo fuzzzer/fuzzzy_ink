@@ -10,7 +10,7 @@ class _FakeStorageFile extends Fake implements BiometricStorageFile {
 
   @override
   final String name;
-  final bool failDelete;
+  bool failDelete;
   final List<String> calls = [];
   String? value;
   Exception? readError;
@@ -129,6 +129,39 @@ void main() {
 
       expect(await repository.discardOutdatedCopy(BiometricScope.chat), isTrue);
       expect(await repository.isEnabled(BiometricScope.chat), isFalse);
+    });
+
+    test(
+        'a failed delete of the old copy is tried again at the next start '
+        'until it succeeds; the notice still shows only once', () async {
+      const cleanup = 'biometric_legacy_cleanup_chat';
+      build({flag: 'true'}, failDelete: true);
+
+      expect(await repository.discardOutdatedCopy(BiometricScope.chat), isTrue);
+      expect(await secure(flag), isNull);
+      expect(await secure(cleanup), 'true');
+      final legacy = biometricStorage.files[legacyName]!;
+      expect(legacy.calls, ['delete']);
+
+      // Next start: the delete fails again and stays pending.
+      expect(
+        await repository.discardOutdatedCopy(BiometricScope.chat),
+        isFalse,
+      );
+      expect(legacy.calls, ['delete', 'delete']);
+      expect(await secure(cleanup), 'true');
+
+      // The start after that: it succeeds, and nothing more is tried.
+      legacy.failDelete = false;
+      expect(await repository.isEnabled(BiometricScope.chat), isFalse);
+      expect(legacy.calls, ['delete', 'delete', 'delete']);
+      expect(await secure(cleanup), isNull);
+
+      expect(
+        await repository.discardOutdatedCopy(BiometricScope.chat),
+        isFalse,
+      );
+      expect(legacy.calls, hasLength(3));
     });
 
     test('a copy made under the current settings is kept', () async {
