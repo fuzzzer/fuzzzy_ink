@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 import '../../data/models/user_auth_preferences.dart';
 import '../storage_models/stored_user_auth_preferences.dart';
