@@ -87,12 +87,19 @@ class DependencyInjection {
       BiometricAuthRepository(),
     );
 
+    sl.safeRegisterSingleton<AppLockThrottleRepository>(
+      AppLockThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(),
+      ),
+    );
+
     sl.safeRegisterSingleton<FuzzyAuthStore>(
       FuzzyAuthStore(
         chatAuthRepository: sl.get<ChatAuthRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
+        appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
       ),
     );
 

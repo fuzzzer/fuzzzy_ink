@@ -710,6 +710,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.';
 
   @override
+  String get chatAuthPasswordTooWeak =>
+      'Password is too weak. Use a longer one with letters, numbers and symbols.';
+
+  @override
+  String chatAuthLockedOut(Object time) {
+    return 'Too many wrong attempts. Try again in $time.';
+  }
+
+  @override
+  String get chatAuthBiometricReset =>
+      'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.';
+
+  @override
   String get vaultBiometricUnlock => 'Unlock with biometrics';
 
   @override

@@ -13,6 +13,7 @@ class FuzzyUserAuthPage extends StatelessWidget {
         chatAuthRepository: sl.get<ChatAuthRepository>(),
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        passwordStrengthService: sl.get<PasswordStrengthService>(),
       ),
       child: const _FuzzyUserAuthPageContent(),
     );
@@ -35,6 +36,13 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   bool _isPasswordVisible = false;
   bool _isVaultPasswordVisible = false;
   bool _showMismatchError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // The strength meter follows the new password as it is typed.
+    _passwordController.addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
@@ -164,6 +172,9 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     final localizations = context.fuzzzyInkLocalizations;
     final authStatus = context.watch<FuzzyAuthStore>().state.status;
     final isAuthEnabled = authStatus.isAuthenticated || authStatus.isLocked;
+    final isNewPasswordStrongEnough = context
+        .read<FuzzyUserAuthPreferencesCubit>()
+        .isStrongEnough(_passwordController.text);
 
     return BlocConsumer<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
@@ -234,6 +245,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                               oldPasswordController: _oldPasswordController,
                               isPasswordVisible: _isPasswordVisible,
                               showMismatchError: _showMismatchError,
+                              isPasswordStrongEnough: isNewPasswordStrongEnough,
                               onTogglePasswordVisibility:
                                   _togglePasswordVisibility,
                               onChangePassword: _onChangePassword,
@@ -251,6 +263,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                                   _confirmPasswordController,
                               isPasswordVisible: _isPasswordVisible,
                               showMismatchError: _showMismatchError,
+                              isPasswordStrongEnough: isNewPasswordStrongEnough,
                               onTogglePasswordVisibility:
                                   _togglePasswordVisibility,
                               onEnableAuth: _onEnableAuth,
@@ -325,6 +338,7 @@ class _SetupPasswordSection extends StatelessWidget {
     required this.confirmPasswordController,
     required this.isPasswordVisible,
     required this.showMismatchError,
+    required this.isPasswordStrongEnough,
     required this.onTogglePasswordVisibility,
     required this.onEnableAuth,
   });
@@ -333,6 +347,7 @@ class _SetupPasswordSection extends StatelessWidget {
   final TextEditingController confirmPasswordController;
   final bool isPasswordVisible;
   final bool showMismatchError;
+  final bool isPasswordStrongEnough;
   final VoidCallback onTogglePasswordVisibility;
   final VoidCallback onEnableAuth;
 
@@ -357,6 +372,10 @@ class _SetupPasswordSection extends StatelessWidget {
                 onPressed: onTogglePasswordVisibility,
               ),
             ),
+            _NewPasswordStrength(
+              password: passwordController.text,
+              isStrongEnough: isPasswordStrongEnough,
+            ),
             const SizedBox(height: 12),
             FuzzzyTextField(
               controller: confirmPasswordController,
@@ -374,7 +393,8 @@ class _SetupPasswordSection extends StatelessWidget {
             const SizedBox(height: 24),
             FuzzzyButton(
               label: localizations.chatAuthEnableProtection,
-              onPressed: !isLoading ? onEnableAuth : null,
+              onPressed:
+                  !isLoading && isPasswordStrongEnough ? onEnableAuth : null,
             ),
           ],
         );
@@ -390,6 +410,7 @@ class _ChangePasswordSection extends StatelessWidget {
     required this.oldPasswordController,
     required this.isPasswordVisible,
     required this.showMismatchError,
+    required this.isPasswordStrongEnough,
     required this.onTogglePasswordVisibility,
     required this.onChangePassword,
     required this.onDisableAuth,
@@ -400,6 +421,7 @@ class _ChangePasswordSection extends StatelessWidget {
   final TextEditingController oldPasswordController;
   final bool isPasswordVisible;
   final bool showMismatchError;
+  final bool isPasswordStrongEnough;
   final VoidCallback onTogglePasswordVisibility;
   final VoidCallback onChangePassword;
   final VoidCallback onDisableAuth;
@@ -437,6 +459,10 @@ class _ChangePasswordSection extends StatelessWidget {
                 onPressed: onTogglePasswordVisibility,
               ),
             ),
+            _NewPasswordStrength(
+              password: passwordController.text,
+              isStrongEnough: isPasswordStrongEnough,
+            ),
             const SizedBox(height: 12),
             FuzzzyTextField(
               controller: confirmPasswordController,
@@ -454,7 +480,9 @@ class _ChangePasswordSection extends StatelessWidget {
             const SizedBox(height: 24),
             FuzzzyButton(
               label: localizations.chatAuthSetPassword,
-              onPressed: !isLoading ? onChangePassword : null,
+              onPressed: !isLoading && isPasswordStrongEnough
+                  ? onChangePassword
+                  : null,
             ),
             const SizedBox(height: 12),
             FuzzzyButton(
@@ -464,6 +492,41 @@ class _ChangePasswordSection extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// The vault's strength meter under a new app-lock password, and why the
+/// button stays off until the password reaches "good".
+class _NewPasswordStrength extends StatelessWidget {
+  const _NewPasswordStrength({
+    required this.password,
+    required this.isStrongEnough,
+  });
+
+  final String password;
+  final bool isStrongEnough;
+
+  @override
+  Widget build(BuildContext context) {
+    if (password.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(top: context.fuzzzySpace.m),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PasswordStrengthIndicator(password: password),
+          if (!isStrongEnough) ...[
+            SizedBox(height: context.fuzzzySpace.s),
+            Text(
+              context.fuzzzyInkLocalizations.chatAuthPasswordTooWeak,
+              style: context.fuzzzyTextStyles.bodyS.copyWith(
+                color: context.fuzzzyColors.destructiveText,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
