@@ -1405,6 +1405,36 @@ abstract class FuzzzyInkLocalizations {
   /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
   String get chatAuthBiometricInvalidated;
 
+  /// No description provided for @chatAuthPasswordTooWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Use a longer one with letters, numbers and symbols.'**
+  String get chatAuthPasswordTooWeak;
+
+  /// No description provided for @chatAuthLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong attempts. Try again in {time}.'**
+  String chatAuthLockedOut(Object time);
+
+  /// No description provided for @chatAuthBiometricReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.'**
+  String get chatAuthBiometricReset;
+
+  /// No description provided for @biometricNotStrongEnough.
+  ///
+  /// In en, this message translates to:
+  /// **'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.'**
+  String get biometricNotStrongEnough;
+
+  /// No description provided for @biometricNotTurnedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock was not turned on.'**
+  String get biometricNotTurnedOn;
+
   /// No description provided for @vaultBiometricUnlock.
   ///
   /// In en, this message translates to:

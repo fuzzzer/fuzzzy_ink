@@ -462,6 +462,20 @@
   "@chatAuthBiometricFailed": {},
   "chatAuthBiometricInvalidated": "Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.",
   "@chatAuthBiometricInvalidated": {},
+  "chatAuthPasswordTooWeak": "Password is too weak. Use a longer one with letters, numbers and symbols.",
+  "@chatAuthPasswordTooWeak": {},
+  "chatAuthLockedOut": "Too many wrong attempts. Try again in {time}.",
+  "@chatAuthLockedOut": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "chatAuthBiometricReset": "Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.",
+  "@chatAuthBiometricReset": {},
+  "biometricNotStrongEnough": "This device's biometrics aren't strong enough to protect your password. Keep unlocking with your password.",
+  "@biometricNotStrongEnough": {},
+  "biometricNotTurnedOn": "Biometric unlock was not turned on.",
+  "@biometricNotTurnedOn": {},
   "vaultBiometricUnlock": "Unlock with biometrics",
   "@vaultBiometricUnlock": {},
   "vaultBiometricEnable": "Enable Biometric Unlock",

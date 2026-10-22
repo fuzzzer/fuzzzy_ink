@@ -721,6 +721,26 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.';
 
   @override
+  String get chatAuthPasswordTooWeak =>
+      'პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.';
+
+  @override
+  String chatAuthLockedOut(Object time) {
+    return 'ძალიან ბევრი არასწორი მცდელობა. ხელახლა სცადეთ $time-ის შემდეგ.';
+  }
+
+  @override
+  String get chatAuthBiometricReset =>
+      'ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.';
+
+  @override
+  String get biometricNotStrongEnough =>
+      'ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.';
+
+  @override
+  String get biometricNotTurnedOn => 'ბიომეტრიული განბლოკვა არ ჩაირთო.';
+
+  @override
   String get vaultBiometricUnlock => 'განბლოკვა ბიომეტრიით';
 
   @override

@@ -230,10 +230,13 @@ void main() {
       when(() => mockCryptoRepo.unlock('pw', _metadata))
           .thenAnswer((_) async => VaultSuccess(verifyKey));
       when(() => mockBiometricRepo.enable(BiometricScope.vault, 'pw'))
-          .thenAnswer((_) async {});
+          .thenAnswer((_) async => BiometricEnableResult.enabled);
 
       final cubit = buildCubit();
-      expect(await cubit.enableBiometric('pw'), isTrue);
+      expect(
+        await cubit.enableBiometric('pw'),
+        BiometricEnableResult.enabled,
+      );
       expect(cubit.state.biometricEnabled, isTrue);
       expect(cubit.state.masterKey, isNull);
       verifyInOrder([
@@ -251,8 +254,69 @@ void main() {
       );
 
       final cubit = buildCubit();
-      expect(await cubit.enableBiometric('nope'), isFalse);
+      expect(
+        await cubit.enableBiometric('nope'),
+        BiometricEnableResult.wrongPassword,
+      );
       verifyNever(() => mockBiometricRepo.enable(any(), any()));
+      await cubit.close();
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Biometrics: a cancel keeps the setting; weak biometrics enable nothing
+  // (security review 2026-10-22, item 2 follow-up)
+  // -----------------------------------------------------------------------
+  group('biometric outcomes', () {
+    setUp(() {
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+    });
+
+    test('a cancelled prompt keeps vault biometrics on', () async {
+      when(() => mockBiometricRepo.readPassword(BiometricScope.vault))
+          .thenAnswer((_) async => const BiometricNotRead());
+      final cubit = buildCubit()
+        ..emit(const VaultAuthState().copyWith(biometricEnabled: true));
+
+      await cubit.unlockWithBiometrics();
+
+      expect(cubit.state.authState, VaultAuthEnum.locked);
+      expect(cubit.state.biometricEnabled, isTrue);
+      expect(cubit.state.biometricInvalidated, isFalse);
+      verifyNever(() => mockBiometricRepo.disable(any()));
+      await cubit.close();
+    });
+
+    test('a copy that is gone turns vault biometrics off', () async {
+      when(() => mockBiometricRepo.readPassword(BiometricScope.vault))
+          .thenAnswer((_) async => const BiometricCopyGone());
+      final cubit = buildCubit()
+        ..emit(const VaultAuthState().copyWith(biometricEnabled: true));
+
+      await cubit.unlockWithBiometrics();
+
+      expect(cubit.state.biometricEnabled, isFalse);
+      expect(cubit.state.biometricInvalidated, isTrue);
+      verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
+      await cubit.close();
+    });
+
+    test('weak biometrics: the result says so and nothing is enabled',
+        () async {
+      final verifyKey = MockVaultKey();
+      when(verifyKey.close).thenAnswer((_) async {});
+      when(verifyKey.dispose).thenReturn(null);
+      when(() => mockCryptoRepo.unlock('pw', _metadata))
+          .thenAnswer((_) async => VaultSuccess(verifyKey));
+      when(() => mockBiometricRepo.enable(BiometricScope.vault, 'pw'))
+          .thenAnswer((_) async => BiometricEnableResult.notStrongEnough);
+
+      final cubit = buildCubit();
+      expect(
+        await cubit.enableBiometric('pw'),
+        BiometricEnableResult.notStrongEnough,
+      );
+      expect(cubit.state.biometricEnabled, isFalse);
       await cubit.close();
     });
   });

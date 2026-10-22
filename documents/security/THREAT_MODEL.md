@@ -94,13 +94,19 @@ Two things the reader must know:
 2. **Biometric unlock stores the password itself.** When a user enables biometric unlock for the app lock
    or the vault, the *password* is written to a `biometric_storage` entry
    (`lib/src/fuzzy_auth/data/repositories/biometric_auth_repository.dart`, entry
-   `fuzzy_biometric_password_<scope>`) that the OS releases only after a successful biometric prompt, or
-   within 30 s of one (`authenticationValidityDurationSeconds: 30`). The crate never sees this: it receives
-   the password as if typed. Per platform (`biometric_storage` 5.0.1 as configured in that repository):
-   **Android** — the password is encrypted under a Keystore key requiring `AUTH_BIOMETRIC_STRONG`
-   (`androidBiometricOnly: true`; StrongBox-backed where the device has it), ciphertext in the app's private
-   directory; **iOS/macOS** — a Keychain item with `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` and
-   `.biometryCurrentSet` (`darwinBiometricOnly: true`), so enrolling a new finger or face invalidates the
+   `fuzzy_biometric_password_<scope>`, on Android `fuzzy_biometric_password_v2_<scope>`) that the OS
+   releases only after a successful biometric prompt, on every read (`authenticationValidityDurationSeconds:
+   -1`). The crate never sees this: it receives the password as if typed. Per platform (`biometric_storage`
+   5.0.1 as configured in that repository): **Android** — the password is encrypted under a Keystore key
+   made with `setUserAuthenticationParameters(0, AUTH_BIOMETRIC_STRONG)` (no device PIN, no validity
+   window; the key is used through a `CryptoObject` behind the prompt; StrongBox-backed where the device has
+   it; `setInvalidatedByBiometricEnrollment` is left at its default, so enrolling a new fingerprint or face
+   invalidates the key and the copy is deleted on the next read), ciphertext in the app's private
+   directory. Copies written before this (key version 2) sat under a key that also accepted the device PIN
+   and stayed open 30 s after any unlock; key parameters cannot change after creation, so on the first start
+   after the update such a copy is deleted with its key and the user turns biometrics on again (security
+   review 2026-10-22, item 2); **iOS/macOS** — a Keychain item with
+   `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` and `.biometryCurrentSet` (`darwinBiometricOnly: true`), so enrolling a new finger or face invalidates the
    entry, and it is **always** in the data-protection keychain — the development-flavour login-keychain
    exception of item 1 does *not* extend to the biometric copy (an unsigned development build cannot enable
    biometrics at all); **Linux and Windows** — `canAuthenticate` reports the hardware unavailable, so the
@@ -926,7 +932,7 @@ studio's flow directory; the review ids below are those records).
 | R17 | **Handshake half-commit window**: the core persists `complete_handshake` before the database record is updated; a kill between them leaves the record "invited" while the core is connected, and every retry is `InvitationAlreadyUsed` until the chat is deleted and re-paired. Recoverable; one chat wide. | F2-7 review nit 2 | developer (reconcile from `chat_status` at chat open) |
 | R18 | **Seal failure on write stores the row with a null seal** — reachable only if the store closes between `decrypt_text` and `seal_local`; today nothing closes the chat store while a chat is open. | F2-8 review §2 | none today; revisit with R21 |
 | R19 | **Passwords on the Dart side are not wipeable** (Dart `String`; the bridge's serialisation buffer is freed unwiped). Key material is unaffected. | §2.2; F2-2 review nits; brief F-8 | none (language limit) |
-| R20 | **Biometric unlock stores the password** in the OS biometric keystore (Android: `AUTH_BIOMETRIC_STRONG` Keystore key, 30 s validity; iOS/macOS: data-protection Keychain, `WhenPasscodeSetThisDeviceOnly` + `biometryCurrentSet`, 30 s reuse; not available on Linux/Windows); the app lock is then as strong as the OS biometric gate. | §2.3; `biometric_auth_repository.dart`; `biometric_storage` 5.0.1 | product copy |
+| R20 | **Biometric unlock stores the password** in the OS biometric keystore (Android: Keystore key with `AUTH_BIOMETRIC_STRONG` only and timeout 0 — a prompt on every read, invalidated by a new enrolment; iOS/macOS: data-protection Keychain, `WhenPasscodeSetThisDeviceOnly` + `biometryCurrentSet`, no reuse window; not available on Linux/Windows); the app lock is then as strong as the OS biometric gate. | §2.3; `biometric_auth_repository.dart`; `biometric_storage` 5.0.1 | product copy |
 | R21 | **No auto-lock and no manual lock for the chat store** once unlocked at boot; only the vault has an inactivity timer. A device seized with the process alive and the OS session open is the with-password case with no password needed (§4.3). | §4.3, §4.5; F2-8 review §2 (`lock()` has no caller) | product |
 | R22 | **No post-quantum component**; harvest-now-decrypt-later on the X25519 key agreement is undefended. Hybrid ML-KEM + X25519 on the pre-key exchange is the next protocol project, after this one is audited. | §4.6, §7.9; `PROTOCOL.md` §17.12 | owner (sequencing) |
 | R23 | **Open audit question — MAC length.** Should a format version 2 adopt vodozemac's untruncated-MAC session config, given that the oracle argument rests on a product rule rather than on the primitive? | §7.5; R6 | auditor → owner |
