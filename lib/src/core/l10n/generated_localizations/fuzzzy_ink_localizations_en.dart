@@ -710,6 +710,26 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.';
 
   @override
+  String get chatAuthPasswordTooWeak =>
+      'Password is too weak. Use a longer one with letters, numbers and symbols.';
+
+  @override
+  String chatAuthLockedOut(Object time) {
+    return 'Too many wrong attempts. Try again in $time.';
+  }
+
+  @override
+  String get chatAuthBiometricReset =>
+      'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.';
+
+  @override
+  String get biometricNotStrongEnough =>
+      'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.';
+
+  @override
+  String get biometricNotTurnedOn => 'Biometric unlock was not turned on.';
+
+  @override
   String get vaultBiometricUnlock => 'Unlock with biometrics';
 
   @override
@@ -976,4 +996,22 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get biometricSavePassword => 'Authenticate to save password';
+
+  @override
+  String get riskyFileNotOpenedTitle => 'File not opened';
+
+  @override
+  String riskyFileNotOpenedMessage(Object fileName) {
+    return '“$fileName” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.';
+  }
+
+  @override
+  String get showInFolder => 'Show in folder';
+
+  @override
+  String get vaultMoveUnfinishedTitle => 'Vault not moved';
+
+  @override
+  String get vaultMoveUnfinishedMessage =>
+      'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
 }

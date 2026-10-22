@@ -88,7 +88,11 @@ void main() {
     if (documents.existsSync()) documents.deleteSync(recursive: true);
   });
 
-  String chatFolder() => path.join(documents.path, _chatName);
+  String chatFolder() => UserFileNames.chatFolderPath(
+        documentsPath: documents.path,
+        chatName: _chatName,
+        chatId: _chatId,
+      );
 
   FileProcessingCubit<FileEncryptionOption> buildEncrypt() =>
       FileProcessingCubit<FileEncryptionOption>(
@@ -155,6 +159,123 @@ void main() {
             'isProcessed',
             isTrue,
           );
+
+  // -----------------------------------------------------------------------
+  // where files go (security review item 5) — Completer ordering, no clock
+  // -----------------------------------------------------------------------
+  group('chat folder and file names', () {
+    /// Stubs the send with a job that stays running and answers the output
+    /// path the cubit chose.
+    Future<String> chosenSendPath(
+      StreamController<FileProcessingProgress> job,
+    ) {
+      final chosen = Completer<String>();
+      when(
+        () => mockService.encryptFileForChat(
+          chatId: any(named: 'chatId'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).thenAnswer((invocation) async {
+        chosen.complete(invocation.namedArguments[#outputPath] as String);
+        return CryptoCoreSuccess(
+          FileProcessingHandler(
+            progressStream: job.stream,
+            pause: () {},
+            resume: () {},
+            cancel: () {},
+          ),
+        );
+      });
+      return chosen.future;
+    }
+
+    test(
+        'on a computer the chat folder is Documents/Fuzzzy Ink/<chat> (<id>), '
+        "never a folder of the user's own", () async {
+      final job = StreamController<FileProcessingProgress>();
+      final chosen = chosenSendPath(job);
+      final cubit = buildEncrypt()
+        ..addFilesToProcess(
+          chatId: _chatId,
+          chatName: _chatName,
+          filePaths: [input.path],
+        );
+
+      final outputPath = await chosen;
+      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+        expect(
+          path.dirname(outputPath),
+          path.join(documents.path, 'Fuzzzy Ink', 'Bob (6f1e9b2c)'),
+        );
+      } else {
+        expect(path.dirname(outputPath), path.join(documents.path, _chatName));
+      }
+      expect(Directory(path.dirname(outputPath)).existsSync(), isTrue);
+
+      await cubit.close();
+      await job.close();
+    });
+
+    test('a send never replaces an existing .fuzz of the same name', () async {
+      Directory(chatFolder()).createSync(recursive: true);
+      final earlier = File(path.join(chatFolder(), 'report.pdf.fuzz'))
+        ..writeAsStringSync('an earlier send');
+      final job = StreamController<FileProcessingProgress>();
+      final chosen = chosenSendPath(job);
+      final cubit = buildEncrypt()
+        ..addFilesToProcess(
+          chatId: _chatId,
+          chatName: _chatName,
+          filePaths: [input.path],
+        );
+
+      expect(await chosen, path.join(chatFolder(), 'report (1).pdf.fuzz'));
+      expect(earlier.readAsStringSync(), 'an earlier send');
+
+      await cubit.close();
+      await job.close();
+    });
+
+    test('a receive is pointed at the chat folder (the name is chosen there)',
+        () async {
+      final chosen = Completer<String>();
+      final job = StreamController<FileProcessingProgress>();
+      when(
+        () => mockService.decryptFileForChat(
+          chatId: any(named: 'chatId'),
+          inputPath: any(named: 'inputPath'),
+          outputDirectoryPath: any(named: 'outputDirectoryPath'),
+        ),
+      ).thenAnswer((invocation) async {
+        chosen.complete(
+          invocation.namedArguments[#outputDirectoryPath] as String,
+        );
+        return CryptoCoreSuccess(
+          CryptoCoreReceivedFile(
+            outputPath: path.join(chatFolder(), 'report.pdf'),
+            handler: FileProcessingHandler(
+              progressStream: job.stream,
+              pause: () {},
+              resume: () {},
+              cancel: () {},
+            ),
+          ),
+        );
+      });
+      final cubit = buildDecrypt()
+        ..addFilesToProcess(
+          chatId: _chatId,
+          chatName: _chatName,
+          filePaths: [input.path],
+        );
+
+      expect(await chosen.future, chatFolder());
+
+      await cubit.close();
+      await job.close();
+    });
+  });
 
   // -----------------------------------------------------------------------
   // encrypt (send)

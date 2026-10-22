@@ -22,6 +22,9 @@ class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 class MockBiometricAuthRepository extends Mock
     implements BiometricAuthRepository {}
 
+class MockAppLockThrottleRepository extends Mock
+    implements AppLockThrottleRepository {}
+
 /// The real router's top-level `redirect` against a real [FuzzyAuthStore]
 /// walking the boot sequence (T-0329): protected routes are gated while the
 /// store is still opening (`initial`), exactly as when it is `locked`.
@@ -66,6 +69,7 @@ void main() {
       biometricAuthRepository: MockBiometricAuthRepository(),
       cryptoStoreKeyRepository: mockStoreKeyRepo,
       cryptoCoreService: mockService,
+      appLockThrottleRepository: MockAppLockThrottleRepository(),
     );
     sl.safeRegisterSingleton<FuzzyAuthStore>(store);
 

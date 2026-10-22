@@ -1,5 +1,5 @@
 import 'package:fuzzzy_ink/lib.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 part 'stored_message_data.g.dart';
 

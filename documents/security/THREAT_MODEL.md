@@ -30,13 +30,13 @@ What an attacker wants, in the order the product cares about it.
 | A3 | **Identity keys of a chat** (one Ed25519 + one Curve25519 key pair per chat per device) and the **one-time key** | inside the Olm `Account` pickle in the sealed state file | the store key (`PROTOCOL.md` §3, §10.3) |
 | A4 | **Session state** (the double-ratchet chains — including the current *receiving chain key* — skipped message keys, the counter window) **and the chat's history key** (A7's key) | the sealed state file `<chat_id>.state` | the store key; atomic write, save-before-return (`PROTOCOL.md` §10.3). A copy of this file is the post-compromise asset of §4.3 and §4.5: it decrypts every message the peer generates on the current receiving chain until the peer has received a new ratchet key from this device (§4.3) — and, opened, it yields that chat's history key, so a state copy plus the store key also reads that chat's local history (A7), no other chat's |
 | A5 | **The store key** (32 bytes, one per install) | exists in the clear only inside the unlocked process; at rest as a `0x10` wrapped blob in the platform secure storage | Argon2id-derived KEK from the app-lock password (`PROTOCOL.md` §10.2, §11) |
-| A6 | **The vault master key** and **vault item content** | `0x10` blob in the Isar vault metadata row; items as `0x20` files | the vault password; sealed items (`PROTOCOL.md` §10.6). Independent of the chat store: neither the store key nor any history key (A7) opens a vault item, and the vault key opens no chat history |
+| A6 | **The vault master key** and **vault item content** | `0x10` blob in the `vault.meta` file (JSON field `verificationToken`); items as `0x20` files under `items/`; both in the app-private vault folder `<app support directory>/vault/` (§2.5) — not in Isar | the vault password; sealed items (`PROTOCOL.md` §10.6). Independent of the chat store: neither the store key nor any history key (A7) opens a vault item, and the vault key opens no chat history |
 | A7 | **Local message history** (sent *and* received **text** plaintext — file rows carry no seal, see A12) | `StoredMessageData.sealedPlaintext`, one `0x20` seal per row, AAD `local-seal` ‖ chat id | **that chat's history key** — 32 random bytes drawn with the chat's Olm account and kept only inside the chat's sealed state (A4), so it is protected by the store key and, through it, the app-lock password (`PROTOCOL.md` §3, §10.4). Owner decision D-1 (§8): design (a) with a per-chat key. One chat's key opens no other chat's history and not the peer device's copy of the same chat; a captured **store key** still opens every state and therefore every history key — the per-chat key bounds a history-key leak, not a store-key leak |
 | A8 | **The app-lock and vault passwords** | typed by the user; optionally copied into the OS biometric-gated keystore when biometric unlock is enabled (§2.3) | the OS; the user |
 | A9 | **Metadata**: chat names, chat ids, timestamps, message counts and ordering, file names, sizes and the on-disk paths of unfuzzed files (A12), the ciphertext blobs themselves, vault item titles/tags/groups/types | plaintext columns of the Isar database | **not protected** — an explicit non-goal (§7.4, `PROTOCOL.md` §10.5) |
 | A10 | **Peer authenticity** — that the person at the other end of a chat is the person the user thinks | the safety number (`PROTOCOL.md` §5) | the users' out-of-band comparison |
 | A11 | **Availability of history**: that a blob a user already read stays readable | the local seal (A7) | the app lock; the ratchet makes the blob itself single-use by design (§7.6) |
-| A12 | **Unfuzzed file plaintext at rest** — every file a user has unfuzzed (chat or Basics) | an ordinary file at `<app documents directory>/<chat name>/<original name>` (desktop: the user's Documents folder; iOS: Documents, shown in the Files app; Android: moved to the public `Downloads/Fuzzzy Ink/<chat name>/`, T-0366), beside the `.fuzz` containers the user produced (`PROTOCOL.md` §10.5) | **nothing in the app** — not sealed, not gated by the app lock, not deleted with the chat; only the OS user account and device encryption (§2.5, §7.13, R36). The archive export (A7 as a file, `PROTOCOL.md` §9.5) is the same class: plaintext under a user-chosen password, outside forward secrecy (R35) |
+| A12 | **Unfuzzed file plaintext at rest** — every file a user has unfuzzed (chat or Basics) | an ordinary file at `<app documents directory>/<chat name>/<original name>` (desktop since 2026-10-22: `Documents/Fuzzzy Ink/<safe chat name> (<chat id prefix>)/<original name>`, never over an existing file; iOS: Documents, shown in the Files app; Android: moved to the public `Downloads/Fuzzzy Ink/<chat name>/`, T-0366; on both phones since 2026-10-22 the chat name is cleaned of path separators, control and direction characters and outer dots, so it cannot leave the folder), beside the `.fuzz` containers the user produced (`PROTOCOL.md` §10.5) | **nothing in the app** — not sealed, not gated by the app lock, not deleted with the chat; only the OS user account and device encryption (§2.5, §7.13, R36). The archive export (A7 as a file, `PROTOCOL.md` §9.5) is the same class: plaintext under a user-chosen password, outside forward secrecy (R35) |
 
 Not an asset of this model: the users' real-world identities (the protocol has no notion of them), the
 existence of the app on a device, or the fact that two people exchange blobs (§7.4).
@@ -94,13 +94,19 @@ Two things the reader must know:
 2. **Biometric unlock stores the password itself.** When a user enables biometric unlock for the app lock
    or the vault, the *password* is written to a `biometric_storage` entry
    (`lib/src/fuzzy_auth/data/repositories/biometric_auth_repository.dart`, entry
-   `fuzzy_biometric_password_<scope>`) that the OS releases only after a successful biometric prompt, or
-   within 30 s of one (`authenticationValidityDurationSeconds: 30`). The crate never sees this: it receives
-   the password as if typed. Per platform (`biometric_storage` 5.0.1 as configured in that repository):
-   **Android** — the password is encrypted under a Keystore key requiring `AUTH_BIOMETRIC_STRONG`
-   (`androidBiometricOnly: true`; StrongBox-backed where the device has it), ciphertext in the app's private
-   directory; **iOS/macOS** — a Keychain item with `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` and
-   `.biometryCurrentSet` (`darwinBiometricOnly: true`), so enrolling a new finger or face invalidates the
+   `fuzzy_biometric_password_<scope>`, on Android `fuzzy_biometric_password_v2_<scope>`) that the OS
+   releases only after a successful biometric prompt, on every read (`authenticationValidityDurationSeconds:
+   -1`). The crate never sees this: it receives the password as if typed. Per platform (`biometric_storage`
+   5.0.1 as configured in that repository): **Android** — the password is encrypted under a Keystore key
+   made with `setUserAuthenticationParameters(0, AUTH_BIOMETRIC_STRONG)` (no device PIN, no validity
+   window; the key is used through a `CryptoObject` behind the prompt; StrongBox-backed where the device has
+   it; `setInvalidatedByBiometricEnrollment` is left at its default, so enrolling a new fingerprint or face
+   invalidates the key and the copy is deleted on the next read), ciphertext in the app's private
+   directory. Copies written before this (key version 2) sat under a key that also accepted the device PIN
+   and stayed open 30 s after any unlock; key parameters cannot change after creation, so on the first start
+   after the update such a copy is deleted with its key and the user turns biometrics on again (security
+   review 2026-10-22, item 2); **iOS/macOS** — a Keychain item with
+   `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` and `.biometryCurrentSet` (`darwinBiometricOnly: true`), so enrolling a new finger or face invalidates the
    entry, and it is **always** in the data-protection keychain — the development-flavour login-keychain
    exception of item 1 does *not* extend to the biometric copy (an unsigned development build cannot enable
    biometrics at all); **Linux and Windows** — `canAuthenticate` reports the hardware unavailable, so the
@@ -119,10 +125,11 @@ boundary inside it is column-level and the reader must not assume more than this
 | Sealed (ciphertext) | Plaintext |
 |---|---|
 | `StoredMessageData.sealedPlaintext` — a `0x20` local seal per message (`PROTOCOL.md` §10.4) | `StoredMessageData.encryptedMessage` — the `Fuzz/` blob text (ciphertext, but a record that a message exists, its length and its time) |
-| `StoredVaultMetadata.verificationTokenBase64` — the `0x10`-wrapped vault master key (field name kept from the old design; it is no longer a token) | chat names, chat ids, timestamps, message ordering and counts, file names and sizes, chat status, vault item **titles, tags, group and type**, user preferences (the verified flag has no Isar mirror — the Rust flag in the sealed state is the only truth) |
+| — (the `0x10`-wrapped vault master key is **not** in Isar: it is the `verificationToken` field of the vault's `vault.meta` file, §2.5; the `StoredVaultMetadata` collection is still declared but never written) | chat names, chat ids, timestamps, message ordering and counts, file names and sizes, chat status, vault item **titles, tags, group and type**, user preferences (the verified flag has no Isar mirror — the Rust flag in the sealed state is the only truth) |
 
 Vault item *content* is not in Isar at all: one `0x20` file per item (optionally wrapped again in a `0x05`
-under a per-item password) in the app's files directory (`PROTOCOL.md` §10.1, §10.6).
+under a per-item password) in the vault folder `<app support directory>/vault/items/` (§2.5, `PROTOCOL.md`
+§10.1, §10.6).
 
 A copy of the database without the password (and without the OS keystore) is therefore: every message's
 ciphertext, every message's *sealed* plaintext (unreadable), and every piece of metadata in the clear (§7.4).
@@ -143,11 +150,14 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   output truncates it (`PROTOCOL.md` §17.11).
 - **Outputs are user-directed.** The receiver chooses the directory; the peer chooses only a bare file
   *name* (no `/`, `\`, NUL, control bytes, `.`/`..`, ≤ 255 bytes; `PROTOCOL.md` §7.3). Test:
-  `files::tests::original_name_is_bounded_and_free_of_control_characters`. The name is not display-sanitised
-  and an existing output is replaced silently (§10, R14–R15).
+  `files::tests::original_name_is_bounded_and_free_of_control_characters`. The core does not display-sanitise
+  the name and its final rename replaces an existing output; the app shows names without direction controls,
+  refuses to "Open" programs, scripts and shortcuts, and never names an existing file as the output
+  (`name (1).ext`, …) (R14–R15, mitigated 2026-10-22).
 - **Unfuzzed files are plain files (A12).** The plaintext of every received file — and of every file
   decrypted in Basics — is written where the user's app puts it: `<app documents directory>/<chat name>/<original
-  name>`, which on macOS, Windows and Linux is the user's Documents folder, on iOS the app's Documents folder
+  name>`, which on macOS, Windows and Linux is `Documents/Fuzzzy Ink/<safe chat name> (<chat id prefix>)/` in the
+  user's Documents folder (since 2026-10-22; Basics: `Documents/Working Folder/`), on iOS the app's Documents folder
   (exposed to the Files app) and on Android the public `Downloads/Fuzzzy Ink/<chat name>/` folder, readable by any
   app the user grants file access to (T-0366). It is never sealed, the app lock does not gate it, deleting the chat does not remove it, and the
   database row that names it (`encryptedMessage` = its path) is plaintext (§2.4). The fuzzed containers the
@@ -162,6 +172,26 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   no boot sweep. On Android the *sealed* container is additionally staged by the share sheet under
   `cache/share_plus/` until the next share (sealed bytes only; true of every file the app shares). The export runs
   only on an open store; a locked store returns before the file is created. R35.
+- **The vault folder** `<app support directory>/vault/` holds `vault.meta` (JSON: the `0x10`-wrapped vault master
+  key, the vault id, timestamps and the auto-lock minutes — everything but the wrapped key in plaintext),
+  `items/<item id>.vault` (one `0x20` blob per item) and `.tmp/` (atomic-write temp files), written tmp → flush
+  → rename (`VaultFileDataSource`). It lies under the Application Support directory, out of the user-visible
+  folders on every platform and excluded from backups wherever §2.8 can exclude it (on Windows that directory
+  is the Roaming AppData folder, which a domain roaming profile copies to a server, as it already does the
+  store directory). Builds before 2026-10-22 used the **documents directory itself** as
+  the vault folder: on iOS the Files app and a paired computer's Finder showed `vault.meta` and the item files
+  (`UIFileSharingEnabled`, kept for chat files), and on Windows and Linux they sat loose in the user's own
+  Documents folder, which a cloud client (OneDrive) may sync. At every start, before the vault is used,
+  `VaultLocationMigration` moves such a vault into the private folder: a marker is written first; each file is
+  renamed, or on another volume copied → flushed → size-checked → renamed, and only then its old copy deleted;
+  `vault.meta` moves last; while the marker exists, or when the move failed before writing it (the old
+  `vault.meta` could not be read), the vault neither opens nor accepts writes and offers no new vault, and the
+  next start retries. Only the vault's own files are moved or deleted (a `vault.meta` that parses as the vault's,
+  `items/*.vault` files that start with `FUZZ`, the vault's temp files, then those folders only if empty); a
+  vault already in the private folder is never overwritten (the old one is then left where it was). The
+  move cannot recall a copy made before it: a cloud sync, desktop backup or Finder copy of the documents
+  directory taken earlier still holds the wrapped key for offline guessing (§4.3). The vault's
+  "delete everything" (`clearAll`, no caller today) refuses any folder not named `vault`.
 - **Two processes on one store are unsupported** (`PROTOCOL.md` §17.10).
 - **A prepared receive that never runs has already spent the file's message.** A `FileTicket` dropped
   between `prepare_file_receive` and `run_file_job` — a process kill, a UI flow abandoned — consumed the
@@ -246,7 +276,9 @@ accessibility) and is kept because it says what a backup taken by such a build c
 
 In every case the **metadata non-goal extends to the backup provider and to anyone who holds the account**
 (§7.4, T24): the Isar database leaves the device in the clear wherever a backup exists. The vault's `0x10`
-row is a column of that database, so every backup above also carries the wrapped vault master key.
+blob is not in that database but in `vault.meta` (§2.5): since 2026-10-22 it sits beside the database under
+Application Support and every statement above about the database applies to it; before that it sat in the
+documents directory — on iOS shown in the Files app, on Windows and Linux in the user's own Documents folder.
 
 With the fix in `6ecd9f1` the availability corollary is uniform: an OS backup no longer carries the store,
 the database or (on darwin) a migratable key item, so a restore cannot recover history — on top of "a new
@@ -376,8 +408,8 @@ An adversary who controls the victim's OS is not on this list (§7.1).
   re-key path exists in the crate or the app. So a copy of the `0x10` blob taken while the lock was **off**
   (empty-string wrap — an iOS backup made before `6ecd9f1`, a macOS development-flavour keychain read, a
   Linux/Windows user-profile backup; §2.8) stays openable forever: enabling
-  the lock later protects nothing that already left the device. The same holds for the vault's `0x10` row,
-  which travels with any copy of the database, plus the vault password. The only remedy is to delete every
+  the lock later protects nothing that already left the device. The same holds for the vault's `0x10` blob
+  (`vault.meta`, §2.5), which travels with any copy of the vault folder, plus the vault password. The only remedy is to delete every
   chat and the vault (or wipe the app) — R33.
 
 **With the app-lock password** (or the unlocked device in hand):
@@ -442,8 +474,8 @@ peer *sends* is treated as attacker-controlled input:
 - **A peer cannot impersonate the other direction or another chat** (§4.2, inner header).
 - **Limits:** a peer *can* make the receiver consume a message on a container whose chunks are then
   corrupt (`PROTOCOL.md` §17.5; §7.8 below) — the file must be re-sent, and the UI says so; a peer can
-  choose a file name that looks like another (Unicode direction override) or collides with an existing
-  output (§10, R14–R15); a peer can flood the ratchet windows so that the victim's older unread blobs become
+  choose a file name that looks like another (Unicode direction override — no longer shown, R14) or collides
+  with an existing output (it is then saved as `name (1).ext`, R15); a peer can flood the ratchet windows so that the victim's older unread blobs become
   undecryptable (§7.7) — a denial of *old* messages, never a disclosure.
 
 ### 4.5 ADV-5 — malware on an unlocked device
@@ -535,7 +567,7 @@ Findings F-1 … F-9 are the nine defects the hardening brief opened (§6).
 | T15 | MAC forgery against Olm's 8-byte tag | No oracle: every decryption is a human paste; a failed check changes nothing (test `api::messages::tests::tampered_blob_corrupt`); nothing decrypts automatically; no network to signal success | §17.6; §7.5 below | — | Stated as a known limitation; an untruncated MAC is vodozemac's `experimental-session-config` (R23) |
 | T16 | Olm encoding malleability | Inherent to Olm; vodozemac re-encodes what it MACs; only canonically-equivalent encodings of the *same* message are accepted, same key consumption | §17.7 | — | Not a forgery; documented so an "accepted mutant" in a fuzzer is not mistaken for a bypass |
 | T17 | Hostile KDF parameters exhaust memory or hang the device | Caps `m ≤ 256 MiB`, `t ≤ 16` checked before allocation; one Argon2 buffer per process | §11, §17.9 | — | Up to ≈ 10 s of CPU on a phone per hostile blob, by the user's own paste |
-| T18 | Path traversal via a peer-chosen chat id or file name | Chat id shape-validated at every entry; blob chat ids only ever *compared*; file names validated as bare names on both sides | §2, §7.3 | — | Names are not display-safe; silent overwrite of an existing output (R14–R15) |
+| T18 | Path traversal via a peer-chosen chat id or file name | Chat id shape-validated at every entry; blob chat ids only ever *compared*; file names validated as bare names on both sides | §2, §7.3 | — | Display and overwrite mitigated in the app (R14–R15): direction controls not shown, risky types not opened, existing files never replaced |
 | T19 | Unauthenticated `peek_chat_id` used to route a pasted pairing blob | Documented as a routing hint; every operation that acts on the id re-verifies the signature; the Dart side uses it only for a read-only lookup and for deleting a core state that has no database record | §13; F2-7 review | — | R16 |
 | T20 | State and message key lost to a crash mid-operation | Atomic write, save-before-return, cache evicted on any failure; a crash between Olm decrypt and write leaves the key → user re-pastes; a crash after the write has already returned the plaintext | §10.3 | — | The app-layer database write after a successful core call is not in the same transaction (R17–R18) |
 | T21 | Wrong-type / wrong-role blob accepted under the right password | AAD domains: `store-key` vs `vault-key` for `0x10`; `chat-state ‖ chat_id`, `local-seal`, `vault-item` for `0x20`; the first 31 bytes for `0x05`; storage-only types refused on paste | §6.7–6.9, §10 | — | Tests: `vault::tests::store_key_and_vault_key_domains_are_separate`, `formats::tests::pasted_rejects_storage_only_kinds`, `store::tests::corrupt_missing_and_foreign_files` |
@@ -704,7 +736,7 @@ the peer the safety number over a channel the attacker controls, is outside ever
 ### 7.13 Unfuzzed files on disk, and exported archives
 
 A file is unfuzzed so that it can be used: the plaintext is handed to the user as an ordinary file under the
-documents directory (`<chat name>/<original name>`; on desktop the user's Documents folder) and from that
+documents directory (`<chat name>/<original name>`; on desktop `Documents/Fuzzzy Ink/<chat folder>/`) and from that
 moment the app makes no claim about it — it is not sealed, the app lock does not gate it, deleting the chat
 does not remove it, and any process or person who can read the file system reads it (§2.5, A12, T25, R36).
 The same is true of an exported chat archive once it leaves the app: it is the chat's plaintext under the
@@ -895,13 +927,13 @@ studio's flow directory; the review ids below are those records).
 | R11 | **`getMessagesForChat` degrades on a locked store**: every text row reads as an empty string with a logged warning. Since F2-10 the row carries `isUnreadable` (set when the seal is absent, malformed, or the core answers `Corrupt` / `UnknownChat` / `StoreLocked`) and the archive export returns `storeLocked` before it touches the file system, so a blank-rows archive cannot be produced; an unreadable row exports as `"unreadable": true`. The UI still renders such a row as an empty message (only the export reads the flag). | F2-8 review §8; F2-10 review §1–3 | closed (residual: the UI shows `''`, not a marker — product) |
 | R12 | **The "Copy as link" message link carries the chat id in the clear**; pairing links carry `exp`. The raw blob does not. Both options have a cost, for D-7: **keep `c`** — a stable per-chat identifier on every message link (metadata only, §7.4); **drop `c`** — link routing disappears, because the blob carries no chat id (`PROTOCOL.md` §6.5) and the only way to route without one would be to trial-decrypt across every chat's session on link open, which the §7.5 rule forbids — a message link could then only prefill the currently open chat or ask the user to pick one. | §7.4; hardening plan §H (internal) rule "no chat id in the clear without a threat-model note" | owner |
 | R13 | **A cancelled chat receive** shows no failure reason, and the next attempt on the same container reads "already unfuzzed". | F3-3 review N2 | product copy |
-| R14 | **Peer-chosen file names are not display-safe** (a Unicode direction override is a valid name); the UI shows the *input* name today. | `PROTOCOL.md` §7.3; F3-2 review N1; F3-3 review §1 | product |
-| R15 | **Output collisions overwrite silently** (`<chat>/<originalName>`), and the name is now peer-chosen. | `PROTOCOL.md` §9.3; F3-3 review N3 | product |
+| R14 | **Peer-chosen file names are not display-safe** (a Unicode direction override is a valid name). **Mitigated 2026-10-22 (security review item 4):** every shown file name and folder has its direction controls and control characters removed (`UserFileNames.forDisplay`, through `UserFileLocation.of`); "Open" refuses a file whose real extension (after removing direction and invisible characters, trailing dots and spaces and any `:stream` part, case ignored) is a program, installer, script, shortcut or mountable image on a computer, or an app package on Android, and offers "Show in folder" (`UserFileNames.isRiskyToOpen`, `DeviceFileInteractor.openFile`). Remaining: a denylist cannot know every handler a user installed; "Show in folder" then a double-click still runs the file; the failed-files snackbar prints the *input* container name unsanitised. | `PROTOCOL.md` §7.3; F3-2 review N1; F3-3 review §1; security review 2026-10-22 | product |
+| R15 | **Output collisions overwrite silently** (`<chat>/<originalName>`), and the name is now peer-chosen. **Mitigated 2026-10-22 (security review item 5):** the app picks the output path before the core runs and never picks an existing name or one with a `.part` beside it — `name (1).ext`, `name (2).ext`, … (`UserFileNames.uniqueOutputPath`, for chat receive and send and both Basics directions); on a computer chat files go to `Documents/Fuzzzy Ink/<safe chat name> (<first 8 of the chat id>)/`, so a chat can no longer write into the user's own Documents folders or share a folder with another chat. The core is unchanged (its final rename still replaces), so a file another program creates under the chosen name *while* a job runs is replaced. | `PROTOCOL.md` §9.3, §10.5; F3-3 review N3; security review 2026-10-22 | product |
 | R16 | **`peek_chat_id` is unauthenticated** by design; the Dart side uses the peeked id for a read-only lookup and — only when no database record exists — to delete an orphaned core state before re-accepting. A crafted invitation naming an id this device holds hits the own-invitation guard. | `PROTOCOL.md` §13; F2-7 review §2 | none (documented) |
 | R17 | **Handshake half-commit window**: the core persists `complete_handshake` before the database record is updated; a kill between them leaves the record "invited" while the core is connected, and every retry is `InvitationAlreadyUsed` until the chat is deleted and re-paired. Recoverable; one chat wide. | F2-7 review nit 2 | developer (reconcile from `chat_status` at chat open) |
 | R18 | **Seal failure on write stores the row with a null seal** — reachable only if the store closes between `decrypt_text` and `seal_local`; today nothing closes the chat store while a chat is open. | F2-8 review §2 | none today; revisit with R21 |
 | R19 | **Passwords on the Dart side are not wipeable** (Dart `String`; the bridge's serialisation buffer is freed unwiped). Key material is unaffected. | §2.2; F2-2 review nits; brief F-8 | none (language limit) |
-| R20 | **Biometric unlock stores the password** in the OS biometric keystore (Android: `AUTH_BIOMETRIC_STRONG` Keystore key, 30 s validity; iOS/macOS: data-protection Keychain, `WhenPasscodeSetThisDeviceOnly` + `biometryCurrentSet`, 30 s reuse; not available on Linux/Windows); the app lock is then as strong as the OS biometric gate. | §2.3; `biometric_auth_repository.dart`; `biometric_storage` 5.0.1 | product copy |
+| R20 | **Biometric unlock stores the password** in the OS biometric keystore (Android: Keystore key with `AUTH_BIOMETRIC_STRONG` only and timeout 0 — a prompt on every read, invalidated by a new enrolment; iOS/macOS: data-protection Keychain, `WhenPasscodeSetThisDeviceOnly` + `biometryCurrentSet`, no reuse window; not available on Linux/Windows); the app lock is then as strong as the OS biometric gate. | §2.3; `biometric_auth_repository.dart`; `biometric_storage` 5.0.1 | product copy |
 | R21 | **No auto-lock and no manual lock for the chat store** once unlocked at boot; only the vault has an inactivity timer. A device seized with the process alive and the OS session open is the with-password case with no password needed (§4.3). | §4.3, §4.5; F2-8 review §2 (`lock()` has no caller) | product |
 | R22 | **No post-quantum component**; harvest-now-decrypt-later on the X25519 key agreement is undefended. Hybrid ML-KEM + X25519 on the pre-key exchange is the next protocol project, after this one is audited. | §4.6, §7.9; `PROTOCOL.md` §17.12 | owner (sequencing) |
 | R23 | **Open audit question — MAC length.** Should a format version 2 adopt vodozemac's untruncated-MAC session config, given that the oracle argument rests on a product rule rather than on the primitive? | §7.5; R6 | auditor → owner |
@@ -915,9 +947,9 @@ studio's flow directory; the review ids below are those records).
 | R31 | **Pairing has no timeout**: a pending chat keeps its account and one-time key until accepted, regenerated or deleted; the link-level `exp` is a hint the core never checks. | `PROTOCOL.md` §4.6 | product |
 | R32 | **No post-compromise security until the peer ratchets.** A copied state file (thief with the password, malware on an unlocked device, a user-made backup of the store directory) holds the current receiving chain key of each chat and decrypts every message the peer generates on that chain until this device sends a message carrying a new ratchet key and the peer has received it — the peer's next message is then on a chain the copy lacks; no victim read is required, and messages the peer generated before receiving it stay readable by the copy. Nothing forces the victim to send. Past messages stay protected (forward secrecy). No mitigation in scope; candidates (forcing a ratchet step on every send, or re-keying on unlock) are a protocol change for a later version. | `PROTOCOL.md` §8.1, §14 point 3 (verified against the crate: a copy of B's state opened three messages A generated afterwards, and got `Corrupt` on A's first message after A had received B's reply), §17.14; F5-1 security audit finding M1 | planner (format v2 candidate); product copy |
 | R33 | **No store or vault re-key; a leaked key outlives every password change.** `rewrap_store_key` and `vault_rewrap` re-wrap the *same* 32-byte key; nothing is re-sealed, no re-key path exists. A store key or vault master key read from the unlocked process, or a copy of the `""`-wrapped `0x10` blob taken while the lock was off — an iOS backup made before `6ecd9f1`, a macOS development-flavour login-keychain read, a Linux/Windows user-profile backup (§2.8; **not** an Android backup, whose entry is Keystore-bound; since `6ecd9f1` no platform backup carries the item) — opens every present and future state file — and, through the history key each state file carries, every chat's local seals — and vault item after any password change, lock enable or re-pair. The per-chat history key (F2-12) does not change this: it is sealed *under* the store key, not beside it. Remedy today: delete every chat and the vault, or wipe the app (deleting one chat does destroy that chat's history key). Format v2 candidate: re-key = re-seal all state under a fresh store key. | `PROTOCOL.md` §10.2, §10.6; F4-1 review ("the master key never changes"), F4-2 review §2; §4.3, §4.5 | planner (format v2); product copy |
-| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory and the database (the key stays in the login keyring / DPAPI store); on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
+| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
 | R35 | **The archive export is plaintext under a password, outside forward secrecy — by design — and its working file is not `0o600` and not swept.** During an export the chat's rows exist in the clear as `<app support>/chat_archive_<chat id>.jsonl` for the seal's duration (default file mode; Dart cannot set `0o600` — routing the temp through the crate's `store::create_tmp` would close that); a process kill mid-seal leaves the file until the next export of the same chat, with no boot sweep; on Android the sealed container is staged under `cache/share_plus/` until the next share (sealed bytes only). Once exported, the archive's only protection is the user's password against offline Argon2id-bounded guessing (the dialog refuses weak/fair passwords); a lost archive is the chat's history, readable by whoever guesses the password, forever. | §2.5, §7.13, T26; `PROTOCOL.md` §9.5, §11; F2-10 review N1–N2 | developer (a one-line sweep in `ChatArchiveRepository` or at boot; `0o600` via a Rust temp helper) — non-blocking |
-| R36 | **Unfuzzed files are in the clear on disk.** Every received file and every Basics-decrypted file is an ordinary file under `<app documents>/<chat name>/` (desktop: the user's Documents folder): not sealed, not gated by the app lock, not removed with the chat, and its path is a plaintext database column. This is the product's purpose (a file is decrypted in order to be used), not an oversight; it is stated in the About-encryption page and the README (F2-11 review B1). What a future version could offer without changing the protocol: an app-private output directory on desktop, or deleting a chat's folder with the chat, both product choices. | §2.5, §7.13, A12, T25; `PROTOCOL.md` §10.5, §17.15 | product |
+| R36 | **Unfuzzed files are in the clear on disk.** Every received file and every Basics-decrypted file is an ordinary file under `<app documents>/<chat name>/` (desktop: `Documents/Fuzzzy Ink/<chat folder>/` in the user's Documents folder since 2026-10-22): not sealed, not gated by the app lock, not removed with the chat, and its path is a plaintext database column. This is the product's purpose (a file is decrypted in order to be used), not an oversight; it is stated in the About-encryption page and the README (F2-11 review B1). What a future version could offer without changing the protocol: an app-private output directory on desktop, or deleting a chat's folder with the chat, both product choices. | §2.5, §7.13, A12, T25; `PROTOCOL.md` §10.5, §17.15 | product |
 
 ---
 

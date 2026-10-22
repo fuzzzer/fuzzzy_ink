@@ -721,6 +721,26 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.';
 
   @override
+  String get chatAuthPasswordTooWeak =>
+      'პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.';
+
+  @override
+  String chatAuthLockedOut(Object time) {
+    return 'ძალიან ბევრი არასწორი მცდელობა. ხელახლა სცადეთ $time-ის შემდეგ.';
+  }
+
+  @override
+  String get chatAuthBiometricReset =>
+      'ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.';
+
+  @override
+  String get biometricNotStrongEnough =>
+      'ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.';
+
+  @override
+  String get biometricNotTurnedOn => 'ბიომეტრიული განბლოკვა არ ჩაირთო.';
+
+  @override
   String get vaultBiometricUnlock => 'განბლოკვა ბიომეტრიით';
 
   @override
@@ -989,4 +1009,22 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get biometricSavePassword => 'პაროლის შესანახად დაადასტურეთ ვინაობა';
+
+  @override
+  String get riskyFileNotOpenedTitle => 'ფაილი არ გაიხსნა';
+
+  @override
+  String riskyFileNotOpenedMessage(Object fileName) {
+    return '„$fileName“ პროგრამაა, საინსტალაციო ფაილი, სკრიპტი ან მალსახმობი. გახსნისას ის ამ მოწყობილობაზე შეიძლება გაეშვას, ამიტომ აპლიკაცია ასეთ ფაილებს არ ხსნის. თუ გამგზავნს ენდობით, დააჭირეთ „საქაღალდეში ჩვენებას“ და ფაილს იქ იპოვით.';
+  }
+
+  @override
+  String get showInFolder => 'საქაღალდეში ჩვენება';
+
+  @override
+  String get vaultMoveUnfinishedTitle => 'საცავის გადატანა ვერ მოხერხდა';
+
+  @override
+  String get vaultMoveUnfinishedMessage =>
+      'საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.';
 }

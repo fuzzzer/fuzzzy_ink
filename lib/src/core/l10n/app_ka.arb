@@ -462,6 +462,20 @@
   "@chatAuthBiometricFailed": {},
   "chatAuthBiometricInvalidated": "თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.",
   "@chatAuthBiometricInvalidated": {},
+  "chatAuthPasswordTooWeak": "პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.",
+  "@chatAuthPasswordTooWeak": {},
+  "chatAuthLockedOut": "ძალიან ბევრი არასწორი მცდელობა. ხელახლა სცადეთ {time}-ის შემდეგ.",
+  "@chatAuthLockedOut": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "chatAuthBiometricReset": "ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.",
+  "@chatAuthBiometricReset": {},
+  "biometricNotStrongEnough": "ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.",
+  "@biometricNotStrongEnough": {},
+  "biometricNotTurnedOn": "ბიომეტრიული განბლოკვა არ ჩაირთო.",
+  "@biometricNotTurnedOn": {},
   "vaultBiometricUnlock": "განბლოკვა ბიომეტრიით",
   "@vaultBiometricUnlock": {},
   "vaultBiometricEnable": "ბიომეტრიული განბლოკვის ჩართვა",
@@ -624,5 +638,19 @@
   "biometricUnlockVaultTitle": "Fuzzy Vault-ის განბლოკვა",
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "პაროლის შესანახად დაადასტურეთ ვინაობა",
-  "@biometricSavePassword": {}
+  "@biometricSavePassword": {},
+  "riskyFileNotOpenedTitle": "ფაილი არ გაიხსნა",
+  "@riskyFileNotOpenedTitle": {},
+  "riskyFileNotOpenedMessage": "„{fileName}“ პროგრამაა, საინსტალაციო ფაილი, სკრიპტი ან მალსახმობი. გახსნისას ის ამ მოწყობილობაზე შეიძლება გაეშვას, ამიტომ აპლიკაცია ასეთ ფაილებს არ ხსნის. თუ გამგზავნს ენდობით, დააჭირეთ „საქაღალდეში ჩვენებას“ და ფაილს იქ იპოვით.",
+  "@riskyFileNotOpenedMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "showInFolder": "საქაღალდეში ჩვენება",
+  "@showInFolder": {},
+  "vaultMoveUnfinishedTitle": "საცავის გადატანა ვერ მოხერხდა",
+  "@vaultMoveUnfinishedTitle": {},
+  "vaultMoveUnfinishedMessage": "საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.",
+  "@vaultMoveUnfinishedMessage": {}
 }

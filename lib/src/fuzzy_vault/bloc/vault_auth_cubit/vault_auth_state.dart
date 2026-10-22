@@ -1,6 +1,16 @@
 part of 'vault_auth_cubit.dart';
 
-enum VaultAuthEnum { initial, noVault, locked, unlocking, unlocked }
+enum VaultAuthEnum {
+  initial,
+  noVault,
+
+  /// The old vault is not yet in its private folder: nothing opens, and no
+  /// new vault is offered, until a restart finishes the move.
+  moveUnfinished,
+  locked,
+  unlocking,
+  unlocked,
+}
 
 class VaultAuthState {
   const VaultAuthState({

@@ -4,13 +4,15 @@ import 'package:fuzzzy_ink/lib.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 export 'user_file_location.dart';
+export 'user_file_names.dart';
 export 'user_files_channel.dart';
 
 /// Where the files the app produces end up so the user can find them
 /// (T-0366).
 ///
-/// The crypto core streams into the app's own chat folder
-/// (`AppDocumentsDirectory/<chat name>/`); [publish] then moves the finished
+/// The crypto core streams into the chat's folder
+/// ([UserFileNames.chatFolderPath]) under a name no existing file has
+/// ([UserFileNames.uniqueOutputPath]); [publish] then moves the finished
 /// file to its user-visible place and answers the path the message row keeps:
 ///
 /// * Android — `Downloads/Fuzzzy Ink/<chat name>/`, through MediaStore on
@@ -18,7 +20,7 @@ export 'user_files_channel.dart';
 ///   on API 24–28.
 /// * iOS — the file stays in Documents, which `Info.plist` exposes to the
 ///   Files app as "On My iPhone › Fuzzzy Ink".
-/// * Desktop — the file stays in the user's Documents folder.
+/// * Desktop — the file stays in `Documents/Fuzzzy Ink/<chat folder>/`.
 class UserFileStore {
   UserFileStore({UserFilesChannel channel = const UserFilesChannel()})
       : _channel = channel;

@@ -87,28 +87,34 @@ jobs:
         # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
         env: { CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src" }
       - name: 16 KB page-size check
-        # Every LOAD segment of the crate's .so must be aligned >= 0x4000 on the 64-bit ABIs
-        # (Android's 16 KB requirement; armeabi-v7a is 32-bit and printed for information only).
+        # Every LOAD segment of every bundled .so (the crypto core, the database library and any
+        # other plugin's native code) must be aligned >= 0x4000 on the 64-bit ABIs (Android's 16 KB
+        # requirement; armeabi-v7a is 32-bit and printed for information only). The libraries the
+        # app cannot start without must be present, so a packaging change cannot skip the check.
         run: |
           set -euo pipefail
           readelf=$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf
           unzip -o -q build/app/outputs/flutter-apk/app-production-release.apk 'lib/*' -d "$RUNNER_TEMP/apk"
-          find "$RUNNER_TEMP/apk/lib" -name 'libfuzzy_crypto_core.so' | sort
+          find "$RUNNER_TEMP/apk/lib" -name '*.so' | sort
           bad=0; checked=0
           for abi in arm64-v8a x86_64; do
-            so="$RUNNER_TEMP/apk/lib/$abi/libfuzzy_crypto_core.so"
-            if [ ! -f "$so" ]; then echo "MISSING $so"; bad=1; continue; fi
-            echo "## $abi"
-            "$readelf" -lW "$so" | awk '$1 == "LOAD"'
-            for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
-              if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $so"; bad=1; fi
+            for required in libfuzzy_crypto_core.so libisar.so libflutter.so libapp.so; do
+              if [ ! -f "$RUNNER_TEMP/apk/lib/$abi/$required" ]; then echo "MISSING $abi/$required"; bad=1; fi
             done
-            checked=$((checked + 1))
+            while IFS= read -r so; do
+              echo "## $abi/$(basename "$so")"
+              "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+              for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
+                if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $abi/$(basename "$so")"; bad=1; fi
+              done
+              checked=$((checked + 1))
+            done < <(find "$RUNNER_TEMP/apk/lib/$abi" -name '*.so' | sort)
           done
-          so="$RUNNER_TEMP/apk/lib/armeabi-v7a/libfuzzy_crypto_core.so"
-          if [ -f "$so" ]; then echo "## armeabi-v7a (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'; fi
+          for so in $(find "$RUNNER_TEMP/apk/lib/armeabi-v7a" -name '*.so' 2>/dev/null | sort); do
+            echo "## armeabi-v7a/$(basename "$so") (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+          done
           echo "checked=$checked bad=$bad"
-          [ "$checked" -eq 2 ] && [ "$bad" -eq 0 ]
+          [ "$checked" -ge 8 ] && [ "$bad" -eq 0 ]
       - uses: actions/upload-artifact@v7
         with: { name: android-apk, path: build/app/outputs/flutter-apk/*.apk }
   linux:

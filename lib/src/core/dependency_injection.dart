@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fuzzzy_ink/lib.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,12 +87,19 @@ class DependencyInjection {
       BiometricAuthRepository(),
     );
 
+    sl.safeRegisterSingleton<AppLockThrottleRepository>(
+      AppLockThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(),
+      ),
+    );
+
     sl.safeRegisterSingleton<FuzzyAuthStore>(
       FuzzyAuthStore(
         chatAuthRepository: sl.get<ChatAuthRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
+        appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
       ),
     );
 
@@ -131,9 +138,22 @@ class DependencyInjection {
       PasswordStrengthService(),
     );
 
+    // The vault lives in its own app-private folder; a vault an older build
+    // left in the documents directory is moved there before first use.
+    // A move that failed before its marker was written keeps the vault
+    // closed too (moveFailed), so no new vault is made in its place.
+    final vaultDirectoryPath = VaultFileDataSource.directoryIn(
+      sl.get<AppSupportDirectory>().directory.path,
+    );
+    final vaultMove = await VaultLocationMigration(
+      legacyDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+      vaultDataSource:
+          VaultFileDataSource(vaultDirectoryPath: vaultDirectoryPath),
+    ).run();
     sl.safeRegisterSingleton<VaultFileDataSource>(
       VaultFileDataSource(
-        vaultDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+        vaultDirectoryPath: vaultDirectoryPath,
+        moveFailed: vaultMove == VaultLocationMigrationResult.failed,
       ),
     );
 

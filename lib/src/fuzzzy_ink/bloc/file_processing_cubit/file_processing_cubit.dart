@@ -116,15 +116,16 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
   }) async {
     try {
       final chatFolderPath = await _ensureChatFolder(
-        outputPath: sl.get<AppDocumentsDirectory>().directory.path,
+        documentsPath: sl.get<AppDocumentsDirectory>().directory.path,
         chatName: fileData.chatName,
+        chatId: fileData.chatId,
       );
 
       final FileProcessingHandler handler;
       final String outputPath;
 
       if (processingOption is FileEncryptionOption) {
-        outputPath = _fuzzedOutputPath(
+        outputPath = await _fuzzedOutputPath(
           chatFolderPath: chatFolderPath,
           inputFilePath: fileData.inputFilePath,
           fuzzedFileIdentificator: fuzzedFileIdentificator,
@@ -444,11 +445,21 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
   }
 }
 
+/// The chat's folder (`Documents/Fuzzzy Ink/<chat> (<id>)` on a computer,
+/// see [UserFileNames.chatFolderPath]); a received file is written there by
+/// [CryptoCoreService.decryptFileForChat] under a name nothing has yet.
 Future<String> _ensureChatFolder({
-  required String outputPath,
+  required String documentsPath,
   required String chatName,
+  required String chatId,
 }) async {
-  final chatIdFolder = Directory(path.join(outputPath, chatName));
+  final chatIdFolder = Directory(
+    UserFileNames.chatFolderPath(
+      documentsPath: documentsPath,
+      chatName: chatName,
+      chatId: chatId,
+    ),
+  );
 
   if (!await chatIdFolder.exists()) {
     await chatIdFolder.create(recursive: true);
@@ -458,12 +469,16 @@ Future<String> _ensureChatFolder({
   return chatIdFolder.path;
 }
 
-String _fuzzedOutputPath({
+/// `<name>.fuzz` in the chat's folder, or `<name> (1).fuzz`, … when taken:
+/// a send never replaces an existing file.
+Future<String> _fuzzedOutputPath({
   required String chatFolderPath,
   required String inputFilePath,
   required String fuzzedFileIdentificator,
 }) {
   final fileName =
       UserFileLocation.cleanPickedFileName(path.basename(inputFilePath));
-  return path.join(chatFolderPath, '$fileName.$fuzzedFileIdentificator');
+  return UserFileNames.uniqueOutputPath(
+    path.join(chatFolderPath, '$fileName.$fuzzedFileIdentificator'),
+  );
 }

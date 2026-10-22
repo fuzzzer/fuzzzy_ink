@@ -220,7 +220,9 @@ class CryptoCoreService {
   }
 
   /// Unfuzzes the chat-mode container at [inputPath] for [chatId] into
-  /// [outputDirectoryPath] under the sender's original file name. The
+  /// [outputDirectoryPath] under the sender's original file name, or
+  /// `name (1).ext`, `name (2).ext`, … when that name is taken — an existing
+  /// file is never replaced (`UserFileNames.uniqueOutputPath`). The
   /// container's key message is consumed here (a second attempt is `replay`;
   /// `wrongChat`, `tooOld`, and `corrupt` for a truncated or tampered header
   /// leave nothing consumed), so a run failure after a success here is
@@ -235,8 +237,9 @@ class CryptoCoreService {
       final ticket =
           await core.prepareFileReceive(chatId: chatId, input: inputPath);
       // Before the run: a running job holds the ticket's write lock.
-      final outputPath =
-          path.join(outputDirectoryPath, await ticket.originalName());
+      final outputPath = await UserFileNames.uniqueOutputPath(
+        path.join(outputDirectoryPath, await ticket.originalName()),
+      );
       final handler = await _startFileJob(
         (job) =>
             rust_files.runFileJob(ticket: ticket, output: outputPath, job: job),

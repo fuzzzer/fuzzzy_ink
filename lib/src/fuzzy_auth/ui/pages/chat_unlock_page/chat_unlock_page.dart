@@ -16,6 +16,9 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _autoBiometricAttempted = false;
+
+  /// Stays on this page once an update has turned biometric unlock off.
+  bool _showBiometricReset = false;
   late final AnimationController _shakeController;
 
   @override
@@ -49,9 +52,20 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
     super.dispose();
   }
 
+  /// The keyboard's Enter reaches here too, so the same rules as the button:
+  /// nothing while an attempt or the boot check runs, or a wait is on.
   void _onUnlock() {
     if (_passwordController.text.isEmpty) return;
+    final state = context.read<FuzzyAuthStore>().state;
+    if (state.isLockedOut) return;
+    if (state.status.isUnlocking || state.status.isInitial) return;
     context.read<FuzzyAuthStore>().unlock(_passwordController.text);
+  }
+
+  /// `m:ss`, rounded up so the last second still shows `0:01`.
+  static String _formatWait(Duration remaining) {
+    final seconds = (remaining.inMilliseconds + 999) ~/ 1000;
+    return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
   }
 
   void _onBiometricUnlock() {
@@ -75,6 +89,9 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
               duration: const Duration(seconds: 5),
             ),
           );
+        }
+        if (state.biometricReset) {
+          setState(() => _showBiometricReset = true);
         }
       },
       builder: (context, state) {
@@ -117,6 +134,16 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                             ),
                         textAlign: TextAlign.center,
                       ),
+                      if (_showBiometricReset) ...[
+                        SizedBox(height: context.fuzzzySpace.m),
+                        Text(
+                          currentContextLocalization.chatAuthBiometricReset,
+                          style: context.fuzzzyTextStyles.bodyS.copyWith(
+                            color: context.fuzzzyColors.ink,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                       const SizedBox(height: 40),
                       AnimatedBuilder(
                         animation: _shakeController,
@@ -149,7 +176,18 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                           ),
                         ),
                       ),
-                      if (state.verificationFailed) ...[
+                      if (state.isLockedOut) ...[
+                        SizedBox(height: context.fuzzzySpace.s),
+                        Text(
+                          currentContextLocalization.chatAuthLockedOut(
+                            _formatWait(state.lockoutRemaining),
+                          ),
+                          style: context.fuzzzyTextStyles.bodyS.copyWith(
+                            color: context.fuzzzyColors.destructiveText,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ] else if (state.verificationFailed) ...[
                         const SizedBox(height: 8),
                         Text(
                           currentContextLocalization.chatAuthIncorrectPassword,
@@ -162,10 +200,11 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                       const SizedBox(height: 40),
                       FuzzzyButton(
                         label: currentContextLocalization.chatAuthUnlock,
-                        onPressed:
-                            _passwordController.text.isNotEmpty && !isLoading
-                                ? _onUnlock
-                                : null,
+                        onPressed: _passwordController.text.isNotEmpty &&
+                                !isLoading &&
+                                !state.isLockedOut
+                            ? _onUnlock
+                            : null,
                       ),
                       if (state.biometricEnabled) ...[
                         const SizedBox(height: 24),

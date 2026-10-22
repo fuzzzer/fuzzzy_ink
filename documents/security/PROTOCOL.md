@@ -520,7 +520,11 @@ Vector: `file_key_body` (44 bytes: key `42×32`, name `report.pdf`).
 The name check runs on both sides (the sender derives it from a real basename; the receiver checks it inside
 step 9, before the counter commit). It is a file *name*, never a path, so a peer cannot steer the receiver's
 output outside the directory the receiver chose. It is not display-sanitised (a Unicode direction override is
-a valid file name); the UI must treat it as untrusted text.
+a valid file name); the UI must treat it as untrusted text. The app does (2026-10-22): every file name and
+folder it shows has its direction controls and control characters removed (`UserFileNames.forDisplay`),
+and "Open" refuses a file whose real extension — read after removing direction and invisible characters,
+trailing dots and spaces and any `:stream` part — is a program, installer, script or shortcut on that
+platform (`UserFileNames.isRiskyToOpen`), offering "Show in folder" instead (`THREAT_MODEL.md` R14).
 
 ---
 
@@ -640,7 +644,9 @@ of the *new* `x` is emitted.
 - All output goes to `<output>.part` (suffix appended, so `report.pdf.part`), created with mode `0o600` on
   unix ([`store.rs#L319`](../../rust/fuzzy_crypto_core/src/store.rs#L319)), **after** the header parsed and the key
   was derived — so a header-stage rejection creates nothing. On success: `fsync` → close → rename over
-  `<output>` (replacing an existing file silently). On *any* other exit — error, cancel, panic — the `.part`
+  `<output>` (the core replaces an existing file silently; the app never names an existing file, or one with
+  a `.part` beside it, as `<output>` — it picks `name (1).ext`, `name (2).ext`, … first,
+  `UserFileNames.uniqueOutputPath`, 2026-10-22, `THREAT_MODEL.md` R15). On *any* other exit — error, cancel, panic — the `.part`
   is unlinked by a drop guard ([`files.rs#L499`](../../rust/fuzzy_crypto_core/src/files.rs#L499)). A process kill
   mid-job can leave a `.part` behind; the next job over the same output truncates it.
 - A job's control word ([`files.rs#L41`](../../rust/fuzzy_crypto_core/src/files.rs#L41)) is read before every
@@ -721,15 +727,23 @@ shares.
 <application support directory>/fuzzy_crypto_store/<chat_id>.state.tmp  transient, see 10.3
 flutter_secure_storage  key "crypto_store_key_v1"                       the wrapped store key (0x10), base64
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
-Isar (app database)     StoredVaultMetadata.verificationTokenBase64      the wrapped vault master key (0x10), base64
-vault item files        one file per item (VaultFileDataSource)          a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/vault.meta                       JSON: the wrapped vault master key (0x10, base64, field "verificationToken"); vault id, timestamps, auto-lock minutes in plaintext
+<application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
 <application documents directory>/<chat name>/<name>                     unfuzzed FILES in the clear (§10.5) — plain files, not sealed; fuzzed containers <name>.fuzz sit beside them.
                                                                         Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Ink/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
+                                                                        Windows, macOS, Linux since 2026-10-22: Documents/Fuzzzy Ink/<safe chat name> (<first 8 of chat id>)/<name>; a taken name becomes <name> (1).<ext>
 ```
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
 from a shape-validated chat id (§2) and is asserted to stay inside the directory.
+
+The vault folder is app-private. Builds before 2026-10-22 used the application documents directory itself as
+the vault folder (`vault.meta`, `items/`, `.tmp/` loose in it); at every start, before the vault is used, a
+crash-safe one-time move (`VaultLocationMigration`, `THREAT_MODEL.md` §2.5) brings such a vault into
+`<application support directory>/vault/`. The wrapped vault master key is not stored in Isar
+(`StoredVaultMetadata` is declared but never written).
 
 ### 10.2 Store key lifecycle
 
@@ -830,15 +844,20 @@ type are plaintext columns in the database. The wrapped store key lives in the p
 secure storage (Keychain / Keystore / DPAPI / libsecret) as a `0x10` blob.
 
 **Unfuzzed files are written in the clear.** A received file's plaintext is delivered as an ordinary file at
-`<application documents directory>/<chat name>/<original name>` — on desktop that is the user's Documents
-folder; on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Ink"; on
+`<application documents directory>/<chat name>/<original name>` — on desktop (since 2026-10-22) at
+`Documents/Fuzzzy Ink/<safe chat name> (<first 8 characters of the chat id>)/<original name>` in the user's
+Documents folder, the chat name cleaned of separators, `<>:"|?*`, direction and control characters, leading
+and trailing dots and spaces and Windows device names (`UserFileNames.chatFolderPath`; files received
+before keep their old paths); on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Ink"; on
 Android the file is written there and then moved to the public `Downloads/Fuzzzy Ink/<chat name>/` through
 MediaStore (T-0366, so the user finds it with any file manager) — and the fuzzed containers the user produced
 sit beside it as `<name>.fuzz` (ciphertext). The plaintext file is **not sealed, not gated by the app lock, and
 not removed when the chat is deleted**; anyone who can read the device's file system reads it, and only text
 rows get a `sealedPlaintext` (§10.4). A file row's `encryptedMessage` column holds that file's path, so the
 database names the plaintext file but does not contain it; the archive export (§9.5) records the name only.
-Basics file decryption likewise writes a plain file into a folder under the same documents directory. The app's own copy (About
+An existing file is never replaced: a taken name becomes `<name> (1).<ext>`, `<name> (2).<ext>`, … (§9.3).
+Basics file decryption likewise writes a plain file into a folder under the same documents directory
+(`Working Folder`), under the same no-replace rule. The app's own copy (About
 encryption; README) says so in as many words. `THREAT_MODEL.md` §2.5, §7.13, R36.
 
 ### 10.6 Vault

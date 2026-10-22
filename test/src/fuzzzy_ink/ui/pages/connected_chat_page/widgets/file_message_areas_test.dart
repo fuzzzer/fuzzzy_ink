@@ -9,6 +9,11 @@ const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _missingPath =
     '/storage/emulated/0/Download/Fuzzzy Ink/Fz bot/secret.jpg.fuzz';
 
+/// A received program whose name hides its extension behind a direction
+/// override: shown naively it reads "invoiceexe.pdf".
+const _disguisedProgramPath =
+    '/Users/me/Documents/Fuzzzy Ink/Bob (6f1e9b2c)/invoice\u{202E}fdp.exe';
+
 /// A 360dp-wide phone (T-0366: every action of the pill must stay on it).
 const _phoneSize = Size(360, 780);
 
@@ -22,11 +27,12 @@ class _MissingFile extends Fake implements File {
   Directory get parent => Directory('/storage/emulated/0/Download/Fuzzzy Ink');
 }
 
-MessageData _fileRow({required bool isSent}) => MessageData(
+MessageData _fileRow({required bool isSent, String path = _missingPath}) =>
+    MessageData(
       id: 1,
       chatId: _chatId,
       type: MessageType.file,
-      encryptedMessage: _missingPath,
+      encryptedMessage: path,
       decryptedMessage: '',
       sentAt: DateTime(2026, 9, 22, 12),
       isSent: isSent,
@@ -44,7 +50,9 @@ Widget _host(Widget child) => MaterialApp(
 final class _MissingFileOverrides extends IOOverrides {
   @override
   File createFile(String path) =>
-      path == _missingPath ? _MissingFile() : super.createFile(path);
+      path == _missingPath || path == _disguisedProgramPath
+          ? _MissingFile()
+          : super.createFile(path);
 }
 
 Future<void> _withMissingFiles(Future<void> Function() body) =>
@@ -165,6 +173,76 @@ void main() {
         expect(tester.takeException(), isNull);
 
         await _dismissOverlayAndToast(tester);
+      });
+    });
+  });
+
+  // Security review: "Open" on a received program, script or shortcut would
+  // run it on a computer. It is refused before anything is launched, the
+  // dialog offers the folder instead, and the name is shown in its real
+  // order (R14).
+  group('received program', () {
+    testWidgets(
+        'the name shows its real extension; Open refuses with a dialog whose '
+        '"Show in folder" goes to the folder', (tester) async {
+      await _withMissingFiles(() async {
+        await tester.pumpWidget(
+          _host(
+            ReceivedFileMessageArea(
+              message: _fileRow(isSent: false, path: _disguisedProgramPath),
+            ),
+          ),
+        );
+
+        expect(find.text('invoicefdp.exe'), findsOneWidget);
+        expect(find.textContaining('\u{202E}'), findsNothing);
+
+        await tester.tap(find.text('invoicefdp.exe'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Open'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('File not opened'), findsOneWidget);
+        expect(find.textContaining('“invoicefdp.exe”'), findsOneWidget);
+        expect(find.text('Could not open file.'), findsNothing);
+
+        // The folder of a missing file cannot be shown: the usual toast.
+        await tester.tap(
+          find.byKey(const ValueKey('riskyFileDialog.showInFolder')),
+        );
+        await tester.pump();
+        // The dialog's closing transition.
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.text('File not opened'), findsNothing);
+        expect(find.text('Could not open file.'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        await _dismissOverlayAndToast(tester);
+      });
+    });
+
+    testWidgets('Cancel closes the dialog and opens nothing', (tester) async {
+      await _withMissingFiles(() async {
+        await tester.pumpWidget(
+          _host(
+            ReceivedFileMessageArea(
+              message: _fileRow(isSent: false, path: _disguisedProgramPath),
+            ),
+          ),
+        );
+
+        // A long press on the bubble is "Open" too.
+        await tester.longPress(find.text('invoicefdp.exe'));
+        await tester.pumpAndSettle();
+        expect(find.text('File not opened'), findsOneWidget);
+
+        await tester.tap(find.byKey(const ValueKey('riskyFileDialog.cancel')));
+        await tester.pumpAndSettle();
+
+        expect(find.text('File not opened'), findsNothing);
+        expect(find.text('Could not open file.'), findsNothing);
+        expect(tester.takeException(), isNull);
       });
     });
   });

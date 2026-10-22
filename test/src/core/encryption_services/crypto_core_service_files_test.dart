@@ -317,6 +317,34 @@ void main() {
     });
 
     test(
+        'a received name that is taken becomes "name (1).ext": the existing '
+        'file is never replaced (security review item 5)', () async {
+      await send();
+      final inbox = Directory(b.pathOf('Alice'))..createSync();
+      final mine = File(path.join(inbox.path, 'report.pdf'))
+        ..writeAsStringSync('my own report');
+      // A stale .part of the next name (a killed job) is not truncated either.
+      final stalePart = File(path.join(inbox.path, 'report (1).pdf.part'))
+        ..writeAsStringSync('stale');
+
+      final received = _dataOf(
+        await b.service.decryptFileForChat(
+          chatId: _chatId,
+          inputPath: sealedPath,
+          outputDirectoryPath: inbox.path,
+        ),
+      );
+      expect(received.outputPath, path.join(inbox.path, 'report (2).pdf'));
+      final events = await received.handler.progressStream.toList();
+      expect(events.last.isComplete, isTrue);
+      expect(events.last.errorMessage, isNull);
+
+      expect(File(received.outputPath).readAsBytesSync(), _plaintext());
+      expect(mine.readAsStringSync(), 'my own report');
+      expect(stalePart.readAsStringSync(), 'stale');
+    });
+
+    test(
         'a truncated container is corrupt at prepare and spends nothing; a '
         'tampered chunk fails the run and spends the message', () async {
       await send();

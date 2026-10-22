@@ -29,6 +29,16 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           biometricEnabled: biometricEnabled,
         ),
       );
+    } else if (metaRes is VaultFailure<VaultMetadata> &&
+        metaRes.type == VaultFailureType.vaultMoveUnfinished) {
+      // Offering "create" here would leave the real vault behind for good.
+      emit(
+        state.copyWith(
+          status: StateStatus.success,
+          authState: VaultAuthEnum.moveUnfinished,
+          biometricEnabled: false,
+        ),
+      );
     } else {
       emit(
         state.copyWith(
@@ -48,16 +58,24 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       ),
     );
     try {
-      final password =
-          await biometricAuthRepository.retrievePassword(BiometricScope.vault);
-      if (password == null) {
-        logger.w(
-          'Vault biometric unlock returned null (cancelled or empty storage)',
-        );
-        await _handleBiometricInvalidation();
-        return;
+      // A cancel or a locked-out sensor keeps biometric unlock on; only a
+      // copy that is gone turns it off.
+      final read =
+          await biometricAuthRepository.readPassword(BiometricScope.vault);
+      switch (read) {
+        case BiometricPassword(:final password):
+          await unlock(password);
+        case BiometricCopyGone():
+          logger.w('Vault biometric copy is gone');
+          await _handleBiometricInvalidation();
+        case BiometricNotRead():
+          emit(
+            state.copyWith(
+              status: StateStatus.success,
+              authState: VaultAuthEnum.locked,
+            ),
+          );
       }
-      await unlock(password);
     } catch (e, stack) {
       logger.e('Vault biometric unlock failed', error: e, stackTrace: stack);
       await _handleBiometricInvalidation();
@@ -76,18 +94,23 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     );
   }
 
-  Future<bool> enableBiometric(String currentPassword) async {
+  Future<BiometricEnableResult> enableBiometric(String currentPassword) async {
     final metaRes = await vaultRepository.getMetadata();
-    if (metaRes is! VaultSuccess) return false;
+    if (metaRes is! VaultSuccess) return BiometricEnableResult.wrongPassword;
 
     final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
     final keyRes = await cryptoRepository.unlock(currentPassword, metadata);
-    if (keyRes is VaultFailure) return false;
+    if (keyRes is VaultFailure) return BiometricEnableResult.wrongPassword;
     await _closeKey((keyRes as VaultSuccess<VaultKey>).data);
 
-    await biometricAuthRepository.enable(BiometricScope.vault, currentPassword);
-    emit(state.copyWith(biometricEnabled: true));
-    return true;
+    final result = await biometricAuthRepository.enable(
+      BiometricScope.vault,
+      currentPassword,
+    );
+    if (result == BiometricEnableResult.enabled) {
+      emit(state.copyWith(biometricEnabled: true));
+    }
+    return result;
   }
 
   Future<void> disableBiometric() async {

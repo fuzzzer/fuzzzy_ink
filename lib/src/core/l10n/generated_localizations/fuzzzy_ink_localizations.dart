@@ -1405,6 +1405,36 @@ abstract class FuzzzyInkLocalizations {
   /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
   String get chatAuthBiometricInvalidated;
 
+  /// No description provided for @chatAuthPasswordTooWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Use a longer one with letters, numbers and symbols.'**
+  String get chatAuthPasswordTooWeak;
+
+  /// No description provided for @chatAuthLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong attempts. Try again in {time}.'**
+  String chatAuthLockedOut(Object time);
+
+  /// No description provided for @chatAuthBiometricReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.'**
+  String get chatAuthBiometricReset;
+
+  /// No description provided for @biometricNotStrongEnough.
+  ///
+  /// In en, this message translates to:
+  /// **'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.'**
+  String get biometricNotStrongEnough;
+
+  /// No description provided for @biometricNotTurnedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock was not turned on.'**
+  String get biometricNotTurnedOn;
+
   /// No description provided for @vaultBiometricUnlock.
   ///
   /// In en, this message translates to:
@@ -1878,6 +1908,36 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Authenticate to save password'**
   String get biometricSavePassword;
+
+  /// No description provided for @riskyFileNotOpenedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File not opened'**
+  String get riskyFileNotOpenedTitle;
+
+  /// No description provided for @riskyFileNotOpenedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'“{fileName}” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.'**
+  String riskyFileNotOpenedMessage(Object fileName);
+
+  /// No description provided for @showInFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in folder'**
+  String get showInFolder;
+
+  /// No description provided for @vaultMoveUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault not moved'**
+  String get vaultMoveUnfinishedTitle;
+
+  /// No description provided for @vaultMoveUnfinishedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
+  String get vaultMoveUnfinishedMessage;
 }
 
 class _FuzzzyInkLocalizationsDelegate

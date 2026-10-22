@@ -8,21 +8,48 @@ class FuzzyUserAuthPreferencesCubit
   final ChatAuthRepository _chatAuthRepository;
   final FuzzyAuthStore _fuzzyAuthStore;
   final BiometricAuthRepository _biometricAuthRepository;
+  final PasswordStrengthService _passwordStrengthService;
 
   FuzzyUserAuthPreferencesCubit({
     required ChatAuthRepository chatAuthRepository,
     required FuzzyAuthStore fuzzyAuthStore,
     required BiometricAuthRepository biometricAuthRepository,
+    required PasswordStrengthService passwordStrengthService,
   })  : _chatAuthRepository = chatAuthRepository,
         _fuzzyAuthStore = fuzzyAuthStore,
         _biometricAuthRepository = biometricAuthRepository,
+        _passwordStrengthService = passwordStrengthService,
         super(
           const FuzzyUserAuthPreferencesState(
             activationStatus: StateStatus.initial,
           ),
         );
 
+  /// The bar the vault and the archive export set: "good" or better. Only
+  /// a new or changed password must reach it; an existing one still unlocks.
+  bool isStrongEnough(String password) {
+    final level = _passwordStrengthService.assess(password).level;
+    return level == PasswordStrengthLevel.good ||
+        level == PasswordStrengthLevel.strong;
+  }
+
+  void _emitTooWeak(AuthPreferencesAction action) {
+    emit(
+      state.copyWith(
+        activationStatus: StateStatus.failed,
+        lastAction: action,
+        activationFailure: DefaultFailure(
+          message: currentContextLocalization.chatAuthPasswordTooWeak,
+        ),
+      ),
+    );
+  }
+
   Future<void> enableAuth(String password) async {
+    if (!isStrongEnough(password)) {
+      _emitTooWeak(AuthPreferencesAction.enable);
+      return;
+    }
     emit(
       state.copyWith(
         activationStatus: StateStatus.loading,
@@ -62,6 +89,10 @@ class FuzzyUserAuthPreferencesCubit
     required String oldPassword,
     required String newPassword,
   }) async {
+    if (!isStrongEnough(newPassword)) {
+      _emitTooWeak(AuthPreferencesAction.changePassword);
+      return;
+    }
     emit(
       state.copyWith(
         activationStatus: StateStatus.loading,
@@ -172,10 +203,23 @@ class FuzzyUserAuthPreferencesCubit
         return;
       }
 
-      await _biometricAuthRepository.enable(
+      final result = await _biometricAuthRepository.enable(
         BiometricScope.chat,
         currentPassword,
       );
+      if (result != BiometricEnableResult.enabled) {
+        emit(
+          state.copyWith(
+            activationStatus: StateStatus.failed,
+            activationFailure: DefaultFailure(
+              message: result == BiometricEnableResult.notStrongEnough
+                  ? currentContextLocalization.biometricNotStrongEnough
+                  : currentContextLocalization.biometricNotTurnedOn,
+            ),
+          ),
+        );
+        return;
+      }
       await _fuzzyAuthStore.setBiometricEnabled(enabled: true);
       emit(
         state.copyWith(
