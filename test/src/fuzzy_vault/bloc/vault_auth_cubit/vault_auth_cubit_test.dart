@@ -60,6 +60,53 @@ void main() {
       );
 
   // -----------------------------------------------------------------------
+  // checkVaultStatus: an unfinished move never offers a new vault
+  // -----------------------------------------------------------------------
+  group('checkVaultStatus', () {
+    blocTest<VaultAuthCubit, VaultAuthState>(
+      'an unfinished move says so instead of offering to create a vault',
+      setUp: () {
+        when(() => mockVaultRepo.getMetadata()).thenAnswer(
+          (_) async => const VaultFailure(VaultFailureType.vaultMoveUnfinished),
+        );
+      },
+      build: buildCubit,
+      act: (cubit) => cubit.checkVaultStatus(),
+      expect: () => [
+        isA<VaultAuthState>()
+            .having((s) => s.status, 'status', StateStatus.loading),
+        isA<VaultAuthState>()
+            .having(
+              (s) => s.authState,
+              'authState',
+              VaultAuthEnum.moveUnfinished,
+            )
+            .having((s) => s.biometricEnabled, 'biometricEnabled', isFalse),
+      ],
+      verify: (_) {
+        verifyNever(() => mockBiometricRepo.isEnabled(any()));
+      },
+    );
+
+    blocTest<VaultAuthCubit, VaultAuthState>(
+      'no vault anywhere still offers to create one',
+      setUp: () {
+        when(() => mockVaultRepo.getMetadata()).thenAnswer(
+          (_) async => const VaultFailure(VaultFailureType.vaultNotInitialized),
+        );
+      },
+      build: buildCubit,
+      act: (cubit) => cubit.checkVaultStatus(),
+      expect: () => [
+        isA<VaultAuthState>()
+            .having((s) => s.status, 'status', StateStatus.loading),
+        isA<VaultAuthState>()
+            .having((s) => s.authState, 'authState', VaultAuthEnum.noVault),
+      ],
+    );
+  });
+
+  // -----------------------------------------------------------------------
   // createVault
   // -----------------------------------------------------------------------
   group('createVault', () {

@@ -6,6 +6,10 @@ enum VaultFailureType {
   vaultNotInitialized,
   vaultAlreadyExists,
 
+  /// The vault from the documents directory is not yet in its private
+  /// folder; it neither opens nor is replaced until a start finishes the move.
+  vaultMoveUnfinished,
+
   // CRUD failures
   itemNotFound,
   groupNotFound,

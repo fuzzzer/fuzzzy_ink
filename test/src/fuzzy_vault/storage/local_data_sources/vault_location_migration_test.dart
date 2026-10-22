@@ -3,7 +3,14 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
+
+class _MockItems extends Mock implements VaultItemLocalDataSource {}
+
+class _MockGroups extends Mock implements VaultGroupLocalDataSource {}
+
+class _MockCrypto extends Mock implements VaultCryptoRepository {}
 
 /// A sealed-blob stand-in: what matters to the move is the `FUZZ` magic.
 List<int> _blob(String body) =>
@@ -245,6 +252,62 @@ void main() {
 
     await expectVaultMoved();
   });
+
+  test(
+    'an old vault.meta that cannot be read: the move fails, the vault '
+    'stays closed and no new vault is made; a later start moves it',
+    () async {
+      await seedLegacyVault();
+      final legacyMeta = inDocuments('vault.meta');
+      await Process.run('chmod', ['000', legacyMeta]);
+      addTearDown(() => Process.run('chmod', ['644', legacyMeta]));
+
+      final result = await migration().run();
+      expect(result, VaultLocationMigrationResult.failed);
+      expect(
+        File(inVault(VaultFileDataSource.migrationMarkerName)).existsSync(),
+        isFalse,
+      );
+
+      // What dependency injection registers after a failed move.
+      final repository = VaultRepository(
+        itemDataSource: _MockItems(),
+        groupDataSource: _MockGroups(),
+        fileDataSource: VaultFileDataSource(
+          vaultDirectoryPath: vault,
+          backupExclusion: const BackupExclusion(isApplePlatform: false),
+          moveFailed: result == VaultLocationMigrationResult.failed,
+        ),
+        cryptoRepository: _MockCrypto(),
+      );
+      final read = await repository.getMetadata();
+      expect(
+        read,
+        isA<VaultFailure<VaultMetadata>>().having(
+          (failure) => failure.type,
+          'type',
+          VaultFailureType.vaultMoveUnfinished,
+        ),
+      );
+      final created = await repository.saveMetadata(
+        VaultMetadata(
+          vaultId: 'new',
+          verificationToken: 'new',
+          createdAt: DateTime(2026),
+          lastUnlockedAt: DateTime(2026),
+          autoLockMinutes: 5,
+        ),
+      );
+      expect(created, isA<VaultFailure<void>>());
+      expect(File(inVault('vault.meta')).existsSync(), isFalse);
+
+      // The next start, with the file readable again, finishes the move.
+      await Process.run('chmod', ['644', legacyMeta]);
+      expect(await migration().run(), VaultLocationMigrationResult.moved);
+      await expectVaultMoved();
+    },
+    skip: Platform.isWindows ? 'chmod is POSIX only' : false,
+  );
 
   test('a second start after the move does nothing', () async {
     await seedLegacyVault();

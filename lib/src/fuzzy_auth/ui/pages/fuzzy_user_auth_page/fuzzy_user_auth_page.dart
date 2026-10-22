@@ -686,6 +686,7 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
     final vaultState = context.watch<VaultAuthCubit>().state;
     final biometricEnabled = vaultState.biometricEnabled;
     final hasVault = vaultState.authState != VaultAuthEnum.noVault &&
+        vaultState.authState != VaultAuthEnum.moveUnfinished &&
         vaultState.authState != VaultAuthEnum.initial;
     final canUse = _canUseBiometrics;
 

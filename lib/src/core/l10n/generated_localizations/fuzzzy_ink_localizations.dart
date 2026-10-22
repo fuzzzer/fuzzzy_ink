@@ -1926,6 +1926,18 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Show in folder'**
   String get showInFolder;
+
+  /// No description provided for @vaultMoveUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault not moved'**
+  String get vaultMoveUnfinishedTitle;
+
+  /// No description provided for @vaultMoveUnfinishedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
+  String get vaultMoveUnfinishedMessage;
 }
 
 class _FuzzzyInkLocalizationsDelegate

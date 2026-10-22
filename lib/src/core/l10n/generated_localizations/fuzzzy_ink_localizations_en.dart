@@ -1007,4 +1007,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get showInFolder => 'Show in folder';
+
+  @override
+  String get vaultMoveUnfinishedTitle => 'Vault not moved';
+
+  @override
+  String get vaultMoveUnfinishedMessage =>
+      'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
 }

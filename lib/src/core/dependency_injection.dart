@@ -140,16 +140,22 @@ class DependencyInjection {
 
     // The vault lives in its own app-private folder; a vault an older build
     // left in the documents directory is moved there before first use.
-    final vaultFileDataSource = VaultFileDataSource(
-      vaultDirectoryPath: VaultFileDataSource.directoryIn(
-        sl.get<AppSupportDirectory>().directory.path,
+    // A move that failed before its marker was written keeps the vault
+    // closed too (moveFailed), so no new vault is made in its place.
+    final vaultDirectoryPath = VaultFileDataSource.directoryIn(
+      sl.get<AppSupportDirectory>().directory.path,
+    );
+    final vaultMove = await VaultLocationMigration(
+      legacyDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+      vaultDataSource:
+          VaultFileDataSource(vaultDirectoryPath: vaultDirectoryPath),
+    ).run();
+    sl.safeRegisterSingleton<VaultFileDataSource>(
+      VaultFileDataSource(
+        vaultDirectoryPath: vaultDirectoryPath,
+        moveFailed: vaultMove == VaultLocationMigrationResult.failed,
       ),
     );
-    await VaultLocationMigration(
-      legacyDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
-      vaultDataSource: vaultFileDataSource,
-    ).run();
-    sl.safeRegisterSingleton<VaultFileDataSource>(vaultFileDataSource);
 
     sl.safeRegisterSingleton<VaultItemLocalDataSource>(
       VaultItemLocalDataSource(isar: sl.get<Isar>()),

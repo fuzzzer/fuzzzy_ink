@@ -3,10 +3,23 @@ import 'dart:io';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:path/path.dart' as path;
 
+/// Thrown while the vault cannot be used because its move from the documents
+/// directory is unfinished ([VaultFileDataSource.moveFailed] or the
+/// migration marker).
+class VaultMoveUnfinishedException extends FileSystemException {
+  const VaultMoveUnfinishedException(String path)
+      : super(
+          'The vault is still being moved to its private folder; '
+          'the move resumes at the next start',
+          path,
+        );
+}
+
 class VaultFileDataSource {
   const VaultFileDataSource({
     required this.vaultDirectoryPath,
     this.backupExclusion = const BackupExclusion(),
+    this.moveFailed = false,
   });
 
   /// The vault's own folder inside the app-private support directory. Only a
@@ -33,6 +46,12 @@ class VaultFileDataSource {
   /// The vault's folders are kept out of iCloud / Time Machine (T-0432).
   final BackupExclusion backupExclusion;
 
+  /// The move at this start stopped before its marker was written (an
+  /// unreadable old `vault.meta`, say). The vault then neither opens nor
+  /// accepts writes, so no new vault is made beside the one still in the
+  /// documents directory; the next start tries the move again.
+  final bool moveFailed;
+
   Directory get _vaultDir => Directory(vaultDirectoryPath);
   Directory get _itemsDir =>
       Directory(path.join(vaultDirectoryPath, itemsFolderName));
@@ -55,12 +74,8 @@ class VaultFileDataSource {
   }
 
   Future<void> _ensureNotMigrating() async {
-    if (await _migrationMarker.exists()) {
-      throw FileSystemException(
-        'The vault is still being moved to its private folder; '
-        'the move resumes at the next start',
-        vaultDirectoryPath,
-      );
+    if (moveFailed || await _migrationMarker.exists()) {
+      throw VaultMoveUnfinishedException(vaultDirectoryPath);
     }
   }
 

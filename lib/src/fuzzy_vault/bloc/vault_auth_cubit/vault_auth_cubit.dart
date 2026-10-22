@@ -29,6 +29,16 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           biometricEnabled: biometricEnabled,
         ),
       );
+    } else if (metaRes is VaultFailure<VaultMetadata> &&
+        metaRes.type == VaultFailureType.vaultMoveUnfinished) {
+      // Offering "create" here would leave the real vault behind for good.
+      emit(
+        state.copyWith(
+          status: StateStatus.success,
+          authState: VaultAuthEnum.moveUnfinished,
+          biometricEnabled: false,
+        ),
+      );
     } else {
       emit(
         state.copyWith(

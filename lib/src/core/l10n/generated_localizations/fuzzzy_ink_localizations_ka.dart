@@ -1020,4 +1020,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get showInFolder => 'საქაღალდეში ჩვენება';
+
+  @override
+  String get vaultMoveUnfinishedTitle => 'საცავის გადატანა ვერ მოხერხდა';
+
+  @override
+  String get vaultMoveUnfinishedMessage =>
+      'საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.';
 }

@@ -98,4 +98,29 @@ void main() {
       '{}',
     );
   });
+
+  test(
+      'a move that failed before its marker keeps the vault closed: '
+      'nothing opens and no new vault can be written', () async {
+    final vaultPath = VaultFileDataSource.directoryIn(root.path);
+    final dataSource = VaultFileDataSource(
+      vaultDirectoryPath: vaultPath,
+      backupExclusion: const BackupExclusion(isApplePlatform: false),
+      moveFailed: true,
+    );
+
+    await expectLater(
+      dataSource.readMeta(),
+      throwsA(isA<VaultMoveUnfinishedException>()),
+    );
+    await expectLater(
+      dataSource.writeMetaAtomic(utf8.encode('{"new": true}')),
+      throwsA(isA<VaultMoveUnfinishedException>()),
+    );
+    await expectLater(
+      dataSource.writeItemAtomic('a', [1]),
+      throwsA(isA<VaultMoveUnfinishedException>()),
+    );
+    expect(File(path.join(vaultPath, 'vault.meta')).existsSync(), isFalse);
+  });
 }

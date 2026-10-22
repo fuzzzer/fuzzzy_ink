@@ -648,5 +648,9 @@
     }
   },
   "showInFolder": "საქაღალდეში ჩვენება",
-  "@showInFolder": {}
+  "@showInFolder": {},
+  "vaultMoveUnfinishedTitle": "საცავის გადატანა ვერ მოხერხდა",
+  "@vaultMoveUnfinishedTitle": {},
+  "vaultMoveUnfinishedMessage": "საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.",
+  "@vaultMoveUnfinishedMessage": {}
 }

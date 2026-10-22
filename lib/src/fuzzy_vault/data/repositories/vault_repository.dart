@@ -37,6 +37,8 @@ class VaultRepository {
           customDirectoryPath: jsonMap['customDirectoryPath'] as String?,
         ),
       );
+    } on VaultMoveUnfinishedException {
+      return const VaultFailure(VaultFailureType.vaultMoveUnfinished);
     } catch (e) {
       return VaultFailure(
         VaultFailureType.storageReadError,
