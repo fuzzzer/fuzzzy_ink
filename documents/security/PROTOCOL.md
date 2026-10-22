@@ -721,8 +721,9 @@ shares.
 <application support directory>/fuzzy_crypto_store/<chat_id>.state.tmp  transient, see 10.3
 flutter_secure_storage  key "crypto_store_key_v1"                       the wrapped store key (0x10), base64
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
-Isar (app database)     StoredVaultMetadata.verificationTokenBase64      the wrapped vault master key (0x10), base64
-vault item files        one file per item (VaultFileDataSource)          a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/vault.meta                       JSON: the wrapped vault master key (0x10, base64, field "verificationToken"); vault id, timestamps, auto-lock minutes in plaintext
+<application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
 <application documents directory>/<chat name>/<name>                     unfuzzed FILES in the clear (§10.5) — plain files, not sealed; fuzzed containers <name>.fuzz sit beside them.
                                                                         Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Ink/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
@@ -730,6 +731,12 @@ vault item files        one file per item (VaultFileDataSource)          a 0x20 
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
 from a shape-validated chat id (§2) and is asserted to stay inside the directory.
+
+The vault folder is app-private. Builds before 2026-10-22 used the application documents directory itself as
+the vault folder (`vault.meta`, `items/`, `.tmp/` loose in it); at every start, before the vault is used, a
+crash-safe one-time move (`VaultLocationMigration`, `THREAT_MODEL.md` §2.5) brings such a vault into
+`<application support directory>/vault/`. The wrapped vault master key is not stored in Isar
+(`StoredVaultMetadata` is declared but never written).
 
 ### 10.2 Store key lifecycle
 

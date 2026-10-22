@@ -131,11 +131,18 @@ class DependencyInjection {
       PasswordStrengthService(),
     );
 
-    sl.safeRegisterSingleton<VaultFileDataSource>(
-      VaultFileDataSource(
-        vaultDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+    // The vault lives in its own app-private folder; a vault an older build
+    // left in the documents directory is moved there before first use.
+    final vaultFileDataSource = VaultFileDataSource(
+      vaultDirectoryPath: VaultFileDataSource.directoryIn(
+        sl.get<AppSupportDirectory>().directory.path,
       ),
     );
+    await VaultLocationMigration(
+      legacyDirectoryPath: sl.get<AppDocumentsDirectory>().directory.path,
+      vaultDataSource: vaultFileDataSource,
+    ).run();
+    sl.safeRegisterSingleton<VaultFileDataSource>(vaultFileDataSource);
 
     sl.safeRegisterSingleton<VaultItemLocalDataSource>(
       VaultItemLocalDataSource(isar: sl.get<Isar>()),
