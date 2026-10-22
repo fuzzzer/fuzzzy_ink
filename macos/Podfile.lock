@@ -14,7 +14,7 @@ PODS:
   - FlutterMacOS (1.0.0)
   - fuzzy_crypto_core (0.0.1):
     - FlutterMacOS
-  - isar_flutter_libs (1.0.0):
+  - isar_community_flutter_libs (1.0.0):
     - FlutterMacOS
   - package_info_plus (0.0.1):
     - FlutterMacOS
@@ -38,7 +38,7 @@ DEPENDENCIES:
   - flutter_secure_storage_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_secure_storage_macos/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - fuzzy_crypto_core (from `Flutter/ephemeral/.symlinks/plugins/fuzzy_crypto_core/macos`)
-  - isar_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/isar_flutter_libs/macos`)
+  - isar_community_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/isar_community_flutter_libs/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
@@ -62,8 +62,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   fuzzy_crypto_core:
     :path: Flutter/ephemeral/.symlinks/plugins/fuzzy_crypto_core/macos
-  isar_flutter_libs:
-    :path: Flutter/ephemeral/.symlinks/plugins/isar_flutter_libs/macos
+  isar_community_flutter_libs:
+    :path: Flutter/ephemeral/.symlinks/plugins/isar_community_flutter_libs/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   path_provider_foundation:
@@ -84,7 +84,7 @@ SPEC CHECKSUMS:
   flutter_secure_storage_macos: 7f45e30f838cf2659862a4e4e3ee1c347c2b3b54
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   fuzzy_crypto_core: b2da7328ccd928f0ab4493b0a33332b34ed6d3ab
-  isar_flutter_libs: a65381780401f81ad6bf3f2e7cd0de5698fb98c4
+  isar_community_flutter_libs: a631ceb5622413b56bcd0a8bf49cb55bf3d8bb2b
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc

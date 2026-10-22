@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:504135ae-aee5-4be8-8c2d-2b502017e1b0",
+  "serialNumber": "urn:uuid:1182bfc5-1df2-40d4-9902-c6cbb0068fd1",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-25T19:57:30Z",
+    "timestamp": "2026-10-22T01:16:06Z",
     "tools": {
       "components": [
         {
@@ -36,9 +36,9 @@
     "component": {
       "name": "fuzzzy_ink",
       "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
-      "version": "1.1.0+2",
-      "purl": "pkg:pub/fuzzzy_ink@1.1.0%2B2",
-      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.0+2",
+      "version": "1.1.4+6",
+      "purl": "pkg:pub/fuzzzy_ink@1.1.4%2B6",
+      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.4+6",
       "type": "application"
     },
     "properties": [
@@ -56,11 +56,11 @@
     {
       "group": "",
       "name": "fuzzzy_ink",
-      "version": "1.1.0+2",
+      "version": "1.1.4+6",
       "description": "End to End encripted chat, It's content is stored locally only and can be read only by chat members",
-      "purl": "pkg:pub/fuzzzy_ink@1.1.0%2B2",
+      "purl": "pkg:pub/fuzzzy_ink@1.1.4%2B6",
       "type": "application",
-      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.0+2"
+      "bom-ref": "pkg:pub/fuzzzy_ink@1.1.4+6"
     },
     {
       "group": "",
@@ -2428,18 +2428,18 @@
     },
     {
       "group": "",
-      "name": "isar",
-      "version": "3.1.0+1",
+      "name": "isar_community",
+      "version": "3.4.1",
       "scope": "required",
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "99165dadb2cf2329d3140198363a7e7bff9bbd441871898a87e26914d25cf1ea"
+          "content": "5046967047825b8699b66ad41f29c68c4eaefd54e236f6dea9e90e0b8063442a"
         }
       ],
-      "purl": "pkg:pub/isar@3.1.0%2B1",
+      "purl": "pkg:pub/isar_community@3.4.1",
       "type": "library",
-      "bom-ref": "pkg:pub/isar@3.1.0+1",
+      "bom-ref": "pkg:pub/isar_community@3.4.1",
       "properties": [
         {
           "name": "SrcFile",
@@ -2465,18 +2465,18 @@
     },
     {
       "group": "",
-      "name": "isar_flutter_libs",
-      "version": "3.1.0+1",
+      "name": "isar_community_flutter_libs",
+      "version": "3.4.1",
       "scope": "required",
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "bc6768cc4b9c61aabff77152e7f33b4b17d2fc93134f7af1c3dd51500fe8d5e8"
+          "content": "541b07c0de7b5bd28e76cafc9fb56fac521186937bf309231572bf16551ef2f1"
         }
       ],
-      "purl": "pkg:pub/isar_flutter_libs@3.1.0%2B1",
+      "purl": "pkg:pub/isar_community_flutter_libs@3.4.1",
       "type": "library",
-      "bom-ref": "pkg:pub/isar_flutter_libs@3.1.0+1",
+      "bom-ref": "pkg:pub/isar_community_flutter_libs@3.4.1",
       "properties": [
         {
           "name": "SrcFile",
@@ -7648,7 +7648,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:pub/fuzzzy_ink@1.1.0+2",
+      "ref": "pkg:pub/fuzzzy_ink@1.1.4+6",
       "dependsOn": [
         "pkg:pub/app_links@7.0.0",
         "pkg:pub/args@2.4.2",
@@ -7671,10 +7671,11 @@
         "pkg:pub/get_it@8.3.0",
         "pkg:pub/github@9.17.0",
         "pkg:pub/go_router@13.2.5",
+        "pkg:pub/google_fonts@6.3.3",
         "pkg:pub/hex@0.2.0",
         "pkg:pub/http@1.1.0",
-        "pkg:pub/isar@3.1.0+1",
-        "pkg:pub/isar_flutter_libs@3.1.0+1",
+        "pkg:pub/isar_community@3.4.1",
+        "pkg:pub/isar_community_flutter_libs@3.4.1",
         "pkg:pub/logger@2.7.0",
         "pkg:pub/logging@1.2.0",
         "pkg:pub/marionette_flutter@0.6.0",
@@ -7699,7 +7700,7 @@
     {
       "bom-ref": "metadata-annotations",
       "subjects": [
-        "pkg:pub/fuzzzy_ink@1.1.0+2"
+        "pkg:pub/fuzzzy_ink@1.1.4+6"
       ],
       "annotator": {
         "component": {
@@ -7717,8 +7718,8 @@
           ]
         }
       },
-      "timestamp": "2026-09-25T19:57:30Z",
-      "text": "This Software Bill-of-Materials (SBOM) document was created on Friday, September 25, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_seal' with version '1.1.0+2'."
+      "timestamp": "2026-10-22T01:16:06Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Thursday, October 22, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.4+6'."
     }
   ]
 }

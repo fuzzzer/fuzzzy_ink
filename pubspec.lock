@@ -501,22 +501,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  isar:
+  isar_community:
     dependency: "direct main"
     description:
-      name: isar
-      sha256: "99165dadb2cf2329d3140198363a7e7bff9bbd441871898a87e26914d25cf1ea"
+      name: isar_community
+      sha256: "5046967047825b8699b66ad41f29c68c4eaefd54e236f6dea9e90e0b8063442a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0+1"
-  isar_flutter_libs:
+    version: "3.4.1"
+  isar_community_flutter_libs:
     dependency: "direct main"
     description:
-      name: isar_flutter_libs
-      sha256: bc6768cc4b9c61aabff77152e7f33b4b17d2fc93134f7af1c3dd51500fe8d5e8
+      name: isar_community_flutter_libs
+      sha256: "541b07c0de7b5bd28e76cafc9fb56fac521186937bf309231572bf16551ef2f1"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0+1"
+    version: "3.4.1"
   js:
     dependency: transitive
     description:
