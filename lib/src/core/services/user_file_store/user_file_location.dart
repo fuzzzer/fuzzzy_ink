@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fuzzzy_ink/src/src.dart';
 import 'package:path/path.dart' as path;
 
 /// What a file bubble prints instead of a path (T-0366): the file's name and
@@ -14,9 +15,12 @@ class UserFileLocation {
   /// folder the user knows — the public Downloads folder on Android, the
   /// Documents folder on desktop, the Files app's "On My iPhone" on iOS — or
   /// at "App storage" for a row from before files were public. An app-private
-  /// path such as `/data/user/0/...` is never printed.
+  /// path such as `/data/user/0/...` is never printed. Every part is display
+  /// text ([UserFileNames.forDisplay]): a sender's name cannot reorder itself
+  /// with direction controls (`THREAT_MODEL.md` R14).
   factory UserFileLocation.of(String filePath, {bool? isIOS}) {
-    final segments = path.split(filePath);
+    final segments =
+        path.split(filePath).map(UserFileNames.forDisplay).toList();
     final fileName = segments.isEmpty ? '' : segments.last;
     final folders = segments.length > 1
         ? segments.sublist(0, segments.length - 1)

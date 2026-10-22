@@ -989,4 +989,15 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get biometricSavePassword => 'პაროლის შესანახად დაადასტურეთ ვინაობა';
+
+  @override
+  String get riskyFileNotOpenedTitle => 'ფაილი არ გაიხსნა';
+
+  @override
+  String riskyFileNotOpenedMessage(Object fileName) {
+    return '„$fileName“ პროგრამაა, საინსტალაციო ფაილი, სკრიპტი ან მალსახმობი. გახსნისას ის ამ მოწყობილობაზე შეიძლება გაეშვას, ამიტომ აპლიკაცია ასეთ ფაილებს არ ხსნის. თუ გამგზავნს ენდობით, დააჭირეთ „საქაღალდეში ჩვენებას“ და ფაილს იქ იპოვით.';
+  }
+
+  @override
+  String get showInFolder => 'საქაღალდეში ჩვენება';
 }

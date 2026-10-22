@@ -624,5 +624,15 @@
   "biometricUnlockVaultTitle": "Fuzzy Vault-ის განბლოკვა",
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "პაროლის შესანახად დაადასტურეთ ვინაობა",
-  "@biometricSavePassword": {}
+  "@biometricSavePassword": {},
+  "riskyFileNotOpenedTitle": "ფაილი არ გაიხსნა",
+  "@riskyFileNotOpenedTitle": {},
+  "riskyFileNotOpenedMessage": "„{fileName}“ პროგრამაა, საინსტალაციო ფაილი, სკრიპტი ან მალსახმობი. გახსნისას ის ამ მოწყობილობაზე შეიძლება გაეშვას, ამიტომ აპლიკაცია ასეთ ფაილებს არ ხსნის. თუ გამგზავნს ენდობით, დააჭირეთ „საქაღალდეში ჩვენებას“ და ფაილს იქ იპოვით.",
+  "@riskyFileNotOpenedMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "showInFolder": "საქაღალდეში ჩვენება",
+  "@showInFolder": {}
 }

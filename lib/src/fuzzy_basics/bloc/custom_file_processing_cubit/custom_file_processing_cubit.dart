@@ -415,9 +415,12 @@ Future<String> _buildOutputPathInChatFolder({
     await const BackupExclusion().exclude(chatIdFolder.path);
   }
 
+  // Never over an existing file: `name (1).ext`, … when the name is taken.
   final fileName = path.basename(inputFilePath);
   if (isEncryption) {
-    return path.join(chatIdFolder.path, '$fileName.$fuzzedFileIdentificator');
+    return UserFileNames.uniqueOutputPath(
+      path.join(chatIdFolder.path, '$fileName.$fuzzedFileIdentificator'),
+    );
   } else {
     final defuzzedFileName = fileName.endsWith('.$fuzzedFileIdentificator')
         ? fileName.substring(
@@ -425,6 +428,8 @@ Future<String> _buildOutputPathInChatFolder({
             fileName.length - '.$fuzzedFileIdentificator'.length,
           )
         : fileName;
-    return path.join(chatIdFolder.path, defuzzedFileName);
+    return UserFileNames.uniqueOutputPath(
+      path.join(chatIdFolder.path, defuzzedFileName),
+    );
   }
 }

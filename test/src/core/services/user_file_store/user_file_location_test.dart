@@ -45,6 +45,30 @@ void main() {
       expect(location.folderLine, isNot(contains('/data/user')));
     });
 
+    test(
+        "a computer's Documents/Fuzzzy Ink/<chat folder> → "
+        '"Documents › Fuzzzy Ink › <chat folder>"', () {
+      final location = UserFileLocation.of(
+        '/Users/me/Documents/Fuzzzy Ink/Fz bot (6f1e9b2c)/report.pdf',
+        isIOS: false,
+      );
+
+      expect(location.fileName, 'report.pdf');
+      expect(location.folderLine, 'Documents › Fuzzzy Ink › Fz bot (6f1e9b2c)');
+    });
+
+    test('a direction override in a received name is not shown (R14)', () {
+      // On disk it ends in ".exe"; with the override it would read
+      // "invoiceexe.pdf".
+      final location = UserFileLocation.of(
+        '/Users/me/Documents/Fuzzzy Ink/Bob (6f1e9b2c)/invoice\u{202E}fdp.exe',
+        isIOS: false,
+      );
+
+      expect(location.fileName, 'invoicefdp.exe');
+      expect(location.fileName.runes, isNot(contains(0x202E)));
+    });
+
     test('an unknown root shows only the parent folder', () {
       final location =
           UserFileLocation.of('/tmp/somewhere/x.fuzz', isIOS: false);

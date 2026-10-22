@@ -39,6 +39,18 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
 
     try {
       await DeviceFileInteractor.openFile(filePath);
+    } on RiskyFileOpenRefused {
+      // A program, installer, script or shortcut from the sender is never
+      // launched from here; its folder is offered instead.
+      if (!mounted) return;
+      await showRiskyFileDialog(
+        context,
+        fileName: UserFileLocation.of(encryptedMessage).fileName,
+        onShowInFolder: () => _openDecryptedFileDirectory(
+          encryptedMessage: encryptedMessage,
+          localizations: localizations,
+        ),
+      );
     } catch (_) {
       if (!mounted) return;
       FuzzzyToast.show(context, message: localizations.couldNotOpenFile);

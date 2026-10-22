@@ -2,8 +2,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
+import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+/// [DeviceFileInteractor.openFile] refused a file the default handler would
+/// run, install or follow ([UserFileNames.isRiskyToOpen]); the caller offers
+/// [DeviceFileInteractor.revealFile] instead.
+class RiskyFileOpenRefused implements Exception {
+  const RiskyFileOpenRefused(this.filePath);
+
+  final String filePath;
+
+  @override
+  String toString() =>
+      'Not opened: ${UserFileNames.forDisplay(path.basename(filePath))} could '
+      'run a program. Use Show in folder instead.';
+}
 
 class DeviceFileInteractor {
   static const _userFiles = UserFilesChannel();
@@ -46,7 +61,15 @@ class DeviceFileInteractor {
     }
   }
 
+  /// Hands the file to the system's default app. A file that app would run,
+  /// install or follow — a program, installer, script or shortcut, whatever
+  /// its name pretends — is refused with [RiskyFileOpenRefused] before
+  /// anything is launched: a received file's name is the sender's choice.
   static Future<void> openFile(String filePath) async {
+    if (UserFileNames.isRiskyToOpen(path.basename(filePath))) {
+      throw RiskyFileOpenRefused(filePath);
+    }
+
     if (Platform.isAndroid) {
       await _userFiles.openFile(
         filePath,
