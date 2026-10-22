@@ -21,10 +21,16 @@ void main() {
 
   late MockChatAuthRepository chatAuthRepository;
   late MockFuzzyAuthStore store;
+  late MockBiometricAuthRepository biometricRepository;
 
   setUp(() {
     chatAuthRepository = MockChatAuthRepository();
     store = MockFuzzyAuthStore();
+    biometricRepository = MockBiometricAuthRepository();
+    when(() => chatAuthRepository.verifyPassword(any()))
+        .thenAnswer((_) async => true);
+    when(() => store.setBiometricEnabled(enabled: any(named: 'enabled')))
+        .thenAnswer((_) async {});
     when(() => chatAuthRepository.setupPassword(any()))
         .thenAnswer((_) async => true);
     when(() => store.onPasswordSetup(any())).thenAnswer((_) async {});
@@ -39,7 +45,7 @@ void main() {
   FuzzyUserAuthPreferencesCubit buildCubit() => FuzzyUserAuthPreferencesCubit(
         chatAuthRepository: chatAuthRepository,
         fuzzyAuthStore: store,
-        biometricAuthRepository: MockBiometricAuthRepository(),
+        biometricAuthRepository: biometricRepository,
         passwordStrengthService: PasswordStrengthService(),
       );
 
@@ -128,4 +134,43 @@ void main() {
       ).called(1);
     },
   );
+
+  setUpAll(() => registerFallbackValue(BiometricScope.chat));
+
+  for (final (result, message) in [
+    (
+      BiometricEnableResult.notStrongEnough,
+      FuzzzyInkLocalizationsEn().biometricNotStrongEnough,
+    ),
+    (
+      BiometricEnableResult.cancelled,
+      FuzzzyInkLocalizationsEn().biometricNotTurnedOn,
+    ),
+    (
+      BiometricEnableResult.failed,
+      FuzzzyInkLocalizationsEn().biometricNotTurnedOn,
+    ),
+  ]) {
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'turning biometrics on that ends "${result.name}" shows a plain message '
+      'and leaves them off',
+      setUp: () {
+        when(() => biometricRepository.enable(BiometricScope.chat, good))
+            .thenAnswer((_) async => result);
+      },
+      build: buildCubit,
+      act: (cubit) => cubit.enableBiometric(good),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.failed)
+            .having((s) => s.activationFailure?.message, 'message', message),
+      ],
+      verify: (_) {
+        verifyNever(
+          () => store.setBiometricEnabled(enabled: any(named: 'enabled')),
+        );
+      },
+    );
+  }
 }

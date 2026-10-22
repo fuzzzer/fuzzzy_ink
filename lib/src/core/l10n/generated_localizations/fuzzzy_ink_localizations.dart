@@ -1423,6 +1423,18 @@ abstract class FuzzzyInkLocalizations {
   /// **'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.'**
   String get chatAuthBiometricReset;
 
+  /// No description provided for @biometricNotStrongEnough.
+  ///
+  /// In en, this message translates to:
+  /// **'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.'**
+  String get biometricNotStrongEnough;
+
+  /// No description provided for @biometricNotTurnedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock was not turned on.'**
+  String get biometricNotTurnedOn;
+
   /// No description provided for @vaultBiometricUnlock.
   ///
   /// In en, this message translates to:

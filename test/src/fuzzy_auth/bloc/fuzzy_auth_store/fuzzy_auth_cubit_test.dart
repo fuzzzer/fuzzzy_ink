@@ -535,8 +535,8 @@ void main() {
 
     test('a biometric unlock during the wait gets in and clears the count', () {
       fakeAsync((async) {
-        when(() => mockBiometricRepo.retrievePassword(BiometricScope.chat))
-            .thenAnswer((_) async => 'pw');
+        when(() => mockBiometricRepo.readPassword(BiometricScope.chat))
+            .thenAnswer((_) async => const BiometricPassword('pw'));
         final store = buildTimedStore(async);
         failTimes(store, async, 5);
         expect(store.state.isLockedOut, isTrue);
@@ -566,5 +566,65 @@ void main() {
         async.flushMicrotasks();
       });
     });
+  });
+
+  // -----------------------------------------------------------------------
+  // unlockWithBiometrics: only a copy that is gone turns biometrics off
+  // -----------------------------------------------------------------------
+  group('unlockWithBiometrics', () {
+    setUp(() {
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+    });
+
+    blocTest<FuzzyAuthStore, FuzzyAuthState>(
+      'a cancelled prompt or a locked-out sensor keeps biometrics on',
+      setUp: () {
+        when(() => mockBiometricRepo.readPassword(BiometricScope.chat))
+            .thenAnswer((_) async => const BiometricNotRead());
+      },
+      build: buildStore,
+      seed: () => const FuzzyAuthState.initial().copyWith(
+        status: AuthStateStatus.locked,
+        biometricEnabled: true,
+      ),
+      act: (store) => store.unlockWithBiometrics(),
+      expect: () => [
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.unlocking),
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.locked)
+            .having((s) => s.biometricEnabled, 'biometricEnabled', true)
+            .having((s) => s.biometricInvalidated, 'invalidated', false)
+            .having((s) => s.verificationFailed, 'verificationFailed', false),
+      ],
+      verify: (_) {
+        verifyNever(() => mockBiometricRepo.disable(any()));
+        verifyNever(() => mockThrottleRepo.save(any()));
+      },
+    );
+
+    blocTest<FuzzyAuthStore, FuzzyAuthState>(
+      'a copy that is gone (new enrolment) turns biometrics off and says so',
+      setUp: () {
+        when(() => mockBiometricRepo.readPassword(BiometricScope.chat))
+            .thenAnswer((_) async => const BiometricCopyGone());
+      },
+      build: buildStore,
+      seed: () => const FuzzyAuthState.initial().copyWith(
+        status: AuthStateStatus.locked,
+        biometricEnabled: true,
+      ),
+      act: (store) => store.unlockWithBiometrics(),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.locked)
+            .having((s) => s.biometricEnabled, 'biometricEnabled', false)
+            .having((s) => s.biometricInvalidated, 'invalidated', true),
+      ],
+      verify: (_) {
+        verify(() => mockBiometricRepo.disable(BiometricScope.chat)).called(1);
+      },
+    );
   });
 }

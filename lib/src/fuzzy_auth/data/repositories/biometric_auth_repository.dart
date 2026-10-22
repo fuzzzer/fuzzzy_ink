@@ -32,8 +32,9 @@ const biometricKeyVersion = '2';
 
 /// Only Android copies made before [biometricKeyVersion] are weaker than the
 /// current ones; iOS/macOS items had the same access control then.
-bool get _androidKeysOutdated =>
-    defaultTargetPlatform == TargetPlatform.android;
+bool get _androidKeysOutdated => _isAndroid;
+
+bool get _isAndroid => defaultTargetPlatform == TargetPlatform.android;
 
 /// The system fingerprint / Face ID prompt in the app's language (T-0413).
 /// Chats reuse the unlock screen's title; the Android cancel button reuses
@@ -133,25 +134,65 @@ class BiometricAuthRepository {
     return true;
   }
 
-  Future<void> enable(BiometricScope scope, String password) async {
+  /// Never throws. On Android a key that needs strong biometrics on every
+  /// use cannot be made while none is enrolled — the case of a device with
+  /// only weak (class 2) biometrics, which `canAuthenticate` still reports
+  /// as available — so a failure there that is not the prompt's own error is
+  /// [BiometricEnableResult.notStrongEnough].
+  Future<BiometricEnableResult> enable(
+    BiometricScope scope,
+    String password,
+  ) async {
     logger.i('Biometric enable: scope=$scope');
-    final storage = await _openStorage(scope);
-    await storage.write(password);
-    await _secureStorage.write(
-      key: scope._versionKey,
-      value: biometricKeyVersion,
-    );
-    await _secureStorage.write(key: scope._flagKey, value: 'true');
+    try {
+      final storage = await _openStorage(scope);
+      await storage.write(password);
+    } on AuthException catch (e) {
+      logger.w('Biometric enable refused: scope=$scope, ${e.code}');
+      return switch (e.code) {
+        AuthExceptionCode.userCanceled ||
+        AuthExceptionCode.canceled ||
+        AuthExceptionCode.timeout =>
+          BiometricEnableResult.cancelled,
+        _ => BiometricEnableResult.failed,
+      };
+    } catch (e) {
+      logger.w('Biometric enable failed: scope=$scope, $e');
+      return _isAndroid
+          ? BiometricEnableResult.notStrongEnough
+          : BiometricEnableResult.failed;
+    }
+    try {
+      await _secureStorage.write(
+        key: scope._versionKey,
+        value: biometricKeyVersion,
+      );
+      await _secureStorage.write(key: scope._flagKey, value: 'true');
+    } catch (e) {
+      logger.w('Biometric flag not saved: scope=$scope, $e');
+      return BiometricEnableResult.failed;
+    }
     logger.i('Biometric enabled: scope=$scope');
+    return BiometricEnableResult.enabled;
   }
 
-  Future<String?> retrievePassword(BiometricScope scope) async {
-    logger.i('Biometric retrieve: scope=$scope');
-    final storage = await _openStorage(scope);
-    final value = await storage.read();
-    logger
-        .i('Biometric retrieve done: scope=$scope, hasValue=${value != null}');
-    return value;
+  /// Never throws. Only a missing copy — the plugin deletes one whose key a
+  /// new enrolment invalidated (Android), or the Keychain no longer returns
+  /// it (`biometryCurrentSet`, iOS/macOS) — is [BiometricCopyGone]; a
+  /// cancel, a sensor lockout or any other error is [BiometricNotRead].
+  Future<BiometricRead> readPassword(BiometricScope scope) async {
+    logger.i('Biometric read: scope=$scope');
+    try {
+      final storage = await _openStorage(scope);
+      final value = await storage.read();
+      logger.i('Biometric read done: scope=$scope, hasValue=${value != null}');
+      return value == null
+          ? const BiometricCopyGone()
+          : BiometricPassword(value);
+    } catch (e) {
+      logger.w('Biometric read did not unlock: scope=$scope, $e');
+      return const BiometricNotRead();
+    }
   }
 
   Future<void> disable(BiometricScope scope) async {

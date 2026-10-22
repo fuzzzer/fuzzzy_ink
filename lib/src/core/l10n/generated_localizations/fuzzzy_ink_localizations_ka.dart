@@ -734,6 +734,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.';
 
   @override
+  String get biometricNotStrongEnough =>
+      'ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.';
+
+  @override
+  String get biometricNotTurnedOn => 'ბიომეტრიული განბლოკვა არ ჩაირთო.';
+
+  @override
   String get vaultBiometricUnlock => 'განბლოკვა ბიომეტრიით';
 
   @override

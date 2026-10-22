@@ -1,5 +1,6 @@
 import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -11,10 +12,23 @@ class _FakeStorageFile extends Fake implements BiometricStorageFile {
   final String name;
   final bool failDelete;
   final List<String> calls = [];
+  String? value;
+  Exception? readError;
+  Exception? writeError;
 
   @override
-  Future<void> write(String content, {PromptInfo? promptInfo}) async =>
-      calls.add('write');
+  Future<String?> read({PromptInfo? promptInfo}) async {
+    calls.add('read');
+    if (readError != null) throw readError!;
+    return value;
+  }
+
+  @override
+  Future<void> write(String content, {PromptInfo? promptInfo}) async {
+    calls.add('write');
+    if (writeError != null) throw writeError!;
+    value = content;
+  }
 
   @override
   Future<void> delete({PromptInfo? promptInfo}) async {
@@ -174,5 +188,111 @@ void main() {
         expect(biometricStorage.files.keys, [legacyName]);
       });
     }
+  });
+
+  group('reading the copy', () {
+    const v2Name = 'fuzzy_biometric_password_v2_chat';
+
+    setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      build({flag: 'true', version: biometricKeyVersion});
+    });
+
+    _FakeStorageFile file() => biometricStorage.files.putIfAbsent(
+          v2Name,
+          () => _FakeStorageFile(v2Name),
+        );
+
+    test('a stored password comes back', () async {
+      file().value = 'pw';
+      final read = await repository.readPassword(BiometricScope.chat);
+      expect(read, isA<BiometricPassword>());
+      expect((read as BiometricPassword).password, 'pw');
+    });
+
+    test('no copy (the plugin deleted an invalidated key) is "gone"', () async {
+      file();
+      expect(
+        await repository.readPassword(BiometricScope.chat),
+        isA<BiometricCopyGone>(),
+      );
+    });
+
+    for (final error in <Exception>[
+      AuthException(AuthExceptionCode.userCanceled, 'cancel'),
+      AuthException(AuthExceptionCode.unknown, 'Too many attempts'),
+      PlatformException(code: 'SecurityError'),
+    ]) {
+      test('$error is "not read" and keeps the setting', () async {
+        file().readError = error;
+        expect(
+          await repository.readPassword(BiometricScope.chat),
+          isA<BiometricNotRead>(),
+        );
+        expect(await secure(flag), 'true');
+      });
+    }
+  });
+
+  group('turning biometrics on fails plainly', () {
+    const v2Name = 'fuzzy_biometric_password_v2_chat';
+
+    Future<BiometricEnableResult> enableWith(
+      Exception error,
+      TargetPlatform platform,
+    ) async {
+      debugDefaultTargetPlatformOverride = platform;
+      build({});
+      final name = platform == TargetPlatform.android ? v2Name : legacyName;
+      biometricStorage.files[name] = _FakeStorageFile(name)..writeError = error;
+      return repository.enable(BiometricScope.chat, 'pw');
+    }
+
+    test('a cancelled prompt is "cancelled" and enables nothing', () async {
+      expect(
+        await enableWith(
+          AuthException(AuthExceptionCode.userCanceled, 'cancel'),
+          TargetPlatform.android,
+        ),
+        BiometricEnableResult.cancelled,
+      );
+      expect(await secure(flag), isNull);
+    });
+
+    test('Android cannot make a strong-biometric key: "not strong enough"',
+        () async {
+      expect(
+        await enableWith(
+          PlatformException(
+            code: 'Unexpected Error',
+            message: 'At least one biometric must be enrolled to create keys '
+                'requiring user authentication for every use',
+          ),
+          TargetPlatform.android,
+        ),
+        BiometricEnableResult.notStrongEnough,
+      );
+      expect(await secure(flag), isNull);
+    });
+
+    test('a prompt error other than cancel is "failed"', () async {
+      expect(
+        await enableWith(
+          AuthException(AuthExceptionCode.unknown, 'lockout'),
+          TargetPlatform.android,
+        ),
+        BiometricEnableResult.failed,
+      );
+    });
+
+    test('the same storage error on iOS is "failed"', () async {
+      expect(
+        await enableWith(
+          PlatformException(code: 'SecurityError'),
+          TargetPlatform.iOS,
+        ),
+        BiometricEnableResult.failed,
+      );
+    });
   });
 }

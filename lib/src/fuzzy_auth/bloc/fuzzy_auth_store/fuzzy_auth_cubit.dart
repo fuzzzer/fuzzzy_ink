@@ -64,23 +64,21 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
     }
   }
 
+  /// A cancelled prompt or a locked-out sensor leaves biometric unlock on;
+  /// only a copy that is gone turns it off.
   Future<void> unlockWithBiometrics() async {
     emit(state.copyWith(status: AuthStateStatus.unlocking));
-    try {
-      final password =
-          await biometricAuthRepository.retrievePassword(BiometricScope.chat);
-      if (password == null) {
-        logger.w(
-          'Biometric unlock returned null password (cancelled or empty storage)',
-        );
+    final read =
+        await biometricAuthRepository.readPassword(BiometricScope.chat);
+    switch (read) {
+      case BiometricPassword(:final password):
+        // A biometric prompt is a second factor: it may end a running wait.
+        await _verify(password);
+      case BiometricCopyGone():
+        logger.w('Biometric copy is gone (new enrolment or never stored)');
         await _handleBiometricInvalidation();
-        return;
-      }
-      // A biometric prompt is a second factor: it may end a running wait.
-      await _verify(password);
-    } catch (e, stack) {
-      logger.e('Biometric unlock failed', error: e, stackTrace: stack);
-      await _handleBiometricInvalidation();
+      case BiometricNotRead():
+        emit(state.copyWith(status: AuthStateStatus.locked));
     }
   }
 

@@ -146,19 +146,25 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
       );
       return;
     }
-    final success =
+    final result =
         await context.read<VaultAuthCubit>().enableBiometric(password);
     if (!mounted) return;
-    if (success) {
+    if (result == BiometricEnableResult.enabled) {
       _vaultPasswordController.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.vaultBiometricEnabled)),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.vaultBiometricInvalidPassword)),
-      );
     }
+    final message = switch (result) {
+      BiometricEnableResult.enabled => localizations.vaultBiometricEnabled,
+      BiometricEnableResult.wrongPassword =>
+        localizations.vaultBiometricInvalidPassword,
+      BiometricEnableResult.notStrongEnough =>
+        localizations.biometricNotStrongEnough,
+      BiometricEnableResult.cancelled ||
+      BiometricEnableResult.failed =>
+        localizations.biometricNotTurnedOn,
+    };
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _onDisableVaultBiometric() async {

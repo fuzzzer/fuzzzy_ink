@@ -203,10 +203,23 @@ class FuzzyUserAuthPreferencesCubit
         return;
       }
 
-      await _biometricAuthRepository.enable(
+      final result = await _biometricAuthRepository.enable(
         BiometricScope.chat,
         currentPassword,
       );
+      if (result != BiometricEnableResult.enabled) {
+        emit(
+          state.copyWith(
+            activationStatus: StateStatus.failed,
+            activationFailure: DefaultFailure(
+              message: result == BiometricEnableResult.notStrongEnough
+                  ? currentContextLocalization.biometricNotStrongEnough
+                  : currentContextLocalization.biometricNotTurnedOn,
+            ),
+          ),
+        );
+        return;
+      }
       await _fuzzyAuthStore.setBiometricEnabled(enabled: true);
       emit(
         state.copyWith(
