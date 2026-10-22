@@ -25,10 +25,9 @@ class VaultExportRepository {
           '$destinationDirectoryPath/fuzzy_vault_export_${DateTime.now().millisecondsSinceEpoch}.fvault';
       encoder.create(zipPath);
 
-      final tempDir =
-          Directory('${fileDataSource.vaultDirectoryPath}/.tmp_export');
+      final tempDir = Directory(fileDataSource.exportTmpDirectoryPath);
       if (await tempDir.exists()) await tempDir.delete(recursive: true);
-      await tempDir.create();
+      await tempDir.create(recursive: true);
 
       // We won't decrypt the items, we just bundle the encrypted blobs along with
       // the metadata DB and vault.meta, OR we create a totally new vault structure

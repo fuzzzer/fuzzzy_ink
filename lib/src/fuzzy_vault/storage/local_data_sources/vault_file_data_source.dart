@@ -8,15 +8,43 @@ class VaultFileDataSource {
     required this.vaultDirectoryPath,
     this.backupExclusion = const BackupExclusion(),
   });
+
+  /// The vault's own folder inside the app-private support directory. Only a
+  /// folder with this name can be wiped by [clearAll].
+  static const folderName = 'vault';
+
+  /// Kept in the vault folder while [VaultLocationMigration] moves a vault
+  /// from the documents directory; while it exists the vault neither opens
+  /// nor accepts writes, so a half-moved vault is never replaced.
+  static const migrationMarkerName = '.migration_in_progress';
+
+  static const metaFileName = 'vault.meta';
+  static const itemsFolderName = 'items';
+  static const tmpFolderName = '.tmp';
+  static const exportTmpFolderName = '.tmp_export';
+  static const itemFileExtension = '.vault';
+
+  /// The vault folder under [parentDirectoryPath] (the app support directory).
+  static String directoryIn(String parentDirectoryPath) =>
+      path.join(parentDirectoryPath, folderName);
+
   final String vaultDirectoryPath;
 
   /// The vault's folders are kept out of iCloud / Time Machine (T-0432).
   final BackupExclusion backupExclusion;
 
   Directory get _vaultDir => Directory(vaultDirectoryPath);
-  Directory get _itemsDir => Directory(path.join(vaultDirectoryPath, 'items'));
-  Directory get _tmpDir => Directory(path.join(vaultDirectoryPath, '.tmp'));
-  File get _metaFile => File(path.join(vaultDirectoryPath, 'vault.meta'));
+  Directory get _itemsDir =>
+      Directory(path.join(vaultDirectoryPath, itemsFolderName));
+  Directory get _tmpDir =>
+      Directory(path.join(vaultDirectoryPath, tmpFolderName));
+  File get _metaFile => File(path.join(vaultDirectoryPath, metaFileName));
+  File get _migrationMarker =>
+      File(path.join(vaultDirectoryPath, migrationMarkerName));
+
+  /// Working folder of the vault export, inside the vault folder.
+  String get exportTmpDirectoryPath =>
+      path.join(vaultDirectoryPath, exportTmpFolderName);
 
   Future<void> initDirectories() async {
     for (final directory in [_vaultDir, _itemsDir, _tmpDir]) {
@@ -26,42 +54,70 @@ class VaultFileDataSource {
     }
   }
 
+  Future<void> _ensureNotMigrating() async {
+    if (await _migrationMarker.exists()) {
+      throw FileSystemException(
+        'The vault is still being moved to its private folder; '
+        'the move resumes at the next start',
+        vaultDirectoryPath,
+      );
+    }
+  }
+
   Future<void> writeMetaAtomic(List<int> bytes) async {
+    await _ensureNotMigrating();
     await initDirectories();
-    final tmpFile = File(path.join(_tmpDir.path, 'vault.meta.tmp'));
+    final tmpFile = File(path.join(_tmpDir.path, '$metaFileName.tmp'));
     await tmpFile.writeAsBytes(bytes, flush: true);
     await tmpFile.rename(_metaFile.path);
   }
 
   Future<List<int>?> readMeta() async {
+    await _ensureNotMigrating();
     if (!await _metaFile.exists()) return null;
     return await _metaFile.readAsBytes();
   }
 
   Future<void> writeItemAtomic(String itemId, List<int> bytes) async {
+    await _ensureNotMigrating();
     await initDirectories();
-    final tmpFile = File(path.join(_tmpDir.path, '$itemId.vault.tmp'));
+    final tmpFile =
+        File(path.join(_tmpDir.path, '$itemId$itemFileExtension.tmp'));
     await tmpFile.writeAsBytes(bytes, flush: true);
-    final itemFile = File(path.join(_itemsDir.path, '$itemId.vault'));
+    final itemFile =
+        File(path.join(_itemsDir.path, '$itemId$itemFileExtension'));
     await tmpFile.rename(itemFile.path);
   }
 
   Future<List<int>?> readItem(String itemId) async {
-    final itemFile = File(path.join(_itemsDir.path, '$itemId.vault'));
+    final itemFile =
+        File(path.join(_itemsDir.path, '$itemId$itemFileExtension'));
     if (!await itemFile.exists()) return null;
     return await itemFile.readAsBytes();
   }
 
   Future<void> deleteItem(String itemId) async {
-    final itemFile = File(path.join(_itemsDir.path, '$itemId.vault'));
+    await _ensureNotMigrating();
+    final itemFile =
+        File(path.join(_itemsDir.path, '$itemId$itemFileExtension'));
     if (await itemFile.exists()) {
       await itemFile.delete();
     }
   }
 
+  /// Deletes the vault folder and everything in it. Refuses any folder not
+  /// named [folderName], so a misconfigured path can never wipe the documents
+  /// directory or another parent folder.
   Future<void> clearAll() async {
-    if (await _vaultDir.exists()) {
-      await _vaultDir.delete(recursive: true);
+    final normalizedPath = path.normalize(path.absolute(vaultDirectoryPath));
+    if (path.basename(normalizedPath) != folderName) {
+      throw StateError(
+        'clearAll refuses to delete $normalizedPath: not the vault folder',
+      );
+    }
+    final vaultDir = Directory(normalizedPath);
+    if (await vaultDir.exists()) {
+      await vaultDir.delete(recursive: true);
     }
   }
 }
