@@ -624,5 +624,15 @@
   "biometricUnlockVaultTitle": "Unlock Fuzzy Vault",
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "Authenticate to save password",
-  "@biometricSavePassword": {}
+  "@biometricSavePassword": {},
+  "riskyFileNotOpenedTitle": "File not opened",
+  "@riskyFileNotOpenedTitle": {},
+  "riskyFileNotOpenedMessage": "“{fileName}” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.",
+  "@riskyFileNotOpenedMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
+  "showInFolder": "Show in folder",
+  "@showInFolder": {}
 }

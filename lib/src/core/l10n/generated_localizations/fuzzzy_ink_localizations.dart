@@ -1878,6 +1878,24 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Authenticate to save password'**
   String get biometricSavePassword;
+
+  /// No description provided for @riskyFileNotOpenedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File not opened'**
+  String get riskyFileNotOpenedTitle;
+
+  /// No description provided for @riskyFileNotOpenedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'“{fileName}” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.'**
+  String riskyFileNotOpenedMessage(Object fileName);
+
+  /// No description provided for @showInFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in folder'**
+  String get showInFolder;
 }
 
 class _FuzzzyInkLocalizationsDelegate

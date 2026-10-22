@@ -976,4 +976,15 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get biometricSavePassword => 'Authenticate to save password';
+
+  @override
+  String get riskyFileNotOpenedTitle => 'File not opened';
+
+  @override
+  String riskyFileNotOpenedMessage(Object fileName) {
+    return '“$fileName” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.';
+  }
+
+  @override
+  String get showInFolder => 'Show in folder';
 }

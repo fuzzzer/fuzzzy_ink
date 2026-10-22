@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
@@ -192,6 +193,48 @@ void main() {
         );
       },
     );
+
+    // Security review: decrypting used to replace an existing file of the
+    // same name in the working folder. Completer ordering, no wall clock.
+    test('a taken output name becomes "name (1).ext"; the existing file stays',
+        () async {
+      Directory(workingFolder()).createSync(recursive: true);
+      final mine = File(path.join(workingFolder(), 'photo.jpg'))
+        ..writeAsStringSync('my own photo');
+      final chosen = Completer<String>();
+      // A job that stays running, so nothing is emitted after `close`.
+      final progress = StreamController<FileProcessingProgress>();
+      when(
+        () => mockService.decryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).thenAnswer((invocation) async {
+        chosen.complete(invocation.namedArguments[#outputPath] as String);
+        return CryptoCoreSuccess(
+          FileProcessingHandler(
+            progressStream: progress.stream,
+            pause: () {},
+            resume: () {},
+            cancel: () {},
+          ),
+        );
+      });
+      final cubit = buildDecrypt()
+        ..addFilesToProcess(
+          filePaths: ['/pick/photo.jpg.fuzz'],
+          customKey: _password,
+        );
+
+      expect(
+        await chosen.future,
+        path.join(workingFolder(), 'photo (1).jpg'),
+      );
+      expect(mine.readAsStringSync(), 'my own photo');
+      await cubit.close();
+      await progress.close();
+    });
 
     for (final (text, failure) in [
       (
