@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:bloc_test/bloc_test.dart';
@@ -548,6 +549,81 @@ void main() {
         expect(stored(async), AppLockThrottleData.none);
 
         store.close();
+        async.flushMicrotasks();
+      });
+    });
+
+    // Security review follow-up: concurrent submits must not share one
+    // snapshot of the count. Checks are held open with Completers.
+    List<Completer<CryptoCoreResponse<void>>> holdWrongChecks() {
+      final checks = <Completer<CryptoCoreResponse<void>>>[];
+      when(() => mockService.openStore(wrapped: wrapped, password: 'bad'))
+          .thenAnswer((_) {
+        final check = Completer<CryptoCoreResponse<void>>();
+        checks.add(check);
+        return check.future;
+      });
+      return checks;
+    }
+
+    const wrong = CryptoCoreFailure<void>(CryptoCoreFailureType.wrongPassword);
+
+    test(
+        'submits while a password is checked are ignored: each password '
+        'tried counts once, and the fifth tried starts the wait', () {
+      fakeAsync((async) {
+        final checks = holdWrongChecks();
+        when(() => mockBiometricRepo.readPassword(BiometricScope.chat))
+            .thenAnswer((_) async => const BiometricPassword('bad'));
+        final store = buildTimedStore(async);
+
+        for (var round = 1; round <= 5; round++) {
+          for (var submit = 0; submit < 4; submit++) {
+            store.unlock('bad');
+          }
+          store.unlockWithBiometrics();
+          async.flushMicrotasks();
+          expect(checks, hasLength(round), reason: 'round $round');
+          expect(store.state.status, AuthStateStatus.unlocking);
+
+          checks.last.complete(wrong);
+          async.flushMicrotasks();
+          expect(stored(async).failedAttempts, round);
+        }
+        expect(store.state.lockoutRemaining, const Duration(seconds: 30));
+
+        store.close();
+        async.flushMicrotasks();
+      });
+    });
+
+    test(
+        'wrong passwords whose checks overlap all count: the count is read '
+        'again after each check, so the wait starts at the fifth', () {
+      fakeAsync((async) {
+        final checks = holdWrongChecks();
+        final stores = List.generate(5, (_) => buildTimedStore(async));
+
+        for (final store in stores) {
+          store.unlock('bad');
+        }
+        async.flushMicrotasks();
+        expect(checks, hasLength(5));
+        expect(stored(async), AppLockThrottleData.none);
+
+        for (var index = 0; index < 5; index++) {
+          checks[index].complete(wrong);
+          async.flushMicrotasks();
+          expect(stored(async).failedAttempts, index + 1);
+        }
+        expect(stores.last.state.lockoutRemaining, const Duration(seconds: 30));
+        for (final store in stores.take(4)) {
+          expect(store.state.isLockedOut, isFalse);
+        }
+
+        for (final store in stores) {
+          store.close();
+        }
         async.flushMicrotasks();
       });
     });

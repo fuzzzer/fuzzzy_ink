@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFuzzyAuthStore extends MockCubit<FuzzyAuthState>
     implements FuzzyAuthStore {}
@@ -65,6 +66,30 @@ void main() {
     expect(find.textContaining('1:05'), findsNothing);
     final button = tester.widget<FuzzzyButton>(find.byType(FuzzzyButton));
     expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Enter on the keyboard tries nothing while a check runs',
+      (tester) async {
+    await pumpPage(
+      tester,
+      locked.copyWith(status: AuthStateStatus.unlocking),
+    );
+    await tester.enterText(find.byType(TextField), 'pw');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    verifyNever(() => store.unlock(any()));
+  });
+
+  testWidgets('Enter on the keyboard tries the password when idle',
+      (tester) async {
+    when(() => store.unlock(any())).thenAnswer((_) async {});
+    await pumpPage(tester, locked);
+    await tester.enterText(find.byType(TextField), 'pw');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    verify(() => store.unlock('pw')).called(1);
   });
 
   testWidgets('the one-time notice stays once an update turned biometrics off',

@@ -52,9 +52,13 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
     super.dispose();
   }
 
+  /// The keyboard's Enter reaches here too, so the same rules as the button:
+  /// nothing while an attempt or the boot check runs, or a wait is on.
   void _onUnlock() {
     if (_passwordController.text.isEmpty) return;
-    if (context.read<FuzzyAuthStore>().state.isLockedOut) return;
+    final state = context.read<FuzzyAuthStore>().state;
+    if (state.isLockedOut) return;
+    if (state.status.isUnlocking || state.status.isInitial) return;
     context.read<FuzzyAuthStore>().unlock(_passwordController.text);
   }
 

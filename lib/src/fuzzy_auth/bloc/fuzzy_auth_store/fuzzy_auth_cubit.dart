@@ -29,6 +29,11 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   DateTime? _waitEndsAt;
   Timer? _waitTicker;
 
+  /// Set while a password or biometric attempt runs: a second submit (a
+  /// double tap, Enter pressed twice) is ignored instead of racing the first
+  /// for the wrong-password count.
+  bool _attemptRunning = false;
+
   /// The store is open whenever the status is `noAuthRequired` or
   /// `authenticated`, and closed on [lock]. Whether the lock is enabled is
   /// read from the store-key blob, not the preference
@@ -67,18 +72,24 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   /// A cancelled prompt or a locked-out sensor leaves biometric unlock on;
   /// only a copy that is gone turns it off.
   Future<void> unlockWithBiometrics() async {
-    emit(state.copyWith(status: AuthStateStatus.unlocking));
-    final read =
-        await biometricAuthRepository.readPassword(BiometricScope.chat);
-    switch (read) {
-      case BiometricPassword(:final password):
-        // A biometric prompt is a second factor: it may end a running wait.
-        await _verify(password);
-      case BiometricCopyGone():
-        logger.w('Biometric copy is gone (new enrolment or never stored)');
-        await _handleBiometricInvalidation();
-      case BiometricNotRead():
-        emit(state.copyWith(status: AuthStateStatus.locked));
+    if (_attemptRunning) return;
+    _attemptRunning = true;
+    try {
+      emit(state.copyWith(status: AuthStateStatus.unlocking));
+      final read =
+          await biometricAuthRepository.readPassword(BiometricScope.chat);
+      switch (read) {
+        case BiometricPassword(:final password):
+          // A biometric prompt is a second factor: it may end a running wait.
+          await _verify(password);
+        case BiometricCopyGone():
+          logger.w('Biometric copy is gone (new enrolment or never stored)');
+          await _handleBiometricInvalidation();
+        case BiometricNotRead():
+          emit(state.copyWith(status: AuthStateStatus.locked));
+      }
+    } finally {
+      _attemptRunning = false;
     }
   }
 
@@ -96,23 +107,29 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   /// Refused without trying the password while a wait runs (security review
   /// 2026-10-22, item 6): after [AppLockThrottleData.freeAttempts] wrong
   /// passwords in a row each further one starts a growing wait, kept across
-  /// restarts.
+  /// restarts. Ignored while another attempt runs.
   Future<void> unlock(String password) async {
-    final throttle = await appLockThrottleRepository.read();
-    final remaining = throttle.remainingAt(_now());
-    if (remaining > Duration.zero) {
-      emit(
-        state.copyWith(
-          status: AuthStateStatus.locked,
-          lockoutRemaining: _startWait(remaining),
-        ),
-      );
-      return;
+    if (_attemptRunning) return;
+    _attemptRunning = true;
+    try {
+      final throttle = await appLockThrottleRepository.read();
+      final remaining = throttle.remainingAt(_now());
+      if (remaining > Duration.zero) {
+        emit(
+          state.copyWith(
+            status: AuthStateStatus.locked,
+            lockoutRemaining: _startWait(remaining),
+          ),
+        );
+        return;
+      }
+      await _verify(password);
+    } finally {
+      _attemptRunning = false;
     }
-    await _verify(password, throttle: throttle);
   }
 
-  Future<void> _verify(String password, {AppLockThrottleData? throttle}) async {
+  Future<void> _verify(String password) async {
     emit(state.copyWith(status: AuthStateStatus.unlocking));
 
     final isValid = await chatAuthRepository.verifyPassword(password);
@@ -127,7 +144,9 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
         ),
       );
     } else {
-      final before = throttle ?? await appLockThrottleRepository.read();
+      // The count as saved now, not as read before the check: anything
+      // recorded meanwhile is kept, and this failure is added on top.
+      final before = await appLockThrottleRepository.read();
       final after = before.afterFailure(_now());
       // Saved before the result is shown, so closing the app on a wrong
       // password still counts it.
