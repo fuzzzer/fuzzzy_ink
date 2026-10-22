@@ -59,6 +59,12 @@ abstract final class UserFileNames {
     // Office databases and add-ins that run code when opened.
     'ade', 'adp', 'mad', 'maf', 'mag', 'mam', 'maq', 'mar', 'mas', 'mat',
     'mau', 'mav', 'maw', 'mda', 'mdb', 'mde', 'mdt', 'mdw', 'mdz',
+    // Office documents with macros, Office add-ins and VSTO solutions.
+    'docm', 'dotm', 'xlsm', 'xltm', 'xlam', 'xla', 'xlm', 'pptm', 'potm',
+    'ppam', 'ppsm', 'sldm', 'wll', 'vsto',
+    // Office files that fetch or run content: web queries, SYLK, OneNote,
+    // web archives.
+    'iqy', 'slk', 'one', 'onepkg', 'mht', 'mhtml',
     // Disk images that mount (and so skip the downloaded-file warning).
     'iso', 'img', 'vhd', 'vhdx', 'dmg',
     // Interpreters that are often associated.
@@ -155,9 +161,11 @@ abstract final class UserFileNames {
   /// * Windows, macOS, Linux — `<documents>/Fuzzzy Ink/<safe chat folder>`
   ///   ([safeChatFolderName]), so a chat can never write into one of the
   ///   user's own Documents folders, the vault's, or another chat's.
-  /// * Android — `<documents>/<chat name>`, the app-private staging folder;
-  ///   the finished file moves to `Downloads/Fuzzzy Ink/<chat name>/`.
-  /// * iOS — `<documents>/<chat name>`, the app's own Documents folder.
+  /// * Android — `<documents>/<phone chat folder>` ([phoneChatFolderName]),
+  ///   the app-private staging folder; the finished file moves to
+  ///   `Downloads/Fuzzzy Ink/<phone chat folder>/`.
+  /// * iOS — `<documents>/<phone chat folder>`, the app's own Documents
+  ///   folder.
   static String chatFolderPath({
     required String documentsPath,
     required String chatName,
@@ -165,7 +173,7 @@ abstract final class UserFileNames {
     TargetPlatform? platform,
   }) {
     if (!_isDesktop(platform ?? hostPlatform)) {
-      return path.join(documentsPath, chatName);
+      return path.join(documentsPath, phoneChatFolderName(chatName));
     }
     return path.join(
       documentsPath,
@@ -197,10 +205,7 @@ abstract final class UserFileNames {
     required String chatName,
     required String chatId,
   }) {
-    var name = chatName
-        .replaceAll(_bidiControls, '')
-        .replaceAll(_controls, '')
-        .replaceAll(_invisibles, '')
+    var name = _withoutHiddenCharacters(chatName)
         .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
     name = _trimDotsAndSpaces(name);
 
@@ -225,6 +230,28 @@ abstract final class UserFileNames {
         : idCharacters.substring(0, _chatIdSuffixLength);
     return suffix.isEmpty ? name : '$name ($suffix)';
   }
+
+  /// [chatName] as one folder name on a phone (Android, iOS), without the
+  /// chat id, so a chat keeps the folder it always had: only the cleaning
+  /// that keeps the folder inside its parent is applied. Direction and
+  /// control characters go, `/` and `\` become `_`, leading and trailing dots
+  /// and spaces go (so `.` and `..` are gone too); `Chat` when nothing is
+  /// left. Joiners stay, so an emoji sequence keeps its folder. Android's
+  /// native side gets this name too (`UserFilesChannel`).
+  static String phoneChatFolderName(String chatName) {
+    final name = _trimDotsAndSpaces(
+      chatName
+          .replaceAll(_bidiControls, '')
+          .replaceAll(_controls, '')
+          .replaceAll(RegExp(r'[/\\]'), '_'),
+    );
+    return name.isEmpty ? _fallbackChatFolderName : name;
+  }
+
+  static String _withoutHiddenCharacters(String name) => name
+      .replaceAll(_bidiControls, '')
+      .replaceAll(_controls, '')
+      .replaceAll(_invisibles, '');
 
   static String _trimDotsAndSpaces(String name) =>
       name.replaceAll(RegExp(r'^[\s.]+|[\s.]+$'), '');

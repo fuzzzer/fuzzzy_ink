@@ -113,6 +113,47 @@ void main() {
       }
     });
 
+    test('Office files with macros, add-ins and fetched content are risky', () {
+      const names = [
+        'a.docm',
+        'a.dotm',
+        'a.xlsm',
+        'a.xltm',
+        'a.xlam',
+        'a.xla',
+        'a.xlm',
+        'a.pptm',
+        'a.potm',
+        'a.ppam',
+        'a.ppsm',
+        'a.sldm',
+        'a.wll',
+        'a.vsto',
+        'a.iqy',
+        'a.slk',
+        'a.one',
+        'a.onepkg',
+        'a.mht',
+        'a.mhtml',
+        'a.settingcontent-ms',
+        'Budget.XLSM',
+      ];
+      for (final platform in desktops) {
+        for (final name in names) {
+          expect(
+            UserFileNames.isRiskyToOpen(name, platform: platform),
+            isTrue,
+            reason: '$name on $platform',
+          );
+        }
+      }
+      // Phones open none of these with something that runs it.
+      expect(
+        UserFileNames.isRiskyToOpen('a.docm', platform: TargetPlatform.android),
+        isFalse,
+      );
+    });
+
     test('ordinary documents, media and archives open', () {
       const names = [
         'report.pdf',
@@ -120,6 +161,7 @@ void main() {
         'notes.txt',
         'book.docx',
         'sheet.xlsx',
+        'slides.pptx',
         'song.mp3',
         'clip.mp4',
         'bundle.zip',
@@ -422,6 +464,25 @@ void main() {
       expect(path.dirname(folder), path.join(documents, 'Fuzzzy Ink'));
     });
 
+    test('a hostile chat name stays inside the phone documents folder', () {
+      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+        for (final name in ['.', '..', 'a/b', '../../../etc', '/abs']) {
+          final folder = UserFileNames.chatFolderPath(
+            documentsPath: documents,
+            chatName: name,
+            chatId: chatId,
+            platform: platform,
+          );
+          expect(
+            path.dirname(folder),
+            documents,
+            reason: '$name on $platform',
+          );
+          expect(path.isWithin(documents, folder), isTrue);
+        }
+      }
+    });
+
     test('phones keep their folder: <documents>/<chat name>', () {
       for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
         expect(
@@ -435,6 +496,44 @@ void main() {
           reason: '$platform',
         );
       }
+    });
+  });
+
+  group('UserFileNames.phoneChatFolderName', () {
+    test('ordinary names keep the folder they always had', () {
+      for (final name in [
+        'Work',
+        'Mom & Dad?',
+        'Q: plans "2026"',
+        'მეგობრები',
+        'Ünïcödé 🎉',
+        'CON',
+        'a.b',
+        'x' * 80,
+        'Family 👨\u200D👩\u200D👧',
+      ]) {
+        expect(UserFileNames.phoneChatFolderName(name), name, reason: name);
+      }
+    });
+
+    test('. and .. and names of only dots or spaces become "Chat"', () {
+      for (final name in ['.', '..', '...', ' . ', '']) {
+        expect(UserFileNames.phoneChatFolderName(name), 'Chat', reason: name);
+      }
+    });
+
+    test('path separators cannot make a second folder level', () {
+      expect(UserFileNames.phoneChatFolderName('a/b'), 'a_b');
+      expect(UserFileNames.phoneChatFolderName(r'a\b'), 'a_b');
+      expect(UserFileNames.phoneChatFolderName('../../etc'), '_.._etc');
+      expect(UserFileNames.phoneChatFolderName('/abs'), '_abs');
+    });
+
+    test('control and direction characters go', () {
+      expect(
+        UserFileNames.phoneChatFolderName('Bo${rlo}b\u0000$lri$pdi\n'),
+        'Bob',
+      );
     });
   });
 
