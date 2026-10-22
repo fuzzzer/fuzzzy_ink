@@ -125,6 +125,21 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
     try {
       final tempFile = await _writeTempFile();
       await DeviceFileInteractor.openFile(tempFile.path);
+    } on RiskyFileOpenRefused {
+      // A program, installer, script or shortcut is never launched from
+      // here; where a folder can be shown it is offered instead.
+      if (!context.mounted) return;
+      if (DeviceFileInteractor.canRevealFile) {
+        await showRiskyFileDialog(
+          context,
+          fileName: _pickedFileName!,
+          onShowInFolder: () => _revealFile(context),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(currentContextLocalization.couldNotOpenFile)),
+        );
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
