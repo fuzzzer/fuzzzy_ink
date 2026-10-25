@@ -62,8 +62,21 @@ class SensitiveScreen extends StatefulWidget {
 
   final Widget child;
 
+  /// Whether [context] sits below a [SensitiveScreen]. Shared widgets keep to
+  /// in-place changes there: no travel, glow or Fuzzzy Cast (DESIGN.md
+  /// section 10, "Private screens").
+  static bool isIn(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<_SensitiveScope>() != null;
+
   @override
   State<SensitiveScreen> createState() => _SensitiveScreenState();
+}
+
+class _SensitiveScope extends InheritedWidget {
+  const _SensitiveScope({required super.child});
+
+  @override
+  bool updateShouldNotify(_SensitiveScope oldWidget) => false;
 }
 
 class _SensitiveScreenState extends State<SensitiveScreen> {
@@ -129,7 +142,7 @@ class _SensitiveScreenState extends State<SensitiveScreen> {
     return Stack(
       fit: StackFit.passthrough,
       children: [
-        NoPlaintextCopy(child: widget.child),
+        _SensitiveScope(child: NoPlaintextCopy(child: widget.child)),
         if (_isCovered)
           Positioned.fill(
             child: ColoredBox(
