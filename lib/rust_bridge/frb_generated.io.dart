@@ -161,6 +161,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
+
+  @protected
   RecoveredStore dco_decode_recovered_store(dynamic raw);
 
   @protected
@@ -180,6 +183,12 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   VaultInitResult dco_decode_vault_init_result(dynamic raw);
+
+  @protected
+  VaultOwnPassword dco_decode_vault_own_password(dynamic raw);
+
+  @protected
+  VaultRecovered dco_decode_vault_recovered(dynamic raw);
 
   @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
@@ -303,6 +312,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
+  Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
   RecoveredStore sse_decode_recovered_store(SseDeserializer deserializer);
 
   @protected
@@ -322,6 +334,12 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   VaultInitResult sse_decode_vault_init_result(SseDeserializer deserializer);
+
+  @protected
+  VaultOwnPassword sse_decode_vault_own_password(SseDeserializer deserializer);
+
+  @protected
+  VaultRecovered sse_decode_vault_recovered(SseDeserializer deserializer);
 
   @protected
   void sse_encode_AnyhowException(
@@ -449,6 +467,10 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_list_prim_u_8_strict(
+      Uint8List? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_recovered_store(
       RecoveredStore self, SseSerializer serializer);
 
@@ -470,6 +492,14 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   @protected
   void sse_encode_vault_init_result(
       VaultInitResult self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_vault_own_password(
+      VaultOwnPassword self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_vault_recovered(
+      VaultRecovered self, SseSerializer serializer);
 }
 
 // Section: wire_class

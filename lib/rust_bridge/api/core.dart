@@ -14,9 +14,10 @@ import 'safety.dart';
 
 /// First run: draws the master key, the store key and a recovery key, wraps
 /// the master key under `password` and under the recovery key, wraps the
-/// store key under the master key, and opens the store at
-/// `<store_dir>/fuzzy_crypto_store/`. Two Argon2id runs. An empty password is
-/// refused (`WrongPassword`); strength is the app's judgement.
+/// store key under the master key, opens the store at
+/// `<store_dir>/fuzzy_crypto_store/` and seals the recovery lock under the
+/// store key. Two Argon2id runs. An empty password is refused
+/// (`WrongPassword`); strength is the app's judgement.
 Future<MasterKeySetup> createMasterKey(
         {required String storeDir, required String password}) =>
     FuzzyCryptoCoreLib.instance.api
@@ -53,7 +54,8 @@ Future<Uint8List> changeMasterPassword(
 /// The forgotten-password path: reads the typed `recovery_key` (a typo is
 /// `Corrupt`, before any Argon2 run), unwraps the master key from
 /// `recovery_wrap` (a key of another device is `WrongPassword`), wraps it
-/// under `new_password` and opens the store. The recovery key stays valid.
+/// under `new_password` and opens the store. The recovery key, its lock and a
+/// vault key sealed to it stay valid.
 Future<RecoveredStore> recoverMasterPassword(
         {required String storeDir,
         required List<int> recoveryWrap,
@@ -68,12 +70,18 @@ Future<RecoveredStore> recoverMasterPassword(
         newPassword: newPassword);
 
 /// Draws a new recovery key and wraps the master key under it, after
-/// `password` has opened `password_wrap` (two Argon2id runs). The app
-/// replaces the stored recovery wrap with the new one, which ends the old key.
+/// `password` has opened `password_wrap` (two Argon2id runs), and seals its
+/// lock under the store key of the open `core`. The app replaces the stored
+/// recovery wrap and lock with the new ones, which ends the old key; a vault
+/// with its own password is sealed to the new lock with
+/// [`crate::api::vault::vault_seal_for_recovery`] (its password is needed —
+/// the master password alone never reaches that vault).
 Future<NewRecoveryKey> newRecoveryKey(
-        {required List<int> passwordWrap, required String password}) =>
+        {required CryptoCore core,
+        required List<int> passwordWrap,
+        required String password}) =>
     FuzzyCryptoCoreLib.instance.api.crateApiCoreNewRecoveryKey(
-        passwordWrap: passwordWrap, password: password);
+        core: core, passwordWrap: passwordWrap, password: password);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CryptoCore>>
 abstract class CryptoCore implements RustOpaqueInterface {
@@ -228,7 +236,7 @@ abstract class CryptoCore implements RustOpaqueInterface {
   Future<String> storeDir();
 }
 
-/// What [`create_master_key`] hands back: the open store and the three blobs
+/// What [`create_master_key`] hands back: the open store and the four blobs
 /// the app keeps in secure storage, plus the recovery key to show the user
 /// once. `non_opaque` so frb passes the fields once.
 class MasterKeySetup {
@@ -243,6 +251,10 @@ class MasterKeySetup {
   /// 0x20 — the store key under the master key.
   final Uint8List storeWrap;
 
+  /// 0x20 — the recovery lock (public) under the store key: what a vault
+  /// with its own password seals its key to, so the recovery key opens it.
+  final Uint8List recoveryLock;
+
   /// The printable recovery key (`XXXX-XXXX-…`, 32 base32 characters).
   final String recoveryKey;
 
@@ -251,6 +263,7 @@ class MasterKeySetup {
     required this.passwordWrap,
     required this.recoveryWrap,
     required this.storeWrap,
+    required this.recoveryLock,
     required this.recoveryKey,
   });
 
@@ -260,6 +273,7 @@ class MasterKeySetup {
       passwordWrap.hashCode ^
       recoveryWrap.hashCode ^
       storeWrap.hashCode ^
+      recoveryLock.hashCode ^
       recoveryKey.hashCode;
 
   @override
@@ -271,22 +285,27 @@ class MasterKeySetup {
           passwordWrap == other.passwordWrap &&
           recoveryWrap == other.recoveryWrap &&
           storeWrap == other.storeWrap &&
+          recoveryLock == other.recoveryLock &&
           recoveryKey == other.recoveryKey;
 }
 
-/// A new recovery key and the master key's wrap under it; the old recovery
-/// wrap stops working the moment the app replaces it with this one.
+/// A new recovery key, the master key's wrap under it and its lock (under
+/// the store key); the old recovery wrap stops working the moment the app
+/// replaces it with this one.
 class NewRecoveryKey {
   final String recoveryKey;
   final Uint8List recoveryWrap;
+  final Uint8List recoveryLock;
 
   const NewRecoveryKey({
     required this.recoveryKey,
     required this.recoveryWrap,
+    required this.recoveryLock,
   });
 
   @override
-  int get hashCode => recoveryKey.hashCode ^ recoveryWrap.hashCode;
+  int get hashCode =>
+      recoveryKey.hashCode ^ recoveryWrap.hashCode ^ recoveryLock.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -294,7 +313,8 @@ class NewRecoveryKey {
       other is NewRecoveryKey &&
           runtimeType == other.runtimeType &&
           recoveryKey == other.recoveryKey &&
-          recoveryWrap == other.recoveryWrap;
+          recoveryWrap == other.recoveryWrap &&
+          recoveryLock == other.recoveryLock;
 }
 
 /// What [`recover_master_password`] hands back: the open store and the

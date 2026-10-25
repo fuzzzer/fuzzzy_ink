@@ -21,6 +21,8 @@ class VaultAuthState {
     this.biometricEnabled = false,
     this.biometricInvalidated = false,
     this.usesOwnPassword = false,
+    this.recoverable = false,
+    this.recoveryKeyKept = false,
   });
 
   final StateStatus status;
@@ -33,6 +35,14 @@ class VaultAuthState {
   /// The vault has its own password; otherwise the master password opens it.
   final bool usesOwnPassword;
 
+  /// A vault with its own password that the recovery key can open (a copy
+  /// sealed to the recovery lock is kept).
+  final bool recoverable;
+
+  /// A recovery key is kept, so a vault that gets its own password stays
+  /// recoverable.
+  final bool recoveryKeyKept;
+
   VaultAuthState copyWith({
     StateStatus? status,
     VaultAuthEnum? authState,
@@ -41,6 +51,8 @@ class VaultAuthState {
     bool? biometricEnabled,
     bool? biometricInvalidated,
     bool? usesOwnPassword,
+    bool? recoverable,
+    bool? recoveryKeyKept,
   }) {
     return VaultAuthState(
       status: status ?? this.status,
@@ -51,6 +63,8 @@ class VaultAuthState {
       biometricEnabled: biometricEnabled ?? this.biometricEnabled,
       biometricInvalidated: biometricInvalidated ?? false,
       usesOwnPassword: usesOwnPassword ?? this.usesOwnPassword,
+      recoverable: recoverable ?? this.recoverable,
+      recoveryKeyKept: recoveryKeyKept ?? this.recoveryKeyKept,
     );
   }
 }

@@ -2229,8 +2229,50 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @vaultOwnPasswordNote.
   ///
   /// In en, this message translates to:
-  /// **'The recovery key does not open a vault with its own password. Without that password the vault is lost for good.'**
+  /// **'No recovery key is set: without this password the vault is lost for good.'**
   String get vaultOwnPasswordNote;
+
+  /// No description provided for @vaultOwnPasswordRecoveryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key can still open My safe.'**
+  String get vaultOwnPasswordRecoveryNote;
+
+  /// No description provided for @vaultUseRecoveryKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my recovery key'**
+  String get vaultUseRecoveryKey;
+
+  /// No description provided for @vaultRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe with your recovery key'**
+  String get vaultRecoveryTitle;
+
+  /// No description provided for @vaultRecoveryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your recovery key, then choose a new password for My safe, or let your master password open it.'**
+  String get vaultRecoveryDescription;
+
+  /// No description provided for @vaultRecoveryUseMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe with my master password'**
+  String get vaultRecoveryUseMasterPassword;
+
+  /// No description provided for @vaultRecoverySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe'**
+  String get vaultRecoverySubmit;
+
+  /// No description provided for @recoveryKeyVaultPasswordNote.
+  ///
+  /// In en, this message translates to:
+  /// **'My safe has its own password. Enter it too, so the new key opens My safe as well.'**
+  String get recoveryKeyVaultPasswordNote;
 
   /// No description provided for @vaultOwnNewPassword.
   ///

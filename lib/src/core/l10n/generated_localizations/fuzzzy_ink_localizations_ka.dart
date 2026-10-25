@@ -1194,7 +1194,32 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get vaultOwnPasswordNote =>
-      'საკუთარი პაროლის მქონე საცავს აღდგენის გასაღები ვერ ხსნის. ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.';
+      'აღდგენის გასაღები არ არის შენახული: ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.';
+
+  @override
+  String get vaultOwnPasswordRecoveryNote =>
+      'აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.';
+
+  @override
+  String get vaultUseRecoveryKey => 'აღდგენის გასაღების გამოყენება';
+
+  @override
+  String get vaultRecoveryTitle => '„ჩემი სეიფის“ გახსნა აღდგენის გასაღებით';
+
+  @override
+  String get vaultRecoveryDescription =>
+      'შეიყვანეთ აღდგენის გასაღები და აირჩიეთ „ჩემი სეიფის“ ახალი პაროლი, ან გახსენით ის მთავარი პაროლით.';
+
+  @override
+  String get vaultRecoveryUseMasterPassword =>
+      '„ჩემი სეიფი“ მთავარი პაროლით გაიხსნას';
+
+  @override
+  String get vaultRecoverySubmit => '„ჩემი სეიფის“ გახსნა';
+
+  @override
+  String get recoveryKeyVaultPasswordNote =>
+      '„ჩემ სეიფს“ საკუთარი პაროლი აქვს. შეიყვანეთ ისიც, რომ ახალმა გასაღებმა „ჩემი სეიფიც“ გახსნას.';
 
   @override
   String get vaultOwnNewPassword => 'საცავის ახალი პაროლი';

@@ -12,6 +12,10 @@ class MockFuzzyAuthStore extends Mock implements FuzzyAuthStore {}
 class MockBiometricAuthRepository extends Mock
     implements BiometricAuthRepository {}
 
+class MockVaultRepository extends Mock implements VaultRepository {}
+
+class MockVaultCryptoRepository extends Mock implements VaultCryptoRepository {}
+
 /// The master password's settings. A changed password must reach the
 /// vault's "good" bar (security review 2026-10-22, item 6); the password
 /// cannot be switched off; a new recovery key replaces the old one.
@@ -22,6 +26,12 @@ void main() {
   const fair = 'abcdefgh';
   const good = 'Blue-Kettle-42';
   final recoveryWrap = Uint8List.fromList([1, 2, 3]);
+  final recoveryLock = Uint8List.fromList([4, 5, 6]);
+  final pending = PendingRecoveryKey(
+    recoveryKey: 'AAAA-BBBB',
+    recoveryWrap: recoveryWrap,
+    recoveryLock: recoveryLock,
+  );
 
   late MockChatAuthRepository chatAuthRepository;
   late MockFuzzyAuthStore store;
@@ -30,6 +40,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(BiometricScope.chat);
     registerFallbackValue(Uint8List(0));
+    registerFallbackValue(pending);
   });
 
   setUp(() {
@@ -147,14 +158,9 @@ void main() {
       'a new key is shown, and kept only once it is confirmed saved',
       setUp: () {
         when(() => chatAuthRepository.newRecoveryKey(good)).thenAnswer(
-          (_) async => CryptoCoreSuccess(
-            CryptoCoreRecoveryKey(
-              recoveryKey: 'AAAA-BBBB',
-              recoveryWrap: recoveryWrap,
-            ),
-          ),
+          (_) async => CryptoCoreSuccess(pending),
         );
-        when(() => chatAuthRepository.saveRecoveryWrap(any()))
+        when(() => chatAuthRepository.saveRecovery(any()))
             .thenAnswer((_) async => const CryptoCoreSuccess(null));
       },
       build: buildCubit,
@@ -175,8 +181,7 @@ void main() {
             .having((s) => s.hasRecoveryKey, 'hasRecoveryKey', isTrue),
       ],
       verify: (_) {
-        verify(() => chatAuthRepository.saveRecoveryWrap(recoveryWrap))
-            .called(1);
+        verify(() => chatAuthRepository.saveRecovery(pending)).called(1);
       },
     );
 
@@ -184,12 +189,7 @@ void main() {
       'skipping keeps no recovery key',
       setUp: () {
         when(() => chatAuthRepository.newRecoveryKey(good)).thenAnswer(
-          (_) async => CryptoCoreSuccess(
-            CryptoCoreRecoveryKey(
-              recoveryKey: 'AAAA-BBBB',
-              recoveryWrap: recoveryWrap,
-            ),
-          ),
+          (_) async => CryptoCoreSuccess(pending),
         );
       },
       build: buildCubit,
@@ -204,7 +204,7 @@ void main() {
             .having((s) => s.hasRecoveryKey, 'hasRecoveryKey', isFalse),
       ],
       verify: (_) {
-        verifyNever(() => chatAuthRepository.saveRecoveryWrap(any()));
+        verifyNever(() => chatAuthRepository.saveRecovery(any()));
       },
     );
 
@@ -223,6 +223,149 @@ void main() {
         isA<FuzzyUserAuthPreferencesState>()
             .having((s) => s.activationStatus, 'status', StateStatus.failed)
             .having((s) => s.pendingRecoveryKey, 'key', isNull),
+      ],
+    );
+  });
+
+  group('recovery key and a vault with its own password', () {
+    late MockVaultRepository vaultRepository;
+    late MockVaultCryptoRepository vaultCrypto;
+    final metadata = VaultMetadata(
+      vaultId: 'v',
+      verificationToken: 'AA==',
+      createdAt: DateTime(2026),
+      lastUnlockedAt: DateTime(2026),
+    );
+    final copy = Uint8List.fromList([0x11]);
+
+    setUpAll(() => registerFallbackValue(metadata));
+
+    setUp(() {
+      vaultRepository = MockVaultRepository();
+      vaultCrypto = MockVaultCryptoRepository();
+      when(() => vaultRepository.cryptoRepository).thenReturn(vaultCrypto);
+      when(() => vaultRepository.getMetadata())
+          .thenAnswer((_) async => VaultSuccess(metadata));
+      when(() => vaultCrypto.usesOwnPassword(any()))
+          .thenReturn(const VaultSuccess(true));
+      // The repository runs the vault's seal with the new key's lock.
+      when(
+        () => chatAuthRepository.newRecoveryKey(
+          any(),
+          sealVault: any(named: 'sealVault'),
+        ),
+      ).thenAnswer((invocation) async {
+        final sealVault = invocation.namedArguments[#sealVault]
+            as Future<CryptoCoreResponse<Uint8List>> Function(Uint8List)?;
+        if (sealVault == null) return CryptoCoreSuccess(pending);
+        final sealRes = await sealVault(recoveryLock);
+        if (sealRes is CryptoCoreFailure<Uint8List>) {
+          return CryptoCoreFailure(sealRes.type);
+        }
+        return CryptoCoreSuccess(
+          PendingRecoveryKey(
+            recoveryKey: pending.recoveryKey,
+            recoveryWrap: recoveryWrap,
+            recoveryLock: recoveryLock,
+            vaultRecovery: (sealRes as CryptoCoreSuccess<Uint8List>).data,
+          ),
+        );
+      });
+    });
+
+    FuzzyUserAuthPreferencesCubit buildWithVault() =>
+        FuzzyUserAuthPreferencesCubit(
+          chatAuthRepository: chatAuthRepository,
+          fuzzyAuthStore: store,
+          biometricAuthRepository: biometricRepository,
+          passwordStrengthService: PasswordStrengthService(),
+          vaultRepository: vaultRepository,
+        );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'without the vault password no new key is made',
+      build: buildWithVault,
+      act: (cubit) => cubit.newRecoveryKey(good),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.failed)
+            .having((s) => s.pendingRecoveryKey, 'key', isNull),
+      ],
+      verify: (_) => verifyNever(
+        () => chatAuthRepository.newRecoveryKey(
+          any(),
+          sealVault: any(named: 'sealVault'),
+        ),
+      ),
+    );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'with the vault password the vault is sealed to the new key',
+      setUp: () {
+        when(
+          () => vaultCrypto.sealForRecovery(
+            vaultPassword: 'vault-pw',
+            metadata: metadata,
+            recoveryLock: recoveryLock,
+          ),
+        ).thenAnswer((_) async => CryptoCoreSuccess(copy));
+      },
+      build: buildWithVault,
+      act: (cubit) => cubit.newRecoveryKey(good, vaultPassword: 'vault-pw'),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.success)
+            .having(
+              (s) => s.pendingRecovery?.vaultRecovery,
+              'vault copy',
+              copy,
+            ),
+      ],
+    );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'a wrong vault password is reported as the vault password',
+      setUp: () {
+        when(
+          () => vaultCrypto.sealForRecovery(
+            vaultPassword: any(named: 'vaultPassword'),
+            metadata: any(named: 'metadata'),
+            recoveryLock: any(named: 'recoveryLock'),
+          ),
+        ).thenAnswer(
+          (_) async =>
+              const CryptoCoreFailure(CryptoCoreFailureType.wrongPassword),
+        );
+      },
+      build: buildWithVault,
+      act: (cubit) => cubit.newRecoveryKey(good, vaultPassword: 'nope'),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.failed)
+            .having(
+              (s) => s.activationFailure?.message,
+              'message',
+              FuzzzyInkLocalizationsEn().vaultIncorrectPassword,
+            ),
+      ],
+    );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'a vault under the master key needs no vault password',
+      setUp: () {
+        when(() => vaultCrypto.usesOwnPassword(any()))
+            .thenReturn(const VaultSuccess(false));
+      },
+      build: buildWithVault,
+      act: (cubit) => cubit.newRecoveryKey(good),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.success)
+            .having((s) => s.pendingRecovery?.vaultRecovery, 'copy', isNull),
       ],
     );
   });

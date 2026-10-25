@@ -119,12 +119,7 @@ class _VaultCreatePageState extends State<VaultCreatePage> {
                       qaId: 'vault.create',
                     ),
                     const SizedBox(height: 24),
-                    Text(
-                      localizations.vaultOwnPasswordNote,
-                      style: context.fuzzzyTextStyles.bodyS.copyWith(
-                        color: context.fuzzzyColors.destructiveText,
-                      ),
-                    ),
+                    const VaultOwnPasswordNote(),
                   ] else
                     FuzzzyTextField(
                       controller: _masterPasswordController,

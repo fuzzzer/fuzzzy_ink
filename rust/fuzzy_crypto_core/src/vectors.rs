@@ -427,6 +427,41 @@ fn all_vectors() -> Vec<Vector> {
         }),
     ));
 
+    // The recovery key 00 01 … 12 ‖ its check byte (`master::tests`' fixed key).
+    let recovery_text = "AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ";
+    let recovery_lock = master::RecoveryKey::parse(recovery_text)
+        .expect("fixed recovery key")
+        .lock();
+    vectors.push(Vector::bytes(
+        "recovery_lock",
+        recovery_lock.to_vec(),
+        json!({
+            "recovery_key": recovery_text,
+            "recovery_key_bytes": "000102030405060708090a0b0c0d0e0f10111219",
+            "derivation": "X25519(SHA-256(recovery key bytes ‖ 00000001 ‖ \"fuzzy-recovery-lock-v1\"), 9)",
+        }),
+    ));
+
+    vectors.push(Vector::bytes(
+        "vault_key_recovery",
+        master::seal_to_lock_with(
+            &recovery_lock,
+            &STORE_KEY_33,
+            vault::VAULT_KEY_RECOVERY_AAD,
+            &[0x55; 32],
+            NONCE_22,
+        )
+        .expect("recovery box"),
+        json!({
+            "vault_key": hex(&STORE_KEY_33),
+            "recovery_lock": hex(&recovery_lock),
+            "ephemeral_secret": hex(&[0x55; 32]),
+            "nonce": hex(&NONCE_22),
+            "box_key": "SHA-256(X25519(ephemeral, lock) ‖ 00000001 ‖ \"fuzzy-recovery-box-v1\" ‖ ephemeral public ‖ lock)",
+            "aad": "vault-key-recovery",
+        }),
+    ));
+
     vectors.push(Vector::bytes(
         "local_seal_chat",
         store::seal_local_with(&HISTORY_KEY_55, CHAT_ID, LOCAL_ROW, b"hello", NONCE_44)

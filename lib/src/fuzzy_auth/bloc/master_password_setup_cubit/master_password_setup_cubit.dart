@@ -66,16 +66,31 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
         status: StateStatus.success,
         recoveryKey: setup.recoveryKey,
         recoveryWrap: setup.recoveryWrap,
+        recoveryLock: setup.recoveryLock,
       ),
     );
   }
 
-  /// The user saved the recovery key: its wrap is kept, the app opens.
+  /// The user saved the recovery key: its wrap and lock are kept, the app
+  /// opens.
   Future<void> confirmRecoveryKeySaved() async {
+    final recoveryKey = state.recoveryKey;
     final recoveryWrap = state.recoveryWrap;
-    if (recoveryWrap == null || state.status.isLoading) return;
+    final recoveryLock = state.recoveryLock;
+    if (recoveryKey == null ||
+        recoveryWrap == null ||
+        recoveryLock == null ||
+        state.status.isLoading) {
+      return;
+    }
     emit(state.copyWith(status: StateStatus.loading));
-    final saveRes = await _chatAuthRepository.saveRecoveryWrap(recoveryWrap);
+    final saveRes = await _chatAuthRepository.saveRecovery(
+      PendingRecoveryKey(
+        recoveryKey: recoveryKey,
+        recoveryWrap: recoveryWrap,
+        recoveryLock: recoveryLock,
+      ),
+    );
     if (saveRes is CryptoCoreFailure<void>) {
       emit(
         state.copyWith(

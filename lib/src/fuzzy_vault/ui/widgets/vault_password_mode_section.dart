@@ -163,10 +163,7 @@ class _VaultPasswordModeSectionState extends State<VaultPasswordModeSection> {
             qaId: 'vault.mode.new',
           ),
           SizedBox(height: space.s),
-          Text(
-            localizations.vaultOwnPasswordNote,
-            style: bodyS.copyWith(color: colors.destructiveText),
-          ),
+          const VaultOwnPasswordNote(),
           SizedBox(height: space.m),
           FuzzzyButton(
             label: localizations.vaultUseOwnPassword,

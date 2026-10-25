@@ -19,16 +19,16 @@ class FuzzyUserAuthPreferencesState {
   final bool? hasRecoveryKey;
 
   /// A new recovery key on screen until it is confirmed saved or skipped.
-  final String? pendingRecoveryKey;
-  final Uint8List? pendingRecoveryWrap;
+  final PendingRecoveryKey? pendingRecovery;
+
+  String? get pendingRecoveryKey => pendingRecovery?.recoveryKey;
 
   const FuzzyUserAuthPreferencesState({
     required this.activationStatus,
     this.activationFailure,
     this.lastAction = AuthPreferencesAction.none,
     this.hasRecoveryKey,
-    this.pendingRecoveryKey,
-    this.pendingRecoveryWrap,
+    this.pendingRecovery,
   });
 
   FuzzyUserAuthPreferencesState copyWith({
@@ -36,8 +36,7 @@ class FuzzyUserAuthPreferencesState {
     DefaultFailure? activationFailure,
     AuthPreferencesAction? lastAction,
     bool? hasRecoveryKey,
-    String? pendingRecoveryKey,
-    Uint8List? pendingRecoveryWrap,
+    PendingRecoveryKey? pendingRecovery,
     bool clearPendingRecoveryKey = false,
   }) {
     return FuzzyUserAuthPreferencesState(
@@ -45,12 +44,9 @@ class FuzzyUserAuthPreferencesState {
       activationFailure: activationFailure ?? this.activationFailure,
       lastAction: lastAction ?? this.lastAction,
       hasRecoveryKey: hasRecoveryKey ?? this.hasRecoveryKey,
-      pendingRecoveryKey: clearPendingRecoveryKey
+      pendingRecovery: clearPendingRecoveryKey
           ? null
-          : pendingRecoveryKey ?? this.pendingRecoveryKey,
-      pendingRecoveryWrap: clearPendingRecoveryKey
-          ? null
-          : pendingRecoveryWrap ?? this.pendingRecoveryWrap,
+          : pendingRecovery ?? this.pendingRecovery,
     );
   }
 

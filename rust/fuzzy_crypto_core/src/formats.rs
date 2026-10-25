@@ -41,6 +41,8 @@ pub enum BlobKind {
     PasswordSealed = 0x05,
     /// Secure storage only — never valid on the wire.
     WrappedStoreKey = 0x10,
+    /// Secure storage only — a key sealed to the recovery lock.
+    RecoveryBox = 0x11,
     /// Isar / state files only — never valid on the wire.
     LocalSeal = 0x20,
 }
@@ -54,6 +56,7 @@ impl BlobKind {
             0x04 => Ok(Self::FileContainer),
             0x05 => Ok(Self::PasswordSealed),
             0x10 => Ok(Self::WrappedStoreKey),
+            0x11 => Ok(Self::RecoveryBox),
             0x20 => Ok(Self::LocalSeal),
             _ => Err(CoreError::UnsupportedFormat),
         }
@@ -61,7 +64,10 @@ impl BlobKind {
 
     /// Whether a blob of this kind may arrive by paste.
     pub fn is_wire(self) -> bool {
-        !matches!(self, Self::WrappedStoreKey | Self::LocalSeal)
+        !matches!(
+            self,
+            Self::WrappedStoreKey | Self::RecoveryBox | Self::LocalSeal
+        )
     }
 }
 
@@ -169,7 +175,7 @@ fn expect_kind(blob: &[u8], expected: BlobKind) -> Result<&[u8], CoreError> {
 }
 
 /// The paste path: text envelope → outer envelope, rejecting the storage-only
-/// kinds (0x10, 0x20). Returns the kind and the whole binary blob (header included).
+/// kinds (0x10, 0x11, 0x20). Returns the kind and the whole binary blob (header included).
 pub fn decode_pasted(text: &str) -> Result<(BlobKind, Vec<u8>), CoreError> {
     let blob = decode_text(text)?;
     let (kind, _) = decode_envelope(&blob)?;
@@ -385,6 +391,43 @@ impl WrappedStoreKey {
         };
         reader.finish()?;
         Ok(wrapped)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Recovery box 0x11
+// ---------------------------------------------------------------------------
+
+/// `ephemeral 32 · nonce 24 · ct+tag (32+16)`: a 32-byte key sealed to the
+/// recovery lock (an X25519 public key) — an ephemeral X25519 key, then the
+/// AEAD of the key under a key derived from the shared secret.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RecoveryBox {
+    /// The sender's one-time X25519 public key.
+    pub ephemeral: [u8; 32],
+    pub nonce: [u8; 24],
+    /// The 32-byte key sealed under the box key, followed by its 16-byte tag.
+    pub ciphertext: [u8; WRAPPED_STORE_KEY_CT_LEN],
+}
+
+impl RecoveryBox {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut out = begin_blob(BlobKind::RecoveryBox, 32 + 24 + WRAPPED_STORE_KEY_CT_LEN);
+        out.extend_from_slice(&self.ephemeral);
+        out.extend_from_slice(&self.nonce);
+        out.extend_from_slice(&self.ciphertext);
+        out
+    }
+
+    pub fn decode(blob: &[u8]) -> Result<Self, CoreError> {
+        let mut reader = Reader::new(expect_kind(blob, BlobKind::RecoveryBox)?);
+        let sealed = Self {
+            ephemeral: reader.array()?,
+            nonce: reader.array()?,
+            ciphertext: reader.array()?,
+        };
+        reader.finish()?;
+        Ok(sealed)
     }
 }
 
@@ -1228,6 +1271,40 @@ mod tests {
         );
         assert_eq!(
             decode_text("Fuzz/RlVaWgEGAA").and_then(|b| decode_envelope(&b).map(|e| e.0)),
+            Err(CoreError::UnsupportedFormat)
+        );
+    }
+
+    #[test]
+    fn recovery_box_round_trip_and_strict_length() {
+        let sealed = RecoveryBox {
+            ephemeral: [0x55; 32],
+            nonce: [0x22; 24],
+            ciphertext: [0xEE; WRAPPED_STORE_KEY_CT_LEN],
+        };
+        let blob = sealed.encode();
+        assert_eq!(&blob[..6], &[0x46, 0x55, 0x5A, 0x5A, 0x01, 0x11]);
+        assert_eq!(blob.len(), 6 + 32 + 24 + 48);
+        assert_eq!(RecoveryBox::decode(&blob).unwrap(), sealed);
+        for cut in 0..blob.len() {
+            assert!(RecoveryBox::decode(&blob[..cut]).is_err(), "prefix {cut}");
+        }
+        let mut long = blob.clone();
+        long.push(0);
+        assert_eq!(RecoveryBox::decode(&long), Err(CoreError::Corrupt));
+        // Another storage kind is the wrong type for this decoder, and the reverse.
+        assert_eq!(
+            RecoveryBox::decode(&hex(LOCAL_SEAL_HEX)),
+            Err(CoreError::UnsupportedFormat)
+        );
+        assert_eq!(
+            WrappedStoreKey::decode(&blob),
+            Err(CoreError::UnsupportedFormat)
+        );
+        // Storage only: never accepted by paste.
+        assert!(!BlobKind::RecoveryBox.is_wire());
+        assert_eq!(
+            decode_pasted(&encode_text(&blob)),
             Err(CoreError::UnsupportedFormat)
         );
     }

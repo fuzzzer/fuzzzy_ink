@@ -65,6 +65,10 @@ void main() {
         .thenAnswer((_) async => VaultSuccess(_metadata));
     when(() => mockVaultRepo.saveMetadata(any()))
         .thenAnswer((_) async => const VaultSuccess(null));
+    when(() => mockCryptoRepo.hasRecoveryKey()).thenAnswer((_) async => true);
+    when(() => mockCryptoRepo.hasRecoveryCopy()).thenAnswer((_) async => true);
+    when(() => mockCryptoRepo.dropRecoveryCopy())
+        .thenAnswer((_) async => const VaultSuccess(null));
   });
 
   VaultAuthCubit buildCubit() => VaultAuthCubit(
@@ -380,8 +384,36 @@ void main() {
 
       expect(failure, isNull);
       expect(cubit.state.usesOwnPassword, isTrue);
+      expect(cubit.state.recoverable, isTrue);
       verify(() => mockVaultRepo.saveMetadata(rewrapped)).called(1);
       verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
+      verifyNever(() => mockCryptoRepo.dropRecoveryCopy());
+      await cubit.close();
+    });
+
+    test('switching back to the master password drops the recovery copy',
+        () async {
+      when(
+        () => mockCryptoRepo.useMasterPassword(
+          vaultPassword: 'Vault-Only-9',
+          masterPassword: 'master',
+          metadata: _metadata,
+        ),
+      ).thenAnswer((_) async => VaultSuccess(_metadata));
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+
+      final cubit = buildCubit()
+        ..emit(const VaultAuthState(usesOwnPassword: true, recoverable: true));
+      expect(
+        await cubit.useMasterPassword(
+          vaultPassword: 'Vault-Only-9',
+          masterPassword: 'master',
+        ),
+        isNull,
+      );
+      expect(cubit.state.usesOwnPassword, isFalse);
+      expect(cubit.state.recoverable, isFalse);
+      verify(() => mockCryptoRepo.dropRecoveryCopy()).called(1);
       await cubit.close();
     });
 
@@ -423,6 +455,131 @@ void main() {
       verifyNever(() => mockBiometricRepo.disable(any()));
       await masterVault.close();
       await ownVault.close();
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // the recovery key opens a vault with its own password
+  // -----------------------------------------------------------------------
+  group('recover', () {
+    final renewed = VaultMetadata(
+      vaultId: 'vault-1',
+      verificationToken: 'bmV3',
+      createdAt: DateTime(2026),
+      lastUnlockedAt: DateTime(2026),
+    );
+
+    test(
+        'with a new password: the vault opens, keeps its own password and '
+        'its recovery copy; the biometric copy goes', () async {
+      when(
+        () => mockCryptoRepo.recover(
+          recoveryKey: 'KEY',
+          newPassword: 'Fresh-Vault-9',
+          metadata: _metadata,
+        ),
+      ).thenAnswer(
+        (_) async => VaultSuccess((key: key, metadata: renewed)),
+      );
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+
+      final cubit = buildCubit()
+        ..emit(
+          const VaultAuthState(
+            authState: VaultAuthEnum.locked,
+            usesOwnPassword: true,
+            recoverable: true,
+            biometricEnabled: true,
+          ),
+        );
+      expect(
+        await cubit.recover(recoveryKey: 'KEY', newPassword: 'Fresh-Vault-9'),
+        isNull,
+      );
+      expect(cubit.state.authState, VaultAuthEnum.unlocked);
+      expect(cubit.state.masterKey, same(key));
+      expect(cubit.state.usesOwnPassword, isTrue);
+      expect(cubit.state.recoverable, isTrue);
+      expect(cubit.state.biometricEnabled, isFalse);
+      final saved = verify(() => mockVaultRepo.saveMetadata(captureAny()))
+          .captured
+          .single as VaultMetadata;
+      expect(saved.verificationToken, 'bmV3');
+      verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
+      verifyNever(() => mockCryptoRepo.dropRecoveryCopy());
+      await cubit.close();
+    });
+
+    test('without a new password: the master password opens it from now on',
+        () async {
+      when(
+        () => mockCryptoRepo.recover(
+          recoveryKey: 'KEY',
+          metadata: _metadata,
+        ),
+      ).thenAnswer(
+        (_) async => VaultSuccess((key: key, metadata: renewed)),
+      );
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+
+      final cubit = buildCubit()
+        ..emit(
+          const VaultAuthState(
+            authState: VaultAuthEnum.locked,
+            usesOwnPassword: true,
+            recoverable: true,
+          ),
+        );
+      expect(await cubit.recover(recoveryKey: 'KEY'), isNull);
+      expect(cubit.state.authState, VaultAuthEnum.unlocked);
+      expect(cubit.state.usesOwnPassword, isFalse);
+      expect(cubit.state.recoverable, isFalse);
+      verify(() => mockCryptoRepo.dropRecoveryCopy()).called(1);
+      await cubit.close();
+    });
+
+    test('a wrong key changes nothing and stays locked', () async {
+      when(
+        () => mockCryptoRepo.recover(
+          recoveryKey: any(named: 'recoveryKey'),
+          newPassword: any(named: 'newPassword'),
+          metadata: any(named: 'metadata'),
+        ),
+      ).thenAnswer(
+        (_) async => const VaultFailure(VaultFailureType.recoveryKeyWrong),
+      );
+      final cubit = buildCubit()
+        ..emit(
+          const VaultAuthState(
+            authState: VaultAuthEnum.locked,
+            usesOwnPassword: true,
+            recoverable: true,
+          ),
+        );
+      expect(
+        await cubit.recover(recoveryKey: 'OTHER', newPassword: 'Fresh-Vault-9'),
+        VaultFailureType.recoveryKeyWrong,
+      );
+      expect(cubit.state.authState, VaultAuthEnum.locked);
+      verifyNever(() => mockVaultRepo.saveMetadata(any()));
+      await cubit.close();
+    });
+
+    test('refreshRecovery follows a new or skipped recovery key', () async {
+      final cubit = buildCubit()
+        ..emit(const VaultAuthState(usesOwnPassword: true));
+      await cubit.refreshRecovery();
+      expect(cubit.state.recoveryKeyKept, isTrue);
+      expect(cubit.state.recoverable, isTrue);
+
+      when(() => mockCryptoRepo.hasRecoveryKey())
+          .thenAnswer((_) async => false);
+      when(() => mockCryptoRepo.hasRecoveryCopy())
+          .thenAnswer((_) async => false);
+      await cubit.refreshRecovery();
+      expect(cubit.state.recoveryKeyKept, isFalse);
+      expect(cubit.state.recoverable, isFalse);
+      await cubit.close();
     });
   });
 

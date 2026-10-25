@@ -233,14 +233,16 @@ void main() {
         storeWrap: setup.storeWrap,
         password: 'fresh',
       );
-      await core.close();
-      core.dispose();
 
       final fresh = await newRecoveryKey(
+        core: core,
         passwordWrap: recovered.passwordWrap,
         password: 'fresh',
       );
       expect(fresh.recoveryKey, isNot(setup.recoveryKey));
+      expect(fresh.recoveryLock.length, 78, reason: '0x20 under the store key');
+      await core.close();
+      core.dispose();
       await expectLater(
         recoverMasterPassword(
           storeDir: storeDir.path,
@@ -687,9 +689,23 @@ void main() {
   });
 
   group('vault (async, opaque VaultKey)', () {
-    test('init → unlock → seal/open → rewrap → old password rejected',
-        () async {
-      final created = await vaultInit(password: 'pw');
+    test(
+        'init → unlock → seal/open → rewrap → old password rejected; the '
+        'recovery key opens it', () async {
+      final storeDir = Directory.systemTemp.createTempSync('fuzzy_vault_o_');
+      addTearDown(() => storeDir.deleteSync(recursive: true));
+      final setup =
+          await createMasterKey(storeDir: storeDir.path, password: 'master');
+      final created = await vaultInit(
+        core: setup.core,
+        password: 'pw',
+        recoveryLock: setup.recoveryLock,
+      );
+      expect(created.recovery!.length, 110, reason: '0x11: the recovery copy');
+      expect(
+        created.recovery!.sublist(0, 6),
+        [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x11],
+      );
       expect(
         created.wrapped.length,
         103,
@@ -783,9 +799,46 @@ void main() {
         reason: 'an item is bound to its version',
       );
       expect(vaultUsesOwnPassword(wrapped: created.wrapped), isTrue);
-      for (final key in [created.key, unlocked, reopened]) {
+
+      // The recovery key opens the same vault key with a new password; the
+      // master password alone does not.
+      await expectLater(
+        vaultUnlockWithMaster(
+          passwordWrap: setup.passwordWrap,
+          masterPassword: 'master',
+          wrapped: rewrapped,
+        ),
+        throwsA(CoreError.unsupportedFormat),
+      );
+      final recovered = await vaultRecover(
+        recovery: created.recovery!,
+        recoveryKey: setup.recoveryKey,
+        newPassword: 'third',
+      );
+      expect(
+        utf8.decode(
+          await vaultOpen(
+            key: recovered.key,
+            itemId: _chatId,
+            version: 1,
+            blob: item,
+          ),
+        ),
+        'secret',
+      );
+      await expectLater(
+        vaultRecover(
+          recovery: created.recovery!,
+          recoveryKey: 'AAAA-AAAA',
+          newPassword: 'third',
+        ),
+        throwsA(CoreError.corrupt),
+      );
+      await setup.core.close();
+      for (final key in [created.key, unlocked, reopened, recovered.key]) {
         key.dispose();
       }
+      setup.core.dispose();
     });
 
     test(
@@ -795,8 +848,6 @@ void main() {
       addTearDown(() => storeDir.deleteSync(recursive: true));
       final setup =
           await createMasterKey(storeDir: storeDir.path, password: 'master');
-      await setup.core.close();
-      setup.core.dispose();
 
       final created = await vaultInitWithMaster(
         passwordWrap: setup.passwordWrap,
@@ -812,14 +863,16 @@ void main() {
       );
 
       final own = await vaultUseOwnPassword(
+        core: setup.core,
         passwordWrap: setup.passwordWrap,
         masterPassword: 'master',
         wrapped: created.wrapped,
         newPassword: 'vault',
       );
-      expect(vaultUsesOwnPassword(wrapped: own), isTrue);
+      expect(own.recovery, isNull, reason: 'no lock given');
+      expect(vaultUsesOwnPassword(wrapped: own.wrapped), isTrue);
       final back = await vaultUseMasterPassword(
-        wrapped: own,
+        wrapped: own.wrapped,
         vaultPassword: 'vault',
         passwordWrap: setup.passwordWrap,
         masterPassword: 'master',
@@ -843,8 +896,10 @@ void main() {
         ),
         throwsA(CoreError.wrongPassword),
       );
+      await setup.core.close();
       created.key.dispose();
       key.dispose();
+      setup.core.dispose();
     });
   });
 }

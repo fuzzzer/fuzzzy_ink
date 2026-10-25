@@ -23,6 +23,7 @@ use zeroize::{ZeroizeOnDrop, Zeroizing};
 
 use crate::error::CoreError;
 use crate::formats::{Argon2Params, LocalSeal, WrappedStoreKey, WRAPPED_STORE_KEY_CT_LEN};
+use crate::master::RECOVERY_LOCK_AAD;
 use crate::state::{serialize_exact, ChatState, STATE_FORMAT_VERSION};
 
 /// Directory under the app's support dir that holds every `<chat_id>.state`.
@@ -629,6 +630,29 @@ impl OpenStore {
     /// Inverse of [`OpenStore::seal_setting`].
     pub fn open_setting(&self, name: &str, blob: &[u8]) -> Result<Vec<u8>, CoreError> {
         open_setting(&self.store_key, name, blob)
+    }
+
+    /// Seals the recovery lock — a public key, so this is for integrity only —
+    /// under the store key: a 0x20 with AAD `recovery-lock`. A lock swapped in
+    /// the secure storage then does not open, so nobody without the store key
+    /// can make the app seal a vault key to a lock of theirs.
+    pub fn seal_recovery_lock(&self, lock: &[u8; 32]) -> Result<Vec<u8>, CoreError> {
+        let nonce = random_array()?;
+        let ciphertext = seal(&self.store_key, &nonce, RECOVERY_LOCK_AAD, lock)?;
+        Ok(LocalSeal { nonce, ciphertext }.encode())
+    }
+
+    /// Inverse of [`OpenStore::seal_recovery_lock`]; another store's lock, a
+    /// tampered blob or a body that is not 32 bytes is `Corrupt`.
+    pub fn open_recovery_lock(&self, blob: &[u8]) -> Result<[u8; 32], CoreError> {
+        let sealed = LocalSeal::decode(blob)?;
+        let plain = open(
+            &self.store_key,
+            &sealed.nonce,
+            RECOVERY_LOCK_AAD,
+            &sealed.ciphertext,
+        )?;
+        plain.try_into().map_err(|_| CoreError::Corrupt)
     }
 
     /// Seals a received file's key under `chat_id`'s history key.

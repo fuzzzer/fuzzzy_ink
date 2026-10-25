@@ -27,7 +27,8 @@ pub fn blob_type_of(text: String) -> BlobType {
         Ok((BlobKind::Message, _)) => BlobType::Message,
         Ok((BlobKind::FileContainer, _)) => BlobType::File,
         Ok((BlobKind::PasswordSealed, _)) => BlobType::PasswordSealed,
-        Ok((BlobKind::WrappedStoreKey | BlobKind::LocalSeal, _)) | Err(_) => BlobType::Unknown,
+        Ok((BlobKind::WrappedStoreKey | BlobKind::RecoveryBox | BlobKind::LocalSeal, _))
+        | Err(_) => BlobType::Unknown,
     }
 }
 

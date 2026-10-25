@@ -1186,7 +1186,32 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get vaultOwnPasswordNote =>
-      'The recovery key does not open a vault with its own password. Without that password the vault is lost for good.';
+      'No recovery key is set: without this password the vault is lost for good.';
+
+  @override
+  String get vaultOwnPasswordRecoveryNote =>
+      'Your recovery key can still open My safe.';
+
+  @override
+  String get vaultUseRecoveryKey => 'Use my recovery key';
+
+  @override
+  String get vaultRecoveryTitle => 'Open My safe with your recovery key';
+
+  @override
+  String get vaultRecoveryDescription =>
+      'Enter your recovery key, then choose a new password for My safe, or let your master password open it.';
+
+  @override
+  String get vaultRecoveryUseMasterPassword =>
+      'Open My safe with my master password';
+
+  @override
+  String get vaultRecoverySubmit => 'Open My safe';
+
+  @override
+  String get recoveryKeyVaultPasswordNote =>
+      'My safe has its own password. Enter it too, so the new key opens My safe as well.';
 
   @override
   String get vaultOwnNewPassword => 'New vault password';

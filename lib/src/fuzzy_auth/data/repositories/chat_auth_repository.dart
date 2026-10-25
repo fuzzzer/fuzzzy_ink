@@ -47,9 +47,9 @@ class ChatAuthRepository {
   }
 
   /// First run: the core draws every key and opens the store; the password
-  /// and store wraps are written here. The recovery wrap comes back unsaved
-  /// with the recovery key: [saveRecoveryWrap] keeps it once the user has
-  /// saved the key. A failed write closes the store again.
+  /// and store wraps are written here. The recovery wrap and lock come back
+  /// unsaved with the recovery key: [saveRecovery] keeps them once the user
+  /// has saved the key. A failed write closes the store again.
   Future<CryptoCoreResponse<CryptoCoreMasterKeySetup>> setUp(
     String password,
   ) async {
@@ -151,12 +151,17 @@ class ChatAuthRepository {
     return writeRes;
   }
 
-  /// A new recovery key, once [password] is right. The old recovery key
-  /// stops working here, before the new one is shown: the new wrap is kept
-  /// only when the user confirms saving it ([saveRecoveryWrap]).
-  Future<CryptoCoreResponse<CryptoCoreRecoveryKey>> newRecoveryKey(
-    String password,
-  ) async {
+  /// A new recovery key, once [password] is right. [sealVault] — given when
+  /// the vault has its own password — seals that vault to the new key's lock
+  /// and answers the copy; if it fails, nothing changes and the old key keeps
+  /// working. Otherwise the old recovery key (its wrap, lock and vault copy)
+  /// stops working here, before the new one is shown: the new blobs are kept
+  /// only when the user confirms saving it ([saveRecovery]).
+  Future<CryptoCoreResponse<PendingRecoveryKey>> newRecoveryKey(
+    String password, {
+    Future<CryptoCoreResponse<Uint8List>> Function(Uint8List recoveryLock)?
+        sealVault,
+  }) async {
     final blobsRes = await _readReady();
     if (blobsRes is CryptoCoreFailure<MasterKeyBlobs>) {
       return CryptoCoreFailure(blobsRes.type);
@@ -169,15 +174,54 @@ class ChatAuthRepository {
     if (createRes is CryptoCoreFailure<CryptoCoreRecoveryKey>) {
       return CryptoCoreFailure(createRes.type);
     }
-    final dropRes = await _guard(_localDataSource.deleteRecoveryWrap);
+    final created =
+        (createRes as CryptoCoreSuccess<CryptoCoreRecoveryKey>).data;
+    Uint8List? vaultRecovery;
+    if (sealVault != null) {
+      final sealRes = await sealVault(created.recoveryLock);
+      if (sealRes is CryptoCoreFailure<Uint8List>) {
+        return CryptoCoreFailure(sealRes.type);
+      }
+      vaultRecovery = (sealRes as CryptoCoreSuccess<Uint8List>).data;
+    }
+    final dropRes = await _guard(_localDataSource.deleteRecovery);
     if (dropRes is CryptoCoreFailure<void>) {
       return CryptoCoreFailure(dropRes.type);
     }
-    return createRes;
+    return CryptoCoreSuccess(
+      PendingRecoveryKey(
+        recoveryKey: created.recoveryKey,
+        recoveryWrap: created.recoveryWrap,
+        recoveryLock: created.recoveryLock,
+        vaultRecovery: vaultRecovery,
+      ),
+    );
   }
 
-  Future<CryptoCoreResponse<void>> saveRecoveryWrap(Uint8List recoveryWrap) =>
-      _guard(() => _localDataSource.writeRecoveryWrap(recoveryWrap));
+  /// Keeps a recovery key the user saved: its wrap, its lock and, for a
+  /// vault with its own password, the vault's copy.
+  Future<CryptoCoreResponse<void>> saveRecovery(PendingRecoveryKey pending) =>
+      _guard(
+        () => _localDataSource.writeRecovery(
+          recoveryWrap: pending.recoveryWrap,
+          recoveryLock: pending.recoveryLock,
+          vaultRecovery: pending.vaultRecovery,
+        ),
+      );
+
+  /// The recovery key's blobs the vault needs: the lock to seal a vault with
+  /// its own password to, the vault's copy and the master key's recovery
+  /// wrap (all `null` without a recovery key).
+  Future<CryptoCoreResponse<MasterKeyBlobs>> keyBlobs() => _readReady();
+
+  /// Keeps (or, with `null`, removes) the vault key sealed to the recovery
+  /// lock.
+  Future<CryptoCoreResponse<void>> saveVaultRecovery(Uint8List? recovery) =>
+      _guard(
+        () => recovery == null
+            ? _localDataSource.deleteVaultRecovery()
+            : _localDataSource.writeVaultRecovery(recovery),
+      );
 
   /// The master key's password wrap, for the vault calls that need the
   /// master password.

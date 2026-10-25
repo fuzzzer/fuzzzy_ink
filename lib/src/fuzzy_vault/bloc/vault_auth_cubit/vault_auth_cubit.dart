@@ -35,6 +35,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     if (metaRes is VaultSuccess) {
       final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
       final ownRes = cryptoRepository.usesOwnPassword(metadata);
+      final usesOwn = ownRes is VaultSuccess<bool> && ownRes.data;
       final biometricEnabled =
           await biometricAuthRepository.isEnabled(BiometricScope.vault);
       emit(
@@ -42,7 +43,9 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           status: StateStatus.success,
           authState: VaultAuthEnum.locked,
           biometricEnabled: biometricEnabled,
-          usesOwnPassword: ownRes is VaultSuccess<bool> && ownRes.data,
+          usesOwnPassword: usesOwn,
+          recoverable: usesOwn && await cryptoRepository.hasRecoveryCopy(),
+          recoveryKeyKept: await cryptoRepository.hasRecoveryKey(),
         ),
       );
     } else if (metaRes is VaultFailure<VaultMetadata> &&
@@ -62,6 +65,8 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           authState: VaultAuthEnum.noVault,
           biometricEnabled: false,
           usesOwnPassword: false,
+          recoverable: false,
+          recoveryKeyKept: await cryptoRepository.hasRecoveryKey(),
         ),
       );
     }
@@ -194,6 +199,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
         authState: VaultAuthEnum.unlocked,
         masterKey: masterKey,
         usesOwnPassword: ownPassword,
+        recoverable: ownPassword && await cryptoRepository.hasRecoveryCopy(),
       ),
     );
   }
@@ -302,6 +308,62 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     );
   }
 
+  /// Re-reads whether a recovery key is kept and whether it opens the vault
+  /// — after a new recovery key was saved or skipped in the settings.
+  Future<void> refreshRecovery() async {
+    final kept = await cryptoRepository.hasRecoveryKey();
+    final copy =
+        state.usesOwnPassword && await cryptoRepository.hasRecoveryCopy();
+    emit(state.copyWith(recoveryKeyKept: kept, recoverable: copy));
+  }
+
+  /// The recovery key opens a vault with its own password ("forgot the
+  /// vault password", or after a new master password from the recovery
+  /// key): with [newPassword] the vault keeps its own password, now that one;
+  /// without it the master password opens the vault from now on. The vault
+  /// is then open. `null` on success.
+  Future<VaultFailureType?> recover({
+    required String recoveryKey,
+    String? newPassword,
+  }) async {
+    final metaRes = await vaultRepository.getMetadata();
+    if (metaRes is VaultFailure) return (metaRes as VaultFailure).type;
+    final recoverRes = await cryptoRepository.recover(
+      recoveryKey: recoveryKey,
+      newPassword: newPassword,
+      metadata: (metaRes as VaultSuccess<VaultMetadata>).data,
+    );
+    if (recoverRes is VaultFailure) return (recoverRes as VaultFailure).type;
+    final recovered =
+        (recoverRes as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
+            .data;
+    final saveRes = await vaultRepository.saveMetadata(
+      recovered.metadata.copyWith(lastUnlockedAt: _now()),
+    );
+    if (saveRes is VaultFailure) {
+      await _closeKey(recovered.key);
+      return saveRes.type;
+    }
+    final ownPassword = newPassword != null;
+    if (!ownPassword) await cryptoRepository.dropRecoveryCopy();
+    // The biometric copy held the forgotten password.
+    await biometricAuthRepository.disable(BiometricScope.vault);
+    final previous = state.masterKey;
+    if (previous != null) await _closeKey(previous);
+    _startAutoLockTimer();
+    emit(
+      state.copyWith(
+        status: StateStatus.success,
+        authState: VaultAuthEnum.unlocked,
+        masterKey: recovered.key,
+        biometricEnabled: false,
+        usesOwnPassword: ownPassword,
+        recoverable: ownPassword,
+      ),
+    );
+    return null;
+  }
+
   /// `null` on success.
   Future<VaultFailureType?> _changeWrapping(
     Future<VaultResponse<VaultMetadata>> Function(VaultMetadata) rewrap, {
@@ -315,11 +377,14 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     final saveRes = await vaultRepository
         .saveMetadata((rewrapRes as VaultSuccess<VaultMetadata>).data);
     if (saveRes is VaultFailure) return saveRes.type;
+    if (!usesOwnPassword) await cryptoRepository.dropRecoveryCopy();
     await biometricAuthRepository.disable(BiometricScope.vault);
     emit(
       state.copyWith(
         usesOwnPassword: usesOwnPassword,
         biometricEnabled: false,
+        recoverable:
+            usesOwnPassword && await cryptoRepository.hasRecoveryCopy(),
       ),
     );
     return null;
@@ -341,6 +406,8 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
             : VaultAuthEnum.locked,
         biometricEnabled: state.biometricEnabled,
         usesOwnPassword: state.usesOwnPassword,
+        recoverable: state.recoverable,
+        recoveryKeyKept: state.recoveryKeyKept,
       ),
     );
   }

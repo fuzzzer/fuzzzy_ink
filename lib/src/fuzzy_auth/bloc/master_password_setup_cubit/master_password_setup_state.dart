@@ -10,6 +10,7 @@ class MasterPasswordSetupState {
     this.failureType,
     this.recoveryKey,
     this.recoveryWrap,
+    this.recoveryLock,
   });
 
   final MasterPasswordSetupStep step;
@@ -20,6 +21,7 @@ class MasterPasswordSetupState {
   /// Shown once on the recovery-key step and dropped with this state.
   final String? recoveryKey;
   final Uint8List? recoveryWrap;
+  final Uint8List? recoveryLock;
 
   MasterPasswordSetupState copyWith({
     StateStatus? status,
@@ -33,6 +35,7 @@ class MasterPasswordSetupState {
       failureType: failureType,
       recoveryKey: recoveryKey,
       recoveryWrap: recoveryWrap,
+      recoveryLock: recoveryLock,
     );
   }
 }

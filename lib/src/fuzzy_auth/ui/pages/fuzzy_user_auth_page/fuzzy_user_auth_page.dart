@@ -17,6 +17,7 @@ class FuzzyUserAuthPage extends StatelessWidget {
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
+        vaultRepository: sl.get<VaultRepository>(),
       )..loadRecoveryKeyStatus(),
       child: const _FuzzyUserAuthPageContent(),
     );
@@ -36,6 +37,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   final _confirmPasswordController = TextEditingController();
   final _oldPasswordController = TextEditingController();
   final _recoveryPasswordController = TextEditingController();
+  final _recoveryVaultPasswordController = TextEditingController();
   final _vaultPasswordController = TextEditingController();
   bool _isVaultPasswordVisible = false;
 
@@ -48,6 +50,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
       _confirmPasswordController,
       _oldPasswordController,
       _recoveryPasswordController,
+      _recoveryVaultPasswordController,
     ]) {
       controller.addListener(() => setState(() {}));
     }
@@ -59,6 +62,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     _confirmPasswordController.dispose();
     _oldPasswordController.dispose();
     _recoveryPasswordController.dispose();
+    _recoveryVaultPasswordController.dispose();
     _vaultPasswordController.dispose();
     super.dispose();
   }
@@ -68,6 +72,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     _confirmPasswordController.clear();
     _oldPasswordController.clear();
     _recoveryPasswordController.clear();
+    _recoveryVaultPasswordController.clear();
   }
 
   void _onChangePassword() {
@@ -107,7 +112,14 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   void _onNewRecoveryKey() {
     final password = _recoveryPasswordController.text;
     if (password.isEmpty) return;
-    context.read<FuzzyUserAuthPreferencesCubit>().newRecoveryKey(password);
+    final vaultHasOwnPassword =
+        context.read<VaultAuthCubit>().state.usesOwnPassword;
+    context.read<FuzzyUserAuthPreferencesCubit>().newRecoveryKey(
+          password,
+          vaultPassword: vaultHasOwnPassword
+              ? _recoveryVaultPasswordController.text
+              : null,
+        );
   }
 
   void _toggleVaultPasswordVisibility() {
@@ -169,11 +181,15 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
               message = localizations.chatAuthBiometricEnabled;
             case AuthPreferencesAction.newRecoveryKey:
               _clearFields();
+              context.read<VaultAuthCubit>().refreshRecovery();
               message = null;
             case AuthPreferencesAction.saveRecoveryKey:
+              context.read<VaultAuthCubit>().refreshRecovery();
               message = localizations.recoveryKeyIsSet;
-            case AuthPreferencesAction.disableBiometric:
             case AuthPreferencesAction.skipRecoveryKey:
+              context.read<VaultAuthCubit>().refreshRecovery();
+              message = null;
+            case AuthPreferencesAction.disableBiometric:
             case AuthPreferencesAction.none:
               message = null;
           }
@@ -247,6 +263,8 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                             _RecoveryKeySection(
                               hasRecoveryKey: state.hasRecoveryKey,
                               passwordController: _recoveryPasswordController,
+                              vaultPasswordController:
+                                  _recoveryVaultPasswordController,
                               onCreate: isLoading ? null : _onNewRecoveryKey,
                             ),
                           const SizedBox(height: 32),
@@ -399,11 +417,16 @@ class _RecoveryKeySection extends StatelessWidget {
   const _RecoveryKeySection({
     required this.hasRecoveryKey,
     required this.passwordController,
+    required this.vaultPasswordController,
     required this.onCreate,
   });
 
   final bool? hasRecoveryKey;
   final TextEditingController passwordController;
+
+  /// A vault with its own password: its password too, so the new key opens
+  /// it (the master password alone never does).
+  final TextEditingController vaultPasswordController;
   final VoidCallback? onCreate;
 
   @override
@@ -411,6 +434,11 @@ class _RecoveryKeySection extends StatelessWidget {
     final localizations = context.fuzzzyInkLocalizations;
     final colors = context.fuzzzyColors;
     final hasKey = hasRecoveryKey;
+    final vaultHasOwnPassword = context.select<VaultAuthCubit, bool>(
+      (cubit) => cubit.state.usesOwnPassword,
+    );
+    final isReady = passwordController.text.isNotEmpty &&
+        (!vaultHasOwnPassword || vaultPasswordController.text.isNotEmpty);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -437,12 +465,27 @@ class _RecoveryKeySection extends StatelessWidget {
           obscure: true,
           qaId: 'auth.recoveryPassword',
         ),
+        if (vaultHasOwnPassword) ...[
+          const SizedBox(height: 12),
+          Text(
+            localizations.recoveryKeyVaultPasswordNote,
+            style:
+                context.fuzzzyTextStyles.bodyS.copyWith(color: colors.inkMute),
+          ),
+          const SizedBox(height: 8),
+          FuzzzyTextField(
+            controller: vaultPasswordController,
+            label: localizations.vaultPassword,
+            obscure: true,
+            qaId: 'auth.recoveryVaultPassword',
+          ),
+        ],
         const SizedBox(height: 12),
         FuzzzyButton(
           label: localizations.recoveryKeyCreateNew,
           variant: FuzzzyButtonVariant.secondary,
           qaId: 'auth.newRecoveryKey',
-          onPressed: passwordController.text.isEmpty ? null : onCreate,
+          onPressed: isReady ? onCreate : null,
         ),
       ],
     );

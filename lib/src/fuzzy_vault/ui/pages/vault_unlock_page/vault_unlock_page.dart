@@ -16,6 +16,10 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _autoBiometricAttempted = false;
+
+  /// "Use my recovery key" was tapped: the recovery form replaces the
+  /// password form.
+  bool _recovering = false;
   late final AnimationController _shakeController;
 
   @override
@@ -87,6 +91,15 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
       },
       builder: (context, state) {
         final isLoading = state.authState == VaultAuthEnum.unlocking;
+
+        if (_recovering && state.usesOwnPassword && state.recoverable) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: VaultRecoveryForm(
+              onCancel: () => setState(() => _recovering = false),
+            ),
+          );
+        }
 
         return Stack(
           children: [
@@ -191,15 +204,26 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
                     ),
                   ],
                   const SizedBox(height: 40),
-                  Text(
-                    state.usesOwnPassword
-                        ? currentContextLocalization.vaultForgotPassword
-                        : currentContextLocalization.vaultForgotMasterPassword,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: context.fuzzzyColors.inkMute,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
+                  if (state.usesOwnPassword && state.recoverable)
+                    FuzzzyButton(
+                      label: currentContextLocalization.vaultUseRecoveryKey,
+                      variant: FuzzzyButtonVariant.secondary,
+                      qaId: 'vault.useRecoveryKey',
+                      onPressed: isLoading
+                          ? null
+                          : () => setState(() => _recovering = true),
+                    )
+                  else
+                    Text(
+                      state.usesOwnPassword
+                          ? currentContextLocalization.vaultForgotPassword
+                          : currentContextLocalization
+                              .vaultForgotMasterPassword,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: context.fuzzzyColors.inkMute,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                 ],
               ),
             ),

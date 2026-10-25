@@ -13,6 +13,14 @@ T _dataOf<T>(CryptoCoreResponse<T> res) => (res as CryptoCoreSuccess<T>).data;
 CryptoCoreFailureType _failureOf(CryptoCoreResponse<dynamic> res) =>
     (res as CryptoCoreFailure).type;
 
+/// The first run's recovery key as the user confirms saving it.
+PendingRecoveryKey _pendingOf(CryptoCoreMasterKeySetup setup) =>
+    PendingRecoveryKey(
+      recoveryKey: setup.recoveryKey,
+      recoveryWrap: setup.recoveryWrap,
+      recoveryLock: setup.recoveryLock,
+    );
+
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 
 /// A hand-built 0x01 envelope naming [chatId]; only `peekChatId` reads it.
@@ -50,6 +58,7 @@ void main() {
       expect(setup.passwordWrap.length, 103, reason: '0x10: 6+16+9+24+48');
       expect(setup.recoveryWrap.length, 103);
       expect(setup.storeWrap.length, 78, reason: '0x20: 6+24+32+16');
+      expect(setup.recoveryLock.length, 78, reason: '0x20 under the store key');
       expect(
         setup.recoveryKey,
         matches(RegExp(r'^([A-Z2-7]{4}-){7}[A-Z2-7]{4}$')),
@@ -169,7 +178,7 @@ void main() {
         isFalse,
         reason: 'kept only once the user confirms saving it',
       );
-      _dataOf(await chatAuthRepository.saveRecoveryWrap(setup.recoveryWrap));
+      _dataOf(await chatAuthRepository.saveRecovery(_pendingOf(setup)));
       expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isTrue);
 
       await service.close();
@@ -208,7 +217,7 @@ void main() {
         'is corrupt; a new key ends the old one', () async {
       const chatId = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
       final setup = _dataOf(await chatAuthRepository.setUp('first'));
-      _dataOf(await chatAuthRepository.saveRecoveryWrap(setup.recoveryWrap));
+      _dataOf(await chatAuthRepository.saveRecovery(_pendingOf(setup)));
       _dataOf(await service.createInvitation(chatId));
       final row = Uint8List.fromList([1, ...utf8.encode('Fuzz/row')]);
       final sealed = _dataOf(
@@ -254,7 +263,7 @@ void main() {
       // once saved.
       final fresh = _dataOf(await chatAuthRepository.newRecoveryKey('fresh'));
       expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isFalse);
-      _dataOf(await chatAuthRepository.saveRecoveryWrap(fresh.recoveryWrap));
+      _dataOf(await chatAuthRepository.saveRecovery(fresh));
       expect(
         _failureOf(
           await chatAuthRepository.recover(

@@ -47,19 +47,21 @@ void main() {
   late Directory storeDir;
   late CryptoCoreService service;
   late VaultCryptoRepository repository;
+  late ChatAuthRepository chatAuthRepository;
+  late CryptoCoreMasterKeySetup masterSetup;
 
   setUp(() async {
     FlutterSecureStorage.setMockInitialValues({});
     storeDir = Directory.systemTemp.createTempSync('vault_crypto_repo_');
     service = CryptoCoreService(storeDirectoryPath: storeDir.path);
-    final chatAuthRepository = ChatAuthRepository(
+    chatAuthRepository = ChatAuthRepository(
       localDataSource: MasterKeyLocalDataSource(),
       cryptoCoreService: service,
     );
-    expect(
-      await chatAuthRepository.setUp(_master),
-      isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>(),
-    );
+    final setUpRes = await chatAuthRepository.setUp(_master);
+    expect(setUpRes, isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>());
+    masterSetup =
+        (setUpRes as CryptoCoreSuccess<CryptoCoreMasterKeySetup>).data;
     repository = VaultCryptoRepository(
       passwordStrengthService: PasswordStrengthService(),
       cryptoCoreService: service,
@@ -377,6 +379,206 @@ void main() {
 
       await key.close();
       key.dispose();
+    });
+  });
+
+  group('the recovery key and a vault with its own password', () {
+    Future<void> keepRecoveryKey() async {
+      expect(
+        await chatAuthRepository.saveRecovery(
+          PendingRecoveryKey(
+            recoveryKey: masterSetup.recoveryKey,
+            recoveryWrap: masterSetup.recoveryWrap,
+            recoveryLock: masterSetup.recoveryLock,
+          ),
+        ),
+        isA<CryptoCoreSuccess<void>>(),
+      );
+    }
+
+    Future<Uint8List?> storedCopy() async {
+      final blobs = await chatAuthRepository.keyBlobs();
+      return (blobs as CryptoCoreSuccess<MasterKeyBlobs>).data.vaultRecovery;
+    }
+
+    test(
+        'made with its own password: the recovery key opens it with a new '
+        'password; the master password does not', () async {
+      await keepRecoveryKey();
+      expect(await repository.hasRecoveryKey(), isTrue);
+      final metadata = _metadataOf(
+        await repository.initializeVault(_password, ownPassword: true),
+      );
+      final copy = await storedCopy();
+      expect(copy, isNotNull);
+      expect(copy!.length, 110, reason: '0x11: 6 + 32 + 24 + 48');
+      expect(copy.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x11]);
+      expect(await repository.hasRecoveryCopy(), isTrue);
+
+      final key = _keyOf(await repository.unlock(_password, metadata));
+      final sealed = await seal(key);
+      await key.close();
+      key.dispose();
+      expect(
+        _failureOf(await repository.unlock(_master, metadata)),
+        VaultFailureType.incorrectMasterPassword,
+      );
+
+      expect(
+        _failureOf(
+          await repository.recover(
+            recoveryKey: 'AAAA-AAAA',
+            newPassword: _newPassword,
+            metadata: metadata,
+          ),
+        ),
+        VaultFailureType.recoveryKeyTypo,
+      );
+      expect(
+        _failureOf(
+          await repository.recover(
+            recoveryKey: masterSetup.recoveryKey,
+            newPassword: 'short',
+            metadata: metadata,
+          ),
+        ),
+        VaultFailureType.weakPassword,
+      );
+      final recovered = (await repository.recover(
+        recoveryKey: masterSetup.recoveryKey.toLowerCase(),
+        newPassword: _newPassword,
+        metadata: metadata,
+      ) as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
+          .data;
+      expect(_openedOf(await open(sealed, recovered.key)).version, 1);
+      await recovered.key.close();
+      recovered.key.dispose();
+      expect(
+        _failureOf(await repository.unlock(_password, recovered.metadata)),
+        VaultFailureType.incorrectMasterPassword,
+      );
+      final byNew = _keyOf(
+        await repository.unlock(_newPassword, recovered.metadata),
+      );
+      expect(_openedOf(await open(sealed, byNew)).version, 1);
+      await byNew.close();
+      byNew.dispose();
+      expect(await storedCopy(), copy, reason: 'the vault key did not change');
+    });
+
+    test(
+        'switched to its own password, then back to the master password by '
+        'the recovery key; the copy is dropped after', () async {
+      await keepRecoveryKey();
+      final underMaster =
+          _metadataOf(await repository.initializeVault(_master));
+      expect(await storedCopy(), isNull);
+      final own = _metadataOf(
+        await repository.useOwnPassword(
+          masterPassword: _master,
+          newPassword: _password,
+          metadata: underMaster,
+        ),
+      );
+      expect(await storedCopy(), isNotNull);
+
+      final recovered = (await repository.recover(
+        recoveryKey: masterSetup.recoveryKey,
+        metadata: own,
+      ) as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
+          .data;
+      await recovered.key.close();
+      recovered.key.dispose();
+      expect(
+        (repository.usesOwnPassword(recovered.metadata) as VaultSuccess<bool>)
+            .data,
+        isFalse,
+      );
+      final byMaster =
+          _keyOf(await repository.unlock(_master, recovered.metadata));
+      await byMaster.close();
+      byMaster.dispose();
+      expect(await repository.dropRecoveryCopy(), isA<VaultSuccess<void>>());
+      expect(await storedCopy(), isNull);
+      expect(await repository.hasRecoveryCopy(), isFalse);
+    });
+
+    test('without a recovery key no copy is made and nothing recovers',
+        () async {
+      expect(await repository.hasRecoveryKey(), isFalse);
+      final metadata = _metadataOf(
+        await repository.initializeVault(_password, ownPassword: true),
+      );
+      expect(await storedCopy(), isNull);
+      expect(
+        _failureOf(
+          await repository.recover(
+            recoveryKey: masterSetup.recoveryKey,
+            newPassword: _newPassword,
+            metadata: metadata,
+          ),
+        ),
+        VaultFailureType.noRecoveryKey,
+      );
+    });
+
+    test(
+        'a new recovery key needs the vault password, opens the vault, and '
+        'ends the old key; a wrong vault password changes nothing', () async {
+      await keepRecoveryKey();
+      final metadata = _metadataOf(
+        await repository.initializeVault(_password, ownPassword: true),
+      );
+      final oldCopy = await storedCopy();
+
+      Future<CryptoCoreResponse<Uint8List>> Function(Uint8List) sealWith(
+        String vaultPassword,
+      ) =>
+          (lock) => repository.sealForRecovery(
+                vaultPassword: vaultPassword,
+                metadata: metadata,
+                recoveryLock: lock,
+              );
+
+      final wrongRes = await chatAuthRepository.newRecoveryKey(
+        _master,
+        sealVault: sealWith('not the vault password'),
+      );
+      expect(
+        (wrongRes as CryptoCoreFailure).type,
+        CryptoCoreFailureType.wrongPassword,
+      );
+      expect(await storedCopy(), oldCopy, reason: 'the old key still works');
+      expect(await repository.hasRecoveryKey(), isTrue);
+
+      final pending = (await chatAuthRepository.newRecoveryKey(
+        _master,
+        sealVault: sealWith(_password),
+      ) as CryptoCoreSuccess<PendingRecoveryKey>)
+          .data;
+      expect(pending.vaultRecovery, isNotNull);
+      expect(await repository.hasRecoveryKey(), isFalse, reason: 'old is out');
+      expect(await storedCopy(), isNull);
+      await chatAuthRepository.saveRecovery(pending);
+
+      expect(
+        _failureOf(
+          await repository.recover(
+            recoveryKey: masterSetup.recoveryKey,
+            newPassword: _newPassword,
+            metadata: metadata,
+          ),
+        ),
+        VaultFailureType.recoveryKeyWrong,
+      );
+      final recovered = (await repository.recover(
+        recoveryKey: pending.recoveryKey,
+        newPassword: _newPassword,
+        metadata: metadata,
+      ) as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
+          .data;
+      await recovered.key.close();
+      recovered.key.dispose();
     });
   });
 }

@@ -19,7 +19,7 @@ pub struct CryptoCore {
     inner: Option<OpenStore>,
 }
 
-/// What [`create_master_key`] hands back: the open store and the three blobs
+/// What [`create_master_key`] hands back: the open store and the four blobs
 /// the app keeps in secure storage, plus the recovery key to show the user
 /// once. `non_opaque` so frb passes the fields once.
 #[frb(non_opaque)]
@@ -31,6 +31,9 @@ pub struct MasterKeySetup {
     pub recovery_wrap: Vec<u8>,
     /// 0x20 — the store key under the master key.
     pub store_wrap: Vec<u8>,
+    /// 0x20 — the recovery lock (public) under the store key: what a vault
+    /// with its own password seals its key to, so the recovery key opens it.
+    pub recovery_lock: Vec<u8>,
     /// The printable recovery key (`XXXX-XXXX-…`, 32 base32 characters).
     pub recovery_key: String,
 }
@@ -43,19 +46,22 @@ pub struct RecoveredStore {
     pub password_wrap: Vec<u8>,
 }
 
-/// A new recovery key and the master key's wrap under it; the old recovery
-/// wrap stops working the moment the app replaces it with this one.
+/// A new recovery key, the master key's wrap under it and its lock (under
+/// the store key); the old recovery wrap stops working the moment the app
+/// replaces it with this one.
 #[frb(non_opaque)]
 pub struct NewRecoveryKey {
     pub recovery_key: String,
     pub recovery_wrap: Vec<u8>,
+    pub recovery_lock: Vec<u8>,
 }
 
 /// First run: draws the master key, the store key and a recovery key, wraps
 /// the master key under `password` and under the recovery key, wraps the
-/// store key under the master key, and opens the store at
-/// `<store_dir>/fuzzy_crypto_store/`. Two Argon2id runs. An empty password is
-/// refused (`WrongPassword`); strength is the app's judgement.
+/// store key under the master key, opens the store at
+/// `<store_dir>/fuzzy_crypto_store/` and seals the recovery lock under the
+/// store key. Two Argon2id runs. An empty password is refused
+/// (`WrongPassword`); strength is the app's judgement.
 pub fn create_master_key(store_dir: String, password: String) -> Result<MasterKeySetup, CoreError> {
     let password = Zeroizing::new(password.into_bytes());
     master::refuse_empty(&password)?;
@@ -65,12 +71,15 @@ pub fn create_master_key(store_dir: String, password: String) -> Result<MasterKe
     let password_wrap = master::wrap_with_password(&master_key, &password)?;
     let recovery_wrap = master::wrap_with_recovery(&master_key, &recovery)?;
     let store_wrap = master::wrap_key(&master_key, &store_key, STORE_KEY_WRAP_AAD)?;
+    drop(master_key);
     let core = CryptoCore::open_with(store_dir, store_key)?;
+    let recovery_lock = core.opened()?.seal_recovery_lock(&recovery.lock())?;
     Ok(MasterKeySetup {
         core,
         password_wrap,
         recovery_wrap,
         store_wrap,
+        recovery_lock,
         recovery_key: recovery.text().to_string(),
     })
 }
@@ -111,7 +120,8 @@ pub fn change_master_password(
 /// The forgotten-password path: reads the typed `recovery_key` (a typo is
 /// `Corrupt`, before any Argon2 run), unwraps the master key from
 /// `recovery_wrap` (a key of another device is `WrongPassword`), wraps it
-/// under `new_password` and opens the store. The recovery key stays valid.
+/// under `new_password` and opens the store. The recovery key, its lock and a
+/// vault key sealed to it stay valid.
 pub fn recover_master_password(
     store_dir: String,
     recovery_wrap: Vec<u8>,
@@ -135,19 +145,28 @@ pub fn recover_master_password(
 }
 
 /// Draws a new recovery key and wraps the master key under it, after
-/// `password` has opened `password_wrap` (two Argon2id runs). The app
-/// replaces the stored recovery wrap with the new one, which ends the old key.
+/// `password` has opened `password_wrap` (two Argon2id runs), and seals its
+/// lock under the store key of the open `core`. The app replaces the stored
+/// recovery wrap and lock with the new ones, which ends the old key; a vault
+/// with its own password is sealed to the new lock with
+/// [`crate::api::vault::vault_seal_for_recovery`] (its password is needed —
+/// the master password alone never reaches that vault).
 pub fn new_recovery_key(
+    core: &CryptoCore,
     password_wrap: Vec<u8>,
     password: String,
 ) -> Result<NewRecoveryKey, CoreError> {
     let password = Zeroizing::new(password.into_bytes());
+    let store = core.opened()?;
     let master_key = master::unwrap_with_password(&password_wrap, &password)?;
     let recovery = RecoveryKey::generate()?;
     let recovery_wrap = master::wrap_with_recovery(&master_key, &recovery)?;
+    drop(master_key);
+    let recovery_lock = store.seal_recovery_lock(&recovery.lock())?;
     Ok(NewRecoveryKey {
         recovery_key: recovery.text().to_string(),
         recovery_wrap,
+        recovery_lock,
     })
 }
 
@@ -247,7 +266,18 @@ mod tests {
         assert_eq!(setup.password_wrap.len(), 103);
         assert_eq!(setup.recovery_wrap.len(), 103);
         assert_eq!(setup.store_wrap.len(), 78);
+        assert_eq!(setup.recovery_lock.len(), 78);
         assert_eq!(setup.recovery_key.len(), 39);
+        // The lock under the store key is the recovery key's public half.
+        assert_eq!(
+            setup
+                .core
+                .opened()
+                .unwrap()
+                .open_recovery_lock(&setup.recovery_lock)
+                .unwrap(),
+            RecoveryKey::parse(&setup.recovery_key).unwrap().lock()
+        );
         setup.core.create_invitation(CHAT_ID.into()).unwrap();
         let sealed = setup
             .core
@@ -460,13 +490,39 @@ mod tests {
     #[test]
     fn a_new_recovery_key_replaces_the_old_one() {
         let dir = temp_dir();
-        let setup = created(&dir);
+        let mut setup = created(&dir);
         assert_eq!(
-            err_of(new_recovery_key(setup.password_wrap.clone(), "nope".into())),
+            err_of(new_recovery_key(
+                &setup.core,
+                setup.password_wrap.clone(),
+                "nope".into()
+            )),
             CoreError::WrongPassword
         );
-        let fresh = new_recovery_key(setup.password_wrap.clone(), "pw".into()).unwrap();
+        let fresh =
+            new_recovery_key(&setup.core, setup.password_wrap.clone(), "pw".into()).unwrap();
         assert_ne!(fresh.recovery_key, setup.recovery_key);
+        // A new lock, under the same store key, for the new key only.
+        let store = setup.core.opened().unwrap();
+        let new_lock = store.open_recovery_lock(&fresh.recovery_lock).unwrap();
+        assert_eq!(
+            new_lock,
+            RecoveryKey::parse(&fresh.recovery_key).unwrap().lock()
+        );
+        assert_ne!(
+            new_lock,
+            store.open_recovery_lock(&setup.recovery_lock).unwrap()
+        );
+        // A closed store makes no new key (nothing to seal the lock under).
+        setup.core.close();
+        assert_eq!(
+            err_of(new_recovery_key(
+                &setup.core,
+                setup.password_wrap.clone(),
+                "pw".into()
+            )),
+            CoreError::StoreLocked
+        );
 
         // Under the new wrap only the new key opens; the old key is dead once
         // the app has replaced the wrap.

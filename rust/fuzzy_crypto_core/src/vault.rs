@@ -6,16 +6,23 @@
 //! it stays a separate key: it opens no chat, and the store key opens no vault
 //! item.
 //!
+//! A vault with its own password is also sealed to the recovery lock (a 0x11
+//! blob, AAD `vault-key-recovery`, [`crate::master::seal_to_lock`]), so the
+//! recovery key opens it while the master password does not: the master
+//! password reaches the lock's public half only (owner, 2026-10-26).
+//!
 //! Items are sealed under the vault key directly (0x20 envelope, AAD
 //! `vault-item` ‖ version ‖ item id), so a password change only re-wraps the
 //! key: no item is ever re-encrypted.
 
 use crate::error::CoreError;
 use crate::formats::{self, BlobKind, LocalSeal};
-use crate::master::{self, VAULT_KEY_WRAP_AAD};
+use crate::master::{self, RecoveryKey, VAULT_KEY_WRAP_AAD};
 use crate::store::{self, Key32};
 
 const VAULT_KEY_AAD: &[u8] = b"vault-key";
+/// AAD of the vault key sealed to the recovery lock (0x11).
+pub(crate) const VAULT_KEY_RECOVERY_AAD: &[u8] = b"vault-key-recovery";
 const VAULT_ITEM_AAD: &[u8] = b"vault-item";
 
 /// How the vault key is wrapped, read from the blob's type byte.
@@ -100,6 +107,18 @@ pub fn rewrap(
     master::refuse_empty(new_password)?;
     let key = unlock(old_password, wrapped)?;
     wrap(&key, new_password)
+}
+
+/// Seals the vault key to the recovery `lock` (a 0x11 blob): the recovery key
+/// that made the lock opens it, nothing else does.
+pub fn seal_for_recovery(lock: &[u8; 32], key: &[u8; 32]) -> Result<Vec<u8>, CoreError> {
+    master::seal_to_lock(lock, key, VAULT_KEY_RECOVERY_AAD)
+}
+
+/// Inverse of [`seal_for_recovery`]; another device's recovery key or a
+/// tampered blob is `WrongPassword`.
+pub fn unlock_with_recovery(blob: &[u8], recovery: &RecoveryKey) -> Result<Key32, CoreError> {
+    master::open_with_recovery(blob, recovery, VAULT_KEY_RECOVERY_AAD)
 }
 
 /// `vault-item ‖ u32 BE version ‖ item id`: an item is bound to its own id and

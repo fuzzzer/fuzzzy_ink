@@ -14,15 +14,21 @@ class FuzzyUserAuthPreferencesCubit
   final BiometricAuthRepository _biometricAuthRepository;
   final PasswordStrengthService _passwordStrengthService;
 
+  /// The vault, so a new recovery key can be sealed into a vault that has
+  /// its own password; without it no vault is looked at.
+  final VaultRepository? _vaultRepository;
+
   FuzzyUserAuthPreferencesCubit({
     required ChatAuthRepository chatAuthRepository,
     required FuzzyAuthStore fuzzyAuthStore,
     required BiometricAuthRepository biometricAuthRepository,
     required PasswordStrengthService passwordStrengthService,
+    VaultRepository? vaultRepository,
   })  : _chatAuthRepository = chatAuthRepository,
         _fuzzyAuthStore = fuzzyAuthStore,
         _biometricAuthRepository = biometricAuthRepository,
         _passwordStrengthService = passwordStrengthService,
+        _vaultRepository = vaultRepository,
         super(
           const FuzzyUserAuthPreferencesState(
             activationStatus: StateStatus.initial,
@@ -128,39 +134,96 @@ class FuzzyUserAuthPreferencesCubit
     );
   }
 
-  /// A new recovery key, once [currentPassword] is right. The old key stops
+  /// A new recovery key, once [currentPassword] is right. A vault with its
+  /// own password needs [vaultPassword] too, so the new key opens it as well
+  /// — the master password alone never reaches that vault. The old key stops
   /// working now; the new one counts only once it is confirmed saved.
-  Future<void> newRecoveryKey(String currentPassword) async {
+  Future<void> newRecoveryKey(
+    String currentPassword, {
+    String? vaultPassword,
+  }) async {
     const action = AuthPreferencesAction.newRecoveryKey;
     emit(
       state.copyWith(activationStatus: StateStatus.loading, lastAction: action),
     );
-    final createRes = await _chatAuthRepository.newRecoveryKey(currentPassword);
-    if (createRes is CryptoCoreFailure<CryptoCoreRecoveryKey>) {
-      _emitFailed(action, _messageOf(createRes.type));
+    final vault = await _vaultWithOwnPassword();
+    if (vault.unreadable) {
+      _emitFailed(action, currentContextLocalization.unknownError);
       return;
     }
-    final created =
-        (createRes as CryptoCoreSuccess<CryptoCoreRecoveryKey>).data;
+    final vaultMetadata = vault.metadata;
+    if (vaultMetadata != null &&
+        (vaultPassword == null || vaultPassword.isEmpty)) {
+      _emitFailed(action, currentContextLocalization.vaultIncorrectPassword);
+      return;
+    }
+    var vaultPasswordWrong = false;
+    final createRes = await _chatAuthRepository.newRecoveryKey(
+      currentPassword,
+      sealVault: vaultMetadata == null
+          ? null
+          : (recoveryLock) async {
+              final sealRes =
+                  await _vaultRepository!.cryptoRepository.sealForRecovery(
+                vaultPassword: vaultPassword!,
+                metadata: vaultMetadata,
+                recoveryLock: recoveryLock,
+              );
+              vaultPasswordWrong = sealRes is CryptoCoreFailure<Uint8List> &&
+                  sealRes.type == CryptoCoreFailureType.wrongPassword;
+              return sealRes;
+            },
+    );
+    if (createRes is CryptoCoreFailure<PendingRecoveryKey>) {
+      _emitFailed(
+        action,
+        vaultPasswordWrong
+            ? currentContextLocalization.vaultIncorrectPassword
+            : _messageOf(createRes.type),
+      );
+      return;
+    }
     emit(
       state.copyWith(
         activationStatus: StateStatus.success,
         lastAction: action,
         hasRecoveryKey: false,
-        pendingRecoveryKey: created.recoveryKey,
-        pendingRecoveryWrap: created.recoveryWrap,
+        pendingRecovery:
+            (createRes as CryptoCoreSuccess<PendingRecoveryKey>).data,
       ),
     );
   }
 
+  /// The vault's metadata when a vault exists and has its own password. A
+  /// vault that cannot be read is `unreadable`: the old key is then kept
+  /// rather than replaced by one that might not open the vault.
+  Future<({bool unreadable, VaultMetadata? metadata})>
+      _vaultWithOwnPassword() async {
+    const none = (unreadable: false, metadata: null);
+    final vaultRepository = _vaultRepository;
+    if (vaultRepository == null) return none;
+    final metaRes = await vaultRepository.getMetadata();
+    if (metaRes is VaultFailure<VaultMetadata>) {
+      return metaRes.type == VaultFailureType.vaultNotInitialized
+          ? none
+          : (unreadable: true, metadata: null);
+    }
+    final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
+    final ownRes = vaultRepository.cryptoRepository.usesOwnPassword(metadata);
+    if (ownRes is VaultFailure<bool>) return (unreadable: true, metadata: null);
+    return (ownRes as VaultSuccess<bool>).data
+        ? (unreadable: false, metadata: metadata)
+        : none;
+  }
+
   Future<void> confirmRecoveryKeySaved() async {
     const action = AuthPreferencesAction.saveRecoveryKey;
-    final recoveryWrap = state.pendingRecoveryWrap;
-    if (recoveryWrap == null) return;
+    final pending = state.pendingRecovery;
+    if (pending == null) return;
     emit(
       state.copyWith(activationStatus: StateStatus.loading, lastAction: action),
     );
-    final saveRes = await _chatAuthRepository.saveRecoveryWrap(recoveryWrap);
+    final saveRes = await _chatAuthRepository.saveRecovery(pending);
     if (saveRes is CryptoCoreFailure<void>) {
       _emitFailed(action, _messageOf(saveRes.type));
       return;

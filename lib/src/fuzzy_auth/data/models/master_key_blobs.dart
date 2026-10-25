@@ -13,9 +13,19 @@ class MasterKeyBlobs {
   /// chose to go without one.
   final Uint8List? recoveryWrap;
 
+  /// 0x20 — the recovery lock (public) under the store key, kept with the
+  /// recovery wrap: what a vault with its own password is sealed to.
+  final Uint8List? recoveryLock;
+
+  /// 0x11 — the key of a vault with its own password sealed to the recovery
+  /// lock, so the recovery key opens that vault; `null` otherwise.
+  final Uint8List? vaultRecovery;
+
   const MasterKeyBlobs({
     required this.passwordWrap,
     required this.storeWrap,
     this.recoveryWrap,
+    this.recoveryLock,
+    this.vaultRecovery,
   });
 }

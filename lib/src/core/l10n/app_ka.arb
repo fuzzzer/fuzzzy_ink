@@ -887,9 +887,37 @@
   "@vaultUseMasterPassword": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "vaultOwnPasswordNote": "საკუთარი პაროლის მქონე საცავს აღდგენის გასაღები ვერ ხსნის. ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.",
+  "vaultOwnPasswordNote": "აღდგენის გასაღები არ არის შენახული: ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.",
   "@vaultOwnPasswordNote": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultOwnPasswordRecoveryNote": "აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.",
+  "@vaultOwnPasswordRecoveryNote": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
+  "@vaultUseRecoveryKey": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultRecoveryTitle": "„ჩემი სეიფის“ გახსნა აღდგენის გასაღებით",
+  "@vaultRecoveryTitle": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultRecoveryDescription": "შეიყვანეთ აღდგენის გასაღები და აირჩიეთ „ჩემი სეიფის“ ახალი პაროლი, ან გახსენით ის მთავარი პაროლით.",
+  "@vaultRecoveryDescription": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultRecoveryUseMasterPassword": "„ჩემი სეიფი“ მთავარი პაროლით გაიხსნას",
+  "@vaultRecoveryUseMasterPassword": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "vaultRecoverySubmit": "„ჩემი სეიფის“ გახსნა",
+  "@vaultRecoverySubmit": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
+  },
+  "recoveryKeyVaultPasswordNote": "„ჩემ სეიფს“ საკუთარი პაროლი აქვს. შეიყვანეთ ისიც, რომ ახალმა გასაღებმა „ჩემი სეიფიც“ გახსნას.",
+  "@recoveryKeyVaultPasswordNote": {
+    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
   },
   "vaultOwnNewPassword": "საცავის ახალი პაროლი",
   "@vaultOwnNewPassword": {
