@@ -139,4 +139,15 @@ void main() {
       ],
     );
   });
+
+  // -----------------------------------------------------------------------
+  // filterByGroup
+  // -----------------------------------------------------------------------
+  test('"All groups" clears a group filter again', () async {
+    final cubit = buildCubit()..filterByGroup('work');
+    expect(cubit.state.selectedGroupId, 'work');
+    cubit.filterByGroup(null);
+    expect(cubit.state.selectedGroupId, isNull);
+    await cubit.close();
+  });
 }

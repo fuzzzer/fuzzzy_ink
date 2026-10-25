@@ -149,7 +149,20 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
 
   /// By default [password] is the master password and the master key wraps
   /// the vault key; with [ownPassword] the vault gets [password] as its own.
+  ///
+  /// Under the master key the typed master password counts toward the app
+  /// lock's wait, the same as [unlock].
   Future<void> createVault(String password, {bool ownPassword = false}) async {
+    final usesMaster = !ownPassword;
+    if (usesMaster && await lockoutRemaining() > Duration.zero) {
+      emit(
+        state.copyWith(
+          status: StateStatus.failed,
+          failureType: VaultFailureType.tooManyAttempts,
+        ),
+      );
+      return;
+    }
     emit(state.copyWith(status: StateStatus.loading));
 
     final initRes = await cryptoRepository.initializeVault(
@@ -157,14 +170,20 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       ownPassword: ownPassword,
     );
     if (initRes is VaultFailure) {
+      final type = (initRes as VaultFailure).type;
+      if (usesMaster && type == VaultFailureType.incorrectMasterPassword) {
+        final before = await appLockThrottleRepository.read();
+        await appLockThrottleRepository.save(before.afterFailure(_now()));
+      }
       emit(
         state.copyWith(
           status: StateStatus.failed,
-          failureType: (initRes as VaultFailure).type,
+          failureType: type,
         ),
       );
       return;
     }
+    if (usesMaster) await appLockThrottleRepository.clear();
 
     final metadata = (initRes as VaultSuccess<VaultMetadata>).data;
     final saveRes = await vaultRepository.saveMetadata(metadata);
@@ -202,6 +221,15 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
         recoverable: ownPassword && await cryptoRepository.hasRecoveryCopy(),
       ),
     );
+  }
+
+  /// The wait left before the master password may be tried again (shared
+  /// with the app lock). Zero for a vault with its own password, which is
+  /// outside that count.
+  Future<Duration> lockoutRemaining() async {
+    if (state.usesOwnPassword) return Duration.zero;
+    final throttle = await appLockThrottleRepository.read();
+    return throttle.remainingAt(_now());
   }
 
   /// [password] is the vault's own password, or the master password for a

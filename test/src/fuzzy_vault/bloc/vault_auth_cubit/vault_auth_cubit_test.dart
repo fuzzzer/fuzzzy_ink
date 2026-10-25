@@ -345,6 +345,52 @@ void main() {
       await cubit.close();
     });
 
+    test('a first open with a wrong master password counts too', () async {
+      when(() => mockCryptoRepo.initializeVault('nope')).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = buildCubit();
+      await cubit.createVault('nope');
+      expect(throttle.failedAttempts, 1);
+      expect(
+        cubit.state.failureType,
+        VaultFailureType.incorrectMasterPassword,
+      );
+      await cubit.close();
+    });
+
+    test('a running wait refuses a first open without trying it', () async {
+      throttle = AppLockThrottleData(
+        failedAttempts: 5,
+        lockedUntil: DateTime.now().add(const Duration(seconds: 30)),
+      );
+      final cubit = buildCubit();
+      await cubit.createVault('pw');
+      expect(cubit.state.failureType, VaultFailureType.tooManyAttempts);
+      verifyNever(() => mockCryptoRepo.initializeVault(any()));
+      await cubit.close();
+    });
+
+    test('the wait left is read from the shared count', () async {
+      final now = DateTime(2026, 10, 26, 12);
+      throttle = AppLockThrottleData(
+        failedAttempts: 5,
+        lockedUntil: now.add(const Duration(seconds: 30)),
+      );
+      final cubit = VaultAuthCubit(
+        cryptoRepository: mockCryptoRepo,
+        vaultRepository: mockVaultRepo,
+        biometricAuthRepository: mockBiometricRepo,
+        appLockThrottleRepository: mockThrottle,
+        now: () => now.add(const Duration(seconds: 12)),
+      );
+      expect(await cubit.lockoutRemaining(), const Duration(seconds: 18));
+      cubit.emit(const VaultAuthState(usesOwnPassword: true));
+      expect(await cubit.lockoutRemaining(), Duration.zero);
+      await cubit.close();
+    });
+
     test('a vault with its own password is outside the app lock count',
         () async {
       when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
