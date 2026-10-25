@@ -12,7 +12,7 @@ const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 
 T _dataOf<T>(CryptoCoreResponse<T> res) => (res as CryptoCoreSuccess<T>).data;
 
-/// A device: its own store (lock disabled) and its own file folders.
+/// A device: its own open store and its own file folders.
 class _Device {
   _Device._(this.dir, this.service, this.files);
 
@@ -23,8 +23,8 @@ class _Device {
   static Future<_Device> open() async {
     final dir = Directory.systemTemp.createTempSync('chat_file_cubit_');
     final service = CryptoCoreService(storeDirectoryPath: dir.path);
-    final wrapped = _dataOf(await service.createStoreKey(''));
-    await service.openStore(wrapped: wrapped, password: '');
+    // The first run opens the store; the master password only gates it.
+    _dataOf(await service.createMasterKey('test password'));
     final files = UserFileStore(
       supportDirectoryPath: dir.path,
       temporaryDirectoryPath: path.join(dir.path, 'tmp'),
