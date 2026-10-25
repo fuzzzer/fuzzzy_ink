@@ -60,6 +60,16 @@ class FuzzyLinkHandler {
     }
   }
 
+  /// Home's Open → "Paste it": when [text] is a whole Fuzzzy Ink link it
+  /// takes the same way as a tapped link (same checks, waits while locked)
+  /// and this answers true; anything else answers false and does nothing.
+  bool openPastedText(String text) {
+    final payload = FuzzyLinkParser.parseText(text);
+    if (payload == null) return false;
+    _routePayload(payload);
+    return true;
+  }
+
   void _handleUri(Uri uri) {
     final payload = FuzzyLinkParser.parse(uri);
     if (payload == null) {

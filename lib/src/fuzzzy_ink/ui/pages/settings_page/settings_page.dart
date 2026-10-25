@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +6,8 @@ import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+export 'widgets/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -111,6 +112,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final fileBenchmarkCubit = _fileBenchmarkCubit;
 
     return FuzzyScaffold(
+      // A tab now: the bottom bar is the way out.
+      hasAutomaticBackButton: false,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -195,6 +198,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ],
+                  const SettingsFuzzzyCastSection(),
+                  const SettingsLookAndLanguageSection(),
                   const SizedBox(height: 32),
                   Text(
                     localizations.legalAndSupport,

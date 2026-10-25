@@ -28,6 +28,11 @@ class GlobalBlocProviders extends StatelessWidget {
         BlocProvider<ThemeCubit>(
           create: (_) => ThemeCubit(),
         ),
+        BlocProvider<FuzzzyCastSettingsCubit>(
+          create: (_) => FuzzzyCastSettingsCubit(
+            preferencesService: sl.get<PreferencesService>(),
+          ),
+        ),
         BlocProvider<ChatGeneralDataListCubit>(
           create: (context) => ChatGeneralDataListCubit(
             chatRepository: sl.get<ChatGeneralDataListRepository>(),

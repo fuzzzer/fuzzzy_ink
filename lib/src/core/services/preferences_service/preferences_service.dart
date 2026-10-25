@@ -24,6 +24,21 @@ class PreferencesService {
   Future<void> setLastSelectedTab(String path) =>
       _prefs.setString(_lastSelectedTabKey, path);
 
+  /// Fuzzzy Cast, the optional character layer: off until the person turns
+  /// it on (first run or Settings).
+  static const _fuzzzyCastEnabledKey = 'fuzzzy_cast_enabled';
+  bool get fuzzzyCastEnabled => _prefs.getBool(_fuzzzyCastEnabledKey) ?? false;
+  Future<void> setFuzzzyCastEnabled(bool value) =>
+      _prefs.setBool(_fuzzzyCastEnabledKey, value);
+
+  /// Fuzzzy Cast's soft sounds, off by default; shown only while Fuzzzy Cast
+  /// is on.
+  static const _fuzzzyCastSoftSoundsKey = 'fuzzzy_cast_soft_sounds';
+  bool get fuzzzyCastSoftSounds =>
+      _prefs.getBool(_fuzzzyCastSoftSoundsKey) ?? false;
+  Future<void> setFuzzzyCastSoftSounds(bool value) =>
+      _prefs.setBool(_fuzzzyCastSoftSoundsKey, value);
+
   static const _vaultLastSelectedTabIndexKey = 'vault_last_selected_tab_index';
   int get vaultLastSelectedTabIndex =>
       _prefs.getInt(_vaultLastSelectedTabIndexKey) ?? 0;

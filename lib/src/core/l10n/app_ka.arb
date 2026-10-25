@@ -942,5 +942,545 @@
   "vaultTooManyAttempts": "ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.",
   "@vaultTooManyAttempts": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "tabHome": "მთავარი",
+  "@tabHome": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "tabMySafe": "ჩემი სეიფი",
+  "@tabMySafe": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "tabSettings": "პარამეტრები",
+  "@tabSettings": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeLockTitle": "ჩაკეტვა",
+  "@homeLockTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeLockSubtitle": "ერთი ადამიანისთვის",
+  "@homeLockSubtitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeOpenTitle": "გახსნა",
+  "@homeOpenTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeOpenSubtitle": "რაც მიიღეთ",
+  "@homeOpenSubtitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homePeople": "ადამიანები",
+  "@homePeople": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homePeopleCount": "ადამიანები · {count}",
+  "@homePeopleCount": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeAdd": "დამატება",
+  "@homeAdd": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeAddPerson": "ადამიანის დამატება",
+  "@homeAddPerson": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeNoOneYet": "ჯერ არავინაა",
+  "@homeNoOneYet": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "homeLoadError": "ადამიანების ჩატვირთვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით აპი.",
+  "@homeLoadError": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepYouSendInvite": "აგზავნით მოწვევას",
+  "@stepYouSendInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepTheyReply": "პასუხი მოდის",
+  "@stepTheyReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepInviteSent": "მოწვევა გაიგზავნა",
+  "@stepInviteSent": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepNameReplies": "პასუხი: {name}",
+  "@stepNameReplies": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepLockForEachOther": "ერთმანეთისთვის ჩაკეტვა",
+  "@stepLockForEachOther": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepsProgress": "ნაბიჯი {step} / {total}",
+  "@stepsProgress": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepsProgressWithLabel": "ნაბიჯი {step} / {total} · {label}",
+  "@stepsProgressWithLabel": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepDone": "შესრულდა: {step}",
+  "@stepDone": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "stepNext": "შემდეგი: {step}",
+  "@stepNext": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "addSendInvite": "მოწვევის გაგზავნა",
+  "@addSendInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "addYouStart": "თქვენ იწყებთ",
+  "@addYouStart": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "addGotInvite": "მოწვევა მივიღე",
+  "@addGotInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "addTheyStarted": "მან დაიწყო",
+  "@addTheyStarted": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "chipWaitingForReply": "ველოდებით პასუხს",
+  "@chipWaitingForReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "chipChecked": "შემოწმებულია",
+  "@chipChecked": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "chipNotChecked": "არ არის შემოწმებული",
+  "@chipNotChecked": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "personRowWaitingLine": "მერე ერთმანეთისთვის ჩაკეტვას შეძლებთ",
+  "@personRowWaitingLine": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "waitNoteReply": "პასუხის მიღების შემდეგ ერთმანეთისთვის შეტყობინებების ჩაკეტვას შეძლებთ.",
+  "@waitNoteReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "waitNoteAnyWay": "მოწვევა ნებისმიერი გზით გააგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.",
+  "@waitNoteAnyWay": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "linkWhy": "რატომ?",
+  "@linkWhy": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "linkHow": "როგორ?",
+  "@linkHow": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "linkMore": "მეტი",
+  "@linkMore": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "linkOpensExplanation": "განმარტებას ხსნის",
+  "@linkOpensExplanation": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "gotIt": "გასაგებია",
+  "@gotIt": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoResetTitle": "რატომ არ აღდგება?",
+  "@infoNoResetTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoResetLine1": "თქვენი პაროლი ამ ტელეფონს არ ტოვებს.",
+  "@infoNoResetLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoResetLine2": "ჩვენ მას ვერ ვხედავთ, ამიტომ ვერავინ აღადგენს.",
+  "@infoNoResetLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoResetLine3": "ერთადერთი სათადარიგო გზა აღდგენის გასაღებია.",
+  "@infoNoResetLine3": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoRecoveryKeyTitle": "აღდგენის გასაღები",
+  "@infoRecoveryKeyTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoRecoveryKeyLine1": "სათადარიგო, თუ პაროლი დაგავიწყდათ.",
+  "@infoRecoveryKeyLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoRecoveryKeyLine2": "ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.",
+  "@infoRecoveryKeyLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoRecoveryKeyLine3": "ამობეჭდეთ ან ამ ტელეფონის გარეთ შეინახეთ. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.",
+  "@infoRecoveryKeyLine3": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoOpensOnceTitle": "რატომ მხოლოდ ერთხელ?",
+  "@infoOpensOnceTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoOpensOnceLine1": "ყოველ ჩაკეტილს თავისი გასაღები აქვს.",
+  "@infoOpensOnceLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoOpensOnceLine2": "გახსნისას გასაღები იხარჯება, ნებისმიერ ტელეფონზე.",
+  "@infoOpensOnceLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoOpensOnceLine3": "ასლი ისტორიაში რჩება, ჩაკეტილი.",
+  "@infoOpensOnceLine3": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafeAnywhereTitle": "ყველგან უსაფრთხოა",
+  "@infoSafeAnywhereTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafeAnywhereLine1": "მოწვევა თავისით ვერაფერს ხსნის.",
+  "@infoSafeAnywhereLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafeAnywhereLine2": "დაგაკავშირებთ მხოლოდ მისი პასუხი.",
+  "@infoSafeAnywhereLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafeAnywhereLine3": "მერე ციფრებს ერთად შეამოწმებთ, რომ დარწმუნდეთ, ნამდვილად ის არის.",
+  "@infoSafeAnywhereLine3": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoCheckNumbersTitle": "რატომ ციფრები?",
+  "@infoCheckNumbersTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoCheckNumbersLine1": "თქვენს მოწვევას ნებისმიერი უპასუხებდა, ვინც ის ნახა.",
+  "@infoCheckNumbersLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoCheckNumbersLine2": "ორივე ტელეფონზე ერთნაირი ციფრები ნიშნავს, რომ შუაში არავინ ჩამდგარა.",
+  "@infoCheckNumbersLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoFilesTitle": "სად მიდის ფაილები?",
+  "@infoFilesTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoFilesLine1": "Fuzzzy Ink მხოლოდ ჩაკეტილ ასლს ინახავს.",
+  "@infoFilesLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoFilesLine2": "„გახსნა“ აქვე გაჩვენებთ. არაფერი ინახება.",
+  "@infoFilesLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoFilesLine3": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. იქიდან მისი დაცვა თქვენზეა.",
+  "@infoFilesLine3": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoCopyingTitle": "რატომ არ კოპირდება?",
+  "@infoNoCopyingTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoCopyingLine1": "რასაც ხსნით, Fuzzzy Ink-ში რჩება.",
+  "@infoNoCopyingLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoNoCopyingLine2": "მხოლოდ ჩაკეტილი ტექსტი კოპირდება. ის ყველგან უსაფრთხოა.",
+  "@infoNoCopyingLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoPasswordLockingTitle": "პაროლით ჩაკეტვა",
+  "@infoPasswordLockingTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoPasswordLockingLine1": "ვინც პაროლი იცის, გახსნის.",
+  "@infoPasswordLockingLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoPasswordLockingLine2": "პაროლი სიტყვით უთხარით. ჩაკეტილთან ერთად არასდროს გაგზავნოთ.",
+  "@infoPasswordLockingLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafePasswordTitle": "სეიფის საკუთარი პაროლი",
+  "@infoSafePasswordTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafePasswordLine1": "კიდევ ერთი დასამახსოვრებელი პაროლი.",
+  "@infoSafePasswordLine1": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "infoSafePasswordLine2": "დაგავიწყდათ? აღდგენის გასაღები ჩემს სეიფსაც ხსნის.",
+  "@infoSafePasswordLine2": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "tagNoCopyNoScreenshots": "კოპირება და ეკრანის ანაბეჭდი გამორთულია",
+  "@tagNoCopyNoScreenshots": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "tagNoCopy": "კოპირება გამორთულია",
+  "@tagNoCopy": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "tagNoScreenshots": "ეკრანის ანაბეჭდი გამორთულია",
+  "@tagNoScreenshots": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockWhoTitle": "ვისთვისაა?",
+  "@lockWhoTitle": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockWithPassword": "პაროლით ჩაკეტვა",
+  "@lockWithPassword": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockNoInviteNeeded": "მოწვევა საჭირო არაა",
+  "@lockNoInviteNeeded": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockAddPersonFirst": "ჯერ ადამიანი დაამატეთ",
+  "@lockAddPersonFirst": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "orDivider": "ან",
+  "@orDivider": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openWhatYouGot": "გახსენით, რაც მიიღეთ",
+  "@openWhatYouGot": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openPasteIt": "ჩასმა",
+  "@openPasteIt": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openPasteItHint": "ჩაკეტილი ტექსტი, მოწვევა ან პასუხი",
+  "@openPasteItHint": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openLinksTip": "ბმულები და QR კოდები აქ თავისით იხსნება.",
+  "@openLinksTip": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openNothingToPaste": "ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.",
+  "@openNothingToPaste": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openPasteNotALink": "აქ ბმული ჩასვით. ჩაკეტილი ტექსტი ადამიანის გვერდზე იხსნება.",
+  "@openPasteNotALink": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "openLockedWithPassword": "პაროლით ჩაკეტილი",
+  "@openLockedWithPassword": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareTitleInvite": "მოწვევის გაზიარება",
+  "@shareTitleInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareTitleReply": "პასუხის გაზიარება",
+  "@shareTitleReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareTitleMessage": "ჩაკეტილი შეტყობინების გაზიარება",
+  "@shareTitleMessage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareTitleFile": "ჩაკეტილი ფაილის გაზიარება",
+  "@shareTitleFile": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareLineInvite": "ნებისმიერი გზით, თუნდაც საჯაროდ.",
+  "@shareLineInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareLineReply": "როგორც გინდათ.",
+  "@shareLineReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareLineForName": "გახსნა მხოლოდ მას შეუძლია.",
+  "@shareLineForName": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareLinePassword": "პაროლი დასჭირდება.",
+  "@shareLinePassword": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareSendLink": "ბმულის გაგზავნა",
+  "@shareSendLink": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareSendLinkHint": "აპში იხსნება",
+  "@shareSendLinkHint": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareShowQr": "QR კოდის ჩვენება",
+  "@shareShowQr": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareShowQrHint": "კამერით დაასკანერებს",
+  "@shareShowQrHint": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareSendFile": "ფაილად გაგზავნა",
+  "@shareSendFile": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareSendFileHint": "პატარა ფაილი",
+  "@shareSendFileHint": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareCopyText": "ტექსტად კოპირება",
+  "@shareCopyText": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareCopyTextHint": "ყველგან ჩაკეტილი რჩება",
+  "@shareCopyTextHint": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareTooBig": "ძალიან დიდია. ფაილად გაგზავნეთ.",
+  "@shareTooBig": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "shareCopiedStaysLocked": "დაკოპირდა. ჩაკეტილი რჩება.",
+  "@shareCopiedStaysLocked": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrLabelInvite": "თქვენი მოწვევა",
+  "@qrLabelInvite": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrLabelReply": "თქვენი პასუხი",
+  "@qrLabelReply": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrLabelMessage": "ჩაკეტილი შეტყობინება",
+  "@qrLabelMessage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrLetNameScan": "დაასკანერებინეთ: {name}",
+  "@qrLetNameScan": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrLetThemScan": "დაასკანერებინეთ.",
+  "@qrLetThemScan": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrSafeToShowAnyone": "ნებისმიერს შეგიძლიათ აჩვენოთ. დაგაკავშირებთ მხოლოდ მისი პასუხი.",
+  "@qrSafeToShowAnyone": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "qrOnlyRightPerson": "აჩვენეთ მხოლოდ სწორ ადამიანს.",
+  "@qrOnlyRightPerson": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyYouLockedMessage": "ჩაკეტეთ შეტყობინება",
+  "@historyYouLockedMessage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyYouOpenedMessage": "გახსენით შეტყობინება",
+  "@historyYouOpenedMessage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyYouLockedFile": "ჩაკეტეთ: {file}",
+  "@historyYouLockedFile": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyYouOpenedFile": "გახსენით: {file}",
+  "@historyYouOpenedFile": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyTapToRead": "შეეხეთ წასაკითხად",
+  "@historyTapToRead": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "historyTapToSee": "შეეხეთ სანახავად",
+  "@historyTapToSee": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "fileCardLocked": "ჩაკეტილია",
+  "@fileCardLocked": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "fileCardKeptInSafe": "ჩაკეტილი ინახება ჩემს სეიფში",
+  "@fileCardKeptInSafe": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockedPreviewLabel": "ჩაკეტილი ვერსია · უსაფრთხოა გასაგზავნად",
+  "@lockedPreviewLabel": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "confirmCopied": "დაკოპირდა",
+  "@confirmCopied": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "confirmHandedOver": "გადმოგეცათ",
+  "@confirmHandedOver": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "safetyGridLabel": "უსაფრთხოების ციფრები",
+  "@safetyGridLabel": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lockoutWaitLeft": "მოიცადეთ {time}",
+  "@lockoutWaitLeft": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "settingsLookAndLanguage": "იერსახე და ენა",
+  "@settingsLookAndLanguage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "settingsLook": "იერსახე",
+  "@settingsLook": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "settingsLanguage": "ენა",
+  "@settingsLanguage": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lookLikeMyPhone": "როგორც ტელეფონში",
+  "@lookLikeMyPhone": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lookLight": "ღია",
+  "@lookLight": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "lookDark": "მუქი",
+  "@lookDark": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "languageGeorgian": "ქართული",
+  "@languageGeorgian": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "fuzzzyCast": "Fuzzzy Cast",
+  "@fuzzzyCast": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "fuzzzyCastLine": "Fuzzz რეაგირებს, როცა კეტავთ ან ხსნით.",
+  "@fuzzzyCastLine": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "fuzzzyCastOn": "Fuzzzy Cast ჩართულია.",
+  "@fuzzzyCastOn": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "softSounds": "რბილი ხმები",
+  "@softSounds": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "softSoundsLine": "უხმო რეჟიმში არასდროს",
+  "@softSoundsLine": {
+    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   }
 }

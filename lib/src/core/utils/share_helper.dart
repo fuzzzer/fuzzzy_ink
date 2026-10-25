@@ -20,24 +20,30 @@ class ShareHelper {
     );
   }
 
-  static Future<void> share(
+  /// Answers whether the system reported the share as done: iOS and macOS
+  /// always say; Android only where the platform does (otherwise false). A
+  /// cancel is false.
+  static Future<bool> share(
     String text, {
     required BuildContext context,
-  }) {
-    return Share.share(
+  }) async {
+    final result = await Share.share(
       text,
       sharePositionOrigin: _originFromContext(context),
     );
+    return result.status == ShareResultStatus.success;
   }
 
-  static Future<void> shareXFiles(
+  /// As [share].
+  static Future<bool> shareXFiles(
     List<XFile> files, {
     required BuildContext context,
-  }) {
-    return Share.shareXFiles(
+  }) async {
+    final result = await Share.shareXFiles(
       files,
       sharePositionOrigin: _originFromContext(context),
     );
+    return result.status == ShareResultStatus.success;
   }
 
   /// share_plus has no file sharing on Linux.
@@ -45,7 +51,7 @@ class ShareHelper {
 
   /// Shares [text] as a plain-text file named [fileName]. share_plus writes
   /// it to the app's temporary folder first; pass only sealed text.
-  static Future<void> shareTextAsFile(
+  static Future<bool> shareTextAsFile(
     String text, {
     required String fileName,
     required BuildContext context,

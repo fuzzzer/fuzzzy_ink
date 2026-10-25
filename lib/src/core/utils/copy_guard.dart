@@ -245,6 +245,15 @@ abstract final class CopyGuard {
     return isCopied;
   }
 
+  /// Copies [text] if [content] may leave the app, with no toast: for a
+  /// control that confirms in place ("Copied" on the button or row itself).
+  /// Answers whether it copied.
+  static Future<bool> copyQuietly({
+    required String text,
+    required CopyContent content,
+  }) =>
+      _clipboardGuard.copy(text, content);
+
   /// Context menu for a text field that holds plaintext: paste and select
   /// stay, everything that sends the selection out of the app goes.
   static Widget plaintextContextMenuBuilder(

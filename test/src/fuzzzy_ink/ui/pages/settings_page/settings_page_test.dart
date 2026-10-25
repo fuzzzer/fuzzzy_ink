@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -67,11 +68,22 @@ void main() {
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
-        localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
-        supportedLocales: FuzzzyInkLocalizations.supportedLocales,
-        home: const SettingsPage(),
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(create: (_) => LocalizationCubit()),
+          BlocProvider(
+            create: (_) => FuzzzyCastSettingsCubit(
+              preferencesService: sl.get<PreferencesService>(),
+            ),
+          ),
+        ],
+        child: MaterialApp(
+          theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
+          localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+          supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+          home: const SettingsPage(),
+        ),
       ),
     );
     await tester.pumpAndSettle();

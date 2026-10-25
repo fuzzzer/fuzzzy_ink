@@ -1,0 +1,416 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fuzzzy_ink/src/src.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
+
+/// "Add a person": Send an invite (You start) · I got an invite (They
+/// started).
+Future<void> showAddPersonSheet(BuildContext context) {
+  final localizations = context.fuzzzyInkLocalizations;
+  return FuzzzyBottomSheet.show<void>(
+    context,
+    qaId: 'addPerson',
+    builder: (sheetContext) => FuzzzyBottomSheet(
+      qaId: 'addPerson',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _SheetTitle(localizations.homeAddPerson),
+          SheetDoorRow(
+            qaId: 'addPerson.send',
+            icon: Icons.ios_share,
+            emphasised: true,
+            title: localizations.addSendInvite,
+            hint: localizations.addYouStart,
+            onTap: () {
+              Navigator.of(sheetContext).pop();
+              context.push(AppRouter.chatCreate);
+            },
+          ),
+          SheetDoorRow(
+            qaId: 'addPerson.got',
+            icon: Icons.move_to_inbox_outlined,
+            title: localizations.addGotInvite,
+            hint: localizations.addTheyStarted,
+            divider: false,
+            onTap: () {
+              Navigator.of(sheetContext).pop();
+              context.push(AppRouter.chatAccept);
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Lock → "Who's it for?": connected people (waiting ones shown but off),
+/// then "Lock with a password". With no one connected, "Add a person first".
+Future<void> showLockWhoSheet(
+  BuildContext context, {
+  required List<ChatGeneralData> people,
+  required Set<String> unverifiedChatIds,
+}) {
+  final localizations = context.fuzzzyInkLocalizations;
+  final connected = people
+      .where((chat) => chat.setupStatus == ChatSetupStatus.connected)
+      .toList();
+  final waiting = people
+      .where((chat) => chat.setupStatus != ChatSetupStatus.connected)
+      .toList();
+
+  return FuzzzyBottomSheet.show<void>(
+    context,
+    qaId: 'lockWho',
+    builder: (sheetContext) {
+      void close() => Navigator.of(sheetContext).pop();
+
+      return FuzzzyBottomSheet(
+        qaId: 'lockWho',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SheetTitle(localizations.lockWhoTitle),
+            for (final chat in connected)
+              _PersonChoice(
+                chat: chat,
+                trust: HomePage.trustOf(chat, unverifiedChatIds),
+                onTap: () {
+                  close();
+                  HomePage.openPerson(context, chat);
+                },
+              ),
+            for (final chat in waiting)
+              _PersonChoice(
+                chat: chat,
+                trust: PersonTrust.waiting,
+                onTap: null,
+              ),
+            if (connected.isEmpty) ...[
+              SizedBox(height: sheetContext.fuzzzySpace.m),
+              FuzzzyButton(
+                label: localizations.lockAddPersonFirst,
+                icon: const Icon(Icons.person_add_alt),
+                qaId: 'lockWho.addFirst',
+                onPressed: () {
+                  close();
+                  showAddPersonSheet(context);
+                },
+              ),
+            ],
+            const _OrDivider(),
+            SheetDoorRow(
+              qaId: 'lockWho.password',
+              icon: Icons.key_outlined,
+              title: localizations.lockWithPassword,
+              hint: localizations.lockNoInviteNeeded,
+              divider: false,
+              onTap: () {
+                close();
+                context.push(AppRouter.basics);
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+/// Open → "Open what you got": Paste it (a Fuzzzy Ink link opens as if
+/// tapped; the clipboard is read only on this tap), I got an invite, and
+/// Locked with a password.
+Future<void> showOpenSheet(
+  BuildContext context, {
+  required bool Function(String text) onPastedText,
+}) {
+  final localizations = context.fuzzzyInkLocalizations;
+
+  return FuzzzyBottomSheet.show<void>(
+    context,
+    qaId: 'open',
+    builder: (sheetContext) {
+      void close() => Navigator.of(sheetContext).pop();
+
+      Future<void> paste() async {
+        final data = await Clipboard.getData(Clipboard.kTextPlain);
+        final text = data?.text?.trim() ?? '';
+        if (!sheetContext.mounted) return;
+        if (text.isEmpty) {
+          showInkToast(
+            sheetContext,
+            message: localizations.openNothingToPaste,
+            kind: FuzzzyToastKind.info,
+          );
+          return;
+        }
+        if (onPastedText(text)) {
+          close();
+          return;
+        }
+        showInkToast(
+          sheetContext,
+          message: localizations.openPasteNotALink,
+          kind: FuzzzyToastKind.info,
+        );
+      }
+
+      return FuzzzyBottomSheet(
+        qaId: 'open',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SheetTitle(localizations.openWhatYouGot),
+            SheetDoorRow(
+              qaId: 'open.paste',
+              icon: Icons.content_paste,
+              emphasised: true,
+              title: localizations.openPasteIt,
+              hint: localizations.openPasteItHint,
+              onTap: paste,
+            ),
+            SheetDoorRow(
+              qaId: 'open.invite',
+              icon: Icons.move_to_inbox_outlined,
+              title: localizations.addGotInvite,
+              hint: localizations.addTheyStarted,
+              onTap: () {
+                close();
+                context.push(AppRouter.chatAccept);
+              },
+            ),
+            SheetDoorRow(
+              qaId: 'open.password',
+              icon: Icons.key_outlined,
+              title: localizations.openLockedWithPassword,
+              hint: localizations.lockWithPassword,
+              divider: false,
+              onTap: () {
+                close();
+                context.push(AppRouter.basics);
+              },
+            ),
+            SizedBox(height: sheetContext.fuzzzySpace.m),
+            TipLine(
+              icon: Icons.link,
+              text: localizations.openLinksTip,
+              qaId: 'open.links',
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+/// A door in a sheet: icon box, title, one hint line, chevron.
+class SheetDoorRow extends StatelessWidget {
+  const SheetDoorRow({
+    super.key,
+    required this.qaId,
+    required this.icon,
+    required this.title,
+    required this.hint,
+    required this.onTap,
+    this.emphasised = false,
+    this.divider = true,
+  });
+
+  final String qaId;
+  final IconData icon;
+  final String title;
+  final String hint;
+  final VoidCallback? onTap;
+  final bool emphasised;
+  final bool divider;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.fuzzzyColors;
+    final type = context.fuzzzyTextStyles;
+    final space = context.fuzzzySpace;
+
+    return Semantics(
+      identifier: qaId,
+      button: true,
+      container: true,
+      child: FuzzzyTappable(
+        key: Key(qaId),
+        onTap: onTap,
+        focusRingInset: true,
+        builder: (context, active) => Container(
+          constraints: const BoxConstraints(minHeight: 64),
+          padding: EdgeInsets.symmetric(vertical: space.m),
+          decoration: BoxDecoration(
+            color: active ? colors.surface : null,
+            border:
+                divider ? Border(bottom: BorderSide(color: colors.line)) : null,
+          ),
+          child: Row(
+            children: [
+              ExcludeSemantics(
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: emphasised ? colors.actionPrimaryBg : colors.surface,
+                    border: Border.all(
+                      color: emphasised ? colors.actionPrimaryBg : colors.line,
+                    ),
+                    borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: context.fuzzzyIconSize.l,
+                    color: emphasised ? colors.actionPrimaryFg : colors.ink,
+                  ),
+                ),
+              ),
+              SizedBox(width: space.m + space.xs / 2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: type.titleS.copyWith(color: colors.ink)),
+                    Text(
+                      hint,
+                      style: type.bodyS.copyWith(color: colors.inkMute),
+                    ),
+                  ],
+                ),
+              ),
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.chevron_right,
+                  size: context.fuzzzyIconSize.m,
+                  color: colors.inkFaint,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PersonChoice extends StatelessWidget {
+  const _PersonChoice({
+    required this.chat,
+    required this.trust,
+    required this.onTap,
+  });
+
+  final ChatGeneralData chat;
+  final PersonTrust trust;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
+    final name = chat.chatName.trim();
+    final isOff = onTap == null;
+
+    return Semantics(
+      identifier: 'lockWho.${chat.chatId}',
+      button: true,
+      enabled: !isOff,
+      container: true,
+      child: Opacity(
+        opacity: isOff ? 0.5 : 1,
+        child: FuzzzyTappable(
+          key: Key('lockWho.${chat.chatId}'),
+          onTap: onTap,
+          focusRingInset: true,
+          builder: (context, active) => Container(
+            constraints: const BoxConstraints(minHeight: 64),
+            padding: EdgeInsets.symmetric(vertical: space.m),
+            decoration: BoxDecoration(
+              color: active ? colors.surface : null,
+              border: Border(bottom: BorderSide(color: colors.line)),
+            ),
+            child: Row(
+              children: [
+                FuzzzyAvatar(
+                  initials:
+                      name.isEmpty ? '?' : name.characters.first.toUpperCase(),
+                  size: FuzzzyAvatarSize.s44,
+                ),
+                SizedBox(width: space.m + space.xs / 2),
+                Expanded(
+                  child: Text(
+                    chat.chatName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.fuzzzyTextStyles.titleS.copyWith(
+                      color: colors.ink,
+                    ),
+                  ),
+                ),
+                PersonTrustChip(trust: trust),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetTitle extends StatelessWidget {
+  const _SheetTitle(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.fuzzzySpace.s),
+      child: Semantics(
+        header: true,
+        child: Text(
+          text,
+          style: context.fuzzzyTextStyles.titleL.copyWith(
+            color: context.fuzzzyColors.ink,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OrDivider extends StatelessWidget {
+  const _OrDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
+    final line = Expanded(child: Divider(color: colors.line, height: 1));
+
+    return Padding(
+      padding: EdgeInsets.only(top: space.l, bottom: space.xs),
+      child: Row(
+        children: [
+          line,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: space.m),
+            child: Text(
+              context.fuzzzyInkLocalizations.orDivider.toUpperCase(),
+              style: context.fuzzzyTextStyles.label.copyWith(
+                color: colors.inkFaint,
+              ),
+            ),
+          ),
+          line,
+        ],
+      ),
+    );
+  }
+}
