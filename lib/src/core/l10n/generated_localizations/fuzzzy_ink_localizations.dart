@@ -1597,6 +1597,12 @@ abstract class FuzzzyInkLocalizations {
   /// **'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.'**
   String get safetyNumberExplanation;
 
+  /// No description provided for @safetyNumberVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}. If your partner sees another version, or none, update both apps before comparing.'**
+  String safetyNumberVersion(int version);
+
   /// No description provided for @safetyNumberMarkVerified.
   ///
   /// In en, this message translates to:

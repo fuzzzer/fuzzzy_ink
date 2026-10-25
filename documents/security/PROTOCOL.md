@@ -225,7 +225,7 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 
 After the handshake both devices hold `A_ed25519` and `B_ed25519` — the exact keys that signed the blobs and
 that the handshake header bound to the 3DH. The safety number is a fingerprint of those two keys and the
-chat id ([`safety.rs#L31`](../../rust/fuzzy_crypto_core/src/safety.rs#L31)):
+chat id ([`safety.rs#L39`](../../rust/fuzzy_crypto_core/src/safety.rs#L39)):
 
 ```
 low, high = sort_lexicographic(key_1, key_2)                     // byte-wise on the two [u8; 32]
@@ -234,10 +234,10 @@ group[i]  = ( u40 BE of digest[5i .. 5i+5] ) mod 100000            for i in 0..1
 text      = zero-padded 5-digit groups joined by single spaces      // 60 digits, 71 characters
 ```
 
-Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20)),
-12 groups ([`#L22`](../../rust/fuzzy_crypto_core/src/safety.rs#L22)) of 5 digest bytes each
-([`#L24`](../../rust/fuzzy_crypto_core/src/safety.rs#L24)), modulus 100 000
-([`#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25)); the last 4 bytes of the digest are unused. This
+Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L28`](../../rust/fuzzy_crypto_core/src/safety.rs#L28)),
+12 groups ([`#L30`](../../rust/fuzzy_crypto_core/src/safety.rs#L30)) of 5 digest bytes each
+([`#L32`](../../rust/fuzzy_crypto_core/src/safety.rs#L32)), modulus 100 000
+([`#L33`](../../rust/fuzzy_crypto_core/src/safety.rs#L33)); the last 4 bytes of the digest are unused. This
 is libsignal's `DisplayableFingerprint` group encoding (5 bytes → `% 100000`), applied to one combined
 digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-…`, keys `00 01 … 1f` and
 `ff fe … e0` → `77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132`).
@@ -257,12 +257,27 @@ digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-
   cannot be reused as another's.
 - **Availability.** B has A's identity key from the moment it accepts; A has B's once the handshake completes.
   Before that `safety_number` is `UnknownChat`.
-- **The verified flag** (`mark_verified`, [`safety.rs#L75`](../../rust/fuzzy_crypto_core/src/safety.rs#L75)) is a
+- **The verified flag** (`mark_verified`, [`safety.rs#L83`](../../rust/fuzzy_crypto_core/src/safety.rs#L83)) is a
   per-device boolean in the sealed state, persisted before the call returns. It is refused (`UnknownChat`)
   while no peer key exists, so a flag can never pre-date the keys it vouches for. The only ways an identity
   key of an existing chat can change — regenerating a pending invitation, or deleting and re-pairing — replace
   the whole state with `verified = false`, so the flag cannot outlive the keys either.
 - Nothing secret is hashed; both keys travel in the clear inside the pairing blobs.
+- **Version.** The computation above is safety-number **version 1**
+  (`SAFETY_NUMBER_VERSION`, [`safety.rs`](../../rust/fuzzy_crypto_core/src/safety.rs)); the `V1` at the end of the
+  domain string is that number, and a test pins the two together. The core never returns the digits alone:
+  `safety_number` answers `SafetyNumber { version, digits }` ([`api/safety.rs`](../../rust/fuzzy_crypto_core/src/api/safety.rs)),
+  and the app shows "Version 1" under the digits with the instruction to update both apps if the partner sees
+  another version or none. Two builds that derive the digits differently therefore show different versions,
+  never silently different digits that look exactly like an attack. **Any** change to the derivation — the
+  domain string (including a rename of the app), the inputs, their order, the digest or the group encoding —
+  bumps the version (§12); the golden test fails until the version is bumped and the golden re-pinned.
+- **History.** Release 1.1.0 (app id `com.fuzzzytechnologies.fuzzy_chat`) hashed the domain
+  `FUZZZYSEAL_SAFETY_NUMBER_V1`; 1.1.1 renamed it to `FUZZZYINK_SAFETY_NUMBER_V1` without a version change and
+  without showing a version, so a 1.1.0 device and a later one disagreed silently. 1.1.0 is retired (its app id
+  never updates to the current one) and is not supported: its computation is the unlabelled predecessor, not a
+  version. The current computation keeps exactly the digits of 1.1.1–1.1.4 and is labelled version 1, so those
+  builds agree with this one digit for digit.
 
 ---
 
@@ -931,6 +946,9 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 - **Inner header version** (`inner_version`, §7.1) and **state body version** (`format_version`, §10.3) are
   independent counters with the same rule each: an unknown value is refused. They are bumped only when their
   own layout changes.
+- **Safety-number version** (`SAFETY_NUMBER_VERSION`, §5) is a third independent counter. It is not on the
+  wire — each device computes the number locally — so instead of being refused it is **shown** next to the
+  digits. Changing anything in the derivation of §5 bumps it; the domain string's `V<n>` follows it.
 - **Argon2 parameters are data, not format** (§11): changing the values a build *writes* is not a bump.
 - **Text encoding.** Version 1 has exactly one text encoding, base64url without padding, and no encoding byte
   after `Fuzz/`. The design note that a base91 encoding could later be added as "encoding `0x02`" of the
@@ -1223,7 +1241,7 @@ a file job's terminal event carries.
 | state file extensions | `.state`, `.state.tmp` | [`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44) |
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
-| safety-number domain / groups / bytes / modulus | `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20) |
+| safety-number version / domain / groups / bytes / modulus | 1 / `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25) |
 | original name limit | 255 bytes | [`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261) |
 | longest header read | 65 568 | [`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53) |
 | pause poll | 50 ms | [`files.rs#L50`](../../rust/fuzzy_crypto_core/src/files.rs#L50) |

@@ -530,6 +530,14 @@
   "@safetyNumberTitle": {},
   "safetyNumberExplanation": "შეადარეთ ეს ციფრები თქვენს პარტნიორს ხმით ან პირადად. სანამ ისინი არ დაემთხვევა, შესაძლოა ვინმემ, ვინც მოწვევა ან მიღება გადაიჭირა, შუაში იყოს.",
   "@safetyNumberExplanation": {},
+  "safetyNumberVersion": "ვერსია {version}. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.",
+  "@safetyNumberVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
   "safetyNumberMarkVerified": "მონიშნე როგორც დადასტურებული",
   "@safetyNumberMarkVerified": {},
   "safetyNumberUnmark": "მონიშვნის მოხსნა",

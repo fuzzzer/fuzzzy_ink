@@ -831,6 +831,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'შეადარეთ ეს ციფრები თქვენს პარტნიორს ხმით ან პირადად. სანამ ისინი არ დაემთხვევა, შესაძლოა ვინმემ, ვინც მოწვევა ან მიღება გადაიჭირა, შუაში იყოს.';
 
   @override
+  String safetyNumberVersion(int version) {
+    return 'ვერსია $version. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.';
+  }
+
+  @override
   String get safetyNumberMarkVerified => 'მონიშნე როგორც დადასტურებული';
 
   @override

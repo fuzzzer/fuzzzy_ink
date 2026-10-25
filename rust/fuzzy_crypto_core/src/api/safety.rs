@@ -3,15 +3,31 @@ use crate::error::CoreError;
 use crate::safety;
 use crate::store::validate_chat_id;
 
+/// A safety number as the app shows it: the digits never travel without the
+/// version of the computation that produced them, so two builds that compute
+/// it differently show different versions rather than silently different
+/// digits (PROTOCOL.md §5).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SafetyNumber {
+    /// [`safety::SAFETY_NUMBER_VERSION`] of the build that computed `digits`.
+    pub version: u8,
+    /// 60 digits, `"12345 67890 …"` (12 groups, single spaces).
+    pub digits: String,
+}
+
 impl CryptoCore {
-    /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups), derived
-    /// from both Ed25519 identity keys and the chat id (plan §B.3) — identical on
-    /// both sides of a pairing. `UnknownChat` for a chat the store does not know
-    /// or that is not paired yet. Nothing secret is involved; it stays async
-    /// like every other call on the handle.
-    pub fn safety_number(&self, chat_id: String) -> Result<String, CoreError> {
+    /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups) with
+    /// the version of its computation, derived from both Ed25519 identity keys
+    /// and the chat id (plan §B.3) — identical on both sides of a pairing.
+    /// `UnknownChat` for a chat the store does not know or that is not paired
+    /// yet. Nothing secret is involved; it stays async like every other call on
+    /// the handle.
+    pub fn safety_number(&self, chat_id: String) -> Result<SafetyNumber, CoreError> {
         let state = self.opened()?.load_state(&chat_id)?;
-        safety::safety_number(&state)
+        Ok(SafetyNumber {
+            version: safety::SAFETY_NUMBER_VERSION,
+            digits: safety::safety_number(&state)?,
+        })
     }
 
     /// Persists whether the user compared the safety number with the peer. The
@@ -38,7 +54,7 @@ mod tests {
 
         use crate::api::core::{create_store_key, open_store, CryptoCore};
         use crate::error::CoreError;
-        use crate::safety::safety_number_for;
+        use crate::safety::{safety_number_for, SAFETY_NUMBER_VERSION};
         use crate::store::test_support::temp_dir;
         use crate::store::STORE_SUBDIR;
 
@@ -108,6 +124,9 @@ mod tests {
 
             let on_a = a.core.safety_number(CHAT_X.into()).unwrap();
             let on_b = b.core.safety_number(CHAT_X.into()).unwrap();
+            assert_eq!(on_a.version, SAFETY_NUMBER_VERSION);
+            assert_eq!(on_b.version, SAFETY_NUMBER_VERSION);
+            let (on_a, on_b) = (on_a.digits, on_b.digits);
             assert_eq!(on_a, on_b);
             assert_eq!(on_a.len(), 60 + 11);
 
@@ -123,7 +142,7 @@ mod tests {
             let mut a2 = Device::new();
             let mut b2 = Device::new();
             pair(&mut a2, &mut b2, CHAT_X);
-            assert_ne!(a2.core.safety_number(CHAT_X.into()).unwrap(), on_a);
+            assert_ne!(a2.core.safety_number(CHAT_X.into()).unwrap().digits, on_a);
         }
 
         #[test]
@@ -165,11 +184,11 @@ mod tests {
             // The accepter holds A's key from the invitation, so it can compare
             // right away — and A can once the handshake completes.
             let acceptance = b.core.accept_invitation(CHAT_X.into(), invitation).unwrap();
-            let on_b = b.core.safety_number(CHAT_X.into()).unwrap();
+            let on_b = b.core.safety_number(CHAT_X.into()).unwrap().digits;
             a.core
                 .complete_handshake(CHAT_X.into(), acceptance)
                 .unwrap();
-            assert_eq!(a.core.safety_number(CHAT_X.into()).unwrap(), on_b);
+            assert_eq!(a.core.safety_number(CHAT_X.into()).unwrap().digits, on_b);
             assert!(!a.core.is_verified(CHAT_X.into()).unwrap());
         }
 
@@ -198,11 +217,11 @@ mod tests {
             );
 
             // Unmark round-trips too, and the number itself never changes.
-            let number = a.core.safety_number(CHAT_X.into()).unwrap();
+            let number = a.core.safety_number(CHAT_X.into()).unwrap().digits;
             a.core.mark_verified(CHAT_X.into(), false).unwrap();
             a.reopen();
             assert!(!a.core.is_verified(CHAT_X.into()).unwrap());
-            assert_eq!(a.core.safety_number(CHAT_X.into()).unwrap(), number);
+            assert_eq!(a.core.safety_number(CHAT_X.into()).unwrap().digits, number);
 
             // The flag never outlives the pairing: a deleted and re-paired chat
             // starts unverified with new keys.
@@ -211,7 +230,7 @@ mod tests {
             b.core.delete_chat(CHAT_X.into()).unwrap();
             pair(&mut a, &mut b, CHAT_X);
             assert!(!a.core.is_verified(CHAT_X.into()).unwrap());
-            assert_ne!(a.core.safety_number(CHAT_X.into()).unwrap(), number);
+            assert_ne!(a.core.safety_number(CHAT_X.into()).unwrap().digits, number);
         }
 
         #[test]

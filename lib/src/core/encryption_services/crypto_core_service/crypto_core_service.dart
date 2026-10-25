@@ -6,6 +6,7 @@ import 'package:fuzzzy_ink/rust_bridge/api/core.dart' as rust_core;
 import 'package:fuzzzy_ink/rust_bridge/api/files.dart' as rust_files;
 import 'package:fuzzzy_ink/rust_bridge/api/formats.dart' as rust_formats;
 import 'package:fuzzzy_ink/rust_bridge/api/passwords.dart' as rust_passwords;
+import 'package:fuzzzy_ink/rust_bridge/api/safety.dart' as rust_safety;
 import 'package:fuzzzy_ink/rust_bridge/api/vault.dart' as rust_vault;
 import 'package:fuzzzy_ink/rust_bridge/error.dart';
 import 'package:path/path.dart' as path;
@@ -16,6 +17,11 @@ export 'components/components.dart';
 /// stay in the core. `close()` zeroises it (later seal/open calls answer
 /// `storeLocked`), `dispose()` frees the handle.
 typedef VaultKey = rust_vault.VaultKey;
+
+/// A chat's safety number with the version of the computation that produced
+/// it (`version`, `digits`). The app shows both, so two builds that compute it
+/// differently show different versions instead of silently different digits.
+typedef SafetyNumber = rust_safety.SafetyNumber;
 
 /// The only importer of `package:fuzzzy_ink/rust_bridge/...` besides
 /// `initializer.dart`. Owns the single `CryptoCore` handle of the process and
@@ -482,10 +488,10 @@ class CryptoCoreService {
     return _withCore((core) => core.openLocal(chatId: chatId, blob: blob));
   }
 
-  /// The chat's 60-digit safety number (12 groups of 5, space-separated) —
-  /// identical on both sides once the peer's key is known; a chat without a
-  /// peer yet is `unknownChat`.
-  Future<CryptoCoreResponse<String>> safetyNumber(String chatId) {
+  /// The chat's 60-digit safety number (12 groups of 5, space-separated)
+  /// and the version of its computation — identical on both sides once the
+  /// peer's key is known; a chat without a peer yet is `unknownChat`.
+  Future<CryptoCoreResponse<SafetyNumber>> safetyNumber(String chatId) {
     return _withCore((core) => core.safetyNumber(chatId: chatId));
   }
 

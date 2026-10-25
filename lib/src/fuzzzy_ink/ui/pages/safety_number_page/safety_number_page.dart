@@ -81,10 +81,23 @@ class ProvidedSafetyNumberPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     Text(
-                      _rowsOf(state.safetyNumber!),
+                      _rowsOf(state.safetyNumber!.digits),
                       textAlign: TextAlign.center,
                       style: fuzzzyTextStyles.dataL.copyWith(
                         color: fuzzzyColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // The digits are only comparable between equal versions
+                    // of the computation, so the version is always shown.
+                    Text(
+                      localizations.safetyNumberVersion(
+                        state.safetyNumber!.version,
+                      ),
+                      key: const ValueKey('safety_number_version'),
+                      textAlign: TextAlign.center,
+                      style: fuzzzyTextStyles.body.copyWith(
+                        color: fuzzzyColors.inkMute,
                       ),
                     ),
                     const SizedBox(height: 32),

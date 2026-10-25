@@ -819,6 +819,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.';
 
   @override
+  String safetyNumberVersion(int version) {
+    return 'Version $version. If your partner sees another version, or none, update both apps before comparing.';
+  }
+
+  @override
   String get safetyNumberMarkVerified => 'Mark as verified';
 
   @override

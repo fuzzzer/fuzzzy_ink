@@ -9,6 +9,7 @@ import 'api/formats.dart';
 import 'api/health.dart';
 import 'api/pairing.dart';
 import 'api/passwords.dart';
+import 'api/safety.dart';
 import 'api/vault.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -154,6 +155,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  SafetyNumber dco_decode_safety_number(dynamic raw);
+
+  @protected
   int dco_decode_u_8(dynamic raw);
 
   @protected
@@ -279,6 +283,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  SafetyNumber sse_decode_safety_number(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -408,6 +415,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_safety_number(SafetyNumber self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);

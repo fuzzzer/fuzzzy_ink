@@ -498,13 +498,15 @@ void main() {
         acceptance: acceptance.content,
       );
 
-      final numberA =
-          (await service.safetyNumber(_chatId) as CryptoCoreSuccess<String>)
-              .data;
+      final numberA = (await service.safetyNumber(_chatId)
+              as CryptoCoreSuccess<SafetyNumber>)
+          .data;
       final numberB =
-          (await b.safetyNumber(_chatId) as CryptoCoreSuccess<String>).data;
+          (await b.safetyNumber(_chatId) as CryptoCoreSuccess<SafetyNumber>)
+              .data;
       expect(numberA, numberB);
-      expect(numberA, matches(RegExp(r'^\d{5}( \d{5}){11}$')));
+      expect(numberA.version, 1);
+      expect(numberA.digits, matches(RegExp(r'^\d{5}( \d{5}){11}$')));
 
       expect(
         await service.markVerified(chatId: _chatId, verified: true),

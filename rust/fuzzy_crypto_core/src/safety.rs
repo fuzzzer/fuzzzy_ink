@@ -16,7 +16,15 @@ use sha2::{Digest, Sha512};
 use crate::error::CoreError;
 use crate::state::ChatState;
 
-/// Domain separator of the digest; the version suffix is the format version.
+/// Version of the safety-number computation. It is hashed (as the domain's
+/// `V<n>` suffix) and shown next to the digits, so two builds that compute the
+/// number differently show different versions instead of silently different
+/// digits that look like an attack. Any change to how the digits are derived —
+/// the domain string, the inputs, their order or the encoding — bumps it
+/// (PROTOCOL.md §5, §12); the golden test below fails until it is bumped.
+pub const SAFETY_NUMBER_VERSION: u8 = 1;
+/// Domain separator of the digest; the `V<n>` suffix is [`SAFETY_NUMBER_VERSION`]
+/// (pinned by the `domain_carries_the_version` test).
 const DOMAIN: &[u8] = b"FUZZZYINK_SAFETY_NUMBER_V1";
 /// 12 groups × 5 digits = 60 digits (~199 bits of the 512-bit digest).
 const GROUPS: usize = 12;
@@ -83,7 +91,7 @@ pub fn mark_verified(state: &mut ChatState, verified: bool) -> Result<(), CoreEr
 #[cfg(test)]
 mod tests {
     mod safety_number {
-        use crate::safety::safety_number_for;
+        use crate::safety::{safety_number_for, DOMAIN, SAFETY_NUMBER_VERSION};
 
         const CHAT_X: &str = "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d";
         const CHAT_Y: &str = "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d";
@@ -121,8 +129,24 @@ mod tests {
         const GOLDEN: &str =
             "77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132";
 
+        /// The hashed label and the shown version cannot drift apart.
+        #[test]
+        fn domain_carries_the_version() {
+            assert_eq!(
+                DOMAIN,
+                format!("FUZZZYINK_SAFETY_NUMBER_V{SAFETY_NUMBER_VERSION}").as_bytes()
+            );
+        }
+
+        /// A change to the digits without a version bump fails here: whoever
+        /// changes the computation must bump [`SAFETY_NUMBER_VERSION`] and
+        /// re-pin this golden from an independent implementation.
         #[test]
         fn golden() {
+            assert_eq!(
+                SAFETY_NUMBER_VERSION, 1,
+                "re-pin GOLDEN for the new version"
+            );
             assert_eq!(safety_number_for(CHAT_X, &key_a(), &key_b()), GOLDEN);
             // The sort makes the order of the arguments irrelevant.
             assert_eq!(safety_number_for(CHAT_X, &key_b(), &key_a()), GOLDEN);

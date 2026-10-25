@@ -594,6 +594,7 @@ fn all_vectors() -> Vec<Vector> {
             &SAFETY_KEY_B,
         )),
         inputs: json!({
+            "version": safety::SAFETY_NUMBER_VERSION,
             "chat_id": CHAT_ID,
             "key_1": hex(&SAFETY_KEY_A),
             "key_2": hex(&SAFETY_KEY_B),

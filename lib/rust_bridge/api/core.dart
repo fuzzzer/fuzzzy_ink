@@ -8,6 +8,7 @@ import '../frb_generated.dart';
 import 'files.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pairing.dart';
+import 'safety.dart';
 
 // These functions are ignored because they are not marked as `pub`: `opened_mut`, `opened`
 
@@ -126,12 +127,13 @@ abstract class CryptoCore implements RustOpaqueInterface {
   Future<FileTicket> prepareFileSend(
       {required String chatId, required String input});
 
-  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups), derived
-  /// from both Ed25519 identity keys and the chat id (plan §B.3) — identical on
-  /// both sides of a pairing. `UnknownChat` for a chat the store does not know
-  /// or that is not paired yet. Nothing secret is involved; it stays async
-  /// like every other call on the handle.
-  Future<String> safetyNumber({required String chatId});
+  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups) with
+  /// the version of its computation, derived from both Ed25519 identity keys
+  /// and the chat id (plan §B.3) — identical on both sides of a pairing.
+  /// `UnknownChat` for a chat the store does not know or that is not paired
+  /// yet. Nothing secret is involved; it stays async like every other call on
+  /// the handle.
+  Future<SafetyNumber> safetyNumber({required String chatId});
 
   /// Seals `bytes` of `chat_id`'s message history (F2-8) under that chat's
   /// own history key (owner decision D-1, F2-12): a 0x20 blob with a fresh

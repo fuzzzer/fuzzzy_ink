@@ -19,7 +19,7 @@ class SafetyNumberCubit extends Cubit<SafetyNumberState> {
     emit(state.copyWith(status: StateStatus.loading));
 
     final numberRes = await cryptoCoreService.safetyNumber(chatId);
-    if (numberRes is CryptoCoreFailure<String>) {
+    if (numberRes is CryptoCoreFailure<SafetyNumber>) {
       emit(
         state.copyWith(
           status: StateStatus.failed,
@@ -43,7 +43,7 @@ class SafetyNumberCubit extends Cubit<SafetyNumberState> {
     emit(
       state.copyWith(
         status: StateStatus.success,
-        safetyNumber: (numberRes as CryptoCoreSuccess<String>).data,
+        safetyNumber: (numberRes as CryptoCoreSuccess<SafetyNumber>).data,
         isVerified: (verifiedRes as CryptoCoreSuccess<bool>).data,
       ),
     );
