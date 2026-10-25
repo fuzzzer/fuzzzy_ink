@@ -76,6 +76,15 @@ void main() {
     await openItem(tester, fileItem('note.txt', utf8.encode('the secret')));
 
     expect(find.byType(PlainFileViewerPage), findsOneWidget);
+    // Plaintext on screen: the viewer keeps the window out of captures.
+    expect(
+      find.ancestor(
+        of: find.byType(PlainFileViewerPage),
+        matching: find.byType(SensitiveScreen),
+      ),
+      findsOneWidget,
+    );
+    expect(ScreenGuard.instance.isProtecting, isTrue);
     await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await tester.pumpAndSettle();
     expect(find.text('the secret'), findsOneWidget);

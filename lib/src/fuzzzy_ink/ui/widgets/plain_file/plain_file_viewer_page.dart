@@ -31,7 +31,9 @@ class PlainFileViewerPage extends StatefulWidget {
   final Future<void> Function(BuildContext context)? onShare;
   final VoidCallback? onClosed;
 
-  /// Pushes the viewer; completes when it is closed.
+  /// Pushes the viewer; completes when it is closed. The viewer shows
+  /// plaintext, so it is a [SensitiveScreen] of its own: the screen it covers
+  /// stops protecting the window once it is hidden.
   static Future<void> show(
     BuildContext context, {
     required String fileName,
@@ -43,13 +45,15 @@ class PlainFileViewerPage extends StatefulWidget {
   }) {
     return Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) => PlainFileViewerPage(
-          fileName: fileName,
-          filePath: filePath,
-          bytes: bytes,
-          onSave: onSave,
-          onShare: onShare,
-          onClosed: onClosed,
+        builder: (_) => SensitiveScreen(
+          child: PlainFileViewerPage(
+            fileName: fileName,
+            filePath: filePath,
+            bytes: bytes,
+            onSave: onSave,
+            onShare: onShare,
+            onClosed: onClosed,
+          ),
         ),
       ),
     );
