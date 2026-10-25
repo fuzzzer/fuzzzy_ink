@@ -159,6 +159,18 @@ class SecureClipboard {
   }
 }
 
+/// A copy the guard made has really left the clipboard: its clear ran, and
+/// the clipboard either held it and is now empty or already held something
+/// else. A copy replaced by a newer copy of the app gets no event of its own;
+/// compare [copyId] with [ClipboardGuard.lastCopyId].
+@immutable
+class ClipboardCopyCleared {
+  const ClipboardCopyCleared({required this.copyId, required this.content});
+
+  final int copyId;
+  final CopyContent content;
+}
+
 /// Applies [CopyPolicy] to every copy and runs the auto-clear timer. Holds no
 /// UI: [CopyGuard] is the widget-facing side.
 class ClipboardGuard {
@@ -173,6 +185,15 @@ class ClipboardGuard {
   Timer? _clearTimer;
   bool _isClearPending = false;
   AppLifecycleListener? _lifecycleListener;
+  final _cleared = StreamController<ClipboardCopyCleared>.broadcast();
+  int _lastCopyId = 0;
+  ({int id, CopyContent content})? _pendingCopy;
+
+  /// Counts the copies made; the id of the latest one.
+  int get lastCopyId => _lastCopyId;
+
+  /// One event when a copy has really been cleared ("Cleared." on screen).
+  Stream<ClipboardCopyCleared> get cleared => _cleared.stream;
 
   /// Copies [text] when the policy allows [content]; answers whether it did.
   Future<bool> copy(String text, CopyContent content) async {
@@ -186,6 +207,8 @@ class ClipboardGuard {
       clearAfter: clearAfter,
     );
     _isClearPending = true;
+    _lastCopyId++;
+    _pendingCopy = (id: _lastCopyId, content: content);
     _clearTimer = Timer(clearAfter, () => unawaited(clearNow()));
     _lifecycleListener ??= AppLifecycleListener(onResume: _retryPendingClear);
     return true;
@@ -197,6 +220,14 @@ class ClipboardGuard {
     _clearTimer = null;
     final result = await _clipboard.clearIfStillOurs();
     _isClearPending = result == ClipboardClearResult.unavailable;
+    final pending = _pendingCopy;
+    if (_isClearPending || pending == null) return;
+    _pendingCopy = null;
+    if (!_cleared.isClosed) {
+      _cleared.add(
+        ClipboardCopyCleared(copyId: pending.id, content: pending.content),
+      );
+    }
   }
 
   /// A clear the system refused while the app was in the background runs
@@ -211,6 +242,7 @@ class ClipboardGuard {
   void dispose() {
     _clearTimer?.cancel();
     _lifecycleListener?.dispose();
+    unawaited(_cleared.close());
   }
 }
 
@@ -253,6 +285,12 @@ abstract final class CopyGuard {
     required CopyContent content,
   }) =>
       _clipboardGuard.copy(text, content);
+
+  /// The id of the latest copy ([ClipboardGuard.lastCopyId]).
+  static int get lastCopyId => _clipboardGuard.lastCopyId;
+
+  /// When a copy has really left the clipboard ([ClipboardGuard.cleared]).
+  static Stream<ClipboardCopyCleared> get cleared => _clipboardGuard.cleared;
 
   /// Context menu for a text field that holds plaintext: paste and select
   /// stay, everything that sends the selection out of the app goes.

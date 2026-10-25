@@ -195,6 +195,69 @@ void main() {
     });
   });
 
+  group('ClipboardGuard cleared event', () {
+    test('tells when a vault password has really been cleared', () {
+      fakeAsync((async) {
+        final clipboard = _FakeSecureClipboard();
+        final guard = ClipboardGuard(clipboard: clipboard);
+        final events = <ClipboardCopyCleared>[];
+        guard.cleared.listen(events.add);
+        unawaited(guard.copy('hunter2', CopyContent.vaultPassword));
+        async.flushMicrotasks();
+        final id = guard.lastCopyId;
+
+        async.elapse(const Duration(seconds: 29));
+        expect(events, isEmpty);
+        async.elapse(const Duration(seconds: 1));
+        expect(events.single.copyId, id);
+        expect(events.single.content, CopyContent.vaultPassword);
+        guard.dispose();
+      });
+    });
+
+    test('a replaced copy gets no event; the newer one does', () {
+      fakeAsync((async) {
+        final clipboard = _FakeSecureClipboard();
+        final guard = ClipboardGuard(clipboard: clipboard);
+        final events = <ClipboardCopyCleared>[];
+        guard.cleared.listen(events.add);
+        unawaited(guard.copy('first', CopyContent.vaultPassword));
+        async.flushMicrotasks();
+        final first = guard.lastCopyId;
+        async.elapse(const Duration(seconds: 10));
+        unawaited(guard.copy('second', CopyContent.vaultPassword));
+        async
+          ..flushMicrotasks()
+          ..elapse(const Duration(seconds: 30));
+
+        expect(events.single.copyId, isNot(first));
+        expect(events.single.copyId, guard.lastCopyId);
+        guard.dispose();
+      });
+    });
+
+    test('a clear the system refuses sends nothing until it really runs', () {
+      fakeAsync((async) {
+        final clipboard = _FakeSecureClipboard()
+          ..clearAnswer = ClipboardClearResult.unavailable;
+        final guard = ClipboardGuard(clipboard: clipboard);
+        final events = <ClipboardCopyCleared>[];
+        guard.cleared.listen(events.add);
+        unawaited(guard.copy('hunter2', CopyContent.vaultPassword));
+        async
+          ..flushMicrotasks()
+          ..elapse(const Duration(seconds: 30));
+        expect(events, isEmpty);
+
+        clipboard.clearAnswer = ClipboardClearResult.notOurs;
+        unawaited(guard.clearNow());
+        async.flushMicrotasks();
+        expect(events, hasLength(1), reason: 'gone from the clipboard');
+        guard.dispose();
+      });
+    });
+  });
+
   group('SecureClipboard', () {
     const channel = MethodChannel('test/guard');
     final messenger =
