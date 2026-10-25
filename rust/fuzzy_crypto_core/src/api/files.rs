@@ -956,7 +956,10 @@ mod tests {
         assert_eq!(run(&mut wrong, &output).unwrap_err(), CoreError::Corrupt);
         assert_absent(&output);
         // A history seal is not a kept key.
-        let history = b.core.seal_local(CHAT_X.into(), vec![0x66; 32]).unwrap();
+        let history = b
+            .core
+            .seal_local(CHAT_X.into(), b"\x00Fuzz/row".to_vec(), vec![0x66; 32])
+            .unwrap();
         assert_eq!(
             b.core
                 .reopen_kept_file(CHAT_X.into(), kept.to_string_lossy().into_owned(), history)

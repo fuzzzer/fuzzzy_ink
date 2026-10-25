@@ -1293,16 +1293,20 @@ mod tests {
                 file_key
             );
 
-            // A file key never opens as history, and history never as a file key.
-            assert_eq!(
-                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap_err(),
-                CoreError::Corrupt
-            );
-            let history = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, &file_key).unwrap();
-            assert_eq!(
-                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &history).unwrap_err(),
-                CoreError::Corrupt
-            );
+            // A file key never opens as history, and history never as a file key,
+            // whatever row the history seal is bound to (an empty row leaves only
+            // the label to tell them apart).
+            for row in [&b""[..], &b"\x00Fuzz/row"[..]] {
+                assert_eq!(
+                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, row, &blob).unwrap_err(),
+                    CoreError::Corrupt
+                );
+                let history = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, row, &file_key).unwrap();
+                assert_eq!(
+                    open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &history).unwrap_err(),
+                    CoreError::Corrupt
+                );
+            }
             // Another chat's id or key, a tampered byte, a short blob.
             assert_eq!(
                 open_kept_file_key(&HISTORY_KEY, OTHER_CHAT_ID, &blob).unwrap_err(),
