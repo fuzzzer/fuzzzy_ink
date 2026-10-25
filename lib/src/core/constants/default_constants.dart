@@ -15,10 +15,10 @@ const secureStorageIosOptions = IOSOptions(
 
 /// Development builds are unsigned on macOS, so they use the login keychain
 /// instead of the data-protection keychain (DECISIONS 2026-09-12 / D-3);
-/// revert to `useDataProtectionKeyChain: true` once an Apple Development cert lands.
+/// revert to `usesDataProtectionKeychain: true` once an Apple Development cert lands.
 const secureStorageMacOsOptions = MacOsOptions(
   accessibility: KeychainAccessibility.unlocked_this_device,
-  useDataProtectionKeyChain: appFlavor != 'development',
+  usesDataProtectionKeychain: appFlavor != 'development',
 );
 
 /// The settings tile that benchmarks the file path exists in the development

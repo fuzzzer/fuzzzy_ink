@@ -63,8 +63,8 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 |---|---|
 | **A, the inviter** | The device that creates a chat. It generates the Olm account and the one-time key, publishes the **invitation**, and later completes the handshake from the acceptance. Direction byte `0x00 = A→B`. |
 | **B, the accepter** | The device that pastes the invitation. It generates its own Olm account, creates the outbound session on A's one-time key, and publishes the **acceptance**. Direction byte `0x01 = B→A`. |
-| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L25`](../../rust/fuzzy_crypto_core/src/store.rs#L25)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
-| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L258`](../../rust/fuzzy_crypto_core/src/store.rs#L258)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
+| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
+| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L260`](../../rust/fuzzy_crypto_core/src/store.rs#L260)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
 | **Blob** | A binary message with the 6-byte envelope of §6.2, exchanged as `Fuzz/` text (§6.1). Types `0x01`–`0x05`. |
 | **Container** | A file with the `0x04` envelope (§9). Files are never turned into text. |
 | **Storage-only blobs** | Types `0x10` and `0x20` never travel: the paste decoder refuses them ([`formats.rs#L63`](../../rust/fuzzy_crypto_core/src/formats.rs#L63)). |
@@ -214,8 +214,8 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 - It does not authenticate *who* A and B are; it authenticates that whoever produced each blob controls the
   Ed25519 key inside it. See §5 and §17.
 - It has no timeout: a pending chat keeps its account and one-time key until the acceptance arrives, the
-  invitation is regenerated or the chat is deleted. The app's deep-link `exp` field is a link-level hint the
-  core never sees.
+  invitation is regenerated or the chat is deleted. The app's links (`https://ink.fuzzzycore.com/…#<payload>`)
+  carry no expiry either.
 - It never publishes a fallback key or a second one-time key; the account's one-time-key count is 0 after
   completion.
 
@@ -225,7 +225,7 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 
 After the handshake both devices hold `A_ed25519` and `B_ed25519` — the exact keys that signed the blobs and
 that the handshake header bound to the 3DH. The safety number is a fingerprint of those two keys and the
-chat id ([`safety.rs#L31`](../../rust/fuzzy_crypto_core/src/safety.rs#L31)):
+chat id ([`safety.rs#L39`](../../rust/fuzzy_crypto_core/src/safety.rs#L39)):
 
 ```
 low, high = sort_lexicographic(key_1, key_2)                     // byte-wise on the two [u8; 32]
@@ -234,10 +234,10 @@ group[i]  = ( u40 BE of digest[5i .. 5i+5] ) mod 100000            for i in 0..1
 text      = zero-padded 5-digit groups joined by single spaces      // 60 digits, 71 characters
 ```
 
-Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20)),
-12 groups ([`#L22`](../../rust/fuzzy_crypto_core/src/safety.rs#L22)) of 5 digest bytes each
-([`#L24`](../../rust/fuzzy_crypto_core/src/safety.rs#L24)), modulus 100 000
-([`#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25)); the last 4 bytes of the digest are unused. This
+Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L28`](../../rust/fuzzy_crypto_core/src/safety.rs#L28)),
+12 groups ([`#L30`](../../rust/fuzzy_crypto_core/src/safety.rs#L30)) of 5 digest bytes each
+([`#L32`](../../rust/fuzzy_crypto_core/src/safety.rs#L32)), modulus 100 000
+([`#L33`](../../rust/fuzzy_crypto_core/src/safety.rs#L33)); the last 4 bytes of the digest are unused. This
 is libsignal's `DisplayableFingerprint` group encoding (5 bytes → `% 100000`), applied to one combined
 digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-…`, keys `00 01 … 1f` and
 `ff fe … e0` → `77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132`).
@@ -257,12 +257,27 @@ digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-
   cannot be reused as another's.
 - **Availability.** B has A's identity key from the moment it accepts; A has B's once the handshake completes.
   Before that `safety_number` is `UnknownChat`.
-- **The verified flag** (`mark_verified`, [`safety.rs#L75`](../../rust/fuzzy_crypto_core/src/safety.rs#L75)) is a
+- **The verified flag** (`mark_verified`, [`safety.rs#L83`](../../rust/fuzzy_crypto_core/src/safety.rs#L83)) is a
   per-device boolean in the sealed state, persisted before the call returns. It is refused (`UnknownChat`)
   while no peer key exists, so a flag can never pre-date the keys it vouches for. The only ways an identity
   key of an existing chat can change — regenerating a pending invitation, or deleting and re-pairing — replace
   the whole state with `verified = false`, so the flag cannot outlive the keys either.
 - Nothing secret is hashed; both keys travel in the clear inside the pairing blobs.
+- **Version.** The computation above is safety-number **version 1**
+  (`SAFETY_NUMBER_VERSION`, [`safety.rs`](../../rust/fuzzy_crypto_core/src/safety.rs)); the `V1` at the end of the
+  domain string is that number, and a test pins the two together. The core never returns the digits alone:
+  `safety_number` answers `SafetyNumber { version, digits }` ([`api/safety.rs`](../../rust/fuzzy_crypto_core/src/api/safety.rs)),
+  and the app shows "Version 1" under the digits with the instruction to update both apps if the partner sees
+  another version or none. Two builds that derive the digits differently therefore show different versions,
+  never silently different digits that look exactly like an attack. **Any** change to the derivation — the
+  domain string (including a rename of the app), the inputs, their order, the digest or the group encoding —
+  bumps the version (§12); the golden test fails until the version is bumped and the golden re-pinned.
+- **History.** Release 1.1.0 (app id `com.fuzzzytechnologies.fuzzy_chat`) hashed the domain
+  `FUZZZYSEAL_SAFETY_NUMBER_V1`; 1.1.1 renamed it to `FUZZZYINK_SAFETY_NUMBER_V1` without a version change and
+  without showing a version, so a 1.1.0 device and a later one disagreed silently. 1.1.0 is retired (its app id
+  never updates to the current one) and is not supported: its computation is the unlabelled predecessor, not a
+  version. The current computation keeps exactly the digits of 1.1.1–1.1.4 and is labelled version 1, so those
+  builds agree with this one digit for digit.
 
 ---
 
@@ -427,7 +442,7 @@ Vectors: `wrapped_store_key` (key `33×32`, password `pw`, salt `11×16`, nonce 
 | 31..55 | 24 | `nonce` | random per wrap |
 | 55..103 | 48 | `ct ‖ tag` | AEAD(key = Argon2id(password, salt, m, t, p), nonce, aad = role string, the 32-byte key) — exactly 48 bytes ([`formats.rs#L31`](../../rust/fuzzy_crypto_core/src/formats.rs#L31)); anything else `Corrupt` |
 
-103 bytes. The AAD names the key's **role**: `store-key` ([`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41))
+103 bytes. The AAD names the key's **role**: `store-key` ([`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43))
 for the app-lock store key, `vault-key` ([`vault.rs#L15`](../../rust/fuzzy_crypto_core/src/vault.rs#L15)) for the
 vault master key, so a blob wrapped for one role never unwraps as the other. Never valid on the wire.
 
@@ -515,12 +530,31 @@ Vector: `file_key_body` (44 bytes: key `42×32`, name `report.pdf`).
 |---|---|---|---|
 | 0..32 | 32 | `file_key` | the container's AEAD key |
 | 32..34 | 2 | `original_name_len` | `u16 BE`, 1..=65535 |
-| 34.. | n | `original_name` | UTF-8; then validated as a **file name** ([`files.rs#L269`](../../rust/fuzzy_crypto_core/src/files.rs#L269)): not empty, not `.` or `..`, at most 255 bytes ([`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261)), no `/`, `\`, NUL or any byte in `0x00..=0x1f`, `0x7f` |
+| 34.. | n | `original_name` | UTF-8; then **made safe** as a file name ([`files.rs#L305`](../../rust/fuzzy_crypto_core/src/files.rs#L305)) — never refused for its content (below) |
 
-The name check runs on both sides (the sender derives it from a real basename; the receiver checks it inside
-step 9, before the counter commit). It is a file *name*, never a path, so a peer cannot steer the receiver's
-output outside the directory the receiver chose. It is not display-sanitised (a Unicode direction override is
-a valid file name); the UI must treat it as untrusted text. The app does (2026-10-22): every file name and
+The name is cleaned on both sides by the same function, `safe_file_name` (the sender cleans its own basename
+before sealing it, the receiver cleans whatever the peer sent after opening it), with the same rules on every
+platform, so a peer's choice can never make a file impossible to receive and both devices agree on the name
+(since 2026-10-26; before, the receiver *refused* a bad name as `Corrupt` after the message had been spent,
+and accepted names that Windows cannot create):
+
+1. every separator (`/`, `\`), every character Windows forbids (`< > : " | ? *`), every control character
+   (Unicode `Cc`) and every direction or invisible-format control (U+061C, U+200B–U+200F, U+202A–U+202E,
+   U+2066–U+2069, U+FEFF) becomes `_` — so the result is a single name, never a path, and cannot hide its
+   real extension behind a direction override;
+2. a name over **120 bytes** ([`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277)) is cut at a
+   character boundary, keeping an extension of up to 16 bytes whole — 120 leaves room for the app's ` (n)`
+   and the core's `.part` under every platform's 255 limit and keeps a file under the user's Documents
+   folder inside Windows' classic 260-character path limit;
+3. trailing dots and spaces are removed (Windows drops them silently);
+4. a Windows device name before the first dot (`CON`, `PRN`, `AUX`, `NUL`, `CONIN$`, `CONOUT$`, `COM0`–`COM9`,
+   `LPT0`–`LPT9` and their `¹²³` forms; any case; trailing spaces ignored) gets a `_` in front;
+5. an empty result (`.`, `..`, only dots and spaces) becomes `file`.
+
+The function is idempotent and never fails; only the codec's own rules (length 1..=65535, valid UTF-8) can
+still refuse a body, and the app's own sender never produces one that breaks them. The result is a bare *name*,
+so a peer cannot steer the receiver's output outside the directory the receiver chose. It is still untrusted
+text for display (the cleaning is for the file system, not for the eye). The app does (2026-10-22): every file name and
 folder it shows has its direction controls and control characters removed (`UserFileNames.forDisplay`),
 and "Open" refuses a file whose real extension — read after removing direction and invisible characters,
 trailing dots and spaces and any `:stream` part — is a program, installer, script or shortcut on that
@@ -600,7 +634,7 @@ RustCrypto STREAM construction (`aead-stream` 0.6.0, `EncryptorBE32`/`DecryptorB
 | chunk size | `chunk_size` from the header: encoder 1 MiB, decoder accepts 64 KiB..=16 MiB (§6.6) |
 | chunk `i` (`0 ≤ i < n`) | `AEAD(file_key, nonce_i, aad_i, plaintext_i)` = `ct ‖ tag(16)`; every chunk but the last holds exactly `chunk_size` plaintext bytes, the last holds the remainder (0..=`chunk_size`) |
 | `nonce_i` (24 bytes) | `nonce_prefix(19) ‖ i as u32 BE ‖ last_flag` where `last_flag = 0x01` for chunk `n−1`, `0x00` otherwise — built by `aead-stream` (`StreamBE32::aead_nonce`, `aead-stream-0.6.0/src/lib.rs` line 440) |
-| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L487`](../../rust/fuzzy_crypto_core/src/files.rs#L487)) |
+| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L576`](../../rust/fuzzy_crypto_core/src/files.rs#L576)) |
 | `n` (chunks) | encrypt: `max(1, ceil(len / chunk_size))` — an empty file is one 16-byte chunk; decrypt: `ceil(body_len / (chunk_size + 16))` |
 
 Vectors: `file_container_password` (one 43-byte plaintext → one chunk sealed with the last flag; key =
@@ -614,12 +648,12 @@ of the *new* `x` is emitted.
 
 ### 9.2 Decoding and what the tags detect
 
-`decrypt_chunks` ([`files.rs#L343`](../../rust/fuzzy_crypto_core/src/files.rs#L343)), in order:
+`decrypt_chunks` ([`files.rs#L432`](../../rust/fuzzy_crypto_core/src/files.rs#L432)), in order:
 
 1. Read at most `MAX_HEADER_LEN = 65 568` bytes ([`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53)),
    decode the header (§6.6; `UnsupportedFormat` / `Corrupt` as there), keep its exact bytes for the AAD.
 2. Derive the key (password mode: Argon2id from the header's salt and parameters, §11; chat mode: §9.4).
-3. Structural check ([`files.rs#L418`](../../rust/fuzzy_crypto_core/src/files.rs#L418)): `body_len = file_len −
+3. Structural check ([`files.rs#L507`](../../rust/fuzzy_crypto_core/src/files.rs#L507)): `body_len = file_len −
    header_len ≥ 16`, `n = ceil(body_len / (chunk_size + 16))`, and the last chunk `≥ 16` bytes; else `Corrupt`
    — before any output file exists.
 4. For `i in 0..n`: read the chunk, `decrypt_next` for `i < n−1`, `decrypt_last` for `i = n−1`; write the
@@ -642,12 +676,12 @@ of the *new* `x` is emitted.
 ### 9.3 The `.part` rule and jobs
 
 - All output goes to `<output>.part` (suffix appended, so `report.pdf.part`), created with mode `0o600` on
-  unix ([`store.rs#L319`](../../rust/fuzzy_crypto_core/src/store.rs#L319)), **after** the header parsed and the key
+  unix ([`store.rs#L321`](../../rust/fuzzy_crypto_core/src/store.rs#L321)), **after** the header parsed and the key
   was derived — so a header-stage rejection creates nothing. On success: `fsync` → close → rename over
   `<output>` (the core replaces an existing file silently; the app never names an existing file, or one with
   a `.part` beside it, as `<output>` — it picks `name (1).ext`, `name (2).ext`, … first,
   `UserFileNames.uniqueOutputPath`, 2026-10-22, `THREAT_MODEL.md` R15). On *any* other exit — error, cancel, panic — the `.part`
-  is unlinked by a drop guard ([`files.rs#L499`](../../rust/fuzzy_crypto_core/src/files.rs#L499)). A process kill
+  is unlinked by a drop guard ([`files.rs#L588`](../../rust/fuzzy_crypto_core/src/files.rs#L588)). A process kill
   mid-job can leave a `.part` behind; the next job over the same output truncates it.
 - A job's control word ([`files.rs#L41`](../../rust/fuzzy_crypto_core/src/files.rs#L41)) is read before every
   chunk: paused → sleep 50 ms and re-read; cancelled (terminal) → `Cancelled`, `.part` gone. Progress is one
@@ -659,8 +693,8 @@ of the *new* `x` is emitted.
 ### 9.4 Chat mode — the file key rides in one Olm message
 
 **Send** (`prepare_file_send` → `run_file_job`, [`api/files.rs#L207`](../../rust/fuzzy_crypto_core/src/api/files.rs#L207),
-[`files.rs#L190`](../../rust/fuzzy_crypto_core/src/files.rs#L190)): the input must be a readable regular file
-(`Io` otherwise — checked before anything is spent); its basename is validated as in §7.3; a random 32-byte
+[`files.rs#L191`](../../rust/fuzzy_crypto_core/src/files.rs#L191)): the input must be a readable regular file
+(`Io` otherwise — checked before anything is spent); its basename is made safe as in §7.3; a random 32-byte
 file key is drawn; the file-key body `file_key ‖ name_len ‖ name` is sealed in **one Olm message** on the
 chat's session with content type `0x02` and the next send counter — the sending rules of §7.2 exactly; the
 ratcheted session and counter are persisted; the ticket (key + header) is returned and the core lock
@@ -668,14 +702,14 @@ released. The container header embeds that Olm message; then the chunks are stre
 one ratchet step and has the same forward secrecy as a text message.**
 
 **Receive** (`prepare_file_receive` → `run_file_job`, [`api/files.rs#L248`](../../rust/fuzzy_crypto_core/src/api/files.rs#L248),
-[`files.rs#L220`](../../rust/fuzzy_crypto_core/src/files.rs#L220)): the input must be a regular file; the header is
+[`files.rs#L232`](../../rust/fuzzy_crypto_core/src/files.rs#L232)): the input must be a regular file; the header is
 read and the structural check of §9.2 step 3 runs **first**, so a header-only or truncated container is
 `Corrupt` before the file's message is spent; a password-mode header is `UnsupportedFormat`; then the embedded
 Olm message goes through the receiving chain of §7.2 with `content_type = 0x02` and the file-key body as the
 body parser — `Replay`, `TooOld`, `WrongChat`, `Corrupt` exactly as for text; the state is persisted; the
 ticket carries the key and the original name. The run then opens the chunks with `Corrupt` as the chunk-0
 failure, and additionally refuses to release the key unless the header on disk equals the header the ticket
-was prepared on ([`api/files.rs#L302`](../../rust/fuzzy_crypto_core/src/api/files.rs#L302)) — redundant with the
+was prepared on ([`api/files.rs#L303`](../../rust/fuzzy_crypto_core/src/api/files.rs#L303)) — redundant with the
 AAD, kept as a belt.
 
 **Binding.** The Olm message commits to the inner header only — chat, identities, direction, counter, key,
@@ -725,6 +759,7 @@ shares.
 ```
 <application support directory>/fuzzy_crypto_store/<chat_id>.state      one sealed 0x20 file per chat
 <application support directory>/fuzzy_crypto_store/<chat_id>.state.tmp  transient, see 10.3
+<application support directory>/fuzzy_crypto_store.lock                 empty; the store's exclusive lock while it is open (§17.10)
 flutter_secure_storage  key "crypto_store_key_v1"                       the wrapped store key (0x10), base64
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
 <application support directory>/vault/vault.meta                       JSON: the wrapped vault master key (0x10, base64, field "verificationToken"); vault id, timestamps, auto-lock minutes in plaintext
@@ -766,7 +801,7 @@ crash-safe one-time move (`VaultLocationMigration`, `THREAT_MODEL.md` §2.5) bri
 ### 10.3 Sealed per-chat state files
 
 `<chat_id>.state` is a `0x20` blob (§6.9): `AEAD(store key, random nonce, aad = "chat-state" ‖ chat_id,
-body)` ([`store.rs#L42`](../../rust/fuzzy_crypto_core/src/store.rs#L42), no separator — the chat id is fixed-length).
+body)` ([`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44), no separator — the chat id is fixed-length).
 Vector: `state_file` with its decrypted body in `state_file.body.json`.
 
 The body is compact serde JSON of `ChatState` ([`state.rs#L57`](../../rust/fuzzy_crypto_core/src/state.rs#L57)) —
@@ -796,8 +831,8 @@ One AEAD scheme with random nonces covers all local state. The JSON is produced 
 that is wiped after use ([`state.rs#L27`](../../rust/fuzzy_crypto_core/src/state.rs#L27)), so no partial copy of a
 key is left on the heap by buffer growth.
 
-**Atomic write, save-before-return** ([`store.rs#L334`](../../rust/fuzzy_crypto_core/src/store.rs#L334),
-[`#L420`](../../rust/fuzzy_crypto_core/src/store.rs#L420)): every mutation (pairing step, message, file key, flag)
+**Atomic write, save-before-return** ([`store.rs#L336`](../../rust/fuzzy_crypto_core/src/store.rs#L336),
+[`#L517`](../../rust/fuzzy_crypto_core/src/store.rs#L517)): every mutation (pairing step, message, file key, flag)
 runs inside `with_state_mut`: load (lazily cached), mutate, seal, write `<chat_id>.state.tmp` (mode `0o600`),
 `fsync`, rename over `<chat_id>.state`, `fsync` the directory (unix). The result of the operation is returned
 only after the rename. If the mutation, the seal or the write fails, the cached copy is evicted and the next
@@ -805,8 +840,12 @@ call re-reads the disk — the cache never holds a state that is not on disk, an
 the file byte-identical. On decrypt this means: a crash *between* Olm decrypt and the write leaves the message
 key on disk, so the user re-pastes once; a crash *after* the write has already returned the plaintext.
 
-**Delete** ([`store.rs#L444`](../../rust/fuzzy_crypto_core/src/store.rs#L444)): remove a stale `.tmp`, overwrite the
-state file with zeros (best effort on flash), unlink. Idempotent. The history key goes with the state, so the
+**Delete** ([`store.rs#L541`](../../rust/fuzzy_crypto_core/src/store.rs#L541)): overwrite a stale `.tmp` and the
+state file with zeros **in place** — opened without truncation, so the zeros land on the blocks that held the
+ciphertext rather than on newly allocated ones — `fsync`, then unlink (since 2026-10-26; before, the file was
+truncated first, which freed the old blocks unwritten). Best effort: on a copy-on-write file system (APFS on
+iPhone and Mac, Btrfs) and on flash storage with wear levelling the old blocks can survive an in-place write;
+there the protection of a deleted chat's old state is the platform's disk encryption. Idempotent. The history key goes with the state, so the
 chat's sealed history (§10.4) is unreadable from then on by design — a chat re-created under the same id draws
 a new key and answers `Corrupt` for the old seals.
 
@@ -817,8 +856,8 @@ sender can never decrypt its own output) — owner decision D-1, design (a). Fil
 file is a plain file on disk (§10.5) and its row holds only the path. Each text plaintext is sealed by
 `seal_local(chat_id, plaintext)`: `AEAD(history key of chat_id, random nonce, aad = "local-seal" ‖ chat_id,
 plaintext)` in a `0x20` blob, stored base64 in the database row
-([`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43), [`#L210`](../../rust/fuzzy_crypto_core/src/store.rs#L210),
-[`#L466`](../../rust/fuzzy_crypto_core/src/store.rs#L466)); `open_local(chat_id, blob)` is the inverse. The
+([`store.rs#L45`](../../rust/fuzzy_crypto_core/src/store.rs#L45), [`#L212`](../../rust/fuzzy_crypto_core/src/store.rs#L212),
+[`#L561`](../../rust/fuzzy_crypto_core/src/store.rs#L561)); `open_local(chat_id, blob)` is the inverse. The
 history key is the chat's own (§3): it is read from that chat's sealed state — the cached copy when the state is
 loaded, else the file — so a chat the store does not know is `UnknownChat`, a tag failure (a tampered blob,
 another chat's key, or the right key under another chat's id, which the AAD binds) is `Corrupt`. Vector:
@@ -874,14 +913,14 @@ never re-encrypted. The master key is held in an opaque handle (`VaultKey`) that
 
 ## 11. Password formats
 
-**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L94`](../../rust/fuzzy_crypto_core/src/store.rs#L94)),
+**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L96`](../../rust/fuzzy_crypto_core/src/store.rs#L96)),
 is the crate's only Argon2 entry: the store key, the vault key, password-sealed blobs and password-mode files
 all go through it.
 
 | Parameter | Value written by this build | Where |
 |---|---|---|
 | algorithm | Argon2id, version 0x13 | `argon2` 0.6.0 |
-| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27) |
+| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L29`](../../rust/fuzzy_crypto_core/src/store.rs#L29) |
 | `t_cost` | 4 | same |
 | `p_cost` | 1 | same |
 | output | 32 bytes | same |
@@ -895,12 +934,12 @@ changed parameter derives a different KEK.
 
 **Caps on attacker-controlled headers.** Because a pasted `0x05` blob, a received container or a tampered
 `0x10` blob dictates the cost, the decoder refuses `m_cost > 262 144 KiB (256 MiB)`
-([`store.rs#L36`](../../rust/fuzzy_crypto_core/src/store.rs#L36)) or `t_cost > 16`
-([`store.rs#L39`](../../rust/fuzzy_crypto_core/src/store.rs#L39)) — and anything `argon2::Params::new` rejects, e.g.
+([`store.rs#L38`](../../rust/fuzzy_crypto_core/src/store.rs#L38)) or `t_cost > 16`
+([`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41)) — and anything `argon2::Params::new` rejects, e.g.
 `p = 0` or `m < 8·p` — as `Corrupt` **before allocating a single block**. The worst header a peer can make the
 device compute is therefore 256 MiB × 16 passes (≈ 2 s on a 2021 laptop in release, more on a phone). All
 Argon2 runs in the process are serialised by one lock, taken *before* the block buffer is allocated
-([`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48)), so peak memory is one buffer, and that buffer
+([`store.rs#L50`](../../rust/fuzzy_crypto_core/src/store.rs#L50)), so peak memory is one buffer, and that buffer
 is owned by the crate and wiped after the run (the `argon2` crate does not wipe its own).
 
 **Password-sealed blob `0x05`** (§6.7; vector `password_sealed_text`): `open_bytes`
@@ -931,6 +970,9 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 - **Inner header version** (`inner_version`, §7.1) and **state body version** (`format_version`, §10.3) are
   independent counters with the same rule each: an unknown value is refused. They are bumped only when their
   own layout changes.
+- **Safety-number version** (`SAFETY_NUMBER_VERSION`, §5) is a third independent counter. It is not on the
+  wire — each device computes the number locally — so instead of being refused it is **shown** next to the
+  digits. Changing anything in the derivation of §5 bumps it; the domain string's `V<n>` follows it.
 - **Argon2 parameters are data, not format** (§11): changing the values a build *writes* is not a bump.
 - **Text encoding.** Version 1 has exactly one text encoding, base64url without padding, and no encoding byte
   after `Fuzz/`. The design note that a base91 encoding could later be added as "encoding `0x02`" of the
@@ -1113,8 +1155,13 @@ Stated so a reviewer does not have to discover them.
    builds run; it is a development-only setting, not shipped in staging or production.
 9. **Hostile Argon2 headers cost up to 256 MiB × 16 passes** (§11) before being refused by the tag. A phone may
    take ten seconds on the worst accepted header; it will not crash.
-10. **Two processes on one store are unsupported.** In-process access is serialised; a second process opening
-    the same directory would race the atomic writes.
+10. **One process per store.** In-process access is serialised; across processes the store directory carries an
+    exclusive OS file lock (`<application support directory>/fuzzy_crypto_store.lock`, `flock` on Linux, macOS,
+    Android and iOS, `LockFileEx` on Windows), taken by `open_store` and released when the last handle closes or
+    the process ends ([`store.rs#L383`](../../rust/fuzzy_crypto_core/src/store.rs#L383)). A second copy of the app
+    gets `Io` from `open_store` (after about a second of retries) instead of racing the first one's atomic
+    writes — so it can neither corrupt a chat's state nor reuse a counter or a message key. Handles in one
+    process share the lock (since 2026-10-26).
 11. **`.part` after a process kill** (§9.3) stays on disk until the next job over the same output.
 12. **No post-quantum component, no deniability claim, no multi-device, no key rotation** of a chat's identity
     keys (delete and re-pair instead).
@@ -1212,19 +1259,19 @@ a file job's terminal event carries.
 | inner header version | `0x01` | [`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513) |
 | direction bytes | A→B `0x00`, B→A `0x01` | [`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519) |
 | content types | `0x00 0x01 0x02` | [`formats.rs#L537`](../../rust/fuzzy_crypto_core/src/formats.rs#L537) |
-| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27) |
-| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L36`](../../rust/fuzzy_crypto_core/src/store.rs#L36) |
-| AAD `store-key` | | [`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41) |
-| AAD `chat-state` ‖ chat id | | [`store.rs#L42`](../../rust/fuzzy_crypto_core/src/store.rs#L42) |
-| AAD `local-seal` ‖ chat id | | [`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43) |
+| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L29`](../../rust/fuzzy_crypto_core/src/store.rs#L29) |
+| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L38`](../../rust/fuzzy_crypto_core/src/store.rs#L38) |
+| AAD `store-key` | | [`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43) |
+| AAD `chat-state` ‖ chat id | | [`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44) |
+| AAD `local-seal` ‖ chat id | | [`store.rs#L45`](../../rust/fuzzy_crypto_core/src/store.rs#L45) |
 | AAD `vault-key` / `vault-item` | | [`vault.rs#L15`](../../rust/fuzzy_crypto_core/src/vault.rs#L15) |
 | `0x05` AAD length | 31 | [`passwords.rs#L18`](../../rust/fuzzy_crypto_core/src/passwords.rs#L18) |
-| store directory | `fuzzy_crypto_store` | [`store.rs#L25`](../../rust/fuzzy_crypto_core/src/store.rs#L25) |
-| state file extensions | `.state`, `.state.tmp` | [`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44) |
+| store directory | `fuzzy_crypto_store` | [`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27) |
+| state file extensions | `.state`, `.state.tmp` | [`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46) |
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
-| safety-number domain / groups / bytes / modulus | `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20) |
-| original name limit | 255 bytes | [`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261) |
+| safety-number version / domain / groups / bytes / modulus | 1 / `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25) |
+| original name limit (after cleaning) | 120 bytes, extension kept up to 16 | [`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277) |
 | longest header read | 65 568 | [`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53) |
 | pause poll | 50 ms | [`files.rs#L50`](../../rust/fuzzy_crypto_core/src/files.rs#L50) |
 | Olm skipped keys / gap / chains | 40 / 2000 / 5 | `vodozemac-0.10.0/src/olm/session/receiver_chain.rs` lines 50, 31; `session/mod.rs` line 53 |

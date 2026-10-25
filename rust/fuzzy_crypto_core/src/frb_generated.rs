@@ -2301,6 +2301,18 @@ impl SseDecode for Option<String> {
     }
 }
 
+impl SseDecode for crate::api::safety::SafetyNumber {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_version = <u8>::sse_decode(deserializer);
+        let mut var_digits = <String>::sse_decode(deserializer);
+        return crate::api::safety::SafetyNumber {
+            version: var_version,
+            digits: var_digits,
+        };
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -2614,6 +2626,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::files::FileProgress>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::safety::SafetyNumber {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.version.into_into_dart().into_dart(),
+            self.digits.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::safety::SafetyNumber
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::safety::SafetyNumber>
+    for crate::api::safety::SafetyNumber
+{
+    fn into_into_dart(self) -> crate::api::safety::SafetyNumber {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::vault::VaultInitResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2839,6 +2872,14 @@ impl SseEncode for Option<String> {
         if let Some(value) = self {
             <String>::sse_encode(value, serializer);
         }
+    }
+}
+
+impl SseEncode for crate::api::safety::SafetyNumber {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u8>::sse_encode(self.version, serializer);
+        <String>::sse_encode(self.digits, serializer);
     }
 }
 

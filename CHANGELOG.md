@@ -5,11 +5,26 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+- **The safety number shows its version.** The page shows "Version 1" under the digits, so two app versions that
+  compute the number differently show different versions instead of different digits that look like an attack.
+  The digits of 1.1.1 and later are unchanged.
+- **Any file name can be received.** A name the partner chooses is made safe on both sides (characters Windows
+  forbids, device names such as `CON`, trailing dots, very long names) instead of making the file impossible to
+  receive.
+- **One copy of the app per device.** A second copy of the app can no longer open the same chats at the same time
+  (which could corrupt a chat or reuse a message key); deleting a chat overwrites its saved state in place first.
+- **Builds:** outside build steps are pinned to exact commits with the least permissions; store builds compile the
+  encryption core with the pinned Rust version and lock file; release builds are signed only with the real keys from
+  the build service and stop when a key is missing; the patched `ctutils` and `tokio` versions are in.
+
 ### Changed
 - **The app is called Fuzzzy Ink** (was Fuzzzy Seal) wherever a person sees the name: the home-screen and window
   titles on every platform, the welcome and unlock screens, the Face ID and biometric prompts, and the text sent with a
-  shared invitation, acceptance or message, in English and Georgian. Identifiers stay as they were — the app id
-  `com.fuzzzycore.seal`, the Dart package, the safety-number domain separator. New files on Android now land in
+  shared invitation, acceptance or message, in English and Georgian. The identifiers changed too, from 1.1.1 on:
+  the app id is `com.fuzzzycore.ink` (1.1.0 was `com.fuzzzytechnologies.fuzzy_chat`, so a 1.1.0 install never
+  updates to this app — install it fresh), the Dart package is `fuzzzy_ink`, and the safety-number domain
+  separator is `FUZZZYINK_SAFETY_NUMBER_V1`, so a 1.1.0 device shows different safety-number digits. New files on Android now land in
   `Downloads/Fuzzzy Ink/`; files saved earlier stay in `Downloads/Fuzzzy Seal/` and are not moved.
 - **Files land where the user can find them.** A fuzzed file (on send) and an unfuzzed file (on receive) go to
   `Downloads/Fuzzzy Ink/<chat name>/` on Android (MediaStore, no storage permission on API 29+) and to the app's

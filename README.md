@@ -11,18 +11,14 @@ Once you link up with someone, within the app 'fuzz' (encrypt) messages and file
 
 ## 🚀 Get Fuzzzy Ink!
 
-Ready to start fuzzing? Fuzzzy Ink runs on **Android, Windows, macOS and Linux**. (The web build is
-unsupported — the encryption core is native code. iOS builds from this repo but is not in the App Store.)
-Grab the latest version here:
+Ready to start fuzzing? Fuzzzy Ink runs on **Android, Windows and macOS**; the iPhone app is in testing
+(TestFlight). Linux builds from this repository, but there is no packaged Linux download yet. The web build is
+unsupported — the encryption core is native code.
 
-<!-- [TODO: add app build and link them] -->
-
-- **Android:** [Download Fuzzzy Ink vX.Y.Z APK](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **Windows (64-bit):** [Download Fuzzzy Ink vX.Y.Z ZIP](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **macOS (Universal):** [Download Fuzzzy Ink vX.Y.Z DMG](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **Linux (AppImage) (TO BE ADDED SOON):** [Download Fuzzzy Ink vX.Y.Z AppImage](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-
-Or visit the [**Latest Releases Page**](https://github.com/fuzzzer/fuzzy_chat/releases) for all releases.
+Every download is on the [**latest release**](https://github.com/fuzzzer/fuzzzy_ink/releases/latest) page:
+the Android APK, the Windows ZIP and the macOS app ZIP, with `SHA256SUMS` and a build certificate for each file
+([how to check them](documents/security/RELEASE.md#3-verifying-a-release)). All releases:
+[releases](https://github.com/fuzzzer/fuzzzy_ink/releases).
 
 ## What's the Big Idea?
 
@@ -121,6 +117,6 @@ Repeat as many times as your secret-sharing heart desires!
   specification; also the [threat model](documents/security/THREAT_MODEL.md), the
   [2026 hardening write-up](documents/security/HARDENING_2026.md) and, for building the app yourself,
   the [developer notes](documents/technical_documentation.md).
-- 🐛 **Spotted a Gremlin? Got Ideas for a New Gadget?** Report to HQ (GitHub Issues): [https://github.com/fuzzzer/fuzzy_chat/issues]
+- 🐛 **Spotted a Gremlin? Got Ideas for a New Gadget?** Report to HQ (GitHub Issues): <https://github.com/fuzzzer/fuzzzy_ink/issues>. Security problems go privately instead: see [SECURITY.md](SECURITY.md).
 
 Happy (and secure) scheming with Fuzzzy Ink! 🛡️

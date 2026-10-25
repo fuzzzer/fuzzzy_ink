@@ -269,9 +269,10 @@ impl CryptoCore {
 }
 
 impl FileTicket {
-    /// The file's name as the sender saw it: the input's file name on a send
-    /// ticket, the name carried inside the Olm message on a receive ticket
-    /// (a bare name — never a path). Readable before and after the run.
+    /// The file's name: the input's file name on a send ticket; on a receive
+    /// ticket the name carried inside the Olm message, made safe for every
+    /// platform (a bare name — never a path, never a Windows device name, at
+    /// most 120 bytes; PROTOCOL.md §7.3). Readable before and after the run.
     pub fn original_name(&self) -> String {
         self.original_name.clone()
     }
@@ -836,6 +837,74 @@ mod tests {
         // fail under the re-bound header.
         assert_eq!(run(&mut ticket, &out).unwrap_err(), CoreError::Corrupt);
         assert_absent(&out);
+    }
+
+    /// A peer whose build sends a name this one would never send (an old or a
+    /// modified build): the receiver gets a safe name and the file arrives —
+    /// a name can no longer make a file impossible to receive.
+    #[test]
+    fn hostile_peer_names_are_received_under_a_safe_name() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        // 604 bytes: refused as `Corrupt` (after the ratchet step) before.
+        let long = format!("{}.pdf", "ა".repeat(200));
+        let cases = [
+            ("CON", "_CON".to_owned()),
+            ("..\\x:y. ", ".._x_y".to_owned()),
+            ("a/../../b", "a_.._.._b".to_owned()),
+            (long.as_str(), format!("{}.pdf", "ა".repeat(38))),
+        ];
+        for (index, (name, expected)) in cases.iter().enumerate() {
+            let input = a.write_plain("plain.bin", b"secret");
+            let sealed = a.path(&format!("hostile-{index}.fuzz"));
+            let setup = ChatFileSetup::random().unwrap();
+            let (key, header) = a
+                .core
+                .opened_mut()
+                .unwrap()
+                .with_state_mut(CHAT_X, |state| {
+                    crate::files::wrap_named_file_key(state, name, &setup)
+                })
+                .unwrap();
+            let mut ticket = FileTicket {
+                original_name: (*name).to_owned(),
+                inner: Some(PreparedJob {
+                    key,
+                    header,
+                    input,
+                    kind: JobKind::Send,
+                }),
+            };
+            run(&mut ticket, &sealed).unwrap();
+
+            let mut received = b
+                .core
+                .prepare_file_receive(CHAT_X.into(), sealed.to_string_lossy().into_owned())
+                .unwrap();
+            assert_eq!(&received.original_name(), expected, "{name:?}");
+            let output = b.path(&received.original_name());
+            run(&mut received, &output).unwrap();
+            assert_eq!(fs::read(&output).unwrap(), b"secret", "{name:?}");
+        }
+    }
+
+    /// A local file whose name this build would not hand to a peer as-is is
+    /// still sent: the name inside the message is the safe one.
+    #[test]
+    fn awkward_local_names_are_sent_under_a_safe_name() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        let long = format!("{}.txt", "ა".repeat(80)); // 244 bytes: a valid name here
+        let sealed = send(&mut a, CHAT_X, &long, b"long");
+        let received = b
+            .core
+            .prepare_file_receive(CHAT_X.into(), sealed.to_string_lossy().into_owned())
+            .unwrap();
+        assert_eq!(received.original_name(), format!("{}.txt", "ა".repeat(38)));
     }
 
     #[test]

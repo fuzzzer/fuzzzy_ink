@@ -305,8 +305,10 @@ void main() {
       final onA = await a.safetyNumber(chatId: _chatId);
       final onB = await b.safetyNumber(chatId: _chatId);
       expect(onA, onB);
-      expect(onA, matches(RegExp(r'^\d{5}( \d{5}){11}$')));
-      expect(onA.replaceAll(' ', ''), hasLength(60));
+      // Every number carries the version of its computation.
+      expect(onA.version, 1);
+      expect(onA.digits, matches(RegExp(r'^\d{5}( \d{5}){11}$')));
+      expect(onA.digits.replaceAll(' ', ''), hasLength(60));
 
       expect(await a.isVerified(chatId: _chatId), isFalse);
       await a.markVerified(chatId: _chatId, verified: true);

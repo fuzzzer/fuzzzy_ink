@@ -2,7 +2,9 @@ part of 'safety_number_cubit.dart';
 
 class SafetyNumberState {
   final StateStatus status;
-  final String? safetyNumber;
+  /// The digits and the version of the computation that produced them; the
+  /// page shows both.
+  final SafetyNumber? safetyNumber;
   final bool isVerified;
   final DefaultFailure? failure;
 
@@ -15,7 +17,7 @@ class SafetyNumberState {
 
   SafetyNumberState copyWith({
     StateStatus? status,
-    String? safetyNumber,
+    SafetyNumber? safetyNumber,
     bool? isVerified,
     DefaultFailure? failure,
   }) {
@@ -29,5 +31,5 @@ class SafetyNumberState {
 
   @override
   String toString() =>
-      'SafetyNumberState(status: $status, safetyNumber: $safetyNumber, isVerified: $isVerified, failure: $failure)';
+      'SafetyNumberState(status: $status, safetyNumber: ${safetyNumber?.version}/${safetyNumber?.digits}, isVerified: $isVerified, failure: $failure)';
 }

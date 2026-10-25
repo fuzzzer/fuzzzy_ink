@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
+import 'package:toml/toml.dart';
 
 import 'android_environment.dart';
 import 'cargo.dart';
@@ -147,7 +148,30 @@ class RustBuilder {
   CargoBuildOptions? get _buildOptions =>
       environment.crateOptions.cargo[environment.configuration];
 
-  String get _toolchain => _buildOptions?.toolchain.name ?? 'stable';
+  // Fuzzzy Ink change to vendored cargokit: the crate's own
+  // rust-toolchain.toml wins over the cargokit.yaml channel (default
+  // "stable"), so store builds use the pinned compiler the crate is tested
+  // and reproduced with, not whatever stable is current on the build machine.
+  String get _toolchain =>
+      _pinnedToolchain(environment.manifestDir) ??
+      _buildOptions?.toolchain.name ??
+      'stable';
+
+  /// The `[toolchain] channel` of `<manifestDir>/rust-toolchain.toml`, if any.
+  static String? _pinnedToolchain(String manifestDir) {
+    final file = File(path.join(manifestDir, 'rust-toolchain.toml'));
+    if (!file.existsSync()) {
+      return null;
+    }
+    final toolchain = TomlDocument.parse(file.readAsStringSync())
+        .toMap()['toolchain'];
+    final channel = toolchain is Map ? toolchain['channel'] : null;
+    if (channel is! String || channel.isEmpty) {
+      throw BuildException(
+          '${file.path} has no [toolchain] channel; refusing to guess one.');
+    }
+    return channel;
+  }
   String get _effectiveToolchain => _resolvedToolchain ?? _toolchain;
 
   /// Returns the path of directory containing build artifacts.
@@ -164,6 +188,8 @@ class RustBuilder {
             ? 'zigbuild'
             : 'build',
         ...extraArgs,
+        // Fuzzzy Ink change: build exactly the committed Cargo.lock.
+        '--locked',
         '--manifest-path',
         manifestPath,
         '-p',

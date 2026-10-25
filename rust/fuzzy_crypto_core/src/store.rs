@@ -7,10 +7,12 @@
 //! 0x20); this module only adds the crypto around them.
 
 use std::collections::HashMap;
-use std::fs::{self, File};
+use std::fs::{self, File, TryLockError};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex, Weak};
+use std::thread;
+use std::time::Duration;
 
 use argon2::{Algorithm, Argon2, Params, Version};
 use chacha20poly1305::aead::{Aead, Payload};
@@ -353,8 +355,97 @@ fn write_atomically(path: &Path, bytes: &[u8]) -> Result<(), CoreError> {
     written.map_err(|_| CoreError::Io)
 }
 
+/// Extension of the lock file beside the store directory
+/// (`<store_dir>/fuzzy_crypto_store.lock`).
+const LOCK_EXTENSION: &str = "lock";
+/// How long `open` waits for another holder of the lock to let go (a copy of
+/// the app that is just quitting) before it answers `Io`.
+const LOCK_ATTEMPTS: u32 = 20;
+const LOCK_RETRY: Duration = Duration::from_millis(50);
+
+/// The exclusive OS lock on one store directory, held for as long as any
+/// handle of this process has the store open. Two processes on one store would
+/// each cache a chat's state and write it back over the other's — a counter or
+/// a message key could be used twice (PROTOCOL.md §17). The OS releases the lock
+/// when the file closes: on the last handle's drop, or when the process dies.
+struct StoreLock {
+    _file: File,
+}
+
+/// The store directories this process has locked. A second handle on the same
+/// directory in the same process (the app opens the new handle before closing
+/// the old one) shares the lock instead of colliding with it: an OS file lock
+/// is per open file, so a second lock from this process would refuse itself.
+static HELD_LOCKS: Mutex<Vec<(PathBuf, Weak<StoreLock>)>> = Mutex::new(Vec::new());
+
+/// Takes (or shares, within this process) the exclusive lock on `root`. Another
+/// process that holds it makes this `Io` after about a second of retries.
+fn lock_store(root: &Path) -> Result<Arc<StoreLock>, CoreError> {
+    let mut held = HELD_LOCKS.lock().map_err(|_| CoreError::Internal)?;
+    held.retain(|(_, lock)| lock.strong_count() > 0);
+    if let Some(lock) = held
+        .iter()
+        .find(|(path, _)| path == root)
+        .and_then(|(_, lock)| lock.upgrade())
+    {
+        return Ok(lock);
+    }
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(root.with_extension(LOCK_EXTENSION))
+        .map_err(|_| CoreError::Io)?;
+    let mut attempt = 1;
+    loop {
+        match file.try_lock() {
+            Ok(()) => break,
+            Err(TryLockError::WouldBlock) if attempt < LOCK_ATTEMPTS => {
+                attempt += 1;
+                thread::sleep(LOCK_RETRY);
+            }
+            Err(_) => return Err(CoreError::Io),
+        }
+    }
+    let lock = Arc::new(StoreLock { _file: file });
+    held.push((root.to_path_buf(), Arc::downgrade(&lock)));
+    Ok(lock)
+}
+
+/// Best effort: writes zeros over every byte of the regular file at `path`
+/// **in place** — opened without truncation, so the file system reuses the
+/// blocks that held the ciphertext instead of freeing them and writing the
+/// zeros elsewhere — and syncs. On a copy-on-write file system (APFS, Btrfs)
+/// or flash with wear levelling the old blocks may still survive; there the
+/// guarantee is the platform's disk encryption (PROTOCOL.md §10.3). A missing
+/// file, a link or any error is ignored: the unlink that follows still runs.
+fn overwrite_in_place(path: &Path) {
+    let Ok(metadata) = fs::symlink_metadata(path) else {
+        return;
+    };
+    if !metadata.is_file() {
+        return;
+    }
+    let _ = fs::OpenOptions::new()
+        .write(true)
+        .truncate(false)
+        .open(path)
+        .and_then(|mut file| {
+            let zeros = [0u8; 4096];
+            let mut left = metadata.len();
+            while left > 0 {
+                let step = usize::try_from(left.min(zeros.len() as u64)).unwrap_or(zeros.len());
+                file.write_all(&zeros[..step])?;
+                left -= step as u64;
+            }
+            file.sync_all()
+        });
+}
+
 /// An unlocked store: the store key, its directory and the lazily loaded states.
 /// The cache only ever holds states that are on disk — any failure evicts.
+/// While it exists, no other process can open the same store.
 #[derive(ZeroizeOnDrop)]
 pub struct OpenStore {
     store_key: Key32,
@@ -362,18 +453,24 @@ pub struct OpenStore {
     root: PathBuf,
     #[zeroize(skip)]
     cache: HashMap<String, ChatState>,
+    #[zeroize(skip)]
+    _lock: Arc<StoreLock>,
 }
 
 impl OpenStore {
-    /// Creates `<store_dir>/fuzzy_crypto_store/` if missing and takes ownership of the key.
+    /// Creates `<store_dir>/fuzzy_crypto_store/` if missing, takes the store's
+    /// exclusive lock (`Io` while another process — a second copy of the app —
+    /// has it open) and takes ownership of the key.
     pub fn open(store_dir: &Path, store_key: Key32) -> Result<Self, CoreError> {
         let root = store_dir.join(STORE_SUBDIR);
         fs::create_dir_all(&root).map_err(|_| CoreError::Io)?;
         let root = fs::canonicalize(root).map_err(|_| CoreError::Io)?;
+        let lock = lock_store(&root)?;
         Ok(Self {
             store_key,
             root,
             cache: HashMap::new(),
+            _lock: lock,
         })
     }
 
@@ -439,24 +536,22 @@ impl OpenStore {
         saved
     }
 
-    /// Overwrites the state file with zeros (best effort), unlinks it and evicts
-    /// the cache. A chat with no state file is already deleted.
+    /// Overwrites the state file with zeros in place (best effort), unlinks it
+    /// and evicts the cache. A chat with no state file is already deleted.
     pub fn delete_chat(&mut self, chat_id: &str) -> Result<(), CoreError> {
         let path = self.state_path(chat_id)?;
         self.cache.remove(chat_id);
         // Sweep a `.state.tmp` left by a crash between write and rename (F2-2
-        // review nit) — harmless ciphertext, but "delete" should leave nothing.
-        let _ = fs::remove_file(path.with_extension(STATE_TMP_EXTENSION));
-        let existing = match fs::metadata(&path) {
-            Ok(metadata) => metadata,
+        // review nit) — ciphertext, but "delete" should leave nothing.
+        let tmp = path.with_extension(STATE_TMP_EXTENSION);
+        overwrite_in_place(&tmp);
+        let _ = fs::remove_file(tmp);
+        match fs::symlink_metadata(&path) {
+            Ok(_) => {}
             Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
             Err(_) => return Err(CoreError::Io),
-        };
-        let zeros = vec![0u8; usize::try_from(existing.len()).unwrap_or(0)];
-        let _ = File::create(&path).and_then(|mut file| {
-            file.write_all(&zeros)?;
-            file.sync_all()
-        });
+        }
+        overwrite_in_place(&path);
         fs::remove_file(&path).map_err(|_| CoreError::Io)
     }
 
@@ -953,6 +1048,128 @@ mod tests {
             assert!(state_files(&store).is_empty());
             assert_eq!(err_of(store.load_state(CHAT_ID)), CoreError::UnknownChat);
             store.delete_chat(CHAT_ID).unwrap();
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        /// The zeros go over the ciphertext's own bytes: a second name for the
+        /// same file (a hard link) sees them, at the full original length —
+        /// for the state file and for a stale `.state.tmp` alike.
+        #[test]
+        fn delete_chat_overwrites_in_place_before_unlinking() {
+            let dir = temp_dir();
+            let mut store = open_store(&dir, STORE_KEY);
+            store.put_state(fresh_state(CHAT_ID)).unwrap();
+            let state = store.root.join(format!("{CHAT_ID}.state"));
+            let tmp = store.root.join(format!("{CHAT_ID}.state.tmp"));
+            fs::write(&tmp, [0xAB; 1000]).unwrap();
+            let state_len = fs::metadata(&state).unwrap().len();
+            assert!(fs::read(&state).unwrap().iter().any(|byte| *byte != 0));
+
+            let state_twin = dir.join("state.twin");
+            let tmp_twin = dir.join("tmp.twin");
+            fs::hard_link(&state, &state_twin).unwrap();
+            fs::hard_link(&tmp, &tmp_twin).unwrap();
+
+            store.delete_chat(CHAT_ID).unwrap();
+
+            assert!(!state.exists() && !tmp.exists());
+            let state_bytes = fs::read(&state_twin).unwrap();
+            assert_eq!(state_bytes.len() as u64, state_len);
+            assert!(state_bytes.iter().all(|byte| *byte == 0));
+            let tmp_bytes = fs::read(&tmp_twin).unwrap();
+            assert_eq!(tmp_bytes.len(), 1000);
+            assert!(tmp_bytes.iter().all(|byte| *byte == 0));
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        /// The lock file a store holds, opened the way another process would.
+        fn foreign_handle(store_dir: &Path) -> File {
+            fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(store_dir.join(format!("{STORE_SUBDIR}.{LOCK_EXTENSION}")))
+                .unwrap()
+        }
+
+        /// Two handles in one process share the lock (the app opens the new
+        /// one before it closes the old one); it is released with the last.
+        #[test]
+        fn handles_in_one_process_share_the_lock_until_the_last_closes() {
+            let dir = temp_dir();
+            let first = open_store(&dir, STORE_KEY);
+            let second = open_store(&dir, STORE_KEY);
+            let probe = foreign_handle(&dir);
+            assert!(matches!(probe.try_lock(), Err(TryLockError::WouldBlock)));
+            drop(first);
+            assert!(matches!(probe.try_lock(), Err(TryLockError::WouldBlock)));
+            drop(second);
+            probe.try_lock().expect("released with the last handle");
+            drop(probe);
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        /// Whoever holds the lock first wins: an open while another holder has
+        /// it is `Io` and touches nothing; once it is released the open works.
+        #[test]
+        fn open_is_refused_while_another_holder_has_the_lock() {
+            let dir = temp_dir();
+            drop(open_store(&dir, STORE_KEY)); // creates the directory and lock file
+            let other = foreign_handle(&dir);
+            other.try_lock().unwrap();
+            assert_eq!(
+                err_of(OpenStore::open(&dir, Zeroizing::new(STORE_KEY))),
+                CoreError::Io
+            );
+            drop(other);
+            drop(open_store(&dir, STORE_KEY));
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        const CHILD_DIR_ENV: &str = "FUZZY_STORE_LOCK_CHILD_DIR";
+        const CHILD_EXPECT_ENV: &str = "FUZZY_STORE_LOCK_CHILD_EXPECT";
+
+        /// Only does something when [`a_second_copy_of_the_app_cannot_open_the_store`]
+        /// runs this test binary again as a second process: it opens the store
+        /// and exits 0 when the result is the one the parent expects.
+        #[test]
+        fn second_process_probe() {
+            let (Some(dir), Some(expect)) = (
+                std::env::var_os(CHILD_DIR_ENV),
+                std::env::var_os(CHILD_EXPECT_ENV),
+            ) else {
+                return;
+            };
+            let outcome = match OpenStore::open(Path::new(&dir), Zeroizing::new(STORE_KEY)) {
+                Ok(_) => "opened",
+                Err(CoreError::Io) => "refused",
+                Err(_) => "other",
+            };
+            std::process::exit(if expect == outcome { 0 } else { 1 });
+        }
+
+        /// A real second process — a second copy of the app — is refused while
+        /// the first has the store open, and can open it once the first lets go.
+        #[test]
+        fn a_second_copy_of_the_app_cannot_open_the_store() {
+            let dir = temp_dir();
+            let second_process = |expect: &str| {
+                std::process::Command::new(std::env::current_exe().unwrap())
+                    .args([
+                        "--exact",
+                        "store::tests::state::second_process_probe",
+                        "--test-threads=1",
+                    ])
+                    .env(CHILD_DIR_ENV, &dir)
+                    .env(CHILD_EXPECT_ENV, expect)
+                    .stdout(std::process::Stdio::null())
+                    .status()
+                    .unwrap()
+                    .success()
+            };
+            let first = open_store(&dir, STORE_KEY);
+            assert!(second_process("refused"), "a second process got the store");
+            drop(first);
+            assert!(second_process("opened"), "the lock outlived the store");
             let _ = fs::remove_dir_all(dir);
         }
 

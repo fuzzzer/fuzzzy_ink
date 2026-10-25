@@ -86,7 +86,7 @@ platform limit (Windows Credential Manager, 2 560 bytes).
 Two things the reader must know:
 
 1. **macOS development flavour uses the login keychain**, not the data-protection keychain
-   (`lib/src/core/constants/default_constants.dart`: `useDataProtectionKeyChain: appFlavor != 'development'`).
+   (`lib/src/core/constants/default_constants.dart`: `usesDataProtectionKeychain: appFlavor != 'development'`).
    The data-protection keychain needs a provisioned signature and this project's build machine holds no
    Apple certificate (owner decision D-3); unsigned developer builds would otherwise throw at boot. Staging
    and production builds use the data-protection keychain. A development build's wrapped key is readable
@@ -192,7 +192,9 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   move cannot recall a copy made before it: a cloud sync, desktop backup or Finder copy of the documents
   directory taken earlier still holds the wrapped key for offline guessing (§4.3). The vault's
   "delete everything" (`clearAll`, no caller today) refuses any folder not named `vault`.
-- **Two processes on one store are unsupported** (`PROTOCOL.md` §17.10).
+- **A second copy of the app cannot open the store** while the first has it open: an exclusive OS file lock
+  refuses it (`Io`), so two processes never race one chat's state or reuse a message key (`PROTOCOL.md` §17.10).
+  Test: `store::tests::state::a_second_copy_of_the_app_cannot_open_the_store`.
 - **A prepared receive that never runs has already spent the file's message.** A `FileTicket` dropped
   between `prepare_file_receive` and `run_file_job` — a process kill, a UI flow abandoned — consumed the
   Olm message at prepare time (`PROTOCOL.md` §9.4 "Semantics a consumer must know"); the container is then
@@ -207,8 +209,8 @@ read the clipboard; the app does not clear it. Plaintext shown on screen is read
 read or capture the screen. Both are outside the model (§7.2, §7.3). The app never decrypts a blob
 automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
 (`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
-the user picks it. A `fuzzylink://` deep link **prefills** the input field and navigates; it decrypts
-nothing (§7.5).
+the user picks it. An app link (`https://ink.fuzzzycore.com/…`, below) **prefills** the input field and
+navigates; it decrypts nothing (§7.5).
 
 ### 2.7 The transport channel — the app has none
 
@@ -218,10 +220,13 @@ e-mail, another messenger, a QR code, paper. The model therefore assumes the str
 **everything on the channel can be read, modified, replayed, reordered, delayed or dropped**, and says
 nothing about the channel's own security. The users' choice of channel is theirs.
 
-Deep links (`fuzzylink://invite/…`, `…/accept/…`, `…/fuzz/…`) are an app-layer convenience wrapper around
-the same blob — base64 JSON with the blob, a version, a type, and for pairing links a 24-hour `exp` hint
-the core never sees (`PROTOCOL.md` §4.6). They are subject to everything above; see §7.4 for what the
-message link adds in the clear.
+App links (`https://ink.fuzzzycore.com/invite#<payload>`, `…/accept#<payload>`, `…/message#<payload>`) are
+an app-layer convenience wrapper around the same blob — base64 JSON with the blob, a version and a type. The
+payload sits only after the `#`, the part of a URL a browser never sends to the web server, so the link page
+never receives it. They are verified Android App Links and iOS/macOS universal links (the domain declares the
+app), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is removed
+on every platform. Links carry no expiry; the core never saw one anyway (`PROTOCOL.md` §4.6). They are
+subject to everything above; see §7.4 for what the message link adds in the clear.
 
 ### 2.8 OS and cloud backups
 
@@ -273,6 +278,11 @@ accessibility) and is kept because it says what a backup taken by such a build c
   password) or in an encrypted file under Roaming AppData whose key is in Credential Manager (DPAPI,
   user-scoped). A full user-profile backup restored under the same account and password opens it by design
   of those stores (not measured here); a file-only copy of the store directory does not.
+  **Windows is not "no cloud".** OneDrive folder backup — switched on by default on many Windows 11 set-ups —
+  uploads the user's Documents folder, which is where unfuzzed files land
+  (`Documents/Fuzzzy Ink/<chat folder>/`, plain files, §2.5, §7.13). The store, the database and the vault
+  are under Roaming AppData, which OneDrive does not upload, but a managed (domain) roaming profile copies it
+  to a server at sign-out. Neither can be opted out of by the app.
 
 In every case the **metadata non-goal extends to the backup provider and to anyone who holds the account**
 (§7.4, T24): the Isar database leaves the device in the clear wherever a backup exists. The vault's `0x10`
@@ -283,7 +293,8 @@ documents directory — on iOS shown in the Files app, on Windows and Linux in t
 With the fix in `6ecd9f1` the availability corollary is uniform: an OS backup no longer carries the store,
 the database or (on darwin) a migratable key item, so a restore cannot recover history — on top of "a new
 device cannot re-read old blobs" (§8). What remains (R34): Linux and Windows have no platform backup to opt
-out of, so a user's own full-profile backup still carries the store directory and the database; and the
+out of, so a user's own full-profile backup still carries the store directory and the database (on Windows also
+OneDrive's upload of Documents, which carries unfuzzed files, and a domain roaming profile); and the
 exclusion attribute on darwin is set on the directory at launch, so a backup taken before the first launch
 of `6ecd9f1` or later may still hold the older files. History reaches a cloud only by the user's own act: the
 archive export (F2-10, `PROTOCOL.md` §9.5) is a password-sealed file the user places wherever they like — not
@@ -464,8 +475,12 @@ peer *sends* is treated as attacker-controlled input:
   lock taken before the buffer is allocated (`PROTOCOL.md` §11). Worst accepted header: 256 MiB × 16 passes
   ≈ 2 s on a laptop, of the order of ten seconds on a phone, never an OOM (`PROTOCOL.md` §17.9). Test:
   `files::tests::oversized_argon2_params_rejected_before_any_write`.
-- **A peer cannot steer the receiver's file system.** The original name is validated as a bare *name* on
-  both sides before the counter commits (`PROTOCOL.md` §7.3). The receiver picks the directory.
+- **A peer cannot steer the receiver's file system, nor block a file with its name.** The original name is
+  made safe as a bare *name* on both sides — separators, Windows-forbidden, control and direction characters
+  replaced, trailing dots and spaces removed, device names such as `CON` prefixed, shortened to 120 bytes
+  (`PROTOCOL.md` §7.3). The receiver picks the directory. Tests:
+  `files::tests::safe_file_name_makes_every_name_receivable`,
+  `api::files::tests::hostile_peer_names_are_received_under_a_safe_name`.
 - **A peer cannot make the receiver spend a message on an incomplete file.** The structural check of
   `PROTOCOL.md` §9.2 step 3 runs before the Olm message is opened, so a header-only or truncated container
   is `Corrupt` with nothing consumed. Test: `api::files::tests::incomplete_container_rejected_before_the_message_is_spent`.
@@ -572,7 +587,7 @@ Findings F-1 … F-9 are the nine defects the hardening brief opened (§6).
 | T20 | State and message key lost to a crash mid-operation | Atomic write, save-before-return, cache evicted on any failure; a crash between Olm decrypt and write leaves the key → user re-pastes; a crash after the write has already returned the plaintext | §10.3 | — | The app-layer database write after a successful core call is not in the same transaction (R17–R18) |
 | T21 | Wrong-type / wrong-role blob accepted under the right password | AAD domains: `store-key` vs `vault-key` for `0x10`; `chat-state ‖ chat_id`, `local-seal`, `vault-item` for `0x20`; the first 31 bytes for `0x05`; storage-only types refused on paste | §6.7–6.9, §10 | — | Tests: `vault::tests::store_key_and_vault_key_domains_are_separate`, `formats::tests::pasted_rejects_storage_only_kinds`, `store::tests::corrupt_missing_and_foreign_files` |
 | T22 | Post-quantum adversary records pairing blobs and messages | none in this version | §17.12 | — | **Non-goal** (§7.9); hybrid ML-KEM is the next protocol project (R22) |
-| T23 | A dependency, toolchain or CI runner ships different bytes than reviewed | `Cargo.lock` + `--locked`, committed vectors fail on any byte change, two-runner reproducible Rust core, `SHA256SUMS` + provenance attestation, SBOM drift gates | §12, §15, Appendix A; [`RELEASE.md`](RELEASE.md) | — | Flutter AOT not reproducible; as of `v1.0.0-rc.1` the Android APK's core differs from the reproduced library by one linker flag's `.hash` section (`RELEASE.md` §5, §9.2 — matched byte-for-byte after the tag with cargokit's link flags plus the packaging strip; `attest` gates both shipped cores against the rebuild from the next tag), and rc.1's compare gate was inert (evidence = the two `rust-repro-*` artifacts + review); macOS unsigned (D-3); Android CI key is a throwaway (D-6); a build with `--cfg fuzzing` would silently disable signature checks (§9.4) |
+| T23 | A dependency, toolchain or CI runner ships different bytes than reviewed | `Cargo.lock` + `--locked`, committed vectors fail on any byte change, two-runner reproducible Rust core, `SHA256SUMS` + provenance attestation, SBOM drift gates | §12, §15, Appendix A; [`RELEASE.md`](RELEASE.md) | — | Flutter AOT not reproducible; as of `v1.0.0-rc.1` the Android APK's core differs from the reproduced library by one linker flag's `.hash` section (`RELEASE.md` §5, §9.2 — matched byte-for-byte after the tag with cargokit's link flags plus the packaging strip; `attest` gates both shipped cores against the rebuild from the next tag), and rc.1's compare gate was inert (evidence = the two `rust-repro-*` artifacts + review); release tags are signed with the real keys or stop — Android key from secrets, macOS Developer ID + sandbox check + notarization, Windows signing a placeholder (`RELEASE.md` §2, 2026-10-26); non-tag CI builds are unsigned proofs; a build with `--cfg fuzzing` would silently disable signature checks (§9.4) |
 | T24 | OS / cloud backup carries the store, the plaintext metadata and (per platform) the wrapped key off the device | Opted out everywhere since `6ecd9f1`: Android `allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` (cloud backup and device transfer) excluding every domain; darwin `NSURLIsExcludedFromBackupKey` on Application Support at launch + `ThisDeviceOnly` keychain items | §10.5; §2.8 here; `test/platform/backup_opt_out_test.dart` | manifest + rules + darwin-source assertions; merged manifest checked with `aapt2` | Before the fix: metadata readable by the backup provider on every platform; on **iOS** (and the macOS development flavour) the key item restored even to a new device (R33 copy case). After it: no platform backup carries the store, the database or the key; Linux/Windows have no platform backup to opt out of (a user's own profile backup still carries the store directory — R34) |
 | T25 | Unfuzzed file plaintext read from the device (thief, malware, another app or user on a desktop, a profile backup) | **none in the app** — a received or Basics-decrypted file is delivered as an ordinary file under the documents directory, where the user asked for it; the OS user account and device encryption are the only protection | §10.5, §17.15; §2.5, §7.13 here | — | **Accepted, stated in the product copy** (About encryption, README: "protect them like any other file"). Sealing file outputs would make them unusable outside the app, which defeats the product's purpose (the user decrypts a file *in order to* use it); R36 |
 | T26 | The archive export leaks history: plaintext residue during or after the seal, or a weak archive password guessed offline | Plaintext JSON lines exist only in the app-support directory for the seal's duration and are deleted in `finally`; the store must be open; the dialog refuses weak/fair passwords; the container is Argon2id (m = 64 MiB, t = 4) password mode (§9.5, §11); share staging holds sealed bytes only | §9.5, §11; §2.5 here | — | A process **kill** mid-seal leaves `chat_archive_<chat id>.jsonl` until the next export of the same chat (no boot sweep); the archive is outside forward secrecy by design — its security is the password; R35 |
@@ -633,10 +648,10 @@ Sealing chat names and vault titles is the same `seal_local` call on more column
 a documented follow-up, not this build (R11).
 
 Also in the clear, at the app layer only: a **"Copy as link"** message link
-(`fuzzylink://fuzz/<base64 JSON>`, `lib/src/core/services/fuzzy_link/fuzzy_link_generator.dart`) carries the
+(`https://ink.fuzzzycore.com/message#<base64 JSON>`, `lib/src/core/services/fuzzy_link/`) carries the
 **chat id** next to the blob so the receiving app can open the right chat. The raw `Fuzz/` blob never does
 (`PROTOCOL.md` §6.5). A user who shares links rather than blobs gives an observer a stable identifier that
-groups every link of one chat. Pairing links additionally carry a 24-hour `exp` hint. The leak is
+groups every link of one chat (only the device that opens the link sees it: it sits after the `#`). The leak is
 metadata-only: the receiving app uses `c` for a read-only database lookup and navigation, the crate takes
 the chat id from the database record, and a blob under the wrong `c` dies at the Olm MAC with no state
 change; an observer who saw the pairing blobs already knows the chat id. This is a product choice inherited
@@ -824,7 +839,13 @@ hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were 
 ### 9.1 What is pinned and checked on every push
 
 - **Toolchains:** Rust 1.98.1 (`rust/fuzzy_crypto_core/rust-toolchain.toml`), Flutter 3.41.7 / Dart 3.11.5 (`.fvmrc`),
-  NDK 28.2.13676358, `cargo-ndk` 4.1.2 (`RELEASE.md` §4).
+  NDK 28.2.13676358, `cargo-ndk` 4.1.2 (`RELEASE.md` §4). The app builds (CI and Codemagic store builds)
+  compile the core through cargokit, which since 2026-10-26 uses the toolchain of `rust-toolchain.toml` and
+  `--locked` (§9.4).
+- **Build steps:** every third-party GitHub Action in `.github/workflows/main.yaml` is pinned to a full commit
+  (its version in a comment), so its author cannot swap the code behind a tag; the workflow token has no
+  permissions by default and each job is granted only `contents: read` (the `attest` job adds the
+  `id-token` and `attestations` writes it needs). Since 2026-10-26.
 - **Dependencies:** the pin that matters is **`Cargo.lock` + `--locked`** on every build, CI and release
   alike — every crate, direct and transitive, resolves to the locked version or the build fails. On top of
   that, `Cargo.toml` carries exact `=` pins for the four crates that implement the protocol (`vodozemac`,
@@ -839,7 +860,8 @@ hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were 
   Appendix A; [`vectors/README.md`](vectors/README.md)).
 - **SBOMs:** CycloneDX for the Rust crate ([`sbom/rust.cdx.json`](sbom/rust.cdx.json), `cargo cyclonedx`,
   every target) and for the Flutter app ([`sbom/flutter.cdx.json`](sbom/flutter.cdx.json), cdxgen 12.8.4
-  from `pubspec.lock`); both committed, both regenerated in CI by `./sbom.sh … --check`, which fails the
+  from `pubspec.lock`; cdxgen and everything under it installed by `npm ci` from the committed
+  `tools/sbom/package-lock.json`, exact versions and integrity hashes, no install scripts); both committed, both regenerated in CI by `./sbom.sh … --check`, which fails the
   build if the committed file drifts from the lockfiles. An independent reviewer validated both against the
   CycloneDX schema and cross-checked every `Cargo.lock` entry (F5-3 review).
 - **Dependabot** ([`.github/dependabot.yaml`](../../.github/dependabot.yaml)) watches cargo, pub and
@@ -875,10 +897,12 @@ hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were 
   is on the branch; the first attested tag (`v1.0.0-rc.1`) is cut by the release procedure of `RELEASE.md`
   §1 and its measurements are recorded in `RELEASE.md` §5 when the tag run completes.
 - **What is not proven:** correctness (provenance is not a review); the Flutter AOT output is not
-  bit-for-bit reproducible (build paths and ids embedded — an upstream Dart SDK limitation); macOS is
-  unsigned and not notarised until the owner provides a certificate (D-3); the Android APK is signed with a
-  **throwaway per-run key** and is not a store build until the real keystore is provided as CI secrets
-  (D-6); iOS is not built.
+  bit-for-bit reproducible (build paths and ids embedded — an upstream Dart SDK limitation). Signing
+  (since 2026-10-26): a release tag signs the Android APK with the real key from repository secrets, signs,
+  sandbox-checks and notarizes the macOS app with a Developer ID certificate, and signs the Windows exe and core
+  (a placeholder step until a certificate is chosen) — or stops, naming the missing secrets; no throwaway key
+  exists anywhere. Until the owner adds those secrets, no release tag can complete (`RELEASE.md` §2). iOS is
+  built and signed on Codemagic and sent to TestFlight, not here.
 
 ### 9.3 The lockstep rule for the bridge
 
@@ -892,8 +916,12 @@ CI gate for codegen drift (R24).
 ### 9.4 Things a reviewer of the build must know
 
 - **The vendored `cargokit`** (`rust_builder/cargokit/`, the frb 2.13.0 integration template) builds the
-  crate from source on every platform and is byte-identical to upstream apart from the integrator's
-  prelude comment (F1-2 review). Its own `build_tool/pubspec.lock` is not under Dependabot.
+  crate from source on every platform. It is upstream apart from the integrator's prelude comment (F1-2
+  review) and two marked changes (2026-10-26): `builder.dart` takes the toolchain from the crate's
+  `rust-toolchain.toml` (upstream uses the `cargokit.yaml` channel, default "stable", so a store build
+  compiled the core with whatever stable was current) and passes `--locked`; `rustup.dart` recognises a
+  version-numbered toolchain as installed. Each is commented "Fuzzzy Ink change" — re-apply them if
+  cargokit is ever re-vendored. Its own `build_tool/pubspec.lock` is not under Dependabot.
 - **Never build with `--cfg fuzzing`.** Under that cfg vodozemac's `Ed25519PublicKey::verify` is a no-op
   and every pairing signature would silently pass. A standing comment at the top of
   `rust/fuzzy_crypto_core/src/lib.rs` records it; no CI job sets it; a reviewer should grep for it in any
@@ -941,13 +969,13 @@ studio's flow directory; the review ids below are those records).
 | R25 | **Argon2id cost on low-end devices.** Unlock ≈ 1.0 s on an API 35 arm64 emulator (release core), ≈ 0.13 s on an Apple-silicon laptop; a hostile-header worst case of ≈ 10 s on a phone; debug builds ship the crate's dev profile and take ≈ 10 s per KDF. The parameters (`m = 64 MiB`, `t = 4`) are data, not format, so a later build may tune them without a version bump. | `PROTOCOL.md` §11, §17.9; F2-6 QA; F4-1 review | product (measure on real low-end hardware) |
 | R26 | **Windows secure-storage size limit** is not an issue for the ≈ 140-character wrapped blob (limit 2 560 bytes) but it is the reason nothing larger must ever be stored there. | hardening plan §B.6 (internal) | none (documented) |
 | R27 | **macOS development flavour uses the login keychain**; staging/production use the data-protection keychain. Never ship the development flavour. | `PROTOCOL.md` §17.8; D-3 | ops |
-| R28 | **Release signing:** Android CI key is a throwaway, macOS unsigned, iOS not built. | `RELEASE.md` §2; D-3, D-6 | owner |
+| R28 | **Release signing:** prepared without keys (2026-10-26) — release tags sign with the real Android key, a Developer ID macOS identity (sandbox checked, notarized) and a Windows certificate (placeholder), or stop; the keys and certificates themselves are not yet provided. iOS: Codemagic → TestFlight. | `RELEASE.md` §2, §6 | owner (keys, certificates, which Android key signs the download) |
 | R29 | **Disclosure surface, partly done (D-5):** GitHub private vulnerability reporting **enabled** 2026-09-13 (`SECURITY.md` and `security.txt` name the advisories URL, commit `365e8bd`); the `security@fuzzzycore.com` route is **not yet confirmed** (Cloudflare Email Routing is owner-only; `contact@` stays the advertised address until then); `security.txt` on the website is **written but not deployed** (`fuzzzy_core_website` PR #1). | D-5; `SECURITY.md`; `security.txt` | owner (mail route) / website deploy |
-| R30 | **Two processes on one store** are unsupported; `.part` files survive a process kill. | `PROTOCOL.md` §17.10–17.11 | none (documented) |
+| R30 | **Two processes on one store**: refused by an exclusive lock since 2026-10-26 (the second gets `Io`). `.part` files survive a process kill. | `PROTOCOL.md` §17.10–17.11 | lock (two processes); none for `.part` (documented) |
 | R31 | **Pairing has no timeout**: a pending chat keeps its account and one-time key until accepted, regenerated or deleted; the link-level `exp` is a hint the core never checks. | `PROTOCOL.md` §4.6 | product |
 | R32 | **No post-compromise security until the peer ratchets.** A copied state file (thief with the password, malware on an unlocked device, a user-made backup of the store directory) holds the current receiving chain key of each chat and decrypts every message the peer generates on that chain until this device sends a message carrying a new ratchet key and the peer has received it — the peer's next message is then on a chain the copy lacks; no victim read is required, and messages the peer generated before receiving it stay readable by the copy. Nothing forces the victim to send. Past messages stay protected (forward secrecy). No mitigation in scope; candidates (forcing a ratchet step on every send, or re-keying on unlock) are a protocol change for a later version. | `PROTOCOL.md` §8.1, §14 point 3 (verified against the crate: a copy of B's state opened three messages A generated afterwards, and got `Corrupt` on A's first message after A had received B's reply), §17.14; F5-1 security audit finding M1 | planner (format v2 candidate); product copy |
 | R33 | **No store or vault re-key; a leaked key outlives every password change.** `rewrap_store_key` and `vault_rewrap` re-wrap the *same* 32-byte key; nothing is re-sealed, no re-key path exists. A store key or vault master key read from the unlocked process, or a copy of the `""`-wrapped `0x10` blob taken while the lock was off — an iOS backup made before `6ecd9f1`, a macOS development-flavour login-keychain read, a Linux/Windows user-profile backup (§2.8; **not** an Android backup, whose entry is Keystore-bound; since `6ecd9f1` no platform backup carries the item) — opens every present and future state file — and, through the history key each state file carries, every chat's local seals — and vault item after any password change, lock enable or re-pair. The per-chat history key (F2-12) does not change this: it is sealed *under* the store key, not beside it. Remedy today: delete every chat and the vault, or wipe the app (deleting one chat does destroy that chat's history key). Format v2 candidate: re-key = re-seal all state under a fresh store key. | `PROTOCOL.md` §10.2, §10.6; F4-1 review ("the master key never changes"), F4-2 review §2; §4.3, §4.5 | planner (format v2); product copy |
-| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
+| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on Windows, OneDrive folder backup (often on by default) uploads Documents and with it every unfuzzed file, and a domain roaming profile copies Roaming AppData; on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
 | R35 | **The archive export is plaintext under a password, outside forward secrecy — by design — and its working file is not `0o600` and not swept.** During an export the chat's rows exist in the clear as `<app support>/chat_archive_<chat id>.jsonl` for the seal's duration (default file mode; Dart cannot set `0o600` — routing the temp through the crate's `store::create_tmp` would close that); a process kill mid-seal leaves the file until the next export of the same chat, with no boot sweep; on Android the sealed container is staged under `cache/share_plus/` until the next share (sealed bytes only). Once exported, the archive's only protection is the user's password against offline Argon2id-bounded guessing (the dialog refuses weak/fair passwords); a lost archive is the chat's history, readable by whoever guesses the password, forever. | §2.5, §7.13, T26; `PROTOCOL.md` §9.5, §11; F2-10 review N1–N2 | developer (a one-line sweep in `ChatArchiveRepository` or at boot; `0o600` via a Rust temp helper) — non-blocking |
 | R36 | **Unfuzzed files are in the clear on disk.** Every received file and every Basics-decrypted file is an ordinary file under `<app documents>/<chat name>/` (desktop: `Documents/Fuzzzy Ink/<chat folder>/` in the user's Documents folder since 2026-10-22): not sealed, not gated by the app lock, not removed with the chat, and its path is a plaintext database column. This is the product's purpose (a file is decrypted in order to be used), not an oversight; it is stated in the About-encryption page and the README (F2-11 review B1). What a future version could offer without changing the protocol: an app-private output directory on desktop, or deleting a chat's folder with the chat, both product choices. | §2.5, §7.13, A12, T25; `PROTOCOL.md` §10.5, §17.15 | product |
 

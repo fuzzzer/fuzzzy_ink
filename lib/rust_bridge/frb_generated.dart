@@ -9,6 +9,7 @@ import 'api/formats.dart';
 import 'api/health.dart';
 import 'api/pairing.dart';
 import 'api/passwords.dart';
+import 'api/safety.dart';
 import 'api/vault.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -144,7 +145,7 @@ abstract class FuzzyCryptoCoreLibApi extends BaseApi {
       required String chatId,
       required String input});
 
-  Future<String> crateApiCoreCryptoCoreSafetyNumber(
+  Future<SafetyNumber> crateApiCoreCryptoCoreSafetyNumber(
       {required CryptoCore that, required String chatId});
 
   Future<Uint8List> crateApiCoreCryptoCoreSealLocal(
@@ -717,7 +718,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
       );
 
   @override
-  Future<String> crateApiCoreCryptoCoreSafetyNumber(
+  Future<SafetyNumber> crateApiCoreCryptoCoreSafetyNumber(
       {required CryptoCore that, required String chatId}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -729,7 +730,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
             funcId: 16, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_String,
+        decodeSuccessData: sse_decode_safety_number,
         decodeErrorData: sse_decode_core_error,
       ),
       constMeta: kCrateApiCoreCryptoCoreSafetyNumberConstMeta,
@@ -1711,6 +1712,18 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
   }
 
   @protected
+  SafetyNumber dco_decode_safety_number(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SafetyNumber(
+      version: dco_decode_u_8(arr[0]),
+      digits: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1977,6 +1990,14 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
   }
 
   @protected
+  SafetyNumber sse_decode_safety_number(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_version = sse_decode_u_8(deserializer);
+    var var_digits = sse_decode_String(deserializer);
+    return SafetyNumber(version: var_version, digits: var_digits);
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
@@ -2237,6 +2258,13 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
   }
 
   @protected
+  void sse_encode_safety_number(SafetyNumber self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_8(self.version, serializer);
+    sse_encode_String(self.digits, serializer);
+  }
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self);
@@ -2400,12 +2428,13 @@ class CryptoCoreImpl extends RustOpaque implements CryptoCore {
       FuzzyCryptoCoreLib.instance.api.crateApiCoreCryptoCorePrepareFileSend(
           that: this, chatId: chatId, input: input);
 
-  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups), derived
-  /// from both Ed25519 identity keys and the chat id (plan §B.3) — identical on
-  /// both sides of a pairing. `UnknownChat` for a chat the store does not know
-  /// or that is not paired yet. Nothing secret is involved; it stays async
-  /// like every other call on the handle.
-  Future<String> safetyNumber({required String chatId}) =>
+  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups) with
+  /// the version of its computation, derived from both Ed25519 identity keys
+  /// and the chat id (plan §B.3) — identical on both sides of a pairing.
+  /// `UnknownChat` for a chat the store does not know or that is not paired
+  /// yet. Nothing secret is involved; it stays async like every other call on
+  /// the handle.
+  Future<SafetyNumber> safetyNumber({required String chatId}) =>
       FuzzyCryptoCoreLib.instance.api
           .crateApiCoreCryptoCoreSafetyNumber(that: this, chatId: chatId);
 
@@ -2481,9 +2510,10 @@ class FileTicketImpl extends RustOpaque implements FileTicket {
         .instance.api.rust_arc_decrement_strong_count_FileTicketPtr,
   );
 
-  /// The file's name as the sender saw it: the input's file name on a send
-  /// ticket, the name carried inside the Olm message on a receive ticket
-  /// (a bare name — never a path). Readable before and after the run.
+  /// The file's name: the input's file name on a send ticket; on a receive
+  /// ticket the name carried inside the Olm message, made safe for every
+  /// platform (a bare name — never a path, never a Windows device name, at
+  /// most 120 bytes; PROTOCOL.md §7.3). Readable before and after the run.
   Future<String> originalName() =>
       FuzzyCryptoCoreLib.instance.api.crateApiFilesFileTicketOriginalName(
         that: this,

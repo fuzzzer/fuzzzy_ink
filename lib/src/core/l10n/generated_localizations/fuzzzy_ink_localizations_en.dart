@@ -802,7 +802,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get alreadyUnfuzzed =>
-      'This message was already unfuzzed on this device.';
+      'This message was already unfuzzed on this device, or its one-time key is no longer kept.';
 
   @override
   String get blobTooOld =>
@@ -817,6 +817,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get safetyNumberExplanation =>
       'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.';
+
+  @override
+  String safetyNumberVersion(int version) {
+    return 'Version $version. If your partner sees another version, or none, update both apps before comparing.';
+  }
 
   @override
   String get safetyNumberMarkVerified => 'Mark as verified';
@@ -886,7 +891,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyErrors =>
-      '“Already unfuzzed”: this blob was unfuzzed on this device before and cannot be read a second time. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: too many newer messages were unfuzzed first. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.';
+      '“Already unfuzzed”: this blob was unfuzzed on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the chat has moved on several rounds since — so it can never be read here. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already unfuzzed from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.';
 
   @override
   String get aboutEncryptionBodySafetyNumber =>
