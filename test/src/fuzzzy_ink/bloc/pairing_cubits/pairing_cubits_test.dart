@@ -570,6 +570,8 @@ void main() {
       return ChatGeneralDataListCubit(
         cryptoCoreService: mockService,
         chatRepository: mockChatRepo,
+        messageDataRepository: MockMessageDataRepository(),
+        userFileStore: MockUserFileStore(),
       );
     }
 
