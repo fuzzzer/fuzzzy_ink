@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as path;
 
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
@@ -28,8 +31,17 @@ class _RecordingClipboard extends SecureClipboard {
 void main() {
   late MockCryptoCoreService crypto;
   late _RecordingClipboard clipboard;
+  late Directory temp;
 
   setUp(() {
+    temp = Directory.systemTemp.createTempSync('basic_encryption_page_copy_');
+    sl.safeRegisterSingleton<UserFileStore>(
+      UserFileStore(
+        supportDirectoryPath: path.join(temp.path, 'support'),
+        temporaryDirectoryPath: path.join(temp.path, 'tmp'),
+        documentsDirectoryPath: path.join(temp.path, 'documents'),
+      ),
+    );
     crypto = MockCryptoCoreService();
     when(
       () => crypto.passwordSealText(
@@ -51,6 +63,8 @@ void main() {
   tearDown(() async {
     await sl.unregister<CryptoCoreService>();
     CopyGuard.clipboardGuard = ClipboardGuard();
+    await sl.unregister<UserFileStore>();
+    if (temp.existsSync()) temp.deleteSync(recursive: true);
   });
 
   Future<void> pumpBasics(WidgetTester tester) async {

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:path/path.dart' as path;
 
 class _FakeFilePicker extends FilePicker {
   @override
@@ -51,14 +54,27 @@ VaultItem _passwordItem() => VaultItem(
 /// copy is sensitive (copy_guard).
 void main() {
   late _RecordingClipboard clipboard;
+  late Directory temp;
 
   setUp(() {
     FilePicker.platform = _FakeFilePicker();
+    temp = Directory.systemTemp.createTempSync('vault_item_editor_copy_');
+    sl.safeRegisterSingleton<UserFileStore>(
+      UserFileStore(
+        supportDirectoryPath: path.join(temp.path, 'support'),
+        temporaryDirectoryPath: path.join(temp.path, 'tmp'),
+        documentsDirectoryPath: path.join(temp.path, 'documents'),
+      ),
+    );
     clipboard = _RecordingClipboard();
     CopyGuard.clipboardGuard = ClipboardGuard(clipboard: clipboard);
   });
 
-  tearDown(() => CopyGuard.clipboardGuard = ClipboardGuard());
+  tearDown(() async {
+    CopyGuard.clipboardGuard = ClipboardGuard();
+    await sl.unregister<UserFileStore>();
+    if (temp.existsSync()) temp.deleteSync(recursive: true);
+  });
 
   Future<void> pumpEditor(WidgetTester tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
