@@ -24,6 +24,13 @@ dependencies:
   flutter_secure_storage: 10.3.4
   fuzzy_crypto_core:
     path: rust_builder
+  # The Fuzzzy Cast drawn in code (Fuzzz only is used): no assets, no network
+  # code, no other packages. Pinned to the commit the other apps use.
+  fuzzzy_cast:
+    git:
+      url: https://github.com/fuzzzy-bot/fuzzzy_assets.git
+      path: packages/fuzzzy_cast
+      ref: 67b05440fee3fddb31f4cb6ac78614a4912572ff
   fuzzzy_ui_kit:
     git:
       url: https://github.com/fuzzzy-bot/fuzzy_design.git

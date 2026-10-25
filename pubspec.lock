@@ -404,6 +404,15 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  fuzzzy_cast:
+    dependency: "direct main"
+    description:
+      path: "packages/fuzzzy_cast"
+      ref: "67b05440fee3fddb31f4cb6ac78614a4912572ff"
+      resolved-ref: "67b05440fee3fddb31f4cb6ac78614a4912572ff"
+      url: "https://github.com/fuzzzy-bot/fuzzzy_assets.git"
+    source: git
+    version: "0.1.0"
   fuzzzy_ui_kit:
     dependency: "direct main"
     description:
