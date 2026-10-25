@@ -127,11 +127,14 @@ class AppRouter {
         ),
         GoRoute(
           path: setup,
-          builder: (_, __) => const MasterPasswordSetupPage(),
+          // The master password is typed and the recovery key is shown here.
+          builder: (_, __) =>
+              const SensitiveScreen(child: MasterPasswordSetupPage()),
         ),
         GoRoute(
           path: recover,
-          builder: (_, __) => const MasterPasswordRecoveryPage(),
+          builder: (_, __) =>
+              const SensitiveScreen(child: MasterPasswordRecoveryPage()),
         ),
         GoRoute(
           path: chatCreate,
@@ -184,7 +187,8 @@ class AppRouter {
         ),
         GoRoute(
           path: auth,
-          builder: (_, __) => const FuzzyUserAuthPage(),
+          // Password change and a new recovery key are shown here.
+          builder: (_, __) => const SensitiveScreen(child: FuzzyUserAuthPage()),
         ),
         GoRoute(
           path: basics,
