@@ -1678,7 +1678,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyHistory.
   ///
   /// In en, this message translates to:
-  /// **'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Unfuzzed files are different: they are saved as ordinary files in this chat’s folder on the device and are not sealed or locked by the app — anyone who can read the device’s storage can open them, so protect them like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.'**
+  /// **'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Files are kept the same way: the app keeps only the sealed file, and unfuzzes it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.'**
   String get aboutEncryptionBodyHistory;
 
   /// No description provided for @aboutEncryptionWindowTitle.
@@ -1909,24 +1909,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Authenticate to save password'**
   String get biometricSavePassword;
 
-  /// No description provided for @riskyFileNotOpenedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'File not opened'**
-  String get riskyFileNotOpenedTitle;
-
-  /// No description provided for @riskyFileNotOpenedMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'“{fileName}” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.'**
-  String riskyFileNotOpenedMessage(Object fileName);
-
-  /// No description provided for @showInFolder.
-  ///
-  /// In en, this message translates to:
-  /// **'Show in folder'**
-  String get showInFolder;
-
   /// No description provided for @vaultMoveUnfinishedTitle.
   ///
   /// In en, this message translates to:
@@ -1938,6 +1920,54 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
   String get vaultMoveUnfinishedMessage;
+
+  /// No description provided for @saveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveFile;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get fileSaved;
+
+  /// No description provided for @couldNotSaveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the file.'**
+  String get couldNotSaveFile;
+
+  /// No description provided for @sentFileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzed — share or save it'**
+  String get sentFileHint;
+
+  /// No description provided for @receivedFileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept sealed — open or save it'**
+  String get receivedFileHint;
+
+  /// No description provided for @unfuzzingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfuzzing…'**
+  String get unfuzzingFile;
+
+  /// No description provided for @fileNoPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'This file cannot be shown in the app. Save it to open it with another app.'**
+  String get fileNoPreview;
+
+  /// No description provided for @basicsFuzzedFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzed files kept in the app'**
+  String get basicsFuzzedFilesTitle;
 }
 
 class _FuzzzyInkLocalizationsDelegate

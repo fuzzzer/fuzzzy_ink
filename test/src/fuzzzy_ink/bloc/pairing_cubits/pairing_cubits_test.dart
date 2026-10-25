@@ -12,6 +12,10 @@ class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 class MockChatGeneralDataListRepository extends Mock
     implements ChatGeneralDataListRepository {}
 
+class MockMessageDataRepository extends Mock implements MessageDataRepository {}
+
+class MockUserFileStore extends Mock implements UserFileStore {}
+
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _invitation = CryptoCoreInvitation(chatId: _chatId, content: 'Fuzz/inv');
 const _acceptance = CryptoCoreAcceptance(chatId: _chatId, content: 'Fuzz/acc');
@@ -520,12 +524,33 @@ void main() {
   // ChatGeneralDataListCubit.deleteChat
   // -----------------------------------------------------------------------
   group('ChatGeneralDataListCubit.deleteChat', () {
+    late MockMessageDataRepository mockMessages;
+    late MockUserFileStore mockFiles;
+
+    setUp(() {
+      mockMessages = MockMessageDataRepository();
+      mockFiles = MockUserFileStore();
+      when(() => mockMessages.getFilePathsForChat(_chatId))
+          .thenAnswer((_) async => ['chats/Alice (6f1e9b2c)/a.pdf.fuzz']);
+      when(() => mockMessages.deleteAllMessagesForChat(_chatId))
+          .thenAnswer((_) async {});
+      when(
+        () => mockFiles.deleteChatFiles(
+          chatName: any(named: 'chatName'),
+          chatId: any(named: 'chatId'),
+          storedPaths: any(named: 'storedPaths'),
+        ),
+      ).thenAnswer((_) async {});
+    });
+
     ChatGeneralDataListCubit build() {
       when(() => mockChatRepo.chatListUpdates)
           .thenAnswer((_) => const Stream.empty());
       return ChatGeneralDataListCubit(
         cryptoCoreService: mockService,
         chatRepository: mockChatRepo,
+        messageDataRepository: mockMessages,
+        userFileStore: mockFiles,
       );
     }
 
@@ -553,6 +578,32 @@ void main() {
     );
 
     blocTest<ChatGeneralDataListCubit, ChatGeneralDataListState>(
+      "deletes the chat's sealed files (its folder and every row's) and its "
+      'rows with it',
+      setUp: () {
+        when(() => mockService.deleteChat(_chatId))
+            .thenAnswer((_) async => const CryptoCoreSuccess(null));
+      },
+      build: build,
+      seed: () => ChatGeneralDataListState(
+        status: StateStatus.success,
+        chatList: [_invitedChat],
+      ),
+      act: (cubit) => cubit.deleteChat(chatId: _chatId),
+      verify: (_) {
+        verifyInOrder([
+          () => mockService.deleteChat(_chatId),
+          () => mockFiles.deleteChatFiles(
+                chatName: 'Alice',
+                chatId: _chatId,
+                storedPaths: ['chats/Alice (6f1e9b2c)/a.pdf.fuzz'],
+              ),
+          () => mockMessages.deleteAllMessagesForChat(_chatId),
+        ]);
+      },
+    );
+
+    blocTest<ChatGeneralDataListCubit, ChatGeneralDataListState>(
       'a locked store keeps the chat record',
       setUp: () {
         when(() => mockService.deleteChat(_chatId)).thenAnswer(
@@ -569,7 +620,16 @@ void main() {
             .having((s) => s.actionStatus, 'actionStatus', StateStatus.failed)
             .having((s) => s.actionFailure, 'actionFailure', isNotNull),
       ],
-      verify: (_) => verifyNever(() => mockChatRepo.deleteChat(any())),
+      verify: (_) {
+        verifyNever(() => mockChatRepo.deleteChat(any()));
+        verifyNever(
+          () => mockFiles.deleteChatFiles(
+            chatName: any(named: 'chatName'),
+            chatId: any(named: 'chatId'),
+            storedPaths: any(named: 'storedPaths'),
+          ),
+        );
+      },
     );
   });
 }

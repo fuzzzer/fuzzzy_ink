@@ -520,11 +520,10 @@ Vector: `file_key_body` (44 bytes: key `42×32`, name `report.pdf`).
 The name check runs on both sides (the sender derives it from a real basename; the receiver checks it inside
 step 9, before the counter commit). It is a file *name*, never a path, so a peer cannot steer the receiver's
 output outside the directory the receiver chose. It is not display-sanitised (a Unicode direction override is
-a valid file name); the UI must treat it as untrusted text. The app does (2026-10-22): every file name and
-folder it shows has its direction controls and control characters removed (`UserFileNames.forDisplay`),
-and "Open" refuses a file whose real extension — read after removing direction and invisible characters,
-trailing dots and spaces and any `:stream` part — is a program, installer, script or shortcut on that
-platform (`UserFileNames.isRiskyToOpen`), offering "Show in folder" instead (`THREAT_MODEL.md` R14).
+a valid file name); the UI must treat it as untrusted text. The app does (2026-10-22): every file name it
+shows has its direction controls and control characters removed (`UserFileNames.forDisplay`); and since
+2026-10-26 it never hands a received file to another app to open — images and text are shown in the app,
+anything else is offered for saving only (§10.5, `THREAT_MODEL.md` R14).
 
 ---
 
@@ -696,8 +695,8 @@ The app can write one chat's history to a file the user keeps. The archive is an
 `0x04` container** (§6.6 `key_mode 0x02`: fresh 16-byte salt, Argon2id m = 65 536 KiB, t = 4, p = 1; chunks
 as §9.1) whose plaintext is UTF-8 **JSON lines**, one object per message row in the chat's stored order:
 `chatId`, `chatName`, `direction` (`sent` | `received`), `sentAt` (UTC ISO-8601), `type` (`text` | `file`),
-then exactly one of `text` (the row's opened local seal, §10.4), `fileName` (the base name of the stored
-file — **never file bytes**; the file itself is a plain file on the device, §10.5) or `"unreadable": true`
+then exactly one of `text` (the row's opened local seal, §10.4), `fileName` (the base name of the kept
+sealed file, `<name>.fuzz` — **never file bytes**; the file itself stays sealed in the app, §9.6, §10.5) or `"unreadable": true`
 (a text row whose local seal did not open: absent, malformed, or `Corrupt` / `UnknownChat` / `StoreLocked`
 at the core). The crate sees nothing but a password-mode file job: the lines are produced by the app
 (`lib/src/fuzzzy_ink/data/repositories/chat_archive_repository/`), so no vector covers them — the container
@@ -711,10 +710,11 @@ against offline, Argon2id-bounded guessing (§11). The export is gated on an ope
 returns before a byte is written, so a blank-rows archive cannot be produced). During the seal the JSON
 lines exist in the clear as `<application support directory>/chat_archive_<chat_id>.jsonl` (default file
 mode inside a user-private directory), deleted in a `finally` on every in-process exit; a process **kill**
-mid-seal leaves that file until the next export of the same chat overwrites and deletes it — there is no
-boot sweep (`THREAT_MODEL.md` §2.5, R35). On Android the sealed container is additionally staged by the
-share sheet under `cache/share_plus/` until the next share — sealed bytes only, as for every file the app
-shares.
+mid-seal leaves that file until the next launch, whose sweep deletes every `chat_archive_*.jsonl` before
+anything else runs (2026-10-26, `UserFileStore.wipeTemporaryPlainCopies`; `THREAT_MODEL.md` §2.5, R35). On a
+computer the sealed container is written straight to the place the user picked in the save panel; on Android
+and iOS it is written into the app's private hand-off folder (§10.1), given to the system save dialog
+(Android) or the share sheet's "Save to Files" (iOS), and wiped right after — sealed bytes only.
 
 ### 9.6 Keeping a received file
 
@@ -757,9 +757,14 @@ Isar (app database)     StoredMessageData.sealedPlaintext                one loc
 <application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
 <application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
-<application documents directory>/<chat name>/<name>                     unfuzzed FILES in the clear (§10.5) — plain files, not sealed; fuzzed containers <name>.fuzz sit beside them.
-                                                                        Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Ink/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
-                                                                        Windows, macOS, Linux since 2026-10-22: Documents/Fuzzzy Ink/<safe chat name> (<first 8 of chat id>)/<name>; a taken name becomes <name> (1).<ext>
+<application support directory>/sealed_files/chats/<safe chat name> (<first 8 of chat id>)/<name>.fuzz
+                                                                        one folder per chat: the containers the user sent (0x04, chat mode) and the received ones
+                                                                        the app keeps (§9.6, their kept key in the message row); deleted with the chat; a taken
+                                                                        name becomes <name> (1).<ext>.fuzz
+<application support directory>/sealed_files/basics/<name>.fuzz        the password containers Basics made (0x04, password mode)
+<application support directory>/handoff/<one folder per use>/<name>    transient: a plain (or staged sealed) file for one use — the in-app viewer, the save dialog,
+                                                                        the share sheet — wiped right after and by the launch sweep (§10.5); the only folder
+                                                                        Android's FileProvider serves
 ```
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
@@ -839,8 +844,9 @@ a new key and answers `Corrupt` for the old seals.
 ### 10.4 Local seal of message history
 
 The app keeps received *and* sent **text** plaintext locally (the ratchet makes a blob decryptable once, and a
-sender can never decrypt its own output) — owner decision D-1, design (a). File rows carry no seal: a received
-file is a plain file on disk (§10.5) and its row holds only the path. Each text plaintext is sealed by
+sender can never decrypt its own output) — owner decision D-1, design (a). File rows carry no text seal: a
+file row holds the stored path of its sealed container (§10.1), and a received file row's `sealedPlaintext`
+holds the container's kept key instead (§9.6). Each text plaintext is sealed by
 `seal_local(chat_id, plaintext)`: `AEAD(history key of chat_id, random nonce, aad = "local-seal" ‖ chat_id,
 plaintext)` in a `0x20` blob, stored base64 in the database row
 ([`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43), [`#L210`](../../rust/fuzzy_crypto_core/src/store.rs#L210),
@@ -865,26 +871,32 @@ the app, which never throws on a seal it cannot open (`THREAT_MODEL.md` §8) —
 Deliberately, so the reviewer is not misled: the app's Isar database is not encrypted as a whole. Chat names,
 the chat id, timestamps, message ordering, file names and sizes, the `encryptedMessage` column (the `Fuzz/`
 blob text itself — ciphertext, but a record that a message exists), and every other row are plaintext on disk.
-Only the `sealedPlaintext` column and the vault item files are sealed; a vault item's title, tags, group and
+Only the `sealedPlaintext` column, the vault item files and the kept `.fuzz` files (§10.1) are sealed; a vault item's title, tags, group and
 type are plaintext columns in the database. The wrapped store key lives in the platform
 secure storage (Keychain / Keystore / DPAPI / libsecret) as a `0x10` blob.
 
-**Unfuzzed files are written in the clear.** A received file's plaintext is delivered as an ordinary file at
-`<application documents directory>/<chat name>/<original name>` — on desktop (since 2026-10-22) at
-`Documents/Fuzzzy Ink/<safe chat name> (<first 8 characters of the chat id>)/<original name>` in the user's
-Documents folder, the chat name cleaned of separators, `<>:"|?*`, direction and control characters, leading
-and trailing dots and spaces and Windows device names (`UserFileNames.chatFolderPath`; files received
-before keep their old paths); on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Ink"; on
-Android the file is written there and then moved to the public `Downloads/Fuzzzy Ink/<chat name>/` through
-MediaStore (T-0366, so the user finds it with any file manager) — and the fuzzed containers the user produced
-sit beside it as `<name>.fuzz` (ciphertext). The plaintext file is **not sealed, not gated by the app lock, and
-not removed when the chat is deleted**; anyone who can read the device's file system reads it, and only text
-rows get a `sealedPlaintext` (§10.4). A file row's `encryptedMessage` column holds that file's path, so the
-database names the plaintext file but does not contain it; the archive export (§9.5) records the name only.
-An existing file is never replaced: a taken name becomes `<name> (1).<ext>`, `<name> (2).<ext>`, … (§9.3).
-Basics file decryption likewise writes a plain file into a folder under the same documents directory
-(`Working Folder`), under the same no-replace rule. The app's own copy (About
-encryption; README) says so in as many words. `THREAT_MODEL.md` §2.5, §7.13, R36.
+**Files are kept sealed; plaintext exists only for one use** (2026-10-26, owner: "transfer ownership of
+unfuzzed files to user and we store only fuzzed ones"). The app's private storage holds only sealed files:
+the `.fuzz` containers of each chat and of Basics (§10.1) and the vault's items (§10.6). A received chat file
+is kept as the container it arrived in, with its kept key (§9.6); a Basics container under its password.
+When the user opens, saves or shares a file, it is unfuzzed into a fresh folder of the private hand-off folder
+(`<application support directory>/handoff/`), shown in the app (images and plain text; text is never
+selectable) or given to the system save dialog (Android `ACTION_CREATE_DOCUMENT`, a computer's save panel,
+iOS the share sheet's "Save to Files") or the share sheet, and wiped right after: on closing the viewer, after
+the save, when the app is back in front after a share (Android's share sheet returns before the target has
+read), when the chat or Basics page closes, and at every launch (`UserFileStore.wipeTemporaryPlainCopies`,
+which also deletes the file picker's cache copies, Android's old share staging `cache/user_files` and
+`cache/share_plus`, the archive export's working file and, on a phone, the old Basics `Working Folder`).
+A vault file item is shown from memory and written to the hand-off folder only to be saved or shared.
+Nothing is written to a user-visible folder, to Android's public Downloads or MediaStore (no gallery
+indexing), or to iOS's Files-app-visible Documents (the app no longer exposes it), and the app never hands a
+plain file to another app to *open* it — so a received program cannot be run from the app. A file the user
+saves or shares is the user's: it leaves as an ordinary file. Deleting a chat deletes its state (and with it
+every kept key, §9.6), its message rows and its files folder. A file row's `encryptedMessage` column holds the
+container's path relative to `sealed_files` (so iOS's container move between updates does not break it): the
+database names the sealed file, not a plaintext one. While a hand-off copy exists it is plain on disk, in
+user-private storage with the default file mode; a process kill leaves it until the next launch.
+`THREAT_MODEL.md` §2.5, §7.13, R36.
 
 ### 10.6 Vault
 
@@ -1151,10 +1163,11 @@ Stated so a reviewer does not have to discover them.
     message the peer sends on the current receiving chain after the copy was taken — not messages already read
     (forward secrecy), but future ones, until this device sends and the peer's next message arrives on a fresh
     chain. Post-compromise security needs that round trip; nothing in the protocol forces one.
-15. **Unfuzzed files and exported archives are outside every guarantee above.** A received file lands as a
-    plain file under the app's documents directory (§10.5) and an archive export is the chat's plaintext under
-    a user-chosen password (§9.5); neither is sealed by the store, gated by the app lock, or covered by forward
-    secrecy. Only text history is sealed at rest.
+15. **Files the user takes out, and exported archives, are outside every guarantee above.** The app keeps
+    files sealed (§9.6, §10.5): a kept received file has the protection of the chat's text history, not forward
+    secrecy. A file the user saves or shares leaves as plaintext, and an archive export is the chat's plaintext
+    under a user-chosen password (§9.5); once outside the app, neither is sealed by the store, gated by the app
+    lock, or covered by forward secrecy. A hand-off copy is plain on disk while it is in use (§10.5).
 
 ---
 

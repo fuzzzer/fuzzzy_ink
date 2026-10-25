@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
@@ -111,21 +112,27 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     _processFile(fileData: nextFileData);
   }
 
+  /// A send streams the picked file into `<name>.fuzz` in the chat's sealed
+  /// folder. A receive first copies the container into that folder — the
+  /// copy is what the app keeps — then unfuzzes it once into a hand-off
+  /// folder to prove every chunk opens, and wipes that plain copy at once:
+  /// the row keeps the container and its sealed key (`PROTOCOL.md` §9.6),
+  /// and "Open" unfuzzes it again when asked.
   Future<void> _processFile({
     required FileProcessingData fileData,
   }) async {
+    String? keptContainerPath;
     try {
-      final chatFolderPath = await _ensureChatFolder(
-        documentsPath: sl.get<AppDocumentsDirectory>().directory.path,
+      final chatFolderPath = await userFileStore.chatFolder(
         chatName: fileData.chatName,
         chatId: fileData.chatId,
       );
 
       final FileProcessingHandler handler;
-      final String outputPath;
+      final _Job job;
 
       if (processingOption is FileEncryptionOption) {
-        outputPath = await _fuzzedOutputPath(
+        final outputPath = await _fuzzedOutputPath(
           chatFolderPath: chatFolderPath,
           inputFilePath: fileData.inputFilePath,
           fuzzedFileIdentificator: fuzzedFileIdentificator,
@@ -137,32 +144,48 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
           outputPath: outputPath,
         );
         if (res is CryptoCoreFailure<FileProcessingHandler>) {
-          _failFile(fileData: fileData, type: _failureTypeOf(res.type));
+          await _failFile(fileData: fileData, type: _failureTypeOf(res.type));
           return;
         }
         handler = (res as CryptoCoreSuccess<FileProcessingHandler>).data;
+        job = (keptPath: outputPath, plainPath: null, keptFileKey: null);
       } else if (processingOption is FileDecryptionOption) {
         if (!await _isInputStable(fileData.inputFilePath)) {
-          _failFile(
+          await _failFile(
             fileData: fileData,
             type: FileProcessingFailureType.stillArriving,
           );
           return;
         }
 
+        keptContainerPath = await UserFileNames.uniqueOutputPath(
+          path.join(
+            chatFolderPath,
+            UserFileNames.cleanPickedFileName(
+              path.basename(fileData.inputFilePath),
+            ),
+          ),
+        );
+        await File(fileData.inputFilePath).copy(keptContainerPath);
+
         final res = await cryptoCoreService.decryptFileForChat(
           chatId: fileData.chatId,
-          inputPath: fileData.inputFilePath,
-          outputDirectoryPath: chatFolderPath,
+          inputPath: keptContainerPath,
+          outputDirectoryPath: await userFileStore.newHandoffFolder(),
         );
         if (res is CryptoCoreFailure<CryptoCoreReceivedFile>) {
-          _failFile(fileData: fileData, type: _failureTypeOf(res.type));
+          await _deleteKeptContainer(keptContainerPath);
+          await _failFile(fileData: fileData, type: _failureTypeOf(res.type));
           return;
         }
         final received =
             (res as CryptoCoreSuccess<CryptoCoreReceivedFile>).data;
         handler = received.handler;
-        outputPath = received.outputPath;
+        job = (
+          keptPath: keptContainerPath,
+          plainPath: received.outputPath,
+          keptFileKey: base64Encode(received.keptKey),
+        );
       } else {
         throw UnimplementedError(
           'Unsupported FileProcessingOption: ${processingOption.runtimeType}',
@@ -172,18 +195,20 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
       _activeFileProcessingHandler = handler;
 
       _progressSubscription = handler.progressStream.listen(
-        (event) => _onProgress(
-          event: event,
-          fileData: fileData,
-          outputPath: outputPath,
-        ),
+        (event) => _onProgress(event: event, fileData: fileData, job: job),
       );
 
       logger.i('FILE PROCESSING: _progressSubscription set up correctly');
     } catch (error) {
       logger.i('FILE PROCESSING: file processing failed: $error');
 
-      _failFile(fileData: fileData, type: FileProcessingFailureType.unknown);
+      if (keptContainerPath != null) {
+        await _deleteKeptContainer(keptContainerPath);
+      }
+      await _failFile(
+        fileData: fileData,
+        type: FileProcessingFailureType.unknown,
+      );
     }
   }
 
@@ -194,13 +219,15 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     return await inputFile.length() == lengthBefore;
   }
 
-  void _onProgress({
+  Future<void> _onProgress({
     required FileProcessingProgress event,
     required FileProcessingData fileData,
-    required String outputPath,
-  }) {
+    required _Job job,
+  }) async {
     if (event.isCancelled) {
       _resetThrottle();
+      await _dropJobFiles(job);
+      await userFileStore.discardPickedCopy(fileData.inputFilePath);
       _markFileAsFinished(
         fileData: fileData,
         status: FileProcessingStatus.canceled,
@@ -217,7 +244,8 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     if (event.errorMessage != null) {
       _resetThrottle();
       logger.i('FILE PROCESSING: run failed: ${event.errorMessage}');
-      _failFile(
+      await _dropJobFiles(job);
+      await _failFile(
         fileData: fileData,
         type: _runFailureType(),
         progress: event.progress,
@@ -227,7 +255,7 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
 
     if (event.isComplete) {
       _resetThrottle();
-      _finishFile(fileData: fileData, outputPath: outputPath);
+      await _finishFile(fileData: fileData, job: job);
       return;
     }
 
@@ -237,13 +265,11 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     );
   }
 
-  /// The finished file goes where the user can find it before the row is
-  /// written (T-0366); the bar stays full while it moves. A place that
-  /// cannot be written keeps the app's own copy, which still opens and
-  /// shares.
+  /// The plain proof copy of a receive is wiped before the row is written;
+  /// the row keeps the sealed file only.
   Future<void> _finishFile({
     required FileProcessingData fileData,
-    required String outputPath,
+    required _Job job,
   }) async {
     _updateFileStatus(
       fileData: fileData,
@@ -251,25 +277,39 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
       newProgress: 1,
     );
 
-    String publishedPath;
-    try {
-      publishedPath = await userFileStore.publish(
-        outputPath: outputPath,
-        chatName: fileData.chatName,
-      );
-    } catch (error) {
-      logger.w('FILE PROCESSING: could not publish $outputPath: $error');
-      publishedPath = outputPath;
-    }
+    final plainPath = job.plainPath;
+    if (plainPath != null) await userFileStore.wipe(plainPath);
+    await userFileStore.discardPickedCopy(fileData.inputFilePath);
 
     _markFileAsFinished(
       fileData: fileData,
       status: FileProcessingStatus.completed,
-      outputFilePath: publishedPath,
+      outputFilePath: userFileStore.storedPathOf(job.keptPath),
+      keptFileKey: job.keptFileKey,
       progress: 1,
     );
     _goToNextFileProcessing();
     logger.i('FILE PROCESSING: Marked as isComplete $state');
+  }
+
+  /// A failed or cancelled run: the core already removed its `.part`; the
+  /// hand-off folder goes, and so does a received container — its message is
+  /// spent, so it can never be opened.
+  Future<void> _dropJobFiles(_Job job) async {
+    final plainPath = job.plainPath;
+    if (plainPath != null) {
+      await userFileStore.wipe(plainPath);
+      await _deleteKeptContainer(job.keptPath);
+    }
+  }
+
+  Future<void> _deleteKeptContainer(String keptContainerPath) async {
+    try {
+      final kept = File(keptContainerPath);
+      if (await kept.exists()) await kept.delete();
+    } catch (error) {
+      logger.w('FILE PROCESSING: could not delete $keptContainerPath: $error');
+    }
   }
 
   /// A run that fails after `decryptFileForChat` succeeded has already spent
@@ -289,11 +329,12 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
         : null;
   }
 
-  void _failFile({
+  Future<void> _failFile({
     required FileProcessingData fileData,
     required FileProcessingFailureType type,
     double? progress,
-  }) {
+  }) async {
+    await userFileStore.discardPickedCopy(fileData.inputFilePath);
     _markFileAsFinished(
       fileData: fileData,
       status: FileProcessingStatus.failed,
@@ -355,12 +396,14 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     required FileProcessingData fileData,
     required FileProcessingStatus status,
     required String? outputFilePath,
+    String? keptFileKey,
     double? progress,
     FileProcessingFailure? failure,
   }) {
     final updatedFile = fileData.copyWith(
       status: status,
       outputFilePath: outputFilePath,
+      keptFileKey: keptFileKey,
       progress: progress ?? fileData.progress,
       isProcessed: true,
       failure: failure,
@@ -445,30 +488,6 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
   }
 }
 
-/// The chat's folder (`Documents/Fuzzzy Ink/<chat> (<id>)` on a computer,
-/// see [UserFileNames.chatFolderPath]); a received file is written there by
-/// [CryptoCoreService.decryptFileForChat] under a name nothing has yet.
-Future<String> _ensureChatFolder({
-  required String documentsPath,
-  required String chatName,
-  required String chatId,
-}) async {
-  final chatIdFolder = Directory(
-    UserFileNames.chatFolderPath(
-      documentsPath: documentsPath,
-      chatName: chatName,
-      chatId: chatId,
-    ),
-  );
-
-  if (!await chatIdFolder.exists()) {
-    await chatIdFolder.create(recursive: true);
-    await const BackupExclusion().exclude(chatIdFolder.path);
-  }
-
-  return chatIdFolder.path;
-}
-
 /// `<name>.fuzz` in the chat's folder, or `<name> (1).fuzz`, … when taken:
 /// a send never replaces an existing file.
 Future<String> _fuzzedOutputPath({
@@ -477,8 +496,13 @@ Future<String> _fuzzedOutputPath({
   required String fuzzedFileIdentificator,
 }) {
   final fileName =
-      UserFileLocation.cleanPickedFileName(path.basename(inputFilePath));
+      UserFileNames.cleanPickedFileName(path.basename(inputFilePath));
   return UserFileNames.uniqueOutputPath(
     path.join(chatFolderPath, '$fileName.$fuzzedFileIdentificator'),
   );
 }
+
+/// What a running job leaves: the sealed file the row will keep (the sent
+/// container, or the received one), and for a receive the plain proof copy
+/// in its hand-off folder and the container's sealed key.
+typedef _Job = ({String keptPath, String? plainPath, String? keptFileKey});

@@ -1,15 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fuzzzycore.ink">
 
-    <!-- Permissions -->
-    <!-- API 24–28 only: writing Downloads/Fuzzzy Ink/ directly (UserFiles.kt).
-         API 29+ goes through MediaStore and needs no storage permission. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <!-- Requested alongside WRITE by permission_handler's Permission.storage
-         (UserFileStore, API 24–28). Capped: it is a no-op from API 33 on. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <!-- No storage permission: the app keeps its files in private storage and
+         hands a file to the user only through the system save dialog or the
+         share sheet (UserFiles.kt). -->
 
     <application
         android:label="${appName}"
@@ -50,8 +44,8 @@
             </intent-filter>
         </activity>
 
-        <!-- Content URIs for opening and sharing the files the app produced
-             (T-0366); roots in res/xml/user_file_paths.xml. -->
+        <!-- Content URIs for the share sheet, served from the private hand-off
+             folder only (res/xml/user_file_paths.xml). -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.userfiles"

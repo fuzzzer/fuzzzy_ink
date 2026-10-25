@@ -21,14 +21,21 @@ class BasicEncryptionPage extends StatelessWidget {
         BlocProvider<CustomFileProcessingCubit<FileEncryptionOption>>(
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
             processingOption: const FileEncryptionOption(),
           ),
         ),
         BlocProvider<CustomFileProcessingCubit<FileDecryptionOption>>(
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
             processingOption: const FileDecryptionOption(),
           ),
+        ),
+        BlocProvider<BasicsFuzzedFilesCubit>(
+          create: (context) => BasicsFuzzedFilesCubit(
+            userFileStore: sl.get<UserFileStore>(),
+          )..load(),
         ),
       ],
       child: const _ProvidedBasicEncryptionPage(),
@@ -70,6 +77,21 @@ class _ProvidedBasicEncryptionPageState
     setState(() {
       _selectedFilePaths = paths;
     });
+  }
+
+  /// Unfuzzes a container the app keeps, under the key typed above.
+  void _openFuzzedFile(String filePath) {
+    final key = _keyController.text;
+    if (key.isEmpty) {
+      FuzzzyToast.show(
+        context,
+        message: context.fuzzzyInkLocalizations.pleaseEnterAKey,
+      );
+      return;
+    }
+    context
+        .read<CustomFileProcessingCubit<FileDecryptionOption>>()
+        .addFilesToProcess(filePaths: [filePath], customKey: key);
   }
 
   void _processFiles() {
@@ -166,8 +188,11 @@ class _ProvidedBasicEncryptionPageState
         ),
         BlocListener<CustomFileProcessingCubit<FileEncryptionOption>,
             CustomFileProcessingState>(
+          listenWhen: (previous, current) =>
+              previous.processedFiles.length != current.processedFiles.length,
           listener: (context, state) {
-            // print encryption $state
+            // A finished container is listed with the kept ones.
+            context.read<BasicsFuzzedFilesCubit>().load();
           },
         ),
         BlocListener<CustomFileProcessingCubit<FileDecryptionOption>,
@@ -186,6 +211,7 @@ class _ProvidedBasicEncryptionPageState
           selectedFilePaths: _selectedFilePaths,
           onFilesSelected: _onFilesSelected,
           onProcessFiles: _processFiles,
+          onOpenFuzzedFile: _openFuzzedFile,
         ),
       ),
     );

@@ -1,20 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
-const _missingPath =
-    '/storage/emulated/0/Download/Fuzzzy Ink/Fz bot/secret.jpg.fuzz';
+
+/// A row's stored path: relative to the app's sealed folder.
+const _storedPath = 'chats/Fz bot (6f1e9b2c)/secret.jpg.fuzz';
+
+/// The sealed folder the test store resolves rows against.
+const _sealedRoot = '/app/support/sealed_files';
+const _missingPath = '$_sealedRoot/$_storedPath';
 
 /// A received program whose name hides its extension behind a direction
 /// override: shown naively it reads "invoiceexe.pdf".
 const _disguisedProgramPath =
-    '/Users/me/Documents/Fuzzzy Ink/Bob (6f1e9b2c)/invoice\u{202E}fdp.exe';
+    'chats/Bob (6f1e9b2c)/invoice\u{202E}fdp.exe.fuzz';
 
-/// A 360dp-wide phone (T-0366: every action of the pill must stay on it).
+/// A 360dp-wide phone: every action of the pill must stay on it.
 const _phoneSize = Size(360, 780);
 
 /// `File.exists()` completes on the real event loop, which a widget test's
@@ -22,12 +31,9 @@ const _phoneSize = Size(360, 780);
 class _MissingFile extends Fake implements File {
   @override
   Future<bool> exists() async => false;
-
-  @override
-  Directory get parent => Directory('/storage/emulated/0/Download/Fuzzzy Ink');
 }
 
-MessageData _fileRow({required bool isSent, String path = _missingPath}) =>
+MessageData _fileRow({required bool isSent, String path = _storedPath}) =>
     MessageData(
       id: 1,
       chatId: _chatId,
@@ -42,7 +48,19 @@ Widget _host(Widget child) => MaterialApp(
       theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
       localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
       supportedLocales: FuzzzyInkLocalizations.supportedLocales,
-      home: Scaffold(body: child),
+      home: Scaffold(
+        body: BlocProvider(
+          create: (_) => ChatFileCubit(
+            cryptoCoreService: _MockCryptoCoreService(),
+            userFileStore: UserFileStore(
+              supportDirectoryPath: '/app/support',
+              temporaryDirectoryPath: '/app/tmp',
+              documentsDirectoryPath: '/app/documents',
+            ),
+          ),
+          child: child,
+        ),
+      ),
     );
 
 /// Only the bubble's path is faked; the test binding keeps reading real
@@ -50,9 +68,7 @@ Widget _host(Widget child) => MaterialApp(
 final class _MissingFileOverrides extends IOOverrides {
   @override
   File createFile(String path) =>
-      path == _missingPath || path == _disguisedProgramPath
-          ? _MissingFile()
-          : super.createFile(path);
+      path == _missingPath ? _MissingFile() : super.createFile(path);
 }
 
 Future<void> _withMissingFiles(Future<void> Function() body) =>
@@ -96,42 +112,39 @@ void main() {
     TestWidgetsFlutterBinding.instance.window.clearDevicePixelRatioTestValue();
   });
 
-  // T-0366: a file bubble names the file and the folder the user finds it
-  // in — never a path — its pill offers "Show" on every platform and fits a
-  // 360dp phone, and a failing action surfaces a toast instead of an
-  // unhandled error. The test host is desktop, so "Show" selects the file in
-  // the file manager, which a missing file cannot do.
-  group('file bubble (T-0366)', () {
+  // A file bubble names the file — never a path — and offers what the user
+  // can do with the sealed file the app keeps. Nothing copies a path: the
+  // old "Copy", link and "Copy as Link" actions put the local path (and the
+  // user name in it) on the clipboard (security review).
+  group('file bubble', () {
     testWidgets(
-        'sent file: name + location, Show / Share File / Copy / link actions '
-        'all on a 360dp screen, a missing file toasts', (tester) async {
+        'sent file: name + hint, Share File / Save only, all on a 360dp '
+        'screen, a missing file toasts', (tester) async {
       await _withMissingFiles(() async {
         await tester.pumpWidget(
           _host(SentMessageArea(message: _fileRow(isSent: true))),
         );
 
-        expect(find.text('secret.jpg.fuzz'), findsOneWidget);
-        expect(find.text('Downloads › Fuzzzy Ink › Fz bot'), findsOneWidget);
-        expect(find.textContaining('/storage/'), findsNothing);
+        final en = FuzzzyInkLocalizationsEn();
+        expect(find.text('secret.jpg'), findsOneWidget);
+        expect(find.text(en.sentFileHint), findsOneWidget);
+        expect(find.textContaining('/'), findsNothing);
 
-        await tester.tap(find.text('secret.jpg.fuzz'));
+        await tester.tap(find.text('secret.jpg'));
         await tester.pumpAndSettle();
 
-        for (final label in [
-          'Show',
-          'Share File',
-          'Copy',
-          '🔗',
-          'Copy as Link',
-        ]) {
+        for (final label in [en.shareFile, en.saveFile]) {
           expect(find.text(label), findsOneWidget, reason: label);
+        }
+        for (final gone in [en.show, en.copy, '🔗', en.copyAsLink]) {
+          expect(find.text(gone), findsNothing, reason: gone);
         }
         _expectPillOnScreen(tester);
 
-        await tester.tap(find.text('Show'));
+        await tester.tap(find.text(en.saveFile));
         await tester.pump();
 
-        expect(find.text('Could not open file.'), findsOneWidget);
+        expect(find.text(en.couldNotSaveFile), findsOneWidget);
         expect(tester.takeException(), isNull);
 
         await _dismissOverlayAndToast(tester);
@@ -139,111 +152,51 @@ void main() {
     });
 
     testWidgets(
-        'received file: name + location, Show / Open / Share File / link / '
-        'Copy actions all on a 360dp screen, "Open" on a missing file toasts',
+        'received file: name + hint, Open / Save / Share File only, all on a '
+        '360dp screen; a row the app cannot open toasts why', (tester) async {
+      await tester.pumpWidget(
+        _host(ReceivedFileMessageArea(message: _fileRow(isSent: false))),
+      );
+
+      final en = FuzzzyInkLocalizationsEn();
+      expect(find.text('secret.jpg'), findsOneWidget);
+      expect(find.text(en.receivedFileHint), findsOneWidget);
+      expect(find.textContaining('/'), findsNothing);
+
+      await tester.tap(find.text('secret.jpg'));
+      await tester.pumpAndSettle();
+
+      for (final label in [en.open, en.saveFile, en.shareFile]) {
+        expect(find.text(label), findsOneWidget, reason: label);
+      }
+      for (final gone in [en.show, en.copy, '🔗', en.copyAsLink]) {
+        expect(find.text(gone), findsNothing, reason: gone);
+      }
+      _expectPillOnScreen(tester);
+
+      // The row carries no kept key: nothing is unfuzzed, the reason shows.
+      await tester.tap(find.text(en.open));
+      await tester.pumpAndSettle();
+
+      expect(find.text(en.fileCorrupt), findsOneWidget);
+      expect(find.byType(PlainFileViewerPage), findsNothing);
+      expect(tester.takeException(), isNull);
+
+      await _dismissOverlayAndToast(tester);
+    });
+
+    testWidgets("a sender's direction override cannot disguise the name",
         (tester) async {
-      await _withMissingFiles(() async {
-        await tester.pumpWidget(
-          _host(ReceivedFileMessageArea(message: _fileRow(isSent: false))),
-        );
-
-        expect(find.text('secret.jpg.fuzz'), findsOneWidget);
-        expect(find.text('Downloads › Fuzzzy Ink › Fz bot'), findsOneWidget);
-        expect(find.textContaining('/storage/'), findsNothing);
-
-        await tester.tap(find.text('secret.jpg.fuzz'));
-        await tester.pumpAndSettle();
-
-        for (final label in [
-          'Show',
-          'Open',
-          'Share File',
-          '🔗',
-          'Copy as Link',
-          'Copy',
-        ]) {
-          expect(find.text(label), findsOneWidget, reason: label);
-        }
-        _expectPillOnScreen(tester);
-
-        await tester.tap(find.text('Open'));
-        await tester.pump();
-
-        expect(find.text('Could not open file.'), findsOneWidget);
-        expect(tester.takeException(), isNull);
-
-        await _dismissOverlayAndToast(tester);
-      });
-    });
-  });
-
-  // Security review: "Open" on a received program, script or shortcut would
-  // run it on a computer. It is refused before anything is launched, the
-  // dialog offers the folder instead, and the name is shown in its real
-  // order (R14).
-  group('received program', () {
-    testWidgets(
-        'the name shows its real extension; Open refuses with a dialog whose '
-        '"Show in folder" goes to the folder', (tester) async {
-      await _withMissingFiles(() async {
-        await tester.pumpWidget(
-          _host(
-            ReceivedFileMessageArea(
-              message: _fileRow(isSent: false, path: _disguisedProgramPath),
-            ),
+      await tester.pumpWidget(
+        _host(
+          ReceivedFileMessageArea(
+            message: _fileRow(isSent: false, path: _disguisedProgramPath),
           ),
-        );
+        ),
+      );
 
-        expect(find.text('invoicefdp.exe'), findsOneWidget);
-        expect(find.textContaining('\u{202E}'), findsNothing);
-
-        await tester.tap(find.text('invoicefdp.exe'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('Open'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('File not opened'), findsOneWidget);
-        expect(find.textContaining('“invoicefdp.exe”'), findsOneWidget);
-        expect(find.text('Could not open file.'), findsNothing);
-
-        // The folder of a missing file cannot be shown: the usual toast.
-        await tester.tap(
-          find.byKey(const ValueKey('riskyFileDialog.showInFolder')),
-        );
-        await tester.pump();
-        // The dialog's closing transition.
-        await tester.pump(const Duration(milliseconds: 300));
-
-        expect(find.text('File not opened'), findsNothing);
-        expect(find.text('Could not open file.'), findsOneWidget);
-        expect(tester.takeException(), isNull);
-
-        await _dismissOverlayAndToast(tester);
-      });
-    });
-
-    testWidgets('Cancel closes the dialog and opens nothing', (tester) async {
-      await _withMissingFiles(() async {
-        await tester.pumpWidget(
-          _host(
-            ReceivedFileMessageArea(
-              message: _fileRow(isSent: false, path: _disguisedProgramPath),
-            ),
-          ),
-        );
-
-        // A long press on the bubble is "Open" too.
-        await tester.longPress(find.text('invoicefdp.exe'));
-        await tester.pumpAndSettle();
-        expect(find.text('File not opened'), findsOneWidget);
-
-        await tester.tap(find.byKey(const ValueKey('riskyFileDialog.cancel')));
-        await tester.pumpAndSettle();
-
-        expect(find.text('File not opened'), findsNothing);
-        expect(find.text('Could not open file.'), findsNothing);
-        expect(tester.takeException(), isNull);
-      });
+      expect(find.text('invoicefdp.exe'), findsOneWidget);
+      expect(find.textContaining('\u{202E}'), findsNothing);
     });
   });
 }

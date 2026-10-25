@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -14,30 +15,8 @@ import 'package:path/path.dart' as path;
 
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
-/// Stands in for the user-visible place a finished file moves to (T-0366):
-/// answers `publishedPath` for every file, or throws when [failure] is set.
-class _FakeUserFileStore extends Fake implements UserFileStore {
-  _FakeUserFileStore({this.publishedPath, this.failure});
-
-  final String? publishedPath;
-  final Exception? failure;
-  final List<({String outputPath, String chatName})> published = [];
-
-  @override
-  Future<String> publish({
-    required String outputPath,
-    required String chatName,
-  }) async {
-    published.add((outputPath: outputPath, chatName: chatName));
-    if (failure != null) throw failure!;
-    return publishedPath ?? outputPath;
-  }
-}
-
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _chatName = 'Bob';
-const _publishedPath =
-    '/storage/emulated/0/Download/Fuzzzy Ink/Bob/report.pdf.fuzz';
 
 /// A handler whose stream replays [events]; pause/resume/cancel are counted.
 class _FakeHandler {
@@ -60,8 +39,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late MockCryptoCoreService mockService;
-  late _FakeUserFileStore userFileStore;
+  late UserFileStore userFileStore;
   late Directory documents;
+  late Directory support;
+  late Directory temporary;
   late File input;
   final markedForBackupExclusion = <String>[];
 
@@ -75,24 +56,35 @@ void main() {
   setUp(() {
     markedForBackupExclusion.clear();
     mockService = MockCryptoCoreService();
-    userFileStore = _FakeUserFileStore();
     documents = Directory.systemTemp.createTempSync('file_processing_cubit_');
+    support = Directory(path.join(documents.path, 'support'))..createSync();
+    temporary = Directory(path.join(documents.path, 'tmp'))..createSync();
+    userFileStore = UserFileStore(
+      supportDirectoryPath: support.path,
+      temporaryDirectoryPath: temporary.path,
+      documentsDirectoryPath: documents.path,
+    );
     input = File(path.join(documents.path, 'report.pdf'))
       ..writeAsStringSync('plain');
-    sl.safeRegisterSingleton<AppDocumentsDirectory>(
-      AppDocumentsDirectory(directory: documents),
-    );
   });
 
   tearDown(() async {
-    await sl.unregister<AppDocumentsDirectory>();
     if (documents.existsSync()) documents.deleteSync(recursive: true);
   });
 
-  String chatFolder() => UserFileNames.chatFolderPath(
-        documentsPath: documents.path,
-        chatName: _chatName,
-        chatId: _chatId,
+  /// The chat's sealed folder (`UserFileStore`).
+  String chatFolder() => path.join(
+        support.path,
+        'sealed_files',
+        'chats',
+        UserFileNames.safeChatFolderName(chatName: _chatName, chatId: _chatId),
+      );
+
+  /// What a row keeps for a file in the chat folder.
+  String stored(String name) => path.join(
+        'chats',
+        UserFileNames.safeChatFolderName(chatName: _chatName, chatId: _chatId),
+        name,
       );
 
   FileProcessingCubit<FileEncryptionOption> buildEncrypt() =>
@@ -192,8 +184,8 @@ void main() {
     }
 
     test(
-        'on a computer the chat folder is Documents/Fuzzzy Ink/<chat> (<id>), '
-        "never a folder of the user's own", () async {
+        "the chat folder is the app's private sealed_files/chats/<chat> "
+        "(<id>), never a folder of the user's own", () async {
       final job = StreamController<FileProcessingProgress>();
       final chosen = chosenSendPath(job);
       final cubit = buildEncrypt()
@@ -204,14 +196,10 @@ void main() {
         );
 
       final outputPath = await chosen;
-      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-        expect(
-          path.dirname(outputPath),
-          path.join(documents.path, 'Fuzzzy Ink', 'Bob (6f1e9b2c)'),
-        );
-      } else {
-        expect(path.dirname(outputPath), path.join(documents.path, _chatName));
-      }
+      expect(
+        path.dirname(outputPath),
+        path.join(support.path, 'sealed_files', 'chats', 'Bob (6f1e9b2c)'),
+      );
       expect(Directory(path.dirname(outputPath)).existsSync(), isTrue);
 
       await cubit.close();
@@ -238,9 +226,10 @@ void main() {
       await job.close();
     });
 
-    test('a receive is pointed at the chat folder (the name is chosen there)',
-        () async {
-      final chosen = Completer<String>();
+    test(
+        'a receive keeps a copy of the container in the chat folder and '
+        'unfuzzes that copy into a private hand-off folder', () async {
+      final chosen = Completer<({String input, String output})>();
       final job = StreamController<FileProcessingProgress>();
       when(
         () => mockService.decryptFileForChat(
@@ -250,11 +239,14 @@ void main() {
         ),
       ).thenAnswer((invocation) async {
         chosen.complete(
-          invocation.namedArguments[#outputDirectoryPath] as String,
+          (
+            input: invocation.namedArguments[#inputPath] as String,
+            output: invocation.namedArguments[#outputDirectoryPath] as String,
+          ),
         );
         return CryptoCoreSuccess(
           CryptoCoreReceivedFile(
-            outputPath: path.join(chatFolder(), 'report.pdf'),
+            outputPath: path.join(support.path, 'handoff', 'x', 'report.pdf'),
             keptKey: Uint8List(0),
             handler: FileProcessingHandler(
               progressStream: job.stream,
@@ -265,14 +257,20 @@ void main() {
           ),
         );
       });
+      final container = File(path.join(documents.path, 'report.pdf.fuzz'))
+        ..writeAsStringSync('FUZZ....');
       final cubit = buildDecrypt()
         ..addFilesToProcess(
           chatId: _chatId,
           chatName: _chatName,
-          filePaths: [input.path],
+          filePaths: [container.path],
         );
 
-      expect(await chosen.future, chatFolder());
+      final (:input, :output) = await chosen.future;
+      expect(input, path.join(chatFolder(), 'report.pdf.fuzz'));
+      expect(File(input).readAsStringSync(), 'FUZZ....');
+      expect(userFileStore.isHandoff(path.join(output, 'x')), isTrue);
+      expect(container.existsSync(), isTrue, reason: "the user's own file");
 
       await cubit.close();
       await job.close();
@@ -343,7 +341,7 @@ void main() {
           cubit.state,
           processedAs(
             FileProcessingStatus.completed,
-            outputFilePath: outputPath,
+            outputFilePath: stored('report.pdf.fuzz'),
           ),
         );
         verifyNever(
@@ -356,16 +354,10 @@ void main() {
       },
     );
 
-    // T-0366: the finished file is handed to the user-visible store and the
-    // row keeps the path the store answers (Downloads/Fuzzzy Ink/<chat> on
-    // Android); a store that cannot place it keeps the app's own copy.
     blocTest<FileProcessingCubit<FileEncryptionOption>, FileProcessingState>(
-      'a completed file is published under the chat name and the row keeps '
-      'the published path',
-      setUp: () {
-        userFileStore = _FakeUserFileStore(publishedPath: _publishedPath);
-        stubEncrypt(CryptoCoreSuccess(completingHandler()));
-      },
+      'the row keeps the path relative to the sealed folder, so it survives '
+      'an iOS container move',
+      setUp: () => stubEncrypt(CryptoCoreSuccess(completingHandler())),
       build: buildEncrypt,
       act: (cubit) => cubit.addFilesToProcess(
         chatId: _chatId,
@@ -374,44 +366,14 @@ void main() {
       ),
       wait: settle,
       verify: (cubit) {
+        final row = cubit.state.processedFiles.single.outputFilePath!;
+        expect(path.isAbsolute(row), isFalse);
         expect(
-          userFileStore.published.single,
-          (
-            outputPath: path.join(chatFolder(), 'report.pdf.fuzz'),
-            chatName: _chatName,
-          ),
+          userFileStore.resolve(row),
+          path.join(chatFolder(), 'report.pdf.fuzz'),
         );
-        expect(
-          cubit.state,
-          processedAs(
-            FileProcessingStatus.completed,
-            outputFilePath: _publishedPath,
-          ),
-        );
+        expect(cubit.state.processedFiles.single.keptFileKey, isNull);
       },
-    );
-
-    blocTest<FileProcessingCubit<FileEncryptionOption>, FileProcessingState>(
-      "a store that cannot place the file keeps the app's own path, still "
-      'completed',
-      setUp: () {
-        userFileStore = _FakeUserFileStore(failure: Exception('no storage'));
-        stubEncrypt(CryptoCoreSuccess(completingHandler()));
-      },
-      build: buildEncrypt,
-      act: (cubit) => cubit.addFilesToProcess(
-        chatId: _chatId,
-        chatName: _chatName,
-        filePaths: [input.path],
-      ),
-      wait: settle,
-      verify: (cubit) => expect(
-        cubit.state,
-        processedAs(
-          FileProcessingStatus.completed,
-          outputFilePath: path.join(chatFolder(), 'report.pdf.fuzz'),
-        ),
-      ),
     );
 
     blocTest<FileProcessingCubit<FileEncryptionOption>, FileProcessingState>(
@@ -442,7 +404,7 @@ void main() {
           cubit.state,
           processedAs(
             FileProcessingStatus.completed,
-            outputFilePath: outputPath,
+            outputFilePath: stored('20260920-WA0000.jpg.fuzz'),
           ),
         );
       },
@@ -613,55 +575,125 @@ void main() {
         ..writeAsStringSync('FUZZ....');
     });
 
-    blocTest<FileProcessingCubit<FileDecryptionOption>, FileProcessingState>(
-      'unfuzzes through decryptFileForChat into the chat folder and completes '
-      "with the sender's original name",
-      setUp: () => stubDecrypt(
-        CryptoCoreSuccess(
-          CryptoCoreReceivedFile(
-            outputPath: path.join(chatFolder(), 'report.pdf'),
-            keptKey: Uint8List(0),
-            handler: _FakeHandler([
-              FileProcessingProgress(progress: 1 / 3),
-              FileProcessingProgress(progress: 2 / 3),
-              FileProcessingProgress.completed(),
-            ]).handler,
-          ),
+    test(
+        'keeps the container and its sealed key, wipes the plain proof copy: '
+        'nothing plain is left once the receive completes', () async {
+      final keptKey = Uint8List.fromList([0x46, 0x55, 0x5A, 0x5A, 1, 0x20, 7]);
+      final handoff = await userFileStore.newHandoffFolder();
+      final plain = File(path.join(handoff, 'report.pdf'));
+      final job = StreamController<FileProcessingProgress>();
+      when(
+        () => mockService.decryptFileForChat(
+          chatId: any(named: 'chatId'),
+          inputPath: any(named: 'inputPath'),
+          outputDirectoryPath: any(named: 'outputDirectoryPath'),
         ),
-      ),
-      build: buildDecrypt,
-      act: (cubit) => cubit.addFilesToProcess(
+      ).thenAnswer((_) async {
+        plain.writeAsStringSync('plain');
+        return CryptoCoreSuccess(
+          CryptoCoreReceivedFile(
+            outputPath: plain.path,
+            keptKey: keptKey,
+            handler: FileProcessingHandler(
+              progressStream: job.stream,
+              pause: () {},
+              resume: () {},
+              cancel: () {},
+            ),
+          ),
+        );
+      });
+      final cubit = buildDecrypt();
+      final finished = cubit.stream.firstWhere(
+        (state) =>
+            state.processedFiles.isNotEmpty &&
+            state.currentProcessingFile == null,
+      );
+      cubit.addFilesToProcess(
         chatId: _chatId,
         chatName: _chatName,
         filePaths: [container.path],
-      ),
-      wait: settleReceive,
-      verify: (cubit) {
-        verify(
-          () => mockService.decryptFileForChat(
-            chatId: _chatId,
-            inputPath: container.path,
-            outputDirectoryPath: chatFolder(),
+      );
+      await untilCalled(
+        () => mockService.decryptFileForChat(
+          chatId: any(named: 'chatId'),
+          inputPath: any(named: 'inputPath'),
+          outputDirectoryPath: any(named: 'outputDirectoryPath'),
+        ),
+      );
+      job
+        ..add(FileProcessingProgress(progress: 0.5))
+        ..add(FileProcessingProgress.completed());
+
+      final state = await finished;
+      expect(
+        state,
+        processedAs(
+          FileProcessingStatus.completed,
+          outputFilePath: stored('anything.fuzz'),
+        ),
+      );
+      expect(state.processedFiles.single.keptFileKey, base64Encode(keptKey));
+      expect(
+        File(path.join(chatFolder(), 'anything.fuzz')).existsSync(),
+        isTrue,
+      );
+      expect(plain.existsSync(), isFalse);
+      expect(Directory(handoff).existsSync(), isFalse);
+
+      await cubit.close();
+      await job.close();
+    });
+
+    test('a spent receive (run failed) leaves no kept container behind',
+        () async {
+      final job = StreamController<FileProcessingProgress>();
+      stubDecrypt(
+        CryptoCoreSuccess(
+          CryptoCoreReceivedFile(
+            outputPath: await userFileStore.newHandoffPath('report.pdf'),
+            keptKey: Uint8List(1),
+            handler: FileProcessingHandler(
+              progressStream: job.stream,
+              pause: () {},
+              resume: () {},
+              cancel: () {},
+            ),
           ),
-        ).called(1);
-        expect(
-          cubit.state,
-          processedAs(
-            FileProcessingStatus.completed,
-            outputFilePath: path.join(chatFolder(), 'report.pdf'),
-          ),
-        );
-        // T-0366: the unfuzzed file is published like a fuzzed one.
-        expect(
-          userFileStore.published.single,
-          (
-            outputPath: path.join(chatFolder(), 'report.pdf'),
-            keptKey: Uint8List(0),
-            chatName: _chatName,
-          ),
-        );
-      },
-    );
+        ),
+      );
+      final cubit = buildDecrypt();
+      final finished = cubit.stream.firstWhere(
+        (state) =>
+            state.processedFiles.isNotEmpty &&
+            state.currentProcessingFile == null,
+      );
+      cubit.addFilesToProcess(
+        chatId: _chatId,
+        chatName: _chatName,
+        filePaths: [container.path],
+      );
+      await untilCalled(
+        () => mockService.decryptFileForChat(
+          chatId: any(named: 'chatId'),
+          inputPath: any(named: 'inputPath'),
+          outputDirectoryPath: any(named: 'outputDirectoryPath'),
+        ),
+      );
+      job.add(
+        FileProcessingProgress.completedWithFailure(
+          message: CryptoCoreFailureType.corrupt.name,
+          currentProgress: 0.5,
+        ),
+      );
+
+      await finished;
+      expect(Directory(chatFolder()).listSync(), isEmpty);
+      expect(container.existsSync(), isTrue, reason: "the user's own file");
+
+      await cubit.close();
+      await job.close();
+    });
 
     for (final (core, failure) in [
       (CryptoCoreFailureType.replay, FileProcessingFailureType.alreadyUnfuzzed),
@@ -684,10 +716,14 @@ void main() {
           filePaths: [container.path],
         ),
         wait: settleReceive,
-        verify: (cubit) => expect(
-          cubit.state,
-          processedAs(FileProcessingStatus.failed, failure: failure),
-        ),
+        verify: (cubit) {
+          expect(
+            cubit.state,
+            processedAs(FileProcessingStatus.failed, failure: failure),
+          );
+          // Nothing was spent: the user can try again from their own file.
+          expect(Directory(chatFolder()).listSync(), isEmpty);
+        },
       );
     }
 
@@ -697,7 +733,7 @@ void main() {
       setUp: () => stubDecrypt(
         CryptoCoreSuccess(
           CryptoCoreReceivedFile(
-            outputPath: path.join(chatFolder(), 'report.pdf'),
+            outputPath: path.join(support.path, 'handoff', 'x', 'report.pdf'),
             keptKey: Uint8List(0),
             handler: _FakeHandler([
               FileProcessingProgress(progress: 0.5),
@@ -731,7 +767,7 @@ void main() {
       setUp: () => stubDecrypt(
         CryptoCoreSuccess(
           CryptoCoreReceivedFile(
-            outputPath: path.join(chatFolder(), 'report.pdf'),
+            outputPath: path.join(support.path, 'handoff', 'x', 'report.pdf'),
             keptKey: Uint8List(0),
             handler: _FakeHandler([
               FileProcessingProgress(progress: 0.25),

@@ -53,6 +53,7 @@ class ChatFileInjectorCubit extends Cubit<ChatFileInjectorState> {
           decryptedMessage: '',
           sentAt: DateTime.now(),
           isSent: filesAreEncrypted,
+          keptFileKey: file.keptFileKey,
         );
 
         final addMessageFuture = messageDataRepository.addMessage(

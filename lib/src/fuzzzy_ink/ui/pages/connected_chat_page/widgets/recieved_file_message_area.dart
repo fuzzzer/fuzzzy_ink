@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
+/// A received file: the app keeps it sealed (`PROTOCOL.md` §9.6). Open shows
+/// it in the app, Save gives it to the system save dialog, Share to the
+/// share sheet; each unfuzzes a short-lived copy that is wiped right after.
 class ReceivedFileMessageArea extends StatefulWidget {
   final MessageData message;
 
@@ -17,58 +20,52 @@ class ReceivedFileMessageArea extends StatefulWidget {
 }
 
 class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
-  Future<void> _openDecryptedFileDirectory({
-    required String encryptedMessage,
-    required FuzzzyInkLocalizations localizations,
-  }) async {
-    final filePath = encryptedMessage.replaceAll(fuzzIdentificator, '');
+  String get _fileName => ChatFileCubit.fileNameOf(widget.message);
 
-    try {
-      await DeviceFileInteractor.revealFile(filePath, context: context);
-    } catch (_) {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.couldNotOpenFile);
-    }
+  Future<void> _open() async {
+    final cubit = context.read<ChatFileCubit>();
+    final store = cubit.userFileStore;
+    final copy = await unfuzzChatFile(context, widget.message);
+    if (copy == null || !mounted) return;
+
+    // The viewer is a route of its own: it gets the store, not this context.
+    await PlainFileViewerPage.show(
+      context,
+      fileName: _fileName,
+      filePath: copy,
+      onSave: (viewerContext) => saveFileForUser(
+        viewerContext,
+        filePath: copy,
+        fileName: _fileName,
+        store: store,
+      ),
+      onShare: (viewerContext) async {
+        await shareFileForUser(viewerContext, filePath: copy, store: store);
+        cubit.wipeWhenBack(copy);
+      },
+      onClosed: () => cubit.wipe(copy),
+    );
   }
 
-  Future<void> _openDecryptedFile({
-    required String encryptedMessage,
-    required FuzzzyInkLocalizations localizations,
-  }) async {
-    final filePath = encryptedMessage.replaceAll(fuzzIdentificator, '');
-
-    try {
-      await DeviceFileInteractor.openFile(filePath);
-    } on RiskyFileOpenRefused {
-      // A program, installer, script or shortcut from the sender is never
-      // launched from here; its folder is offered instead.
-      if (!mounted) return;
-      await showRiskyFileDialog(
-        context,
-        fileName: UserFileLocation.of(encryptedMessage).fileName,
-        onShowInFolder: () => _openDecryptedFileDirectory(
-          encryptedMessage: encryptedMessage,
-          localizations: localizations,
-        ),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.couldNotOpenFile);
-    }
+  Future<void> _save() async {
+    final cubit = context.read<ChatFileCubit>();
+    final copy = await unfuzzChatFile(context, widget.message);
+    if (copy == null || !mounted) return;
+    await saveFileForUser(
+      context,
+      filePath: copy,
+      fileName: _fileName,
+      store: cubit.userFileStore,
+    );
+    await cubit.wipe(copy);
   }
 
-  Future<void> _shareDecryptedFile({
-    required String encryptedMessage,
-    required FuzzzyInkLocalizations localizations,
-  }) async {
-    final filePath = encryptedMessage.replaceAll(fuzzIdentificator, '');
-
-    try {
-      await DeviceFileInteractor.shareFile(filePath, context: context);
-    } catch (_) {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.couldNotOpenFile);
-    }
+  Future<void> _share() async {
+    final cubit = context.read<ChatFileCubit>();
+    final copy = await unfuzzChatFile(context, widget.message);
+    if (copy == null || !mounted) return;
+    await shareFileForUser(context, filePath: copy, store: cubit.userFileStore);
+    cubit.wipeWhenBack(copy);
   }
 
   @override
@@ -80,7 +77,8 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
 
     // Read per build: the list has no keys, so this State is reused for
     // whatever file row lands at its index.
-    final fileLocation = UserFileLocation.of(widget.message.encryptedMessage);
+    final fileName =
+        UserFileNames.forDisplay(ChatFileCubit.fileNameOf(widget.message));
 
     const borderRadius = BorderRadius.only(
       topLeft: Radius.circular(12),
@@ -91,12 +89,7 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
-        onLongPress: () {
-          _openDecryptedFile(
-            encryptedMessage: widget.message.encryptedMessage,
-            localizations: localizations,
-          );
-        },
+        onLongPress: _open,
         child: SizedBox(
           width: double.maxFinite,
           child: Align(
@@ -111,80 +104,24 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
                 return FuzzyActionPill(
                   actions: [
                     TextAction(
-                      label: localizations.show,
+                      label: localizations.open,
                       onTap: () {
-                        _openDecryptedFileDirectory(
-                          encryptedMessage: widget.message.encryptedMessage,
-                          localizations: localizations,
-                        );
                         closeOverlay();
+                        _open();
                       },
                     ),
                     TextAction(
-                      label: localizations.open,
+                      label: localizations.saveFile,
                       onTap: () {
-                        _openDecryptedFile(
-                          encryptedMessage: widget.message.encryptedMessage,
-                          localizations: localizations,
-                        );
                         closeOverlay();
+                        _save();
                       },
                     ),
                     TextAction(
                       label: localizations.shareFile,
                       onTap: () {
-                        _shareDecryptedFile(
-                          encryptedMessage: widget.message.encryptedMessage,
-                          localizations: localizations,
-                        );
                         closeOverlay();
-                      },
-                    ),
-                    TextAction(
-                      label: '🔗',
-                      onTap: () {
-                        final link = FuzzyLinkGenerator.generateFuzzLink(
-                          widget.message.chatId,
-                          widget.message.encryptedMessage,
-                        );
-                        final preparedFuzz =
-                            '$fuzzIdentificator${widget.message.encryptedMessage}';
-                        final shareable =
-                            FuzzyLinkGenerator.generateShareableContent(
-                          link: link,
-                          rawFuzz: preparedFuzz,
-                          type: FuzzyLinkType.fuzz,
-                        );
-                        ShareHelper.share(shareable, context: context);
-                        closeOverlay();
-                      },
-                    ),
-                    TextAction(
-                      label: localizations.copyAsLink,
-                      onTap: () {
-                        final link = FuzzyLinkGenerator.generateFuzzLink(
-                          widget.message.chatId,
-                          widget.message.encryptedMessage,
-                        );
-                        Clipboard.setData(ClipboardData(text: link));
-                        FuzzzyToast.show(
-                          context,
-                          message: localizations.linkCopiedToClipboard,
-                        );
-                        closeOverlay();
-                      },
-                    ),
-                    TextAction(
-                      label: localizations.copy,
-                      onTap: () {
-                        final filePath = widget.message.encryptedMessage
-                            .replaceAll(fuzzIdentificator, '');
-                        Clipboard.setData(ClipboardData(text: filePath));
-                        FuzzzyToast.show(
-                          context,
-                          message: localizations.copiedToTheClipboard,
-                        );
-                        closeOverlay();
+                        _share();
                       },
                     ),
                   ],
@@ -208,14 +145,14 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      fileLocation.fileName,
+                      fileName,
                       style: fuzzzyTextStyles.body.copyWith(
                         color: fuzzzyColors.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      fileLocation.folderLine,
+                      localizations.receivedFileHint,
                       style: fuzzzyTextStyles.bodyS.copyWith(
                         color: fuzzzyColors.inkMute,
                       ),
