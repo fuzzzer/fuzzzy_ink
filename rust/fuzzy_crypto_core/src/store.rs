@@ -577,10 +577,74 @@ impl OpenStore {
         open_local(&*self.history_key(chat_id)?, chat_id, blob)
     }
 
+    /// Seals a received file's key under `chat_id`'s history key.
+    pub fn seal_kept_file_key(
+        &self,
+        chat_id: &str,
+        file_key: &[u8; 32],
+    ) -> Result<Vec<u8>, CoreError> {
+        seal_kept_file_key(&*self.history_key(chat_id)?, chat_id, file_key)
+    }
+
+    /// Inverse of [`OpenStore::seal_kept_file_key`]; a deleted chat's blob is
+    /// `UnknownChat`.
+    pub fn open_kept_file_key(&self, chat_id: &str, blob: &[u8]) -> Result<Key32, CoreError> {
+        open_kept_file_key(&*self.history_key(chat_id)?, chat_id, blob)
+    }
+
     #[cfg(test)]
     fn is_cached(&self, chat_id: &str) -> bool {
         self.cache.contains_key(chat_id)
     }
+}
+
+// ---------------------------------------------------------------------------
+// Kept file keys (0x20) — a received file the app keeps, under the history key
+// ---------------------------------------------------------------------------
+
+const KEPT_FILE_KEY_AAD_PREFIX: &[u8] = b"kept-file-key";
+
+/// Seals the file key of a received chat-mode container the app keeps, under
+/// the chat's `history_key` with a random nonce: a 0x20 blob with AAD
+/// `kept-file-key` ‖ chat id, so a history seal never opens as a file key and
+/// a file key never as history. The container's key message is single-use;
+/// this seal is what lets the kept container be opened again (`PROTOCOL.md`
+/// §9.6).
+pub fn seal_kept_file_key(
+    history_key: &[u8; 32],
+    chat_id: &str,
+    file_key: &[u8; 32],
+) -> Result<Vec<u8>, CoreError> {
+    let nonce = random_array()?;
+    let ciphertext = seal(
+        history_key,
+        &nonce,
+        &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, chat_id),
+        file_key,
+    )?;
+    Ok(LocalSeal { nonce, ciphertext }.encode())
+}
+
+/// Inverse of [`seal_kept_file_key`]; a tag failure (another chat's key or id,
+/// a history seal, a tampered blob) or a body that is not 32 bytes is `Corrupt`.
+pub fn open_kept_file_key(
+    history_key: &[u8; 32],
+    chat_id: &str,
+    blob: &[u8],
+) -> Result<Key32, CoreError> {
+    let sealed = LocalSeal::decode(blob)?;
+    let plain = Zeroizing::new(open(
+        history_key,
+        &sealed.nonce,
+        &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, chat_id),
+        &sealed.ciphertext,
+    )?);
+    let mut file_key = Zeroizing::new([0u8; 32]);
+    if plain.len() != file_key.len() {
+        return Err(CoreError::Corrupt);
+    }
+    file_key.copy_from_slice(&plain);
+    Ok(file_key)
 }
 
 #[cfg(test)]
@@ -1287,6 +1351,70 @@ mod tests {
             assert_eq!(
                 open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &wrapped).unwrap_err(),
                 CoreError::UnsupportedFormat
+            );
+        }
+
+        #[test]
+        fn kept_file_key_round_trip_and_domain_separation() {
+            let file_key = [0x66u8; 32];
+            let blob = seal_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &file_key).unwrap();
+            assert_eq!(&blob[..6], b"FUZZ\x01\x20");
+            assert_eq!(blob.len(), 6 + 24 + 32 + 16);
+            assert_eq!(
+                *open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap(),
+                file_key
+            );
+
+            // A file key never opens as history, and history never as a file key.
+            assert_eq!(
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            let history = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, &file_key).unwrap();
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &history).unwrap_err(),
+                CoreError::Corrupt
+            );
+            // Another chat's id or key, a tampered byte, a short blob.
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, OTHER_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                open_kept_file_key(&[0x44; 32], LOCAL_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            for index in 6..blob.len() {
+                let mut tampered = blob.clone();
+                tampered[index] ^= 0x01;
+                assert_eq!(
+                    open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &tampered).unwrap_err(),
+                    CoreError::Corrupt,
+                    "byte {index}"
+                );
+            }
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob[..blob.len() - 1])
+                    .unwrap_err(),
+                CoreError::Corrupt
+            );
+        }
+
+        #[test]
+        fn kept_file_key_must_be_32_bytes() {
+            // A blob under the kept-file AAD whose body is not a key.
+            let nonce = [0x11u8; 24];
+            let ciphertext = seal(
+                &HISTORY_KEY,
+                &nonce,
+                &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, LOCAL_CHAT_ID),
+                b"short",
+            )
+            .unwrap();
+            let blob = LocalSeal { nonce, ciphertext }.encode();
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
             );
         }
 

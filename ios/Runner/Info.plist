@@ -39,14 +39,6 @@
 	<true/>
 	<!-- The files the app produces stay in Documents, which the Files app shows
 	     as "On My iPhone › Fuzzzy Ink"; "Show" opens it there (T-0366). -->
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>shareddocuments</string>
-	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

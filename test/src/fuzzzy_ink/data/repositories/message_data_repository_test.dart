@@ -278,14 +278,14 @@ void main() {
       );
     });
 
-    test('a file row carries no seal and keeps its path in both fields',
+    test('a sent file row carries no seal and keeps its path in both fields',
         () async {
       await repository.addMessage(
         MessageData(
           id: 0,
           chatId: _chatId,
           type: MessageType.file,
-          encryptedMessage: '/tmp/photo.jpg.fuzz',
+          encryptedMessage: 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz',
           decryptedMessage: '',
           sentAt: DateTime.now(),
           isSent: true,
@@ -295,8 +295,39 @@ void main() {
 
       final message = (await repository.getMessagesForChat(_chatId)).single;
       expect(message.type, MessageType.file);
-      expect(message.encryptedMessage, '/tmp/photo.jpg.fuzz');
-      expect(message.decryptedMessage, '/tmp/photo.jpg.fuzz');
+      expect(message.encryptedMessage, 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz');
+      expect(message.decryptedMessage, 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz');
+      expect(message.keptFileKey, isNull);
+      expect(
+        await repository.getFilePathsForChat(_chatId),
+        ['chats/Bob (6f1e9b2c)/photo.jpg.fuzz'],
+      );
+    });
+
+    test(
+        "a received file row keeps the container's sealed key as it is, "
+        'and gives it back', () async {
+      await repository.addMessage(
+        MessageData(
+          id: 0,
+          chatId: _chatId,
+          type: MessageType.file,
+          encryptedMessage: 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz',
+          decryptedMessage: '',
+          sentAt: DateTime.now(),
+          isSent: false,
+          keptFileKey: 'RlVaWgEg',
+        ),
+      );
+      await repository.addMessage(_text('hello', isSent: true));
+      expect(dataSource.rows.first.sealedPlaintext, 'RlVaWgEg');
+
+      final file = (await repository.getMessagesForChat(_chatId)).first;
+      expect(file.keptFileKey, 'RlVaWgEg');
+      expect(
+        await repository.getFilePathsForChat(_chatId),
+        ['chats/Bob (6f1e9b2c)/photo.jpg.fuzz'],
+      );
     });
 
     test('a locked store still stores the blob, without a seal', () async {

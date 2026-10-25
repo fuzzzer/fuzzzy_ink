@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class VaultItemEditorPagePayload {
@@ -81,24 +80,21 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
     _urlController.dispose();
     _notesController.dispose();
 
-    // Clean up any unencrypted temp files created for viewing/sharing
+    // Wipe the plain copies handed to the save dialog or the share sheet.
+    final store = sl.get<UserFileStore>();
     for (final file in _tempFiles) {
-      if (file.existsSync()) {
-        try {
-          file.deleteSync();
-        } catch (_) {}
-      }
+      store.wipe(file.path);
     }
-
-    // Clear the FilePicker cache to ensure picked files are removed
-    FilePicker.platform.clearTemporaryFiles();
 
     super.dispose();
   }
 
+  /// A short-lived plain copy in the app's private hand-off folder, wiped
+  /// when this page closes (and at the next launch at the latest).
   Future<File> _writeTempFile() async {
-    final dir = await getTemporaryDirectory();
-    final tempFile = File('${dir.path}/$_pickedFileName');
+    final copyPath =
+        await sl.get<UserFileStore>().newHandoffPath(_pickedFileName!);
+    final tempFile = File(copyPath);
     await tempFile.writeAsBytes(Uint8List.fromList(_pickedFileBytes!));
     _tempFiles.add(tempFile);
     return tempFile;
@@ -107,8 +103,10 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
   Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
-      final bytes = await file.readAsBytes();
+      final pickedPath = result.files.single.path!;
+      final bytes = await File(pickedPath).readAsBytes();
+      // The picker's cache copy is plain: gone as soon as it is read.
+      await sl.get<UserFileStore>().discardPickedCopy(pickedPath);
       setState(() {
         _pickedFileName = result.files.single.name;
         _pickedFileBytes = bytes;
@@ -120,65 +118,43 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
     }
   }
 
+  /// Shown inside the app from memory: nothing is written to disk.
   Future<void> _openFile(BuildContext context) async {
     if (_pickedFileBytes == null || _pickedFileName == null) return;
+    await PlainFileViewerPage.show(
+      context,
+      fileName: _pickedFileName!,
+      bytes: Uint8List.fromList(_pickedFileBytes!),
+      onSave: _saveFile,
+      onShare: _shareFile,
+    );
+  }
+
+  Future<void> _saveFile(BuildContext context) async {
+    if (_pickedFileBytes == null || _pickedFileName == null) return;
+    final store = sl.get<UserFileStore>();
+    final tempFile = await _writeTempFile();
     try {
-      final tempFile = await _writeTempFile();
-      await DeviceFileInteractor.openFile(tempFile.path);
-    } on RiskyFileOpenRefused {
-      // A program, installer, script or shortcut is never launched from
-      // here; where a folder can be shown it is offered instead.
       if (!context.mounted) return;
-      if (DeviceFileInteractor.canRevealFile) {
-        await showRiskyFileDialog(
-          context,
-          fileName: _pickedFileName!,
-          onShowInFolder: () => _revealFile(context),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(currentContextLocalization.couldNotOpenFile)),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open file: $e')),
-        );
-      }
+      await saveFileForUser(
+        context,
+        filePath: tempFile.path,
+        fileName: _pickedFileName!,
+        store: store,
+      );
+    } finally {
+      _tempFiles.remove(tempFile);
+      await store.wipe(tempFile.path);
     }
   }
 
   Future<void> _shareFile(BuildContext context) async {
     if (_pickedFileBytes == null || _pickedFileName == null) return;
-    try {
-      final tempFile = await _writeTempFile();
-      if (context.mounted) {
-        await DeviceFileInteractor.shareFile(tempFile.path, context: context);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not share file: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> _revealFile(BuildContext context) async {
-    if (_pickedFileBytes == null || _pickedFileName == null) return;
-    try {
-      final tempFile = await _writeTempFile();
-      if (context.mounted) {
-        await DeviceFileInteractor.revealFile(tempFile.path, context: context);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not reveal file: $e')),
-        );
-      }
-    }
+    final store = sl.get<UserFileStore>();
+    final tempFile = await _writeTempFile();
+    if (!context.mounted) return;
+    await shareFileForUser(context, filePath: tempFile.path, store: store);
+    store.wipeWhenBack(tempFile.path);
   }
 
   Future<void> _onSave(BuildContext context) async {
@@ -514,27 +490,21 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: _FileActionButton(
+                                            icon: Icons.save_alt_rounded,
+                                            label: currentContextLocalization
+                                                .saveFile,
+                                            onTap: () => _saveFile(context),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: _FileActionButton(
                                             icon: Icons.share_rounded,
                                             label: currentContextLocalization
                                                 .shareFile,
                                             onTap: () => _shareFile(context),
                                           ),
                                         ),
-                                        // On mobile revealing is the share
-                                        // sheet, so "Show" would duplicate
-                                        // "Share File".
-                                        if (DeviceFileInteractor
-                                            .canRevealFile) ...[
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: _FileActionButton(
-                                              icon: Icons.folder_open_rounded,
-                                              label: currentContextLocalization
-                                                  .show,
-                                              onTap: () => _revealFile(context),
-                                            ),
-                                          ),
-                                        ],
                                       ],
                                     ),
                                   ],

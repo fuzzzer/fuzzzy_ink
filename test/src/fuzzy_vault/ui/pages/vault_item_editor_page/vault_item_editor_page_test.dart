@@ -1,40 +1,42 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:path/path.dart' as path;
 
 class _FakeFilePicker extends FilePicker {
   @override
   Future<bool?> clearTemporaryFiles() async => true;
 }
 
-/// "Open" on a vault file that could run (a program, script or shortcut)
-/// explains itself in the app's language, like a chat does, instead of
-/// showing a raw error.
+/// "Open" on a vault file shows it inside the app, from memory: no plain
+/// copy is written, and a file the app cannot show (a program, a PDF) offers
+/// Save only — the app never hands it to another app to open.
 void main() {
   late Directory temp;
-  const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+  late UserFileStore store;
 
   setUp(() {
     temp = Directory.systemTemp.createTempSync('vault_item_editor_');
-    final messenger =
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    messenger.setMockMethodCallHandler(pathProvider, (_) async => temp.path);
     FilePicker.platform = _FakeFilePicker();
+    store = UserFileStore(
+      supportDirectoryPath: path.join(temp.path, 'support'),
+      temporaryDirectoryPath: path.join(temp.path, 'tmp'),
+      documentsDirectoryPath: path.join(temp.path, 'documents'),
+    );
+    sl.safeRegisterSingleton<UserFileStore>(store);
   });
 
-  tearDown(() {
-    final messenger =
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    messenger.setMockMethodCallHandler(pathProvider, null);
+  tearDown(() async {
+    await sl.unregister<UserFileStore>();
     if (temp.existsSync()) temp.deleteSync(recursive: true);
   });
 
-  VaultItem fileItem(String fileName) => VaultItem(
+  VaultItem fileItem(String fileName, List<int> bytes) => VaultItem(
         metadata: VaultItemMetadata(
           id: 'item-1',
           title: fileName,
@@ -47,11 +49,10 @@ void main() {
           updatedAt: DateTime(2026),
           contentVersion: 1,
         ),
-        fileContent: VaultFileContent(fileName: fileName, fileBytes: [1, 2]),
+        fileContent: VaultFileContent(fileName: fileName, fileBytes: bytes),
       );
 
-  testWidgets('a risky file shows the localized risky-file dialog',
-      (tester) async {
+  Future<void> openItem(WidgetTester tester, VaultItem item) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
@@ -60,35 +61,35 @@ void main() {
         home: VaultItemEditorPage(
           payload: VaultItemEditorPagePayload(
             type: VaultItemType.file,
-            existingItem: fileItem('setup.exe'),
+            existingItem: item,
           ),
         ),
       ),
     );
     await tester.pump();
+    await tester.tap(find.text(FuzzzyInkLocalizationsEn().open));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('a text file is shown in the app, and nothing is written',
+      (tester) async {
+    await openItem(tester, fileItem('note.txt', utf8.encode('the secret')));
+
+    expect(find.byType(PlainFileViewerPage), findsOneWidget);
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pumpAndSettle();
+    expect(find.text('the secret'), findsOneWidget);
+    expect(Directory(store.handoffRootPath).existsSync(), isFalse);
+  });
+
+  testWidgets('a program is not shown or run: the viewer offers Save only',
+      (tester) async {
+    await openItem(tester, fileItem('setup.exe', [0x4D, 0x5A]));
 
     final en = FuzzzyInkLocalizationsEn();
-    await tester.runAsync(() async {
-      await tester.tap(find.text(en.open));
-      // The temporary copy is written with real file I/O.
-      for (var i = 0;
-          i < 20 && find.byType(AlertDialog).evaluate().isEmpty;
-          i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 20));
-        await tester.pump();
-      }
-    });
-    await tester.pumpAndSettle();
-
-    expect(find.text(en.riskyFileNotOpenedTitle), findsOneWidget);
-    expect(
-      find.text(en.riskyFileNotOpenedMessage('setup.exe')),
-      findsOneWidget,
-    );
-    expect(find.textContaining('RiskyFileOpenRefused'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('riskyFileDialog.showInFolder')),
-      findsOneWidget,
-    );
+    expect(find.byType(PlainFileViewerPage), findsOneWidget);
+    expect(find.text(en.fileNoPreview), findsOneWidget);
+    expect(find.text(en.saveFile), findsWidgets);
+    expect(Directory(store.handoffRootPath).existsSync(), isFalse);
   });
 }

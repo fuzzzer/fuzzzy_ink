@@ -32,6 +32,12 @@ class ConnectedChatPage extends StatelessWidget {
             cryptoCoreService: sl.get<CryptoCoreService>(),
           )..load(),
         ),
+        BlocProvider<ChatFileCubit>(
+          create: (context) => ChatFileCubit(
+            cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
+          ),
+        ),
       ],
       child: ProvidedConnectedChatPage(payload: payload),
     );

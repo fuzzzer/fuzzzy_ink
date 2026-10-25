@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path/path.dart' as path;
 
 class BasicEncryptionContent extends StatelessWidget {
   final TextEditingController keyController;
@@ -16,6 +15,7 @@ class BasicEncryptionContent extends StatelessWidget {
   final List<String>? selectedFilePaths;
   final SelectedFilesCallback onFilesSelected;
   final VoidCallback onProcessFiles;
+  final ValueChanged<String> onOpenFuzzedFile;
 
   const BasicEncryptionContent({
     super.key,
@@ -26,6 +26,7 @@ class BasicEncryptionContent extends StatelessWidget {
     required this.selectedFilePaths,
     required this.onFilesSelected,
     required this.onProcessFiles,
+    required this.onOpenFuzzedFile,
   });
 
   @override
@@ -147,13 +148,14 @@ class BasicEncryptionContent extends StatelessWidget {
               BlocBuilder<CustomFileProcessingCubit<FileEncryptionOption>,
                   CustomFileProcessingState>(
                 builder: (context, state) =>
-                    _buildProcessedFilesList(state, context),
+                    _buildProcessedFilesList(state, context, isPlain: false),
               ),
               BlocBuilder<CustomFileProcessingCubit<FileDecryptionOption>,
                   CustomFileProcessingState>(
                 builder: (context, state) =>
-                    _buildProcessedFilesList(state, context),
+                    _buildProcessedFilesList(state, context, isPlain: true),
               ),
+              BasicsFuzzedFilesList(onOpen: onOpenFuzzedFile),
               const SizedBox(height: 120),
             ],
           ),
@@ -162,13 +164,19 @@ class BasicEncryptionContent extends StatelessWidget {
     );
   }
 
+  /// This session's results. A fuzzed file is listed with the kept ones
+  /// below; an unfuzzed one ([isPlain]) is a short-lived copy: Open shows it
+  /// in the app, Save gives it to the save dialog and wipes it, and every
+  /// copy is wiped when the page closes.
   Widget _buildProcessedFilesList(
     CustomFileProcessingState state,
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    required bool isPlain,
+  }) {
     if (state.processedFiles.isEmpty && state.currentProcessingFile == null) {
       return const SizedBox.shrink();
     }
+    final localizations = context.fuzzzyInkLocalizations;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,52 +186,80 @@ class BasicEncryptionContent extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               currentContextLocalization.processingFile(
-                state.currentProcessingFile!.inputFilePath.split('/').last,
+                path.basename(state.currentProcessingFile!.inputFilePath),
                 (state.progress * 100).toStringAsFixed(1),
               ),
             ),
           ),
         ...state.processedFiles.map((file) {
+          final plainCopy = isPlain ? file.outputFilePath : null;
+          final failure = file.status == FileProcessingStatus.completed
+              ? null
+              : file.failure?.type.toUiMessage(currentContextLocalization) ??
+                  currentContextLocalization.processingFailed;
           return ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
-              file.inputFilePath.split('/').last,
+              UserFileNames.forDisplay(path.basename(file.inputFilePath)),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: Text(
-              file.outputFilePath ??
-                  file.failure?.type.toUiMessage(currentContextLocalization) ??
-                  currentContextLocalization.processingFailed,
-              maxLines: 2,
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (file.outputFilePath != null) ...[
-                  IconButton(
-                    icon: const Icon(Icons.folder_open),
-                    onPressed: () {
-                      final dirPath = file.outputFilePath!
-                          .substring(0, file.outputFilePath!.lastIndexOf('/'));
-                      launchUrl(Uri.parse('file://$dirPath'));
-                    },
+            subtitle: failure == null ? null : Text(failure, maxLines: 2),
+            trailing: plainCopy == null
+                ? null
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FuzzzyIconButton(
+                        icon: const Icon(Icons.visibility_rounded),
+                        semanticLabel: localizations.open,
+                        onPressed: () => _openPlainCopy(context, plainCopy),
+                        qaId: 'basics.openPlain',
+                      ),
+                      FuzzzyIconButton(
+                        icon: const Icon(Icons.save_alt_rounded),
+                        semanticLabel: localizations.saveFile,
+                        onPressed: () => _savePlainCopy(
+                          context,
+                          cubit: context.read<
+                              CustomFileProcessingCubit<
+                                  FileDecryptionOption>>(),
+                          plainCopy: plainCopy,
+                        ),
+                        qaId: 'basics.savePlain',
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: () {
-                      ShareHelper.shareXFiles(
-                        [XFile(file.outputFilePath!)],
-                        context: context,
-                      );
-                    },
-                  ),
-                ],
-              ],
-            ),
           );
         }),
       ],
     );
+  }
+
+  Future<void> _openPlainCopy(BuildContext context, String plainCopy) {
+    final cubit =
+        context.read<CustomFileProcessingCubit<FileDecryptionOption>>();
+    // The viewer is a route of its own: it gets the cubit, not this context.
+    return PlainFileViewerPage.show(
+      context,
+      fileName: path.basename(plainCopy),
+      filePath: plainCopy,
+      onSave: (viewerContext) =>
+          _savePlainCopy(viewerContext, cubit: cubit, plainCopy: plainCopy),
+    );
+  }
+
+  Future<void> _savePlainCopy(
+    BuildContext context, {
+    required CustomFileProcessingCubit<FileDecryptionOption> cubit,
+    required String plainCopy,
+  }) async {
+    final saved = await saveFileForUser(
+      context,
+      filePath: plainCopy,
+      fileName: path.basename(plainCopy),
+      store: cubit.userFileStore,
+    );
+    if (saved) await cubit.wipePlainCopy(plainCopy);
   }
 }

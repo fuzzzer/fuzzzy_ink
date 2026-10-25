@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 Future<void> showChatArchiveExportDialog(
   BuildContext context, {
@@ -45,8 +44,9 @@ class _ChatArchiveExportDialogState extends State<_ChatArchiveExportDialog> {
   late final ChatArchiveExportCubit _exportCubit;
 
   /// Where the sealed archive is written: the path the user picked in the
-  /// system save dialog on desktop, a temp file handed to the share sheet on
-  /// Android and iOS.
+  /// system save dialog on a computer; on Android and iOS a copy in the
+  /// app's hand-off folder, given to the system save dialog (iOS: the share
+  /// sheet's "Save to Files") and wiped right after.
   late String _outputPath;
 
   @override
@@ -83,8 +83,8 @@ class _ChatArchiveExportDialogState extends State<_ChatArchiveExportDialog> {
   Future<void> _onExport(FuzzzyInkLocalizations localizations) async {
     final String? outputPath;
     if (Platform.isAndroid || Platform.isIOS) {
-      final dir = await getTemporaryDirectory();
-      outputPath = path.join(dir.path, _defaultFileName);
+      outputPath =
+          await sl.get<UserFileStore>().newHandoffPath(_defaultFileName);
     } else {
       outputPath = await FilePicker.platform.saveFile(
         dialogTitle: localizations.exportChatArchive,
@@ -106,9 +106,29 @@ class _ChatArchiveExportDialogState extends State<_ChatArchiveExportDialog> {
     final outputPath = _outputPath;
 
     if (Platform.isAndroid || Platform.isIOS) {
-      await DeviceFileInteractor.shareFile(outputPath, context: context);
-      final file = File(outputPath);
-      if (file.existsSync()) file.deleteSync();
+      final store = sl.get<UserFileStore>();
+      try {
+        final saved = await DeviceFileInteractor.saveFile(
+          outputPath,
+          fileName: path.basename(outputPath),
+          store: store,
+          dialogTitle: localizations.exportChatArchive,
+          context: context,
+        );
+        if (!saved) {
+          if (mounted) Navigator.of(context).pop();
+          return;
+        }
+      } catch (error) {
+        logger.w('ARCHIVE EXPORT: could not save: $error');
+        if (mounted) {
+          FuzzzyToast.show(context, message: localizations.couldNotSaveFile);
+          Navigator.of(context).pop();
+        }
+        return;
+      } finally {
+        await store.wipe(outputPath);
+      }
     }
 
     if (!mounted) return;

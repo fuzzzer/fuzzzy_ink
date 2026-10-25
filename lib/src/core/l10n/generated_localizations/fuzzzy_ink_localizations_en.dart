@@ -827,7 +827,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyHistory =>
-      'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Unfuzzed files are different: they are saved as ordinary files in this chat’s folder on the device and are not sealed or locked by the app — anyone who can read the device’s storage can open them, so protect them like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.';
+      'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Files are kept the same way: the app keeps only the sealed file, and unfuzzes it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.';
 
   @override
   String get aboutEncryptionWindowTitle => 'Unfuzz in order';
@@ -960,17 +960,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get biometricSavePassword => 'Authenticate to save password';
 
   @override
-  String get riskyFileNotOpenedTitle => 'File not opened';
-
-  @override
-  String riskyFileNotOpenedMessage(Object fileName) {
-    return '“$fileName” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.';
-  }
-
-  @override
-  String get showInFolder => 'Show in folder';
-
-  @override
   String get vaultMoveUnfinishedTitle => 'Vault not moved';
 
   @override
@@ -1036,4 +1025,29 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String pairingWarningMessage(Object chatName) {
     return 'Your chat with $chatName is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with $chatName in person or on a call before you trust this chat.';
   }
+
+  @override
+  String get saveFile => 'Save';
+
+  @override
+  String get fileSaved => 'Saved.';
+
+  @override
+  String get couldNotSaveFile => 'Could not save the file.';
+
+  @override
+  String get sentFileHint => 'Fuzzed — share or save it';
+
+  @override
+  String get receivedFileHint => 'Kept sealed — open or save it';
+
+  @override
+  String get unfuzzingFile => 'Unfuzzing…';
+
+  @override
+  String get fileNoPreview =>
+      'This file cannot be shown in the app. Save it to open it with another app.';
+
+  @override
+  String get basicsFuzzedFilesTitle => 'Fuzzed files kept in the app';
 }

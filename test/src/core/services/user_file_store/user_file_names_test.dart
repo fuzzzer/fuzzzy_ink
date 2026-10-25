@@ -1,303 +1,34 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:path/path.dart' as path;
 
-/// Security review items 4 and 5: a received file's name is the sender's, so
-/// it must not run when opened, must not lie when shown, and must not land
-/// on top of anything when stored (`THREAT_MODEL.md` R14, R15).
+/// Security review item 5: a received file's name is the sender's, so it
+/// must not lie when shown and must not land on top of anything when stored
+/// (`THREAT_MODEL.md` R14, R15).
 void main() {
   const rlo = '\u{202E}'; // RIGHT-TO-LEFT OVERRIDE
   const lri = '\u{2066}'; // LEFT-TO-RIGHT ISOLATE
   const pdi = '\u{2069}'; // POP DIRECTIONAL ISOLATE
-  const rlm = '\u{200F}'; // RIGHT-TO-LEFT MARK
-  const alm = '\u{061C}'; // ARABIC LETTER MARK
   const zwsp = '\u{200B}'; // ZERO WIDTH SPACE
-  const bom = '\u{FEFF}';
   const chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 
-  const desktops = [
-    TargetPlatform.windows,
-    TargetPlatform.macOS,
-    TargetPlatform.linux,
-  ];
-
-  group('UserFileNames.isRiskyToOpen', () {
-    test('Windows programs, scripts and shortcuts are risky on every desktop',
-        () {
-      const names = [
-        'setup.exe',
-        'run.bat',
-        'run.cmd',
-        'old.com',
-        'saver.scr',
-        'x.pif',
-        'link.lnk',
-        'site.url',
-        'a.js',
-        'a.jse',
-        'a.vbs',
-        'a.vbe',
-        'a.wsf',
-        'a.wsh',
-        'a.hta',
-        'a.ps1',
-        'a.msi',
-        'a.msp',
-        'a.reg',
-        'a.cpl',
-        'a.jar',
-        'a.appref-ms',
-        'a.application',
-        'a.library-ms',
-        'a.settingcontent-ms',
-        'a.msix',
-        'a.appinstaller',
-        'a.iso',
-        'a.vhdx',
-        'a.chm',
-        'a.scf',
-        'a.rdp',
-        'a.inf',
-        'a.xll',
-        'a.website',
-        'a.search-ms',
-        'a.searchconnector-ms',
-        'a.psm1',
-        'a.cer',
-      ];
-      for (final platform in desktops) {
-        for (final name in names) {
-          expect(
-            UserFileNames.isRiskyToOpen(name, platform: platform),
-            isTrue,
-            reason: '$name on $platform',
-          );
-        }
-      }
-    });
-
-    test('macOS and Linux launchers and installers are risky', () {
-      const names = [
-        'x.app',
-        'x.command',
-        'x.tool',
-        'x.terminal',
-        'x.sh',
-        'x.zsh',
-        'x.pkg',
-        'x.mpkg',
-        'x.dmg',
-        'x.webloc',
-        'x.fileloc',
-        'x.scpt',
-        'x.desktop',
-        'x.run',
-        'x.AppImage',
-        'x.deb',
-        'x.rpm',
-        'x.py',
-        'x.flatpakref',
-      ];
-      for (final platform in desktops) {
-        for (final name in names) {
-          expect(
-            UserFileNames.isRiskyToOpen(name, platform: platform),
-            isTrue,
-            reason: '$name on $platform',
-          );
-        }
-      }
-    });
-
-    test('Office files with macros, add-ins and fetched content are risky', () {
-      const names = [
-        'a.docm',
-        'a.dotm',
-        'a.xlsm',
-        'a.xltm',
-        'a.xlam',
-        'a.xla',
-        'a.xlm',
-        'a.pptm',
-        'a.potm',
-        'a.ppam',
-        'a.ppsm',
-        'a.sldm',
-        'a.wll',
-        'a.vsto',
-        'a.iqy',
-        'a.slk',
-        'a.one',
-        'a.onepkg',
-        'a.mht',
-        'a.mhtml',
-        'a.settingcontent-ms',
-        'Budget.XLSM',
-      ];
-      for (final platform in desktops) {
-        for (final name in names) {
-          expect(
-            UserFileNames.isRiskyToOpen(name, platform: platform),
-            isTrue,
-            reason: '$name on $platform',
-          );
-        }
-      }
-      // Phones open none of these with something that runs it.
+  group('UserFileNames.cleanPickedFileName', () {
+    test("drops a provider's 'null-' prefix", () {
       expect(
-        UserFileNames.isRiskyToOpen('a.docm', platform: TargetPlatform.android),
-        isFalse,
+        UserFileNames.cleanPickedFileName('null-20260920-WA0000.jpg'),
+        '20260920-WA0000.jpg',
       );
     });
 
-    test('ordinary documents, media and archives open', () {
-      const names = [
-        'report.pdf',
-        'photo.jpg',
-        'notes.txt',
-        'book.docx',
-        'sheet.xlsx',
-        'slides.pptx',
-        'song.mp3',
-        'clip.mp4',
-        'bundle.zip',
-        'page.html',
-        'README',
-        'report.pdf.fuzz',
-        '.bashrc',
-        'exe',
-        'invoice.exe.pdf',
-      ];
-      for (final platform in [...desktops, TargetPlatform.android]) {
-        for (final name in names) {
-          expect(
-            UserFileNames.isRiskyToOpen(name, platform: platform),
-            isFalse,
-            reason: '$name on $platform',
-          );
-        }
-      }
-    });
-
-    test('case is ignored', () {
-      for (final name in ['SETUP.EXE', 'Run.Bat', 'x.Lnk', 'x.APK']) {
-        final platform = name.endsWith('APK')
-            ? TargetPlatform.android
-            : TargetPlatform.windows;
-        expect(
-          UserFileNames.isRiskyToOpen(name, platform: platform),
-          isTrue,
-          reason: name,
-        );
-      }
-    });
-
-    test('a direction override cannot hide the real extension', () {
-      // Shown as "invoiceexe.pdf", really ends in ".exe".
-      const disguised = 'invoice${rlo}fdp.exe';
+    test('leaves an ordinary name alone', () {
+      expect(UserFileNames.cleanPickedFileName('report.pdf'), 'report.pdf');
       expect(
-        UserFileNames.isRiskyToOpen(
-          disguised,
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
+        UserFileNames.cleanPickedFileName('nullable.txt'),
+        'nullable.txt',
       );
-      expect(
-        UserFileNames.isRiskyToOpen(
-          'photo$lri.jpg$pdi.scr',
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
-      );
-    });
-
-    test('invisible characters inside the extension do not hide it', () {
-      for (final name in [
-        'a.e${zwsp}xe',
-        'a.ex${bom}e',
-        'a.$rlm${alm}exe',
-        'a.b\u{00AD}at',
-      ]) {
-        expect(
-          UserFileNames.isRiskyToOpen(name, platform: TargetPlatform.windows),
-          isTrue,
-          reason: name.runes.toList().toString(),
-        );
-      }
-    });
-
-    test('trailing dots and spaces (dropped by Windows) do not hide it', () {
-      for (final name in ['a.exe.', 'a.exe ', 'a.exe. . .', 'a.bat\u{00A0}']) {
-        expect(
-          UserFileNames.isRiskyToOpen(name, platform: TargetPlatform.windows),
-          isTrue,
-          reason: name,
-        );
-      }
-    });
-
-    test('an NTFS stream name does not hide it', () {
-      expect(
-        UserFileNames.isRiskyToOpen(
-          r'a.exe::$DATA',
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
-      );
-      expect(
-        UserFileNames.isRiskyToOpen(
-          'a.exe:Zone.Identifier',
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
-      );
-    });
-
-    test('a {CLSID} extension is risky', () {
-      expect(
-        UserFileNames.isRiskyToOpen(
-          'report.pdf.{3050F4D8-98B5-11CF-BB82-00AA00BDCE0B}',
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
-      );
-    });
-
-    test('Android refuses app packages only', () {
-      for (final name in ['app.apk', 'app.apks', 'app.xapk', 'app.apkm']) {
-        expect(
-          UserFileNames.isRiskyToOpen(name, platform: TargetPlatform.android),
-          isTrue,
-          reason: name,
-        );
-      }
-      expect(
-        UserFileNames.isRiskyToOpen(
-          'setup.exe',
-          platform: TargetPlatform.android,
-        ),
-        isFalse,
-      );
-      expect(
-        UserFileNames.isRiskyToOpen(
-          'evil${rlo}kpa.apk',
-          platform: TargetPlatform.android,
-        ),
-        isTrue,
-      );
-    });
-
-    test('iOS runs nothing it opens', () {
-      for (final name in ['setup.exe', 'app.apk', 'x.sh']) {
-        expect(
-          UserFileNames.isRiskyToOpen(name, platform: TargetPlatform.iOS),
-          isFalse,
-        );
-      }
     });
   });
 
@@ -432,111 +163,6 @@ void main() {
     });
   });
 
-  group('UserFileNames.chatFolderPath', () {
-    const documents = '/home/me/Documents';
-
-    test('a computer writes under Documents/Fuzzzy Ink/<safe chat folder>', () {
-      for (final platform in desktops) {
-        expect(
-          UserFileNames.chatFolderPath(
-            documentsPath: documents,
-            chatName: 'Work',
-            chatId: chatId,
-            platform: platform,
-          ),
-          path.join(documents, 'Fuzzzy Ink', 'Work (6f1e9b2c)'),
-          reason: '$platform',
-        );
-      }
-    });
-
-    test('a hostile chat name stays inside Documents/Fuzzzy Ink', () {
-      final folder = UserFileNames.chatFolderPath(
-        documentsPath: documents,
-        chatName: '../../../etc',
-        chatId: chatId,
-        platform: TargetPlatform.linux,
-      );
-      expect(
-        path.isWithin(path.join(documents, 'Fuzzzy Ink'), folder),
-        isTrue,
-      );
-      expect(path.dirname(folder), path.join(documents, 'Fuzzzy Ink'));
-    });
-
-    test('a hostile chat name stays inside the phone documents folder', () {
-      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
-        for (final name in ['.', '..', 'a/b', '../../../etc', '/abs']) {
-          final folder = UserFileNames.chatFolderPath(
-            documentsPath: documents,
-            chatName: name,
-            chatId: chatId,
-            platform: platform,
-          );
-          expect(
-            path.dirname(folder),
-            documents,
-            reason: '$name on $platform',
-          );
-          expect(path.isWithin(documents, folder), isTrue);
-        }
-      }
-    });
-
-    test('phones keep their folder: <documents>/<chat name>', () {
-      for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
-        expect(
-          UserFileNames.chatFolderPath(
-            documentsPath: documents,
-            chatName: 'Work',
-            chatId: chatId,
-            platform: platform,
-          ),
-          path.join(documents, 'Work'),
-          reason: '$platform',
-        );
-      }
-    });
-  });
-
-  group('UserFileNames.phoneChatFolderName', () {
-    test('ordinary names keep the folder they always had', () {
-      for (final name in [
-        'Work',
-        'Mom & Dad?',
-        'Q: plans "2026"',
-        'მეგობრები',
-        'Ünïcödé 🎉',
-        'CON',
-        'a.b',
-        'x' * 80,
-        'Family 👨\u200D👩\u200D👧',
-      ]) {
-        expect(UserFileNames.phoneChatFolderName(name), name, reason: name);
-      }
-    });
-
-    test('. and .. and names of only dots or spaces become "Chat"', () {
-      for (final name in ['.', '..', '...', ' . ', '']) {
-        expect(UserFileNames.phoneChatFolderName(name), 'Chat', reason: name);
-      }
-    });
-
-    test('path separators cannot make a second folder level', () {
-      expect(UserFileNames.phoneChatFolderName('a/b'), 'a_b');
-      expect(UserFileNames.phoneChatFolderName(r'a\b'), 'a_b');
-      expect(UserFileNames.phoneChatFolderName('../../etc'), '_.._etc');
-      expect(UserFileNames.phoneChatFolderName('/abs'), '_abs');
-    });
-
-    test('control and direction characters go', () {
-      expect(
-        UserFileNames.phoneChatFolderName('Bo${rlo}b\u0000$lri$pdi\n'),
-        'Bob',
-      );
-    });
-  });
-
   group('UserFileNames.uniqueOutputPath', () {
     late Directory folder;
 
@@ -605,18 +231,10 @@ void main() {
       expect(await UserFileNames.uniqueOutputPath(at('.env')), at('.env (1)'));
     });
 
-    test('the numbered name keeps the real extension of a risky file',
-        () async {
+    test('the numbered name keeps the real extension', () async {
       File(at('setup.exe')).writeAsStringSync('');
       final unique = await UserFileNames.uniqueOutputPath(at('setup.exe'));
       expect(unique, at('setup (1).exe'));
-      expect(
-        UserFileNames.isRiskyToOpen(
-          path.basename(unique),
-          platform: TargetPlatform.windows,
-        ),
-        isTrue,
-      );
     });
 
     test('a numbered long name still fits 255 bytes with its .part', () async {

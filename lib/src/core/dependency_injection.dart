@@ -10,6 +10,7 @@ class DependencyInjection {
   static Future<void> inject() async {
     late final Directory documentsDirectory;
     late final Directory supportDirectory;
+    late final Directory temporaryDirectory;
 
     late final SharedPreferences prefs;
     late final PackageInfo packageInfo;
@@ -18,6 +19,7 @@ class DependencyInjection {
       (() async =>
           documentsDirectory = await getApplicationDocumentsDirectory())(),
       (() async => supportDirectory = await getApplicationSupportDirectory())(),
+      (() async => temporaryDirectory = await getTemporaryDirectory())(),
       (() async => prefs = await SharedPreferences.getInstance())(),
       (() async => packageInfo = await PackageInfo.fromPlatform())(),
     ]);
@@ -55,7 +57,15 @@ class DependencyInjection {
 
     sl.safeRegisterSingleton<FuzzyLinkService>(FuzzyLinkService());
 
-    sl.safeRegisterSingleton<UserFileStore>(UserFileStore());
+    // Plain copies a previous run left behind are wiped before anything
+    // can be unfuzzed again.
+    final userFileStore = UserFileStore(
+      supportDirectoryPath: supportDirectory.path,
+      temporaryDirectoryPath: temporaryDirectory.path,
+      documentsDirectoryPath: documentsDirectory.path,
+    );
+    await userFileStore.wipeTemporaryPlainCopies();
+    sl.safeRegisterSingleton<UserFileStore>(userFileStore);
 
     sl.safeRegisterSingleton<UserAuthPreferencesRepository>(
       UserAuthPreferencesRepository(

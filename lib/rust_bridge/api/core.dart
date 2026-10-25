@@ -94,6 +94,17 @@ abstract class CryptoCore implements RustOpaqueInterface {
   /// The persisted flag; `false` for every chat until [`CryptoCore::mark_verified`].
   Future<bool> isVerified({required String chatId});
 
+  /// Seals the file key of a prepared, not yet run, receive ticket for
+  /// `chat_id`: a 0x20 blob (AAD `kept-file-key` ‖ chat id) the app stores
+  /// beside the kept container. A send ticket, or one already run, is
+  /// `Internal`; a chat the store does not know is `UnknownChat`.
+  /// Keeping a received file (`PROTOCOL.md` §9.6): the app stores the container
+  /// it received, never the plaintext. The container's key message is spent by
+  /// the first prepare, so the file key is sealed under the chat's history key
+  /// and the container is opened again from that seal.
+  Future<Uint8List> keepReceivedFile(
+      {required String chatId, required FileTicket ticket});
+
   /// Persists whether the user compared the safety number with the peer. The
   /// flag is on disk before this returns; a chat that is not paired yet is
   /// `UnknownChat`.
@@ -126,6 +137,22 @@ abstract class CryptoCore implements RustOpaqueInterface {
   /// checked first, so no counter is spent on a file that cannot be read.
   Future<FileTicket> prepareFileSend(
       {required String chatId, required String input});
+
+  /// A receive ticket for the kept container at `input`, from the seal
+  /// [`CryptoCore::keep_received_file`] made: no Olm step, no state change.
+  /// A seal of another chat, a history seal or a tampered one is `Corrupt`;
+  /// a deleted chat is `UnknownChat`; a password-mode container is
+  /// `UnsupportedFormat`; a truncated one `Corrupt` (before any output).
+  /// The run then opens only the container the key was made for: chunk 0 of
+  /// anything else is `Corrupt`. The ticket's name is `input`'s file name.
+  /// Keeping a received file (`PROTOCOL.md` §9.6): the app stores the container
+  /// it received, never the plaintext. The container's key message is spent by
+  /// the first prepare, so the file key is sealed under the chat's history key
+  /// and the container is opened again from that seal.
+  Future<FileTicket> reopenKeptFile(
+      {required String chatId,
+      required String input,
+      required List<int> keptKey});
 
   /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups) with
   /// the version of its computation, derived from both Ed25519 identity keys

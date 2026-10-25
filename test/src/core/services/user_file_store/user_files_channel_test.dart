@@ -2,21 +2,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
-/// Android's native side (`UserFiles.kt`) builds
-/// `Downloads/Fuzzzy Ink/<chat folder>/` from the name it is given, so it is
-/// only ever given the cleaned phone folder name, never the raw chat name.
+/// The Dart side of Android's save dialog and share sheet (`UserFiles.kt`).
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const channel = MethodChannel('com.fuzzzycore.ink/user_files');
   final calls = <MethodCall>[];
+  Object? answer;
 
   setUp(() {
     calls.clear();
+    answer = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       calls.add(call);
-      return {'path': '/storage/emulated/0/Download/x', 'uri': null};
+      return answer;
     });
   });
 
@@ -25,24 +25,42 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  Future<Object?> sentChatName(String chatName) async {
-    await const UserFilesChannel().saveToDownloads(
-      sourcePath: '/data/files/a.pdf',
-      chatName: chatName,
+  test('saveAs proposes the name and reports whether the user saved', () async {
+    answer = 'saved';
+    expect(
+      await const UserFilesChannel().saveAs(
+        '/data/files/handoff/1/report.pdf',
+        fileName: 'report.pdf',
+      ),
+      isTrue,
     );
-    return (calls.last.arguments as Map<Object?, Object?>)['chatName'];
-  }
+    expect(calls.single.method, 'saveAs');
+    expect(calls.single.arguments, {
+      'path': '/data/files/handoff/1/report.pdf',
+      'fileName': 'report.pdf',
+      'mimeType': null,
+    });
 
-  test('an ordinary chat name goes to the native side as it is', () async {
-    expect(await sentChatName('Work'), 'Work');
-    expect(await sentChatName('Mom & Dad?'), 'Mom & Dad?');
+    answer = 'cancelled';
+    expect(
+      await const UserFilesChannel().saveAs(
+        '/data/files/handoff/2/a.fuzz',
+        fileName: 'a.fuzz',
+        mimeType: 'application/octet-stream',
+      ),
+      isFalse,
+    );
   });
 
-  test('an unsafe chat name is cleaned before the native side sees it',
-      () async {
-    expect(await sentChatName('..'), 'Chat');
-    expect(await sentChatName('.'), 'Chat');
-    expect(await sentChatName('a/b'), 'a_b');
-    expect(await sentChatName('../../Pictures'), '_.._Pictures');
+  test('shareFile passes the path and the type', () async {
+    await const UserFilesChannel().shareFile(
+      '/data/files/handoff/1/a.fuzz',
+      mimeType: 'application/octet-stream',
+    );
+    expect(calls.single.method, 'shareFile');
+    expect(calls.single.arguments, {
+      'path': '/data/files/handoff/1/a.fuzz',
+      'mimeType': 'application/octet-stream',
+    });
   });
 }

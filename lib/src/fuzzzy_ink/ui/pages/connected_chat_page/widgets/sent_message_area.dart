@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:path/path.dart' as path;
 
 import 'package:vibration/vibration.dart';
 
@@ -122,32 +124,25 @@ class _SentMessageAreaState extends State<SentMessageArea> {
     );
   }
 
-  Future<void> _openEncryptedFileDirectory({
-    required String encryptedMessage,
-    required FuzzzyInkLocalizations localizations,
-  }) async {
-    final filePath = encryptedMessage.replaceAll(fuzzIdentificator, '');
-
-    try {
-      await DeviceFileInteractor.revealFile(filePath, context: context);
-    } catch (_) {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.couldNotOpenFile);
-    }
+  /// A sent file row keeps the `.fuzz` container itself — sealed, so it is
+  /// shared and saved as it is.
+  Future<void> _shareEncryptedFile() {
+    final cubit = context.read<ChatFileCubit>();
+    return shareFileForUser(
+      context,
+      filePath: cubit.sealedPathOf(widget.message),
+      store: cubit.userFileStore,
+    );
   }
 
-  Future<void> _shareEncryptedFile({
-    required String encryptedMessage,
-    required FuzzzyInkLocalizations localizations,
-  }) async {
-    final filePath = encryptedMessage.replaceAll(fuzzIdentificator, '');
-
-    try {
-      await DeviceFileInteractor.shareFile(filePath, context: context);
-    } catch (_) {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.couldNotOpenFile);
-    }
+  Future<void> _saveEncryptedFile() {
+    final cubit = context.read<ChatFileCubit>();
+    return saveFileForUser(
+      context,
+      filePath: cubit.sealedPathOf(widget.message),
+      fileName: path.basename(widget.message.encryptedMessage),
+      store: cubit.userFileStore,
+    );
   }
 
   @override
@@ -181,10 +176,7 @@ class _SentMessageAreaState extends State<SentMessageArea> {
           splashColor: fuzzzyColors.ground,
           onLongPress: () {
             if (isEncryptedFile) {
-              _openEncryptedFileDirectory(
-                encryptedMessage: encryptedMessage,
-                localizations: localizations,
-              );
+              _shareEncryptedFile();
             } else {
               _copyMessage(
                 encryptedMessage: encryptedMessage,
@@ -220,27 +212,21 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                           spawnedChildBuilder: (context, closeOverlay) {
                             return FuzzyActionPill(
                               alignment: CrossAxisAlignment.end,
-                              maxPerRow: isEncryptedFile ? 3 : 2,
+                              maxPerRow: 2,
                               actions: isEncryptedFile
                                   ? <TextAction>[
                                       TextAction(
-                                        label: localizations.show,
+                                        label: localizations.shareFile,
                                         onTap: () {
-                                          _openEncryptedFileDirectory(
-                                            encryptedMessage: encryptedMessage,
-                                            localizations: localizations,
-                                          );
                                           closeOverlay();
+                                          _shareEncryptedFile();
                                         },
                                       ),
                                       TextAction(
-                                        label: localizations.share,
+                                        label: localizations.saveFile,
                                         onTap: () {
-                                          _shareEncryptedFile(
-                                            encryptedMessage: encryptedMessage,
-                                            localizations: localizations,
-                                          );
                                           closeOverlay();
+                                          _saveEncryptedFile();
                                         },
                                       ),
                                       // A file's path is never copied, and
@@ -280,6 +266,12 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                             );
                           },
                           onLongPress: () {
+                            // A file row's text is its stored path: never
+                            // copied.
+                            if (isEncryptedFile) {
+                              _shareEncryptedFile();
+                              return;
+                            }
                             _copyMessage(
                               encryptedMessage: encryptedMessage,
                               localizations: localizations,
@@ -296,9 +288,12 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                               curve: Curves.easeIn,
                               child: isEncryptedFile
                                   ? _FileLabel(
-                                      location: UserFileLocation.of(
-                                        encryptedMessage,
+                                      fileName: UserFileNames.forDisplay(
+                                        ChatFileCubit.fileNameOf(
+                                          widget.message,
+                                        ),
                                       ),
+                                      hint: localizations.sentFileHint,
                                       color: fuzzzyColors.actionPrimaryFg,
                                     )
                                   : Text(
@@ -354,11 +349,16 @@ class _SentMessageAreaState extends State<SentMessageArea> {
   }
 }
 
-/// The file's name over where the user finds it — never its path (T-0366).
+/// The file's name over what the user can do with it — never its path.
 class _FileLabel extends StatelessWidget {
-  const _FileLabel({required this.location, required this.color});
+  const _FileLabel({
+    required this.fileName,
+    required this.hint,
+    required this.color,
+  });
 
-  final UserFileLocation location;
+  final String fileName;
+  final String hint;
   final Color color;
 
   @override
@@ -370,12 +370,12 @@ class _FileLabel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          location.fileName,
+          fileName,
           style: fuzzzyTextStyles.body.copyWith(color: color),
         ),
         const SizedBox(height: 2),
         Text(
-          location.folderLine,
+          hint,
           style: fuzzzyTextStyles.bodyS.copyWith(
             color: color.withValues(alpha: 0.72),
           ),

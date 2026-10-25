@@ -538,7 +538,7 @@
   "@aboutEncryptionDescription": {},
   "aboutEncryptionHistoryTitle": "Your history on this device",
   "@aboutEncryptionHistoryTitle": {},
-  "aboutEncryptionBodyHistory": "Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Unfuzzed files are different: they are saved as ordinary files in this chat’s folder on the device and are not sealed or locked by the app — anyone who can read the device’s storage can open them, so protect them like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.",
+  "aboutEncryptionBodyHistory": "Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Files are kept the same way: the app keeps only the sealed file, and unfuzzes it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.",
   "@aboutEncryptionBodyHistory": {},
   "aboutEncryptionWindowTitle": "Unfuzz in order",
   "@aboutEncryptionWindowTitle": {},
@@ -621,16 +621,6 @@
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "Authenticate to save password",
   "@biometricSavePassword": {},
-  "riskyFileNotOpenedTitle": "File not opened",
-  "@riskyFileNotOpenedTitle": {},
-  "riskyFileNotOpenedMessage": "“{fileName}” is a program, installer, script or shortcut. Opening it could run it on this device, so the app does not open files like this. If you trust the sender, press Show in folder and find the file there.",
-  "@riskyFileNotOpenedMessage": {
-    "placeholders": {
-      "fileName": {}
-    }
-  },
-  "showInFolder": "Show in folder",
-  "@showInFolder": {},
   "vaultMoveUnfinishedTitle": "Vault not moved",
   "@vaultMoveUnfinishedTitle": {},
   "vaultMoveUnfinishedMessage": "Your vault couldn't be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.",
@@ -682,5 +672,21 @@
     "placeholders": {
       "chatName": {}
     }
-  }
+  },
+  "saveFile": "Save",
+  "@saveFile": {},
+  "fileSaved": "Saved.",
+  "@fileSaved": {},
+  "couldNotSaveFile": "Could not save the file.",
+  "@couldNotSaveFile": {},
+  "sentFileHint": "Fuzzed — share or save it",
+  "@sentFileHint": {},
+  "receivedFileHint": "Kept sealed — open or save it",
+  "@receivedFileHint": {},
+  "unfuzzingFile": "Unfuzzing…",
+  "@unfuzzingFile": {},
+  "fileNoPreview": "This file cannot be shown in the app. Save it to open it with another app.",
+  "@fileNoPreview": {},
+  "basicsFuzzedFilesTitle": "Fuzzed files kept in the app",
+  "@basicsFuzzedFilesTitle": {}
 }

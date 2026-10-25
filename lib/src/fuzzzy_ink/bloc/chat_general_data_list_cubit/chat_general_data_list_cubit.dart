@@ -9,6 +9,8 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
   ChatGeneralDataListCubit({
     required this.cryptoCoreService,
     required this.chatRepository,
+    required this.messageDataRepository,
+    required this.userFileStore,
   }) : super(
           const ChatGeneralDataListState(
             status: StateStatus.initial,
@@ -22,6 +24,8 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
   final CryptoCoreService cryptoCoreService;
 
   final ChatGeneralDataListRepository chatRepository;
+  final MessageDataRepository messageDataRepository;
+  final UserFileStore userFileStore;
   late final StreamSubscription<ChatGeneralDataListUpdated>
       _chatListUpdatesSubscription;
 
@@ -117,6 +121,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         return;
       }
       await chatRepository.deleteChat(chatId);
+      await _deleteChatFilesAndMessages(chatId);
 
       final updatedChats =
           state.chatList?.where((chat) => chat.chatId != chatId).toList();
@@ -139,6 +144,21 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         ),
       );
     }
+  }
+
+  /// The chat's sealed files go with it (its kept keys died with its state
+  /// above), and so do its rows, which nothing can open any more.
+  Future<void> _deleteChatFilesAndMessages(String chatId) async {
+    final chatName = state.chatList
+            ?.firstWhereOrNull((chat) => chat.chatId == chatId)
+            ?.chatName ??
+        '';
+    await userFileStore.deleteChatFiles(
+      chatName: chatName,
+      chatId: chatId,
+      storedPaths: await messageDataRepository.getFilePathsForChat(chatId),
+    );
+    await messageDataRepository.deleteAllMessagesForChat(chatId);
   }
 
   Future<void> updateChat({

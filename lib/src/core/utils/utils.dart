@@ -1,10 +1,10 @@
 export 'copy_guard.dart';
 export 'debouncer.dart';
+export 'device_file_interactor.dart';
 export 'external_links.dart';
 export 'file_reader.dart';
 export 'fuzzy_navigator.dart';
 export 'id_generator.dart';
 export 'logger.dart';
 export 'map_casting.dart';
-export 'reveal_file.dart';
 export 'share_helper.dart';
