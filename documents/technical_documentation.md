@@ -20,9 +20,10 @@ $ flutter run --flavor staging --target lib/main_staging.dart
 $ flutter run --flavor production --target lib/main_production.dart
 ```
 
-Fuzzzy Ink ships on Android, Windows, macOS and Linux (see `.github/workflows/main.yaml`). iOS builds
-(`flutter build ios --flavor development -t lib/main_development.dart`) but is not in the App Store; the
-web build is unsupported because the encryption core is native code.
+Fuzzzy Ink ships on Android, Windows and macOS; CI also builds Linux (see `.github/workflows/main.yaml`),
+which has no packaged download yet. iOS is built and signed on Codemagic (`codemagic.yaml`) and goes to
+TestFlight for testing; it is not in the App Store yet. The web build is unsupported because the encryption
+core is native code.
 
 ---
 

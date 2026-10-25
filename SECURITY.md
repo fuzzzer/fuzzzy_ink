@@ -17,8 +17,8 @@ Its security is the security of the code in this repository — the Rust cryptog
 Please do **not** open a public issue for a security problem.
 
 1. **GitHub private vulnerability reporting** (preferred):
-   <https://github.com/fuzzzy-bot/fuzzy_chat/security/advisories/new>.
-   The form is enabled on the repository (2026-09-13); it keeps the report private until a fix ships.
+   <https://github.com/fuzzzer/fuzzzy_ink/security/advisories/new>.
+   It keeps the report private until a fix ships.
 2. **Email:** <contact@fuzzzycore.com>. A dedicated `security@fuzzzycore.com` mailbox is planned
    and will be listed here and in `security.txt` once its mail route exists.
 

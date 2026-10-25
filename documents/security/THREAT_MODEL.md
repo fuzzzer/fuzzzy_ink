@@ -209,8 +209,8 @@ read the clipboard; the app does not clear it. Plaintext shown on screen is read
 read or capture the screen. Both are outside the model (§7.2, §7.3). The app never decrypts a blob
 automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
 (`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
-the user picks it. A `fuzzylink://` deep link **prefills** the input field and navigates; it decrypts
-nothing (§7.5).
+the user picks it. An app link (`https://ink.fuzzzycore.com/…`, below) **prefills** the input field and
+navigates; it decrypts nothing (§7.5).
 
 ### 2.7 The transport channel — the app has none
 
@@ -220,10 +220,13 @@ e-mail, another messenger, a QR code, paper. The model therefore assumes the str
 **everything on the channel can be read, modified, replayed, reordered, delayed or dropped**, and says
 nothing about the channel's own security. The users' choice of channel is theirs.
 
-Deep links (`fuzzylink://invite/…`, `…/accept/…`, `…/fuzz/…`) are an app-layer convenience wrapper around
-the same blob — base64 JSON with the blob, a version, a type, and for pairing links a 24-hour `exp` hint
-the core never sees (`PROTOCOL.md` §4.6). They are subject to everything above; see §7.4 for what the
-message link adds in the clear.
+App links (`https://ink.fuzzzycore.com/invite#<payload>`, `…/accept#<payload>`, `…/message#<payload>`) are
+an app-layer convenience wrapper around the same blob — base64 JSON with the blob, a version and a type. The
+payload sits only after the `#`, the part of a URL a browser never sends to the web server, so the link page
+never receives it. They are verified Android App Links and iOS/macOS universal links (the domain declares the
+app), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is removed
+on every platform. Links carry no expiry; the core never saw one anyway (`PROTOCOL.md` §4.6). They are
+subject to everything above; see §7.4 for what the message link adds in the clear.
 
 ### 2.8 OS and cloud backups
 
@@ -275,6 +278,11 @@ accessibility) and is kept because it says what a backup taken by such a build c
   password) or in an encrypted file under Roaming AppData whose key is in Credential Manager (DPAPI,
   user-scoped). A full user-profile backup restored under the same account and password opens it by design
   of those stores (not measured here); a file-only copy of the store directory does not.
+  **Windows is not "no cloud".** OneDrive folder backup — switched on by default on many Windows 11 set-ups —
+  uploads the user's Documents folder, which is where unfuzzed files land
+  (`Documents/Fuzzzy Ink/<chat folder>/`, plain files, §2.5, §7.13). The store, the database and the vault
+  are under Roaming AppData, which OneDrive does not upload, but a managed (domain) roaming profile copies it
+  to a server at sign-out. Neither can be opted out of by the app.
 
 In every case the **metadata non-goal extends to the backup provider and to anyone who holds the account**
 (§7.4, T24): the Isar database leaves the device in the clear wherever a backup exists. The vault's `0x10`
@@ -285,7 +293,8 @@ documents directory — on iOS shown in the Files app, on Windows and Linux in t
 With the fix in `6ecd9f1` the availability corollary is uniform: an OS backup no longer carries the store,
 the database or (on darwin) a migratable key item, so a restore cannot recover history — on top of "a new
 device cannot re-read old blobs" (§8). What remains (R34): Linux and Windows have no platform backup to opt
-out of, so a user's own full-profile backup still carries the store directory and the database; and the
+out of, so a user's own full-profile backup still carries the store directory and the database (on Windows also
+OneDrive's upload of Documents, which carries unfuzzed files, and a domain roaming profile); and the
 exclusion attribute on darwin is set on the directory at launch, so a backup taken before the first launch
 of `6ecd9f1` or later may still hold the older files. History reaches a cloud only by the user's own act: the
 archive export (F2-10, `PROTOCOL.md` §9.5) is a password-sealed file the user places wherever they like — not
@@ -639,10 +648,10 @@ Sealing chat names and vault titles is the same `seal_local` call on more column
 a documented follow-up, not this build (R11).
 
 Also in the clear, at the app layer only: a **"Copy as link"** message link
-(`fuzzylink://fuzz/<base64 JSON>`, `lib/src/core/services/fuzzy_link/fuzzy_link_generator.dart`) carries the
+(`https://ink.fuzzzycore.com/message#<base64 JSON>`, `lib/src/core/services/fuzzy_link/`) carries the
 **chat id** next to the blob so the receiving app can open the right chat. The raw `Fuzz/` blob never does
 (`PROTOCOL.md` §6.5). A user who shares links rather than blobs gives an observer a stable identifier that
-groups every link of one chat. Pairing links additionally carry a 24-hour `exp` hint. The leak is
+groups every link of one chat (only the device that opens the link sees it: it sits after the `#`). The leak is
 metadata-only: the receiving app uses `c` for a read-only database lookup and navigation, the crate takes
 the chat id from the database record, and a blob under the wrong `c` dies at the Olm MAC with no state
 change; an observer who saw the pairing blobs already knows the chat id. This is a product choice inherited
@@ -966,7 +975,7 @@ studio's flow directory; the review ids below are those records).
 | R31 | **Pairing has no timeout**: a pending chat keeps its account and one-time key until accepted, regenerated or deleted; the link-level `exp` is a hint the core never checks. | `PROTOCOL.md` §4.6 | product |
 | R32 | **No post-compromise security until the peer ratchets.** A copied state file (thief with the password, malware on an unlocked device, a user-made backup of the store directory) holds the current receiving chain key of each chat and decrypts every message the peer generates on that chain until this device sends a message carrying a new ratchet key and the peer has received it — the peer's next message is then on a chain the copy lacks; no victim read is required, and messages the peer generated before receiving it stay readable by the copy. Nothing forces the victim to send. Past messages stay protected (forward secrecy). No mitigation in scope; candidates (forcing a ratchet step on every send, or re-keying on unlock) are a protocol change for a later version. | `PROTOCOL.md` §8.1, §14 point 3 (verified against the crate: a copy of B's state opened three messages A generated afterwards, and got `Corrupt` on A's first message after A had received B's reply), §17.14; F5-1 security audit finding M1 | planner (format v2 candidate); product copy |
 | R33 | **No store or vault re-key; a leaked key outlives every password change.** `rewrap_store_key` and `vault_rewrap` re-wrap the *same* 32-byte key; nothing is re-sealed, no re-key path exists. A store key or vault master key read from the unlocked process, or a copy of the `""`-wrapped `0x10` blob taken while the lock was off — an iOS backup made before `6ecd9f1`, a macOS development-flavour login-keychain read, a Linux/Windows user-profile backup (§2.8; **not** an Android backup, whose entry is Keystore-bound; since `6ecd9f1` no platform backup carries the item) — opens every present and future state file — and, through the history key each state file carries, every chat's local seals — and vault item after any password change, lock enable or re-pair. The per-chat history key (F2-12) does not change this: it is sealed *under* the store key, not beside it. Remedy today: delete every chat and the vault, or wipe the app (deleting one chat does destroy that chat's history key). Format v2 candidate: re-key = re-seal all state under a fresh store key. | `PROTOCOL.md` §10.2, §10.6; F4-1 review ("the master key never changes"), F4-2 review §2; §4.3, §4.5 | planner (format v2); product copy |
-| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
+| R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on Windows, OneDrive folder backup (often on by default) uploads Documents and with it every unfuzzed file, and a domain roaming profile copies Roaming AppData; on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
 | R35 | **The archive export is plaintext under a password, outside forward secrecy — by design — and its working file is not `0o600` and not swept.** During an export the chat's rows exist in the clear as `<app support>/chat_archive_<chat id>.jsonl` for the seal's duration (default file mode; Dart cannot set `0o600` — routing the temp through the crate's `store::create_tmp` would close that); a process kill mid-seal leaves the file until the next export of the same chat, with no boot sweep; on Android the sealed container is staged under `cache/share_plus/` until the next share (sealed bytes only). Once exported, the archive's only protection is the user's password against offline Argon2id-bounded guessing (the dialog refuses weak/fair passwords); a lost archive is the chat's history, readable by whoever guesses the password, forever. | §2.5, §7.13, T26; `PROTOCOL.md` §9.5, §11; F2-10 review N1–N2 | developer (a one-line sweep in `ChatArchiveRepository` or at boot; `0o600` via a Rust temp helper) — non-blocking |
 | R36 | **Unfuzzed files are in the clear on disk.** Every received file and every Basics-decrypted file is an ordinary file under `<app documents>/<chat name>/` (desktop: `Documents/Fuzzzy Ink/<chat folder>/` in the user's Documents folder since 2026-10-22): not sealed, not gated by the app lock, not removed with the chat, and its path is a plaintext database column. This is the product's purpose (a file is decrypted in order to be used), not an oversight; it is stated in the About-encryption page and the README (F2-11 review B1). What a future version could offer without changing the protocol: an app-private output directory on desktop, or deleting a chat's folder with the chat, both product choices. | §2.5, §7.13, A12, T25; `PROTOCOL.md` §10.5, §17.15 | product |
 

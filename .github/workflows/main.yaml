@@ -283,7 +283,7 @@ jobs:
   attest:
     # Tag runs only: SHA256SUMS over the four platform artifacts + the Rust core inside the linux/windows
     # bundles, published as an artifact and used as the subject list of the provenance attestation
-    # (verify: `gh attestation verify <file> -R fuzzzy-bot/fuzzy_chat`). Release procedure: documents/security/RELEASE.md.
+    # (verify: `gh attestation verify <file> -R fuzzzer/fuzzzy_ink`). Release procedure: documents/security/RELEASE.md.
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [rust, flutter-test, android, linux, windows, macos, rust-repro-compare]
     runs-on: ubuntu-latest

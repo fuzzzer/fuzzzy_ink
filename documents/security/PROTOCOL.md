@@ -214,8 +214,8 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 - It does not authenticate *who* A and B are; it authenticates that whoever produced each blob controls the
   Ed25519 key inside it. See §5 and §17.
 - It has no timeout: a pending chat keeps its account and one-time key until the acceptance arrives, the
-  invitation is regenerated or the chat is deleted. The app's deep-link `exp` field is a link-level hint the
-  core never sees.
+  invitation is regenerated or the chat is deleted. The app's links (`https://ink.fuzzzycore.com/…#<payload>`)
+  carry no expiry either.
 - It never publishes a fallback key or a second one-time key; the account's one-time-key count is 0 after
   completion.
 

@@ -11,18 +11,14 @@ Once you link up with someone, within the app 'fuzz' (encrypt) messages and file
 
 ## 🚀 Get Fuzzzy Ink!
 
-Ready to start fuzzing? Fuzzzy Ink runs on **Android, Windows, macOS and Linux**. (The web build is
-unsupported — the encryption core is native code. iOS builds from this repo but is not in the App Store.)
-Grab the latest version here:
+Ready to start fuzzing? Fuzzzy Ink runs on **Android, Windows and macOS**; the iPhone app is in testing
+(TestFlight). Linux builds from this repository, but there is no packaged Linux download yet. The web build is
+unsupported — the encryption core is native code.
 
-<!-- [TODO: add app build and link them] -->
-
-- **Android:** [Download Fuzzzy Ink vX.Y.Z APK](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **Windows (64-bit):** [Download Fuzzzy Ink vX.Y.Z ZIP](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **macOS (Universal):** [Download Fuzzzy Ink vX.Y.Z DMG](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-- **Linux (AppImage) (TO BE ADDED SOON):** [Download Fuzzzy Ink vX.Y.Z AppImage](https://github.com/fuzzzer/fuzzy_chat/releases/tag/v1.0.0)
-
-Or visit the [**Latest Releases Page**](https://github.com/fuzzzer/fuzzy_chat/releases) for all releases.
+Every download is on the [**latest release**](https://github.com/fuzzzer/fuzzzy_ink/releases/latest) page:
+the Android APK, the Windows ZIP and the macOS app ZIP, with `SHA256SUMS` and a build certificate for each file
+([how to check them](documents/security/RELEASE.md#3-verifying-a-release)). All releases:
+[releases](https://github.com/fuzzzer/fuzzzy_ink/releases).
 
 ## What's the Big Idea?
 
@@ -106,9 +102,9 @@ Repeat as many times as your secret-sharing heart desires!
 ## Important Little Secrets About Your Secrets:
 
 - **Each Blob Unfuzzes Once, On One Device:** a fuzzed message can be unfuzzed exactly once, on the device it was sent to — paste it a second time and Fuzzzy Ink tells you it was already unfuzzed. Your readable **text** history stays inside the app on that device, sealed per channel under a key only that device holds (and behind your app-lock password, if you set one). Unfuzzed **files** are different: they land as plain files in the channel's folder on your device — not sealed, not locked by the app — so protect them like any other file. Want a backup? Chat settings → "Export chat archive" writes a password-protected file of the channel's history — it opens in Basics → file decryption with the same password. A new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy. Guard your device like the precious thing it is!
-- **Unfuzz Roughly In Order:** the app keeps keys for skipped messages, but not without limit — a blob more than 63 messages behind the newest one you already unfuzzed in that channel is gone for good ("too old"), and at most 40 skipped messages are kept at once.
+- **Unfuzz Roughly In Order:** the app keeps keys for skipped messages, but not without limit — a blob more than 63 messages behind the newest one you already unfuzzed in that channel is gone for good ("too old"), and at most 40 skipped messages are kept at once. A blob whose key was dropped that way (or after the channel moved on several rounds) is reported as "already unfuzzed" even if you never read it: either way it can no longer be read.
 - **Know Your Recipient:** Double-check you're sending Invitation and Acceptance codes to the right spy... er, person. The codes themselves are fine to send over any channel to establish the link, but you want the _right_ person getting them!
-- **Check the Safety Number:** every live channel has a 60-digit safety number (the shield icon in the chat header), computed from both devices' identity keys. Read it to your ally by voice or compare it in person: if the digits match, nobody sat in the middle when you linked up. Tap "Mark as verified" as your own note that you did this — the app cannot check it for you.
+- **Check the Safety Number:** every live channel has a 60-digit safety number (the shield icon in the chat header), computed from both devices' identity keys. Read it to your ally by voice or compare it in person: if the digits match, nobody sat in the middle when you linked up. The page also shows the number's version; if your ally sees a different version (or none), update both apps before comparing. Tap "Mark as verified" as your own note that you did this — the app cannot check it for you.
 - **One Chat, One Ally (No Threesomes!):** Always create a **new, unique chat** for each new person you want to communicate with. If you try to reuse an existing chat link with multiple people, they'll all be able to read each other's messages. Think of it like giving everyone the same key to the same diary – awkward!
 - **Fuzzy is Your Friend (Plain Text is Not!):** The only thing that can "expose" you is sharing something that _isn't_ fuzzed!
   - The scrambled "fuzz" (encrypted content) from Fuzzzy Ink? Totally safe to splash all over the internet. It's designed to be unreadable nonsense to anyone but your linked secret sharer.
@@ -121,6 +117,6 @@ Repeat as many times as your secret-sharing heart desires!
   specification; also the [threat model](documents/security/THREAT_MODEL.md), the
   [2026 hardening write-up](documents/security/HARDENING_2026.md) and, for building the app yourself,
   the [developer notes](documents/technical_documentation.md).
-- 🐛 **Spotted a Gremlin? Got Ideas for a New Gadget?** Report to HQ (GitHub Issues): [https://github.com/fuzzzer/fuzzy_chat/issues]
+- 🐛 **Spotted a Gremlin? Got Ideas for a New Gadget?** Report to HQ (GitHub Issues): <https://github.com/fuzzzer/fuzzzy_ink/issues>. Security problems go privately instead: see [SECURITY.md](SECURITY.md).
 
 Happy (and secure) scheming with Fuzzzy Ink! 🛡️

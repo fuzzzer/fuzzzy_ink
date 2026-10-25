@@ -1570,7 +1570,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @alreadyUnfuzzed.
   ///
   /// In en, this message translates to:
-  /// **'This message was already unfuzzed on this device.'**
+  /// **'This message was already unfuzzed on this device, or its one-time key is no longer kept.'**
   String get alreadyUnfuzzed;
 
   /// No description provided for @blobTooOld.
@@ -1720,7 +1720,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyErrors.
   ///
   /// In en, this message translates to:
-  /// **'“Already unfuzzed”: this blob was unfuzzed on this device before and cannot be read a second time. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: too many newer messages were unfuzzed first. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
+  /// **'“Already unfuzzed”: this blob was unfuzzed on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the chat has moved on several rounds since — so it can never be read here. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already unfuzzed from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
   String get aboutEncryptionBodyErrors;
 
   /// No description provided for @aboutEncryptionBodySafetyNumber.
