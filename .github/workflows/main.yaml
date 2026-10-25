@@ -75,26 +75,42 @@ jobs:
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
-      - name: Throwaway signing key for the release build type
-        # android/app/build.gradle's `release` signingConfig requires a keystore
-        # (`SigningConfig "release" is missing required property "storeFile"` without one).
-        # CI proves the release build with a key generated here and discarded with the runner;
-        # the distributable key is a release-time secret wired by F5-4 through these same variables.
+      - name: Release signing (release tags only)
+        # A release tag is the downloadable build: it is signed with the real release key from the repository
+        # secrets, and stops here, naming them, if any is missing. Every other run is a compile proof and builds
+        # an unsigned release APK that no device installs — never one signed with a throwaway key.
+        env:
+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          keytool -genkeypair -keystore "$RUNNER_TEMP/ci-throwaway.jks" -storetype JKS -alias ci-throwaway \
-            -keyalg RSA -keysize 2048 -validity 1 -storepass ci-throwaway -keypass ci-throwaway \
-            -dname "CN=fuzzzy_ink CI throwaway, O=FuzzyCore"
-          {
-            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/ci-throwaway.jks"
-            echo "ANDROID_KEYSTORE_ALIAS=ci-throwaway"
-            echo "ANDROID_KEYSTORE_PASSWORD=ci-throwaway"
-            echo "ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD=ci-throwaway"
-          } >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+            echo "FUZZZY_UNSIGNED_RELEASE_PROOF=true" >> "$GITHUB_ENV"
+            echo "Not a release tag: building an unsigned release APK as a compile proof."
+            exit 0
+          fi
+          missing=()
+          for name in ANDROID_RELEASE_KEYSTORE_BASE64 ANDROID_KEYSTORE_ALIAS ANDROID_KEYSTORE_PASSWORD ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD; do
+            [ -n "${!name:-}" ] || missing+=("$name")
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Release tag without the Android release key: repository secrets ${missing[*]} are not set (documents/security/RELEASE.md §2)."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$ANDROID_RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
       - run: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
         # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
         # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
-        env: { CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src" }
+        # The three key values reach Gradle on release tags only (the keystore path was set above).
+        env:
+          CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src"
+          ANDROID_KEYSTORE_ALIAS: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_ALIAS || '' }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD || '' }}
       - name: 16 KB page-size check
         # Every LOAD segment of every bundled .so (the crypto core, the database library and any
         # other plugin's native code) must be aligned >= 0x4000 on the 64-bit ABIs (Android's 16 KB
@@ -160,6 +176,16 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
       - run: flutter build windows --release -t lib/main_production.dart
+      - name: Sign the Windows build (release tags only; placeholder until the certificate exists)
+        # Placeholder: signs with a code-signing certificate given as a PFX in repository secrets. If the owner
+        # picks a cloud signing service instead (Azure Trusted Signing, a hardware-token EV certificate), this
+        # step is replaced, not extended. On a release tag it stops, naming the secrets, when they are missing.
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          WINDOWS_SIGNING_PFX_BASE64: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+          WINDOWS_SIGNING_PFX_PASSWORD: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
+        run: ./scripts/sign_windows_release.ps1 build/windows/x64/runner/Release
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: windows-bundle, path: build/windows/x64/runner/Release }
   macos:
@@ -175,13 +201,25 @@ jobs:
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
-      # The Xcode project only has flavored configurations (Release-production), and the Runner is
-      # signed with team 7W88HRQFXP, which the runner does not have — build unsigned (compile+link proof).
+      # The Xcode project only has flavored configurations (Release-production). Xcode signing is off here; on a
+      # release tag the next step signs the finished app (Developer ID, hardened runtime, sandbox checked) and
+      # notarizes it. Any other run ships nothing and stays an unsigned compile+link proof.
       - run: flutter build macos --release --flavor production -t lib/main_production.dart
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
           FLUTTER_XCODE_CODE_SIGNING_REQUIRED: "NO"
           FLUTTER_XCODE_CODE_SIGN_IDENTITY: ""
+      - name: Sign, check the sandbox and notarize (release tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          MACOS_DEVELOPER_ID_P12_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_P12_BASE64 }}
+          MACOS_DEVELOPER_ID_P12_PASSWORD: ${{ secrets.MACOS_DEVELOPER_ID_P12_PASSWORD }}
+          MACOS_DEVELOPER_ID_PROFILE_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_PROFILE_BASE64 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: ./scripts/sign_macos_direct.sh "build/macos/Build/Products/Release-production/Fuzzzy Ink.app" com.fuzzzycore.ink
       # upload-artifact drops symlinks and file modes, which a .app bundle needs (Frameworks/*/Versions/Current);
       # ditto keeps them, and the zip is the one file SHA256SUMS + the attestation can name.
       - run: ditto -c -k --keepParent "build/macos/Build/Products/Release-production/Fuzzzy Ink.app" build/macos/fuzzzy_ink-macos.zip

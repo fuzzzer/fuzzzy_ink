@@ -24,11 +24,20 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
+// Release signing comes only from the build service's environment: Codemagic sets these four
+// from its `android_signing` keystore, the GitHub release-tag job from repository secrets. There is
+// no file fallback and no throwaway key: a release build without them stops (see the check at the
+// end of this file). Debug builds keep the machine's own debug key.
+def releaseSigningVariables = [
+    "ANDROID_KEYSTORE_PATH",
+    "ANDROID_KEYSTORE_ALIAS",
+    "ANDROID_KEYSTORE_PASSWORD",
+    "ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD",
+]
+def missingReleaseSigning = releaseSigningVariables.findAll { !System.getenv(it) }
+// A CI compile proof that is never distributed may build an *unsigned* release APK instead, which no
+// device installs. Only an explicit opt-in allows it.
+def unsignedReleaseProof = System.getenv("FUZZZY_UNSIGNED_RELEASE_PROOF") == "true"
 
 android {
     namespace "com.fuzzzycore.ink"
@@ -60,19 +69,12 @@ android {
     }
 
     signingConfigs {
-        if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+        if (missingReleaseSigning.isEmpty()) {
             release {
                 storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
                 keyAlias System.getenv("ANDROID_KEYSTORE_ALIAS")
                 keyPassword System.getenv("ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD")
                 storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            }
-        } else {
-            release {
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-                storePassword keystoreProperties['storePassword']
             }
         }
     }
@@ -98,7 +100,8 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // null only for the unsigned compile proof; any other release build without the key stops below.
+            signingConfig missingReleaseSigning.isEmpty() ? signingConfigs.release : null
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
@@ -110,6 +113,23 @@ android {
 
 flutter {
     source '../..'
+}
+
+// Fails a release build that has no release key, naming what is missing, before anything is built.
+gradle.taskGraph.whenReady { graph ->
+    def releaseTasks = graph.allTasks.findAll {
+        it.project == project && it.name ==~ /(assemble|bundle|package)\w*Release/
+    }
+    if (!releaseTasks.isEmpty() && !missingReleaseSigning.isEmpty() && !unsignedReleaseProof) {
+        throw new GradleException(
+            "Release signing is not set up: ${missingReleaseSigning.join(', ')} " +
+            "${missingReleaseSigning.size() == 1 ? 'is' : 'are'} missing.\n" +
+            "A release build is signed only with the real key, which the build service provides " +
+            "(Codemagic: the workflow's android_signing keystore; GitHub: the release-tag secrets, " +
+            "documents/security/RELEASE.md). Debug builds need no key. A compile proof that is never " +
+            "distributed may set FUZZZY_UNSIGNED_RELEASE_PROOF=true to build an unsigned APK."
+        )
+    }
 }
 
 dependencies {
