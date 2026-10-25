@@ -56,12 +56,16 @@ void main() {
       ),
     ).thenAnswer((_) async => const CryptoCoreSuccess('the opened secret'));
     sl.safeRegisterSingleton<CryptoCoreService>(crypto);
+    sl.safeRegisterSingleton<PasswordStrengthService>(
+      PasswordStrengthService(),
+    );
     clipboard = _RecordingClipboard();
     CopyGuard.clipboardGuard = ClipboardGuard(clipboard: clipboard);
   });
 
   tearDown(() async {
     await sl.unregister<CryptoCoreService>();
+    await sl.unregister<PasswordStrengthService>();
     CopyGuard.clipboardGuard = ClipboardGuard();
     await sl.unregister<UserFileStore>();
     if (temp.existsSync()) temp.deleteSync(recursive: true);
