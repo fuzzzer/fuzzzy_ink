@@ -1,56 +1,37 @@
 import 'fuzzy_link_type.dart';
 
+/// A parsed link. Every blob is the core's `Fuzz/` text, rebuilt from the
+/// link's fragment; it is only a routing hint until the core checks it.
 sealed class FuzzyLinkPayload {
-  const FuzzyLinkPayload({
-    required this.version,
-    required this.type,
-  });
+  const FuzzyLinkPayload({required this.type});
 
-  final int version;
   final FuzzyLinkType type;
-
-  static const currentVersion = 1;
-
-  bool get isSupported => version <= currentVersion;
 }
 
 class InvitationLinkPayload extends FuzzyLinkPayload {
-  const InvitationLinkPayload({
-    required super.version,
-    required this.rawInvitationContent,
-    required this.expiresAt,
-  }) : super(type: FuzzyLinkType.invitation);
+  const InvitationLinkPayload({required this.rawInvitationContent})
+      : super(type: FuzzyLinkType.invitation);
 
   final String rawInvitationContent;
-  final int? expiresAt;
-
-  bool get isExpired =>
-      expiresAt != null &&
-      DateTime.now().millisecondsSinceEpoch ~/ 1000 > expiresAt!;
 }
 
 class AcceptanceLinkPayload extends FuzzyLinkPayload {
-  const AcceptanceLinkPayload({
-    required super.version,
-    required this.rawAcceptanceContent,
-    required this.expiresAt,
-  }) : super(type: FuzzyLinkType.acceptance);
+  const AcceptanceLinkPayload({required this.rawAcceptanceContent})
+      : super(type: FuzzyLinkType.acceptance);
 
   final String rawAcceptanceContent;
-  final int? expiresAt;
-
-  bool get isExpired =>
-      expiresAt != null &&
-      DateTime.now().millisecondsSinceEpoch ~/ 1000 > expiresAt!;
 }
 
+/// A message link names its chat in the clear, next to the blob: the blob
+/// itself carries no chat id (PROTOCOL.md §6.5, THREAT_MODEL.md §7.4).
 class FuzzMessageLinkPayload extends FuzzyLinkPayload {
   const FuzzMessageLinkPayload({
-    required super.version,
     required this.chatId,
     required this.encryptedMessage,
-  }) : super(type: FuzzyLinkType.fuzz);
+  }) : super(type: FuzzyLinkType.message);
 
   final String chatId;
+
+  /// The blob without its `Fuzz/` prefix, as messages are stored.
   final String encryptedMessage;
 }

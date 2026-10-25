@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Universal links https://ink.fuzzzycore.com/<kind>#<payload>: iOS opens
+	     them in the app once it has fetched
+	     https://ink.fuzzzycore.com/.well-known/apple-app-site-association
+	     (link_site/), which names this app id. The payload after # never
+	     reaches that server. Every flavour uses this file; each App ID needs
+	     the Associated Domains capability in its provisioning profile. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:ink.fuzzzycore.com</string>
+	</array>
+</dict>
+</plist>

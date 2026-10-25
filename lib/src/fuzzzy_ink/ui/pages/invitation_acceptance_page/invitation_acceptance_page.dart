@@ -55,6 +55,7 @@ class _ProvidedInvitationAcceptancePageState
     }
 
     _invitationTextController.addListener(() {
+      _invitationTextController.unwrapPastedLink(FuzzyLinkType.invitation);
       setState(() {});
     });
 

@@ -1,274 +1,215 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
-/// Opaque `Fuzz/` blobs as the core produces them; the link never looks inside.
-const _invitationBlob =
-    'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
-const _acceptanceBlob =
-    'Fuzz/RlVaWgECJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
+/// Opaque blob bodies (base64url, no padding) as the core writes them after
+/// `Fuzz/`; the link never looks inside. 271 characters, like a real
+/// invitation.
+final _invitationBody = 'RlVaWgEB${'A' * 263}';
+final _acceptanceBody = 'RlVaWgEC${'B' * 600}';
+const _messageBody = 'RlVaWgEDAQ-_xyz09';
+const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
+const _base = 'https://ink.fuzzzycore.com';
+
+FuzzyLinkPayload? _parse(String link) => FuzzyLinkParser.parse(Uri.parse(link));
 
 void main() {
-  group('FuzzyLinkParser', () {
-    group('scheme validation', () {
-      test('rejects non-fuzzylink scheme', () {
-        final uri = Uri.parse('https://invite/abc');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+  group('FuzzyLinkParser accepts exactly the three link kinds', () {
+    test('an invitation link gives the Fuzz/ invitation back', () {
+      final payload = _parse('$_base/invite#$_invitationBody');
 
-      test('rejects empty or malformed scheme', () {
-        // Uri.parse throws on truly malformed URIs, so use tryParse.
-        final uri = Uri.tryParse('://invite/abc');
-        // Either it fails to parse (null) or the parser rejects it.
-        if (uri != null) {
-          expect(FuzzyLinkParser.parse(uri), isNull);
-        }
-        // If uri is null, the caller would never invoke parse — test passes.
-      });
+      expect(payload, isA<InvitationLinkPayload>());
+      final typed = payload! as InvitationLinkPayload;
+      expect(typed.type, FuzzyLinkType.invitation);
+      expect(typed.rawInvitationContent, 'Fuzz/$_invitationBody');
     });
 
-    group('type validation', () {
-      test('rejects unknown host/type segment', () {
-        final payload =
-            _encodePayload({'v': 1, 't': 'inv', 'b': _invitationBlob});
-        final uri = Uri.parse('fuzzylink://unknown/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+    test('an acceptance link gives the Fuzz/ acceptance back', () {
+      final payload = _parse('$_base/accept#$_acceptanceBody');
 
-      test('rejects mismatched host and payload type', () {
-        // Host says "invite" but payload type says "acc"
-        final payload =
-            _encodePayload({'v': 1, 't': 'acc', 'b': _acceptanceBlob});
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+      expect(payload, isA<AcceptanceLinkPayload>());
+      final typed = payload! as AcceptanceLinkPayload;
+      expect(typed.type, FuzzyLinkType.acceptance);
+      expect(typed.rawAcceptanceContent, 'Fuzz/$_acceptanceBody');
     });
 
-    group('version validation', () {
-      test('rejects payload without version', () {
-        final payload = _encodePayload({'t': 'inv', 'b': _invitationBlob});
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+    test('a message link gives the chat id and the stored blob back', () {
+      final payload = _parse('$_base/message#$_chatId.$_messageBody');
 
-      test('rejects payload with future version', () {
-        final payload =
-            _encodePayload({'v': 999, 't': 'inv', 'b': _invitationBlob});
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+      expect(payload, isA<FuzzMessageLinkPayload>());
+      final typed = payload! as FuzzMessageLinkPayload;
+      expect(typed.type, FuzzyLinkType.message);
+      expect(typed.chatId, _chatId);
+      expect(typed.encryptedMessage, _messageBody);
     });
 
-    group('invitation parsing', () {
-      test('parses valid invitation link', () {
-        final exp = DateTime.now()
-                .add(const Duration(hours: 24))
-                .millisecondsSinceEpoch ~/
-            1000;
-
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'inv',
-          'b': _invitationBlob,
-          'exp': exp,
-        });
-
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        final result = FuzzyLinkParser.parse(uri);
-
-        expect(result, isA<InvitationLinkPayload>());
-        final invitation = result! as InvitationLinkPayload;
-        expect(invitation.version, 1);
-        expect(invitation.type, FuzzyLinkType.invitation);
-        expect(invitation.isExpired, isFalse);
-        expect(invitation.isSupported, isTrue);
-        expect(invitation.rawInvitationContent, _invitationBlob);
-      });
-
-      test('detects expired invitation', () {
-        // Expired 1 hour ago
-        final exp = DateTime.now()
-                .subtract(const Duration(hours: 1))
-                .millisecondsSinceEpoch ~/
-            1000;
-
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'inv',
-          'b': _invitationBlob,
-          'exp': exp,
-        });
-
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        final result = FuzzyLinkParser.parse(uri) as InvitationLinkPayload?;
-
-        expect(result, isNotNull);
-        expect(result!.isExpired, isTrue);
-      });
-
-      test('rejects invitation missing the blob', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'inv',
-        });
-
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects invitation with an empty blob', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'inv',
-          'b': '',
-        });
-
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects the pre-blob I/P field layout', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'inv',
-          'I': 'chat',
-          'P': 'key',
-        });
-
-        final uri = Uri.parse('fuzzylink://invite/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+    // Dart's Uri, like the OS, reads these as the very same address: the
+    // default port and an escaped letter are normalised away.
+    test('the default port and escaped unreserved letters are the same link',
+        () {
+      expect(
+        _parse('https://ink.fuzzzycore.com:443/invite#$_invitationBody'),
+        isA<InvitationLinkPayload>(),
+      );
+      expect(
+        _parse('$_base/invite#%52lVaWgEB'),
+        isA<InvitationLinkPayload>(),
+      );
     });
 
-    group('acceptance parsing', () {
-      test('parses valid acceptance link', () {
-        final exp = DateTime.now()
-                .add(const Duration(hours: 24))
-                .millisecondsSinceEpoch ~/
-            1000;
-
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'acc',
-          'b': _acceptanceBlob,
-          'exp': exp,
-        });
-
-        final uri = Uri.parse('fuzzylink://accept/$payload');
-        final result = FuzzyLinkParser.parse(uri);
-
-        expect(result, isA<AcceptanceLinkPayload>());
-        final acceptance = result! as AcceptanceLinkPayload;
-        expect(acceptance.version, 1);
-        expect(acceptance.type, FuzzyLinkType.acceptance);
-        expect(acceptance.isExpired, isFalse);
-        expect(acceptance.rawAcceptanceContent, _acceptanceBlob);
-      });
-
-      test('detects expired acceptance', () {
-        final exp = DateTime.now()
-                .subtract(const Duration(hours: 1))
-                .millisecondsSinceEpoch ~/
-            1000;
-
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'acc',
-          'b': _acceptanceBlob,
-          'exp': exp,
-        });
-
-        final uri = Uri.parse('fuzzylink://accept/$payload');
-        final result = FuzzyLinkParser.parse(uri) as AcceptanceLinkPayload?;
-
-        expect(result, isNotNull);
-        expect(result!.isExpired, isTrue);
-      });
-
-      test('rejects acceptance missing the blob', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'acc',
-          // Missing 'b'
-        });
-
-        final uri = Uri.parse('fuzzylink://accept/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-    });
-
-    group('fuzz message parsing', () {
-      test('parses valid fuzz message link', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'fuz',
-          'c': 'chat-123',
-          'm': 'encrypted-message-content',
-        });
-
-        final uri = Uri.parse('fuzzylink://fuzz/$payload');
-        final result = FuzzyLinkParser.parse(uri);
-
-        expect(result, isA<FuzzMessageLinkPayload>());
-        final fuzz = result! as FuzzMessageLinkPayload;
-        expect(fuzz.version, 1);
-        expect(fuzz.type, FuzzyLinkType.fuzz);
-        expect(fuzz.chatId, 'chat-123');
-        expect(fuzz.encryptedMessage, 'encrypted-message-content');
-      });
-
-      test('rejects fuzz message missing chat id', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'fuz',
-          'm': 'encrypted-message-content',
-        });
-
-        final uri = Uri.parse('fuzzylink://fuzz/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects fuzz message missing encrypted message', () {
-        final payload = _encodePayload({
-          'v': 1,
-          't': 'fuz',
-          'c': 'chat-123',
-        });
-
-        final uri = Uri.parse('fuzzylink://fuzz/$payload');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-    });
-
-    group('malformed input', () {
-      test('rejects empty path segments', () {
-        final uri = Uri.parse('fuzzylink://invite/');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects non-base64 payload', () {
-        final uri = Uri.parse('fuzzylink://invite/not-valid-base64!!!');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects non-JSON payload', () {
-        final encoded = base64Url.encode(utf8.encode('this is not json'));
-        final uri = Uri.parse('fuzzylink://invite/$encoded');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
-
-      test('rejects payload with wrong JSON type', () {
-        final encoded = base64Url.encode(utf8.encode('[1,2,3]'));
-        final uri = Uri.parse('fuzzylink://invite/$encoded');
-        expect(FuzzyLinkParser.parse(uri), isNull);
-      });
+    test('the host is case-insensitive, as it is for the OS', () {
+      expect(
+        _parse('https://INK.FuzzzyCore.com/invite#$_invitationBody'),
+        isA<InvitationLinkPayload>(),
+      );
     });
   });
-}
 
-/// Helper to create a base64url-encoded JSON payload for testing.
-String _encodePayload(Map<String, dynamic> data) {
-  final jsonString = jsonEncode(data);
-  return base64Url.encode(utf8.encode(jsonString));
+  group('FuzzyLinkParser refuses', () {
+    final refused = <String, String>{
+      // Fragment only, or no fragment.
+      'a bare fragment': '#$_invitationBody',
+      'a fragment on the bare host': '$_base#$_invitationBody',
+      'a fragment on the root path': '$_base/#$_invitationBody',
+      'an empty fragment': '$_base/invite#',
+      'no fragment': '$_base/invite',
+      'the payload in the path': '$_base/invite/$_invitationBody',
+      'the payload in a query': '$_base/invite?b=$_invitationBody',
+      // Scheme and host.
+      'the old fuzzylink scheme': 'fuzzylink://invite#$_invitationBody',
+      'http': 'http://ink.fuzzzycore.com/invite#$_invitationBody',
+      'another host': 'https://evil.example/invite#$_invitationBody',
+      'a look-alike host':
+          'https://ink.fuzzzycore.com.evil.example/invite#$_invitationBody',
+      'a sub-domain': 'https://x.ink.fuzzzycore.com/invite#$_invitationBody',
+      'the parent domain': 'https://fuzzzycore.com/invite#$_invitationBody',
+      'a port': 'https://ink.fuzzzycore.com:8443/invite#$_invitationBody',
+      'user info': 'https://me@ink.fuzzzycore.com/invite#$_invitationBody',
+      'an empty query': '$_base/invite?#$_invitationBody',
+      'a query': '$_base/invite?utm=x#$_invitationBody',
+      // Path.
+      'a trailing slash': '$_base/invite/#$_invitationBody',
+      'another case': '$_base/Invite#$_invitationBody',
+      'an unknown kind': '$_base/file#$_invitationBody',
+      'a deeper path': '$_base/x/invite#$_invitationBody',
+      // Payload.
+      'the Fuzz/ prefix inside': '$_base/invite#Fuzz/$_invitationBody',
+      'base64 padding': '$_base/invite#${_invitationBody}A=',
+      'standard base64 characters': '$_base/invite#ab+cd',
+      'an escaped "+"': '$_base/invite#ab%2Bcd',
+      'an escaped space': '$_base/invite#ab%20cd',
+      'a dot in a pairing payload': '$_base/accept#$_chatId.$_messageBody',
+      'a message without a chat id': '$_base/message#$_messageBody',
+      'a message with an empty blob': '$_base/message#$_chatId.',
+      'a message with an upper-case chat id':
+          '$_base/message#${_chatId.toUpperCase()}.$_messageBody',
+      'a message with a short chat id': '$_base/message#6f1e9b2c.$_messageBody',
+      'a message with two dots': '$_base/message#$_chatId.$_messageBody.x',
+    };
+
+    for (final MapEntry(key: reason, value: link) in refused.entries) {
+      test(reason, () {
+        final uri = Uri.tryParse(link);
+        // A link Dart cannot even parse never reaches the parser.
+        if (uri != null) expect(FuzzyLinkParser.parse(uri), isNull);
+      });
+    }
+  });
+
+  group('FuzzyLinkParser size limit', () {
+    test('a fragment of exactly the limit is accepted', () {
+      final body = 'A' * FuzzyLinkParser.maxPayloadLength;
+      expect(_parse('$_base/invite#$body'), isA<InvitationLinkPayload>());
+    });
+
+    test('one character over the limit is refused', () {
+      final body = 'A' * (FuzzyLinkParser.maxPayloadLength + 1);
+      expect(_parse('$_base/invite#$body'), isNull);
+    });
+
+    test('an oversized message link is refused', () {
+      final body = 'A' * FuzzyLinkParser.maxPayloadLength;
+      expect(_parse('$_base/message#$_chatId.$body'), isNull);
+    });
+  });
+
+  group('FuzzyLinkParser.parseText (a pasted link)', () {
+    test('surrounding whitespace and new lines are ignored', () {
+      expect(
+        FuzzyLinkParser.parseText('\n  $_base/invite#$_invitationBody \n'),
+        isA<InvitationLinkPayload>(),
+      );
+    });
+
+    test('a link inside other text is refused', () {
+      expect(
+        FuzzyLinkParser.parseText('Open this: $_base/invite#$_invitationBody'),
+        isNull,
+      );
+    });
+
+    test('a link broken by a line wrap is refused', () {
+      expect(
+        FuzzyLinkParser.parseText('$_base/invite#RlVa\nWgEB'),
+        isNull,
+      );
+    });
+
+    test('empty text is refused', () {
+      expect(FuzzyLinkParser.parseText('   '), isNull);
+    });
+  });
+
+  group('FuzzyLinkParser.blobFromPastedLink', () {
+    test('a link of the asked kind gives its Fuzz/ blob', () {
+      expect(
+        FuzzyLinkParser.blobFromPastedLink(
+          '$_base/accept#$_acceptanceBody',
+          FuzzyLinkType.acceptance,
+        ),
+        'Fuzz/$_acceptanceBody',
+      );
+      expect(
+        FuzzyLinkParser.blobFromPastedLink(
+          '$_base/message#$_chatId.$_messageBody',
+          FuzzyLinkType.message,
+        ),
+        'Fuzz/$_messageBody',
+      );
+    });
+
+    test('a link of another kind is left alone', () {
+      expect(
+        FuzzyLinkParser.blobFromPastedLink(
+          '$_base/invite#$_invitationBody',
+          FuzzyLinkType.acceptance,
+        ),
+        isNull,
+      );
+    });
+
+    test('a pasted blob or plain text is left alone', () {
+      expect(
+        FuzzyLinkParser.blobFromPastedLink(
+          'Fuzz/$_invitationBody',
+          FuzzyLinkType.invitation,
+        ),
+        isNull,
+      );
+      expect(
+        FuzzyLinkParser.blobFromPastedLink('hello', FuzzyLinkType.message),
+        isNull,
+      );
+    });
+  });
+
+  group('FuzzyLinkType.fromPath', () {
+    test('knows the three paths and nothing else', () {
+      expect(FuzzyLinkType.fromPath('/invite'), FuzzyLinkType.invitation);
+      expect(FuzzyLinkType.fromPath('/accept'), FuzzyLinkType.acceptance);
+      expect(FuzzyLinkType.fromPath('/message'), FuzzyLinkType.message);
+      expect(FuzzyLinkType.fromPath('/'), isNull);
+      expect(FuzzyLinkType.fromPath('/chat/accept'), isNull);
+      expect(FuzzyLinkType.fromPath('invite'), isNull);
+    });
+  });
 }

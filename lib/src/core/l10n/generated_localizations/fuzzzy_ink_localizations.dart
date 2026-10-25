@@ -695,12 +695,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @shareAsLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Share as Link'**
-  String get shareAsLink;
-
   /// No description provided for @copyAsLink.
   ///
   /// In en, this message translates to:
@@ -749,12 +743,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Already connected!'**
   String get alreadyConnected;
 
-  /// No description provided for @updateRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'This link requires a newer version of Fuzzzy Ink.'**
-  String get updateRequired;
-
   /// No description provided for @cantAcceptOwnInvitation.
   ///
   /// In en, this message translates to:
@@ -772,18 +760,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Incoming invitation detected.'**
   String get incomingInvitation;
-
-  /// No description provided for @invitationLinkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This invitation link has expired.'**
-  String get invitationLinkExpired;
-
-  /// No description provided for @acceptanceLinkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This acceptance link has expired.'**
-  String get acceptanceLinkExpired;
 
   /// No description provided for @chatNotFoundForAcceptance.
   ///
@@ -1925,6 +1901,66 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Password copied. It is removed from the clipboard in {seconds} seconds.'**
   String vaultPasswordCopiedClearsIn(int seconds);
+
+  /// No description provided for @shareAsLinkOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Send as a link'**
+  String get shareAsLinkOption;
+
+  /// No description provided for @shareAsLinkOptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens straight in Fuzzzy Ink. Without the app, the link shows where to get it.'**
+  String get shareAsLinkOptionHint;
+
+  /// No description provided for @shareAsQrCodeOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a QR code'**
+  String get shareAsQrCodeOption;
+
+  /// No description provided for @shareAsQrCodeOptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The other phone scans it with its camera.'**
+  String get shareAsQrCodeOptionHint;
+
+  /// No description provided for @shareAsFileOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Send as a file'**
+  String get shareAsFileOption;
+
+  /// No description provided for @shareAsFileOptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For e-mail, or a chat that cuts long links.'**
+  String get shareAsFileOptionHint;
+
+  /// No description provided for @qrCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the other phone\'s camera at this code. It opens Fuzzzy Ink there, or the download page if the app is missing.'**
+  String get qrCodeHint;
+
+  /// No description provided for @notVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified'**
+  String get notVerified;
+
+  /// No description provided for @pairingWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else may have accepted your invitation'**
+  String get pairingWarningTitle;
+
+  /// No description provided for @pairingWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chat with {chatName} is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with {chatName} in person or on a call before you trust this chat.'**
+  String pairingWarningMessage(Object chatName);
 }
 
 class _FuzzzyInkLocalizationsDelegate

@@ -1,172 +1,92 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
-/// Opaque `Fuzz/` blobs as the core produces them; the link never looks inside.
-const _invitationBlob =
-    'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
-const _acceptanceBlob =
-    'Fuzz/RlVaWgECJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
-
-Map<String, dynamic> _decodePayload(String link) {
-  final encodedPayload = Uri.parse(link).pathSegments.first;
-  final jsonString =
-      utf8.decode(base64Url.decode(base64Url.normalize(encodedPayload)));
-  return jsonDecode(jsonString) as Map<String, dynamic>;
-}
+/// Opaque blobs as the core produces them; the link never looks inside.
+final _invitationBody = 'RlVaWgEB${'A' * 263}';
+final _acceptanceBody = 'RlVaWgEC${'B' * 600}';
+const _messageBody = 'RlVaWgEDAQ-_xyz09';
+const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 
 void main() {
   group('FuzzyLinkGenerator', () {
-    group('generateInvitationLink', () {
-      test('generates valid invitation URI', () {
-        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
+    test('an invitation link carries the blob after #, never in the path', () {
+      final link =
+          FuzzyLinkGenerator.generateInvitationLink('Fuzz/$_invitationBody');
 
-        expect(link, startsWith('fuzzylink://invite/'));
-        final uri = Uri.parse(link);
-        expect(uri.scheme, 'fuzzylink');
-        expect(uri.host, 'invite');
-        expect(uri.pathSegments, hasLength(1));
-        expect(uri.pathSegments.first, isNotEmpty);
-      });
-
-      test('generated invitation link round-trips through parser', () {
-        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
-        final parsed = FuzzyLinkParser.parse(Uri.parse(link));
-
-        expect(parsed, isA<InvitationLinkPayload>());
-        final invitation = parsed! as InvitationLinkPayload;
-        expect(invitation.version, FuzzyLinkPayload.currentVersion);
-        expect(invitation.type, FuzzyLinkType.invitation);
-        expect(invitation.isExpired, isFalse);
-
-        // The blob comes back byte for byte.
-        expect(invitation.rawInvitationContent, _invitationBlob);
-      });
-
-      test('invitation link carries the blob as the single `b` field', () {
-        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
-        final json = _decodePayload(link);
-
-        expect(json['b'], _invitationBlob);
-        expect(json['t'], 'inv');
-        expect(json.keys, unorderedEquals(['v', 't', 'b', 'exp']));
-      });
-
-      test('invitation link includes expiration', () {
-        final link = FuzzyLinkGenerator.generateInvitationLink(_invitationBlob);
-        final parsed =
-            FuzzyLinkParser.parse(Uri.parse(link))! as InvitationLinkPayload;
-
-        expect(parsed.expiresAt, isNotNull);
-        expect(parsed.isExpired, isFalse);
-      });
+      expect(link, 'https://ink.fuzzzycore.com/invite#$_invitationBody');
+      final uri = Uri.parse(link!);
+      expect(uri.path, '/invite');
+      expect(uri.hasQuery, isFalse);
     });
 
-    group('generateAcceptanceLink', () {
-      test('generates valid acceptance URI', () {
-        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
+    test('an acceptance link round-trips through the parser', () {
+      final link =
+          FuzzyLinkGenerator.generateAcceptanceLink('Fuzz/$_acceptanceBody');
+      final payload = FuzzyLinkParser.parse(Uri.parse(link!));
 
-        expect(link, startsWith('fuzzylink://accept/'));
-        final uri = Uri.parse(link);
-        expect(uri.scheme, 'fuzzylink');
-        expect(uri.host, 'accept');
-      });
-
-      test('generated acceptance link round-trips through parser', () {
-        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
-        final parsed = FuzzyLinkParser.parse(Uri.parse(link));
-
-        expect(parsed, isA<AcceptanceLinkPayload>());
-        final acceptance = parsed! as AcceptanceLinkPayload;
-        expect(acceptance.version, FuzzyLinkPayload.currentVersion);
-        expect(acceptance.type, FuzzyLinkType.acceptance);
-        expect(acceptance.isExpired, isFalse);
-
-        expect(acceptance.rawAcceptanceContent, _acceptanceBlob);
-      });
-
-      test('acceptance link carries the blob as the single `b` field', () {
-        final link = FuzzyLinkGenerator.generateAcceptanceLink(_acceptanceBlob);
-        final json = _decodePayload(link);
-
-        expect(json['b'], _acceptanceBlob);
-        expect(json['t'], 'acc');
-        expect(json.keys, unorderedEquals(['v', 't', 'b', 'exp']));
-      });
+      expect(link, 'https://ink.fuzzzycore.com/accept#$_acceptanceBody');
+      expect(
+        (payload! as AcceptanceLinkPayload).rawAcceptanceContent,
+        'Fuzz/$_acceptanceBody',
+      );
     });
 
-    group('generateFuzzLink', () {
-      test('generates valid fuzz message URI', () {
-        final link =
-            FuzzyLinkGenerator.generateFuzzLink('chat-id-123', 'encrypted-msg');
+    test('a message link names the chat and round-trips', () {
+      final link = FuzzyLinkGenerator.generateFuzzLink(_chatId, _messageBody);
+      final payload = FuzzyLinkParser.parse(Uri.parse(link!));
 
-        expect(link, startsWith('fuzzylink://fuzz/'));
-        final uri = Uri.parse(link);
-        expect(uri.scheme, 'fuzzylink');
-        expect(uri.host, 'fuzz');
-      });
-
-      test('generated fuzz link round-trips through parser', () {
-        const chatId = 'fuzz-round-trip-chat';
-        const encryptedMessage = 'U2FsdGVkX1+encrypted+content';
-
-        final link =
-            FuzzyLinkGenerator.generateFuzzLink(chatId, encryptedMessage);
-        final parsed = FuzzyLinkParser.parse(Uri.parse(link));
-
-        expect(parsed, isA<FuzzMessageLinkPayload>());
-        final fuzz = parsed! as FuzzMessageLinkPayload;
-        expect(fuzz.version, FuzzyLinkPayload.currentVersion);
-        expect(fuzz.chatId, chatId);
-        expect(fuzz.encryptedMessage, encryptedMessage);
-      });
-
-      test('fuzz link has no expiration', () {
-        final link = FuzzyLinkGenerator.generateFuzzLink('chat-1', 'msg');
-
-        // Decode and check there's no 'exp' field
-        final json = _decodePayload(link);
-
-        expect(json.containsKey('exp'), isFalse);
-      });
+      expect(link, 'https://ink.fuzzzycore.com/message#$_chatId.$_messageBody');
+      final typed = payload! as FuzzMessageLinkPayload;
+      expect(typed.chatId, _chatId);
+      expect(typed.encryptedMessage, _messageBody);
     });
 
-    group('generateShareableContent', () {
-      test('generates hybrid share text with link and raw fuzz', () {
-        const link = 'fuzzylink://invite/abc123';
-        const rawFuzz = _invitationBlob;
+    test('a message blob with or without its Fuzz/ prefix gives one link', () {
+      expect(
+        FuzzyLinkGenerator.generateFuzzLink(_chatId, 'Fuzz/$_messageBody'),
+        FuzzyLinkGenerator.generateFuzzLink(_chatId, _messageBody),
+      );
+    });
 
-        final content = FuzzyLinkGenerator.generateShareableContent(
-          link: link,
-          rawFuzz: rawFuzz,
-          type: FuzzyLinkType.invitation,
-        );
+    test('a blob wrapped by an e-mail client is joined back up', () {
+      final wrapped = 'Fuzz/${_invitationBody.substring(0, 60)}\r\n  '
+          '${_invitationBody.substring(60)}\n';
+      expect(
+        FuzzyLinkGenerator.generateInvitationLink(wrapped),
+        'https://ink.fuzzzycore.com/invite#$_invitationBody',
+      );
+    });
 
-        expect(content, contains('Fuzzzy Ink Invitation'));
-        expect(content, contains(link));
-        expect(content, contains(rawFuzz));
-        expect(content, contains('────────────────────'));
+    group('gives no link for', () {
+      test('a message longer than the link limit', () {
+        final body = 'A' * FuzzyLinkParser.maxPayloadLength;
+        expect(FuzzyLinkGenerator.generateFuzzLink(_chatId, body), isNull);
       });
 
-      test('labels fuzz message type correctly', () {
-        final content = FuzzyLinkGenerator.generateShareableContent(
-          link: 'fuzzylink://fuzz/xyz',
-          rawFuzz: 'encrypted',
-          type: FuzzyLinkType.fuzz,
+      test('a file, whose stored "message" is a path', () {
+        expect(
+          FuzzyLinkGenerator.generateFuzzLink(
+            _chatId,
+            'Fuzz//Users/someone/Documents/Bob/photo.jpg.fuzz',
+          ),
+          isNull,
         );
-
-        expect(content, contains('Encrypted Message'));
       });
 
-      test('labels acceptance type correctly', () {
-        final content = FuzzyLinkGenerator.generateShareableContent(
-          link: 'fuzzylink://accept/xyz',
-          rawFuzz: 'acceptance-data',
-          type: FuzzyLinkType.acceptance,
+      test('a chat id that is not a uuid', () {
+        expect(
+          FuzzyLinkGenerator.generateFuzzLink('chat', _messageBody),
+          isNull,
         );
+      });
 
-        expect(content, contains('Acceptance'));
+      test('empty or non-base64url content', () {
+        expect(FuzzyLinkGenerator.generateInvitationLink(''), isNull);
+        expect(FuzzyLinkGenerator.generateInvitationLink('Fuzz/'), isNull);
+        expect(
+          FuzzyLinkGenerator.generateAcceptanceLink('Fuzz/ab+c/d='),
+          isNull,
+        );
       });
     });
   });

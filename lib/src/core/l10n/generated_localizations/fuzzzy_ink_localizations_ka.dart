@@ -332,9 +332,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get settings => 'პარამეტრები';
 
   @override
-  String get shareAsLink => 'ბმულით გაზიარება';
-
-  @override
   String get copyAsLink => 'ბმულის კოპირება';
 
   @override
@@ -359,9 +356,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get alreadyConnected => 'უკვე დაკავშირებულია!';
 
   @override
-  String get updateRequired => 'ამ ბმულს Fuzzzy Ink-ის ახალი ვერსია სჭირდება.';
-
-  @override
   String get cantAcceptOwnInvitation =>
       'თქვენი საკუთარი მოწვევის მიღება შეუძლებელია.';
 
@@ -370,12 +364,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get incomingInvitation => 'შემომავალი მოწვევა აღმოჩენილია.';
-
-  @override
-  String get invitationLinkExpired => 'ამ მოწვევის ბმულის ვადა ამოიწურა.';
-
-  @override
-  String get acceptanceLinkExpired => 'ამ მიღების ბმულის ვადა ამოიწურა.';
 
   @override
   String get chatNotFoundForAcceptance =>
@@ -1023,5 +1011,40 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String vaultPasswordCopiedClearsIn(int seconds) {
     return 'პაროლი დაკოპირდა. ბუფერიდან $seconds წამში წაიშლება.';
+  }
+
+  @override
+  String get shareAsLinkOption => 'ბმულად გაგზავნა';
+
+  @override
+  String get shareAsLinkOptionHint =>
+      'პირდაპირ Fuzzzy Ink-ში იხსნება. თუ აპი არ აქვთ, ბმული აჩვენებს, საიდან ჩამოტვირთონ.';
+
+  @override
+  String get shareAsQrCodeOption => 'QR კოდის ჩვენება';
+
+  @override
+  String get shareAsQrCodeOptionHint => 'მეორე ტელეფონი კამერით დაასკანერებს.';
+
+  @override
+  String get shareAsFileOption => 'ფაილად გაგზავნა';
+
+  @override
+  String get shareAsFileOptionHint =>
+      'ელფოსტისთვის ან ჩატისთვის, რომელიც გრძელ ბმულს ჭრის.';
+
+  @override
+  String get qrCodeHint =>
+      'მეორე ტელეფონის კამერა ამ კოდს მიუშვირეთ. იქ Fuzzzy Ink გაიხსნება, ან ჩამოტვირთვის გვერდი, თუ აპი არ არის.';
+
+  @override
+  String get notVerified => 'დაუდასტურებელი';
+
+  @override
+  String get pairingWarningTitle => 'შესაძლოა, თქვენი მოწვევა სხვამ მიიღო';
+
+  @override
+  String pairingWarningMessage(Object chatName) {
+    return 'ჩატი $chatName-თან უკვე დაკავშირებულია, ეს თანხმობა კი სხვაა. შესაძლოა, თქვენი მოწვევა სხვამ მიიღო. სანამ ამ ჩატს ენდობით, უსაფრთხოების ნომერი $chatName-თან პირადად ან ზარით შეადარეთ.';
   }
 }

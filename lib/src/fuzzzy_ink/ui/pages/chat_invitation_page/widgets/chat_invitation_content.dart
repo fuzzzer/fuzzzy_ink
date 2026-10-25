@@ -84,25 +84,12 @@ class _ChatInvitationContentState extends State<ChatInvitationContent> {
               FuzzzyButton(
                 label: localizations.shareInvitation,
                 icon: const Icon(Icons.share),
-                onPressed: () {
-                  ShareHelper.share(widget.invitationContent, context: context);
-                },
-              ),
-              const SizedBox(height: 12),
-              FuzzzyButton(
-                label: localizations.shareAsLink,
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  final link = FuzzyLinkGenerator.generateInvitationLink(
+                onPressed: () => showSealedShareSheet(
+                  context,
+                  content: SealedShareContent.invitation(
                     widget.invitationContent,
-                  );
-                  final shareable = FuzzyLinkGenerator.generateShareableContent(
-                    link: link,
-                    rawFuzz: widget.invitationContent,
-                    type: FuzzyLinkType.invitation,
-                  );
-                  ShareHelper.share(shareable, context: context);
-                },
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               FuzzzyButton(
@@ -113,6 +100,7 @@ class _ChatInvitationContentState extends State<ChatInvitationContent> {
                     final link = FuzzyLinkGenerator.generateInvitationLink(
                       widget.invitationContent,
                     );
+                    if (link == null) return;
                     CopyGuard.copy(
                       context,
                       text: link,

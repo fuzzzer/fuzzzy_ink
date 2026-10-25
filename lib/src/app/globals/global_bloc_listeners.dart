@@ -101,6 +101,9 @@ class GlobalBlocListeners extends StatelessWidget {
               }
             }
 
+            // Verified flags live in the store, which only now is open.
+            context.read<ChatGeneralDataListCubit>().refreshVerification();
+
             final handler = sl.get<FuzzyLinkHandler>();
             if (handler.hasPendingPayload) {
               handler.processPendingPayload();

@@ -2,20 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- FuzzyLink Custom URL Scheme -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.fuzzzycore.ink</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fuzzylink</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-		</dict>
-	</array>
+	<!-- Links are https://ink.fuzzzycore.com/<kind>#<payload> universal links
+	     (Associated Domains in Runner.entitlements), read by app_links only:
+	     Flutter's own deep linking would also hand them to the router. No
+	     custom URL scheme: another app could claim it. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

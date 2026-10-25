@@ -39,6 +39,8 @@ void main() {
     when(() => mockChatRepo.addChat(any())).thenAnswer((_) async {});
     when(() => mockChatRepo.updateChat(any())).thenAnswer((_) async {});
     when(() => mockChatRepo.deleteChat(any())).thenAnswer((_) async {});
+    when(() => mockChatRepo.rememberPairedAcceptance(any(), any()))
+        .thenAnswer((_) async {});
   });
 
   // -----------------------------------------------------------------------
@@ -455,6 +457,7 @@ void main() {
                 chatId: _chatId,
                 acceptance: 'Fuzz/acc',
               ),
+          () => mockChatRepo.rememberPairedAcceptance(_chatId, 'Fuzz/acc'),
           () => mockChatRepo.updateChat(
                 any(
                   that: isA<ChatGeneralData>().having(
@@ -511,9 +514,97 @@ void main() {
               .having((s) => s.status, 'status', StateStatus.failed)
               .having((s) => s.failure?.type, 'failure', ui),
         ],
-        verify: (_) => verifyNever(() => mockChatRepo.updateChat(any())),
+        verify: (_) {
+          verifyNever(() => mockChatRepo.updateChat(any()));
+          verifyNever(
+            () => mockChatRepo.rememberPairedAcceptance(any(), any()),
+          );
+        },
       );
     }
+  });
+
+  // -----------------------------------------------------------------------
+  // ChatGeneralDataListCubit: the "not verified" mark
+  // -----------------------------------------------------------------------
+  group('ChatGeneralDataListCubit verification', () {
+    const verifiedId = '11111111-1111-4111-8111-111111111111';
+    const lockedId = '22222222-2222-4222-8222-222222222222';
+    final chats = [
+      _invitedChat,
+      ChatGeneralData(
+        chatId: verifiedId,
+        chatName: 'Verified',
+        setupStatus: ChatSetupStatus.connected,
+        didAcceptInvitation: true,
+      ),
+      ChatGeneralData(
+        chatId: lockedId,
+        chatName: 'Unreadable',
+        setupStatus: ChatSetupStatus.connected,
+        didAcceptInvitation: true,
+      ),
+      ChatGeneralData(
+        chatId: '33333333-3333-4333-8333-333333333333',
+        chatName: 'Unverified',
+        setupStatus: ChatSetupStatus.connected,
+        didAcceptInvitation: false,
+      ),
+    ];
+
+    ChatGeneralDataListCubit build() {
+      when(() => mockChatRepo.chatListUpdates)
+          .thenAnswer((_) => const Stream.empty());
+      when(() => mockChatRepo.getAllChats()).thenAnswer((_) async => chats);
+      when(() => mockService.isVerified(any()))
+          .thenAnswer((_) async => const CryptoCoreSuccess(false));
+      when(() => mockService.isVerified(verifiedId))
+          .thenAnswer((_) async => const CryptoCoreSuccess(true));
+      when(() => mockService.isVerified(lockedId)).thenAnswer(
+        (_) async => const CryptoCoreFailure(CryptoCoreFailureType.storeLocked),
+      );
+      return ChatGeneralDataListCubit(
+        cryptoCoreService: mockService,
+        chatRepository: mockChatRepo,
+      );
+    }
+
+    blocTest<ChatGeneralDataListCubit, ChatGeneralDataListState>(
+      'marks every connected chat that is not verified, or unreadable; '
+      'never a chat still waiting for its acceptance',
+      build: build,
+      act: (cubit) => cubit.fetchChats(),
+      skip: 1,
+      expect: () => [
+        isA<ChatGeneralDataListState>()
+            .having((s) => s.status, 'status', StateStatus.success)
+            .having(
+          (s) => s.unverifiedChatIds,
+          'unverifiedChatIds',
+          {lockedId, '33333333-3333-4333-8333-333333333333'},
+        ),
+      ],
+      verify: (_) => verifyNever(() => mockService.isVerified(_chatId)),
+    );
+
+    blocTest<ChatGeneralDataListCubit, ChatGeneralDataListState>(
+      'refreshVerification picks up a chat verified meanwhile',
+      build: build,
+      act: (cubit) async {
+        await cubit.fetchChats();
+        when(() => mockService.isVerified(lockedId))
+            .thenAnswer((_) async => const CryptoCoreSuccess(true));
+        await cubit.refreshVerification();
+      },
+      skip: 2,
+      expect: () => [
+        isA<ChatGeneralDataListState>().having(
+          (s) => s.unverifiedChatIds,
+          'unverifiedChatIds',
+          {'33333333-3333-4333-8333-333333333333'},
+        ),
+      ],
+    );
   });
 
   // -----------------------------------------------------------------------

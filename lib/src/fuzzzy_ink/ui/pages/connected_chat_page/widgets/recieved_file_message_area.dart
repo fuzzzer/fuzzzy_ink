@@ -139,25 +139,6 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
                         closeOverlay();
                       },
                     ),
-                    TextAction(
-                      label: '🔗',
-                      onTap: () {
-                        final link = FuzzyLinkGenerator.generateFuzzLink(
-                          widget.message.chatId,
-                          widget.message.encryptedMessage,
-                        );
-                        final preparedFuzz =
-                            '$fuzzIdentificator${widget.message.encryptedMessage}';
-                        final shareable =
-                            FuzzyLinkGenerator.generateShareableContent(
-                          link: link,
-                          rawFuzz: preparedFuzz,
-                          type: FuzzyLinkType.fuzz,
-                        );
-                        ShareHelper.share(shareable, context: context);
-                        closeOverlay();
-                      },
-                    ),
                     // A file's path is never copied, and neither is a link
                     // made of it (copy_guard).
                   ],

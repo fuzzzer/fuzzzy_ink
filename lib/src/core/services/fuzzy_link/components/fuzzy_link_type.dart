@@ -1,23 +1,17 @@
+/// What a link carries; [path] is the link's whole path on the link page's
+/// host (`https://ink.fuzzzycore.com/<path>#<payload>`).
 enum FuzzyLinkType {
-  invitation('invite', 'inv'),
-  acceptance('accept', 'acc'),
-  fuzz('fuzz', 'fuz');
+  invitation('/invite'),
+  acceptance('/accept'),
+  message('/message');
 
-  const FuzzyLinkType(this.uriSegment, this.payloadCode);
+  const FuzzyLinkType(this.path);
 
-  final String uriSegment;
-  final String payloadCode;
+  final String path;
 
-  static FuzzyLinkType? fromUriSegment(String segment) {
+  static FuzzyLinkType? fromPath(String path) {
     for (final type in FuzzyLinkType.values) {
-      if (type.uriSegment == segment) return type;
-    }
-    return null;
-  }
-
-  static FuzzyLinkType? fromPayloadCode(String code) {
-    for (final type in FuzzyLinkType.values) {
-      if (type.payloadCode == code) return type;
+      if (type.path == path) return type;
     }
     return null;
   }

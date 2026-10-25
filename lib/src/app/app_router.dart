@@ -44,9 +44,13 @@ class AppRouter {
       navigatorKey: navigatorKey,
       initialLocation: sl.get<PreferencesService>().lastSelectedTab,
       redirect: (context, state) {
-        // A fuzzylink:// deep link reaches the router as a location too; it
-        // belongs to FuzzyLinkHandler, never to a page (T-0328).
-        if (state.uri.scheme == FuzzyLinkParser.scheme) return AppRouter.home;
+        // Links belong to FuzzyLinkHandler, never to a page (T-0328). The
+        // platforms hand them to app_links only (Flutter's own deep linking
+        // is off), so this is a guard: a link path that reaches the router
+        // anyway lands on the home page.
+        if (FuzzyLinkType.fromPath(state.uri.path) != null) {
+          return AppRouter.home;
+        }
 
         final hasSeenOnboarding =
             sl.get<PreferencesService>().hasSeenOnboarding;

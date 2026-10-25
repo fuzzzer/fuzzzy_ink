@@ -106,6 +106,8 @@ class DependencyInjection {
     sl.safeRegisterSingleton<ChatGeneralDataListRepository>(
       ChatGeneralDataListRepository(
         localDataSource: ChatGeneralDataLocalDataSource(isar: sl.get()),
+        pairedAcceptanceDataSource:
+            PairedAcceptanceLocalDataSource(prefs: prefs),
       ),
     );
 

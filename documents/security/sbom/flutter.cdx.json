@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:66931553-5381-4177-aa95-6a303960018f",
+  "serialNumber": "urn:uuid:3c8ac3fe-e205-4986-a415-475d807a5963",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-25T20:59:43Z",
+    "timestamp": "2026-10-25T21:07:45Z",
     "tools": {
       "components": [
         {
@@ -4041,6 +4041,43 @@
     },
     {
       "group": "",
+      "name": "qr",
+      "version": "3.0.2",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5a1d2586170e172b8a8c8470bbbffd5eb0cd38a66c0d77155ea138d3af3a4445"
+        }
+      ],
+      "purl": "pkg:pub/qr@3.0.2",
+      "type": "library",
+      "bom-ref": "pkg:pub/qr@3.0.2",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
       "name": "share_plus",
       "version": "10.1.4",
       "scope": "required",
@@ -7685,6 +7722,7 @@
         "pkg:pub/path@1.9.1",
         "pkg:pub/path_provider@2.1.5",
         "pkg:pub/permission_handler@12.0.1",
+        "pkg:pub/qr@3.0.2",
         "pkg:pub/share_plus@10.1.4",
         "pkg:pub/shared_preferences@2.5.3",
         "pkg:pub/source_span@1.10.0",
@@ -7719,7 +7757,7 @@
           ]
         }
       },
-      "timestamp": "2026-10-25T20:59:43Z",
+      "timestamp": "2026-10-25T21:07:45Z",
       "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, October 25, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.4+6'."
     }
   ]
