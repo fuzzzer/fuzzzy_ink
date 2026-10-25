@@ -64,11 +64,11 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 |---|---|
 | **A, the inviter** | The device that creates a chat. It generates the Olm account and the one-time key, publishes the **invitation**, and later completes the handshake from the acceptance. Direction byte `0x00 = A→B`. |
 | **B, the accepter** | The device that pastes the invitation. It generates its own Olm account, creates the outbound session on A's one-time key, and publishes the **acceptance**. Direction byte `0x01 = B→A`. |
-| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L29`](../../rust/fuzzy_crypto_core/src/store.rs#L29)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
-| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L298`](../../rust/fuzzy_crypto_core/src/store.rs#L298)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
+| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L30`](../../rust/fuzzy_crypto_core/src/store.rs#L30)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
+| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L299`](../../rust/fuzzy_crypto_core/src/store.rs#L299)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
 | **Blob** | A binary message with the 6-byte envelope of §6.2, exchanged as `Fuzz/` text (§6.1). Types `0x01`–`0x05`. |
 | **Container** | A file with the `0x04` envelope (§9). Files are never turned into text. |
-| **Storage-only blobs** | Types `0x10` and `0x20` never travel: the paste decoder refuses them ([`formats.rs#L63`](../../rust/fuzzy_crypto_core/src/formats.rs#L63)). |
+| **Storage-only blobs** | Types `0x10`, `0x11` and `0x20` never travel: the paste decoder refuses them ([`formats.rs#L66`](../../rust/fuzzy_crypto_core/src/formats.rs#L66)). |
 
 ---
 
@@ -127,8 +127,8 @@ other type do not verify. Verification is `ed25519-dalek`'s `verify_strict` thro
 the **received** bytes, never over a re-encoding. A key or signature that does not parse is
 `InvalidSignature`.
 
-Order of checks on every pasted pairing blob ([`pairing.rs#L89`](../../rust/fuzzy_crypto_core/src/pairing.rs#L89),
-[`#L157`](../../rust/fuzzy_crypto_core/src/pairing.rs#L157)):
+Order of checks on every pasted pairing blob ([`pairing.rs#L92`](../../rust/fuzzy_crypto_core/src/pairing.rs#L92),
+[`#L162`](../../rust/fuzzy_crypto_core/src/pairing.rs#L162)):
 
 1. the Dart-supplied `chat_id` has the uuid shape (`Corrupt`) — before the store is touched;
 2. text envelope and outer envelope decode (`UnsupportedFormat`); the blob is of the expected type
@@ -174,7 +174,7 @@ message until B has decrypted something from A — Olm semantics, both decryptab
 ### 4.4 Completion (A) and one-time-key consumption
 
 `complete_handshake` ([`api/pairing.rs#L68`](../../rust/fuzzy_crypto_core/src/api/pairing.rs#L68),
-[`pairing.rs#L173`](../../rust/fuzzy_crypto_core/src/pairing.rs#L173)), after §4.1 and inside one atomic
+[`pairing.rs#L178`](../../rust/fuzzy_crypto_core/src/pairing.rs#L178)), after §4.1 and inside one atomic
 state mutation (§10.3 — the file is written only if every step passes, and is byte-identical otherwise):
 
 1. `role == Inviter` and `session.is_none()`, else `InvitationAlreadyUsed` — this catches a second
@@ -290,7 +290,7 @@ digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-
 
 Every blob is exchanged as text: the ASCII prefix `Fuzz/` ([`formats.rs#L15`](../../rust/fuzzy_crypto_core/src/formats.rs#L15))
 followed by **base64url without padding** (RFC 4648 §5 alphabet `A–Z a–z 0–9 - _`, no `=`) of the binary
-blob. Decoding ([`formats.rs#L125`](../../rust/fuzzy_crypto_core/src/formats.rs#L125)):
+blob. Decoding ([`formats.rs#L131`](../../rust/fuzzy_crypto_core/src/formats.rs#L131)):
 
 1. every ASCII whitespace byte (space, `\t`, `\n`, `\x0c`, `\r`) anywhere in the text is dropped — so a blob
    wrapped by an e-mail or SMS client still decodes (vertical tab `\x0b` is *not* whitespace here);
@@ -307,14 +307,14 @@ discriminator (see §12).
 |---|---|---|---|
 | 0..4 | 4 | magic | `46 55 5a 5a` = `FUZZ` ([`formats.rs#L17`](../../rust/fuzzy_crypto_core/src/formats.rs#L17)) |
 | 4 | 1 | version | `0x01` ([`formats.rs#L19`](../../rust/fuzzy_crypto_core/src/formats.rs#L19)) |
-| 5 | 1 | type | `0x01` invitation · `0x02` acceptance · `0x03` message · `0x04` file container · `0x05` password-sealed blob · `0x10` wrapped key (storage only) · `0x20` local seal (storage only) ([`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37)) |
+| 5 | 1 | type | `0x01` invitation · `0x02` acceptance · `0x03` message · `0x04` file container · `0x05` password-sealed blob · `0x10` wrapped key (storage only) · `0x11` recovery box (storage only) · `0x20` local seal (storage only) ([`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37)) |
 | 6.. | | payload | per type |
 
 Envelope length 6 ([`formats.rs#L21`](../../rust/fuzzy_crypto_core/src/formats.rs#L21)). Any other magic,
-version or type byte is `UnsupportedFormat` ([`formats.rs#L152`](../../rust/fuzzy_crypto_core/src/formats.rs#L152));
+version or type byte is `UnsupportedFormat` ([`formats.rs#L158`](../../rust/fuzzy_crypto_core/src/formats.rs#L158));
 a blob of the wrong type for the call (an invitation given to the message decoder) is also
-`UnsupportedFormat`. Types `0x10` and `0x20` are refused by the paste path (`decode_pasted`) — they are valid
-only where the device stores them.
+`UnsupportedFormat`. Types `0x10`, `0x11` and `0x20` are refused by the paste path (`decode_pasted`) — they are
+valid only where the device stores them.
 
 All payload fields are fixed-size or carry a big-endian length prefix (`u8` for chat ids, `u16` for Olm bodies
 and names, `u32` for inner-header bodies). No JSON, no serde, no varints on the wire. Every decoder reads
@@ -364,7 +364,7 @@ Vector: `message` (a 4-byte placeholder body; a real body is vodozemac's `Messag
 | Offset | Size | Field | Rule |
 |---|---|---|---|
 | 0..6 | 6 | envelope | `FUZZ 01 03` |
-| 6 | 1 | `olm_type` | `0x00` pre-key message · `0x01` normal message ([`formats.rs#L72`](../../rust/fuzzy_crypto_core/src/formats.rs#L72)); anything else `Corrupt` |
+| 6 | 1 | `olm_type` | `0x00` pre-key message · `0x01` normal message ([`formats.rs#L78`](../../rust/fuzzy_crypto_core/src/formats.rs#L78)); anything else `Corrupt` |
 | 7.. | ≥ 1 | `olm_body` | the Olm message bytes; empty is `Corrupt` |
 
 Nothing else is in the clear — **no chat id, no counter, no sender**: a chat id on every message would be a
@@ -374,7 +374,7 @@ binding after decryption. The Olm plaintext of every message is an inner header.
 ### 6.6 File container `0x04`
 
 See §9 for the chunks; this is the header. Two key modes. `header_len` is not stored: the decoder recomputes
-it from the fields it read ([`formats.rs#L476`](../../rust/fuzzy_crypto_core/src/formats.rs#L476)).
+it from the fields it read ([`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519)).
 
 **Chat mode** (`key_mode 0x01`) — vector: `file_header_chat` (3-byte placeholder Olm body; a real one is a
 pre-key or normal message whose plaintext is an inner header with content type `0x02`, vector
@@ -445,10 +445,10 @@ Vectors: `wrapped_master_key` (key `33×32`, password `pw`, salt `11×16`, nonce
 | 31..55 | 24 | `nonce` | random per wrap |
 | 55..103 | 48 | `ct ‖ tag` | AEAD(key = Argon2id(password, salt, m, t, p), nonce, aad = role string, the 32-byte key) — exactly 48 bytes ([`formats.rs#L31`](../../rust/fuzzy_crypto_core/src/formats.rs#L31)); anything else `Corrupt` |
 
-103 bytes. The AAD names the key's **role**: `master-key` ([`master.rs#L22`](../../rust/fuzzy_crypto_core/src/master.rs#L22))
+103 bytes. The AAD names the key's **role**: `master-key` ([`master.rs#L31`](../../rust/fuzzy_crypto_core/src/master.rs#L31))
 for the master key under the master password, `master-key-recovery`
-([`master.rs#L24`](../../rust/fuzzy_crypto_core/src/master.rs#L24)) for the master key under the recovery key, `vault-key`
-([`vault.rs#L18`](../../rust/fuzzy_crypto_core/src/vault.rs#L18)) for a vault key under the vault's own password, so a
+([`master.rs#L33`](../../rust/fuzzy_crypto_core/src/master.rs#L33)) for the master key under the recovery key, `vault-key`
+([`vault.rs#L23`](../../rust/fuzzy_crypto_core/src/vault.rs#L23)) for a vault key under the vault's own password, so a
 blob wrapped for one role never unwraps as another. For the recovery wrap the Argon2id "password" is the recovery
 key's 20 decoded bytes (§10.2). An empty password is refused (`WrongPassword`) before any Argon2 run: no wrap
 under `""` can be made. Never valid on the wire.
@@ -470,6 +470,34 @@ Vectors: `local_seal_chat` (history key `55×32`, nonce `44×24`, plaintext `hel
 Fewer than 16 bytes after the nonce is `Corrupt`. Never valid on the wire. A **key wrapped under the master key**
 is a `0x20` whose plaintext is the 32-byte key (78 bytes in all); a plaintext of any other length is `Corrupt`.
 
+### 6.10 Recovery box `0x11` (storage only)
+
+Vectors: `recovery_lock` (the lock of the recovery key `AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ`, i.e. the bytes
+`00 01 … 12` ‖ its check byte) and `vault_key_recovery` (the vault key `33×32` sealed to that lock, ephemeral
+secret `55×32`, nonce `22×24`).
+
+A 32-byte key **sealed to the recovery lock** — an X25519 public key the recovery key determines (§10.2) — so
+that it can be sealed without the recovery key at hand and opened only with it
+([`RecoveryBox`](../../rust/fuzzy_crypto_core/src/formats.rs#L405), [`master.rs#L290`](../../rust/fuzzy_crypto_core/src/master.rs#L290)).
+Today its one use is the key of a vault with its own password (§10.6).
+
+| Offset | Size | Field | Rule |
+|---|---|---|---|
+| 0..6 | 6 | envelope | `FUZZ 01 11` |
+| 6..38 | 32 | `ephemeral` | X25519 public key of a one-time secret drawn per box |
+| 38..62 | 24 | `nonce` | random per box |
+| 62..110 | 48 | `ct ‖ tag` | AEAD(box key, nonce, aad = role string, the 32-byte key) — exactly 48 bytes; anything else `Corrupt` |
+
+110 bytes. **Box key** = `SHA-256(Z ‖ 00 00 00 01 ‖ "fuzzy-recovery-box-v1" ‖ ephemeral ‖ lock)`, where
+`Z = X25519(ephemeral secret, lock)` — the ANSI X9.63 / SEC 1 §3.6.1 KDF with SHA-256, one output block
+([`master.rs#L224`](../../rust/fuzzy_crypto_core/src/master.rs#L224)); both public keys are bound, so a box opens only
+for the lock it was made for. A lock or an ephemeral key of small order (no contributory shared secret) is refused:
+`Corrupt` when sealing, `WrongPassword` when opening. The AAD names the role: `vault-key-recovery`
+([`vault.rs#L25`](../../rust/fuzzy_crypto_core/src/vault.rs#L25)). Opening (`open_with_recovery`,
+[`master.rs#L326`](../../rust/fuzzy_crypto_core/src/master.rs#L326)) recomputes the lock's secret from the typed
+recovery key; a tag failure — another device's recovery key, another role, a tampered box — is `WrongPassword`,
+as for the recovery wrap of §6.8. Never valid on the wire.
+
 ---
 
 ## 7. Inner header and validation rules
@@ -477,7 +505,7 @@ is a `0x20` whose plaintext is the 32-byte key (78 bytes in all); a plaintext of
 The **inner header** is the plaintext of every Olm message the protocol produces — the handshake, every text
 message, every chat-mode file key. It is the Matrix "m.olm" construction: the sender's and recipient's
 identity keys and the room (chat) id travel *inside* the authenticated plaintext, and the receiver checks
-them against its own state after decryption ([`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513)).
+them against its own state after decryption ([`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556)).
 
 ### 7.1 Layout
 
@@ -486,14 +514,14 @@ Vectors: `inner_header_handshake` (116 bytes), `inner_header_text` (body `hello`
 
 | Offset | Size | Field | Rule |
 |---|---|---|---|
-| 0 | 1 | `inner_version` | `0x01` ([`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513)); anything else `UnsupportedFormat` at the codec, remapped to `Corrupt` by every caller (a foreign inner version inside a message is not a negotiation signal) |
+| 0 | 1 | `inner_version` | `0x01` ([`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556)); anything else `UnsupportedFormat` at the codec, remapped to `Corrupt` by every caller (a foreign inner version inside a message is not a negotiation signal) |
 | 1 | 1 | `chat_id_len` | 1..=255 |
 | 2..38 | 36 | `chat_id` | UTF-8 |
 | 38..70 | 32 | `sender_ed25519` | the sender's identity key |
 | 70..102 | 32 | `recipient_ed25519` | the recipient's identity key |
-| 102 | 1 | `direction` | `0x00` A→B (inviter to accepter) · `0x01` B→A ([`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519)); else `Corrupt` |
+| 102 | 1 | `direction` | `0x00` A→B (inviter to accepter) · `0x01` B→A ([`formats.rs#L562`](../../rust/fuzzy_crypto_core/src/formats.rs#L562)); else `Corrupt` |
 | 103..111 | 8 | `counter` | `u64 BE`, per direction, starts at 0 (B→A counter 0 is the handshake) |
-| 111 | 1 | `content_type` | `0x00` handshake (empty body) · `0x01` text (UTF-8) · `0x02` file-key envelope (§7.3) ([`formats.rs#L537`](../../rust/fuzzy_crypto_core/src/formats.rs#L537)); else `Corrupt` |
+| 111 | 1 | `content_type` | `0x00` handshake (empty body) · `0x01` text (UTF-8) · `0x02` file-key envelope (§7.3) ([`formats.rs#L580`](../../rust/fuzzy_crypto_core/src/formats.rs#L580)); else `Corrupt` |
 | 112..116 | 4 | `body_len` | `u32 BE`; 0 is allowed |
 | 116.. | `body_len` | `body` | per content type |
 
@@ -685,7 +713,7 @@ of the *new* `x` is emitted.
 ### 9.3 The `.part` rule and jobs
 
 - All output goes to `<output>.part` (suffix appended, so `report.pdf.part`), created with mode `0o600` on
-  unix ([`store.rs#L321`](../../rust/fuzzy_crypto_core/src/store.rs#L321)), **after** the header parsed and the key
+  unix ([`store.rs#L360`](../../rust/fuzzy_crypto_core/src/store.rs#L360)), **after** the header parsed and the key
   was derived — so a header-stage rejection creates nothing. On success: `fsync` → close → rename over
   `<output>` (the core replaces an existing file silently; the app never names an existing file, or one with
   a `.part` beside it, as `<output>` — it picks `name (1).ext`, `name (2).ext`, … first,
@@ -718,7 +746,7 @@ Olm message goes through the receiving chain of §7.2 with `content_type = 0x02`
 body parser — `Replay`, `TooOld`, `WrongChat`, `Corrupt` exactly as for text; the state is persisted; the
 ticket carries the key and the original name. The run then opens the chunks with `Corrupt` as the chunk-0
 failure, and additionally refuses to release the key unless the header on disk equals the header the ticket
-was prepared on ([`api/files.rs#L303`](../../rust/fuzzy_crypto_core/src/api/files.rs#L303)) — redundant with the
+was prepared on ([`api/files.rs#L366`](../../rust/fuzzy_crypto_core/src/api/files.rs#L366)) — redundant with the
 AAD, kept as a belt.
 
 **Binding.** The Olm message commits to the inner header only — chat, identities, direction, counter, key,
@@ -780,7 +808,7 @@ send ticket, or a ticket already run, is `Internal` (only the receive side keeps
 container it produced, which it cannot open — FN-013).
 
 What this costs, stated exactly: a kept file has the **same protection as the chat's text history** (§10.4) —
-the file key is outside forward secrecy once kept, readable by whoever holds the store key (or the app-lock
+the file key is outside forward secrecy once kept, readable by whoever holds the store key (or the master
 password and the OS keystore) and the kept container. Deleting the chat deletes its state file and with it the
 history key, so every kept key of that chat becomes unopenable; the app also deletes the chat's files folder
 (§10.1). No test vector covers the kept key: it is the `0x20` of §6.9 under a new AAD, and the Rust tests
@@ -799,6 +827,8 @@ assert round trip, tamper, cross-chat, cross-domain and length rules.
 flutter_secure_storage  key "master_key_password_v2"                    the master key under the master password (0x10), base64
 flutter_secure_storage  key "master_key_recovery_v2"                    the master key under the recovery key (0x10), base64 — absent without a recovery key
 flutter_secure_storage  key "store_key_wrap_v2"                         the store key under the master key (0x20), base64
+flutter_secure_storage  key "recovery_lock_v2"                          the recovery lock (public) under the store key (0x20, AAD "recovery-lock"), base64 — kept with the recovery wrap
+flutter_secure_storage  key "vault_key_recovery_v2"                     the vault key sealed to the recovery lock (0x11, §6.10), base64 — only for a vault with its own password and a kept recovery key
 flutter_secure_storage  key "auto_lock_settings_v1"                     the auto-lock times, sealed under the store key (0x20, §10.7), base64
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
 <application support directory>/vault/vault.meta                       JSON: the wrapped vault key (field "verificationToken", base64: a 0x20 under the master key, or a 0x10 under the vault's own password); vault id and timestamps in plaintext. No auto-lock value: the vault's timer is a constant of the app
@@ -843,41 +873,57 @@ recovery key ─────Argon2id──▶ 0x10 "master-key-recovery" ──�
               0x20 "store-key-wrap"                                     0x20 "vault-key-wrap" (default)
                        ▼                                                              ▼
                   store key ──▶ state files ──▶ history keys ──▶ history         vault key ──▶ vault items
-                       └──▶ sealed app settings (§10.7)       or: vault password ──Argon2id──▶ 0x10 "vault-key"
+                       ├──▶ sealed app settings (§10.7)       or: vault password ──Argon2id──▶ 0x10 "vault-key"
+                       └──▶ 0x20 "recovery-lock": the lock (public)       and: recovery key ──X25519──▶ 0x11 "vault-key-recovery"
 ```
 
-- **Creation** (`create_master_key`, [`api/core.rs#L59`](../../rust/fuzzy_crypto_core/src/api/core.rs#L59)), the first
+The recovery key reaches a vault with its own password through the `0x11` box (§6.10); the master password reaches
+the lock's public half only, which seals but does not open.
+
+- **Creation** (`create_master_key`, [`api/core.rs#L65`](../../rust/fuzzy_crypto_core/src/api/core.rs#L65)), the first
   run: 32 random bytes each for the master key and the store key, and a recovery key. The master key is wrapped
   under the master password (§6.8, AAD `master-key`) and under the recovery key (AAD `master-key-recovery`), each
   with a fresh salt and nonce and `Argon2id(m = 65 536 KiB, t = 4, p = 1)`; the store key is wrapped under the
-  master key (§6.9, AAD `store-key-wrap`). The store opens with the store key; the master key is dropped (wiped)
-  before the call returns. An empty password is refused. Two Argon2id runs. The app writes the store wrap, then
-  the password wrap last (its presence marks a finished first run); it keeps the recovery wrap only once the user
-  confirms the key is saved, so a skipped key leaves no recovery wrap at all.
-- **The recovery key** ([`master.rs#L99`](../../rust/fuzzy_crypto_core/src/master.rs#L99)): 19 bytes from the OS CSPRNG
+  master key (§6.9, AAD `store-key-wrap`). The master key is dropped (wiped) before the store opens with the
+  store key; the recovery lock (below) is then sealed under the store key. An empty password is refused. Two
+  Argon2id runs. The app writes the store wrap, then the password wrap last (its presence marks a finished first
+  run); it keeps the recovery wrap and the lock only once the user confirms the key is saved, so a skipped key
+  leaves neither.
+- **The recovery key** ([`master.rs#L114`](../../rust/fuzzy_crypto_core/src/master.rs#L114)): 19 bytes from the OS CSPRNG
   (152 bits) and one check byte, `SHA-256("fuzzy-recovery-check-v1" ‖ the 19 bytes)[0]`; the 20 bytes are written as
   RFC 4648 base32 (32 characters, no padding) in eight groups of four, `XXXX-XXXX-…`. Reading it ignores case,
   spaces, dashes and line breaks and reads `0`, `1`, `8` as `O`, `I`, `B`; anything else, a wrong length or a
   wrong check byte is `Corrupt` — a typo, told apart before any Argon2 run from a key that does not open this
   device (`WrongPassword` at unwrap). The KDF input is the 20 bytes. The recovery key crosses the FFI as text
   only twice: Rust → Dart once to be shown, Dart → Rust when typed (§13). The app never stores it.
-- **Open** (`open_store`, [`api/core.rs#L82`](../../rust/fuzzy_crypto_core/src/api/core.rs#L82)): unwrap the master key
+- **The recovery lock** ([`master.rs#L216`](../../rust/fuzzy_crypto_core/src/master.rs#L216)): an X25519 key pair the
+  recovery key determines — secret = `SHA-256(the 20 bytes ‖ 00 00 00 01 ‖ "fuzzy-recovery-lock-v1")` (X9.63 KDF,
+  clamped by X25519), lock = its public key. The 20 bytes are 152 random bits drawn by the crate, so a hash KDF is
+  enough: there is nothing to stretch, and a guess checked against the public lock still costs 2¹⁵¹ on average.
+  The lock is public: the app keeps it sealed under the store key (`0x20`, AAD `recovery-lock`,
+  [`store.rs#L639`](../../rust/fuzzy_crypto_core/src/store.rs#L639)) only so that a lock swapped in the secure
+  storage does not open and nobody without the store key can make the app seal a vault key to a lock of theirs.
+  Anything is sealed to it as a `0x11` box (§6.10); the recovery key alone opens a box.
+- **Open** (`open_store`, [`api/core.rs#L91`](../../rust/fuzzy_crypto_core/src/api/core.rs#L91)): unwrap the master key
   under the password — a tag failure is `WrongPassword` (the AEAD cannot distinguish a wrong password from a
   tampered blob), so **the password wrap doubles as the password verifier**; there is no separate verification
   token — then the store key under the master key (`Corrupt` on failure); then the directory is
   created/canonicalised and an opaque handle is returned (§13). One Argon2id run.
-- **Password change** (`change_master_password`, [`api/core.rs#L99`](../../rust/fuzzy_crypto_core/src/api/core.rs#L99)):
+- **Password change** (`change_master_password`, [`api/core.rs#L108`](../../rust/fuzzy_crypto_core/src/api/core.rs#L108)):
   unwrap the master key under the old password, wrap it under the new one with a fresh salt and nonce. One blob
   replaces the other in secure storage in a single write, so the change is atomic: nothing else is keyed by the
   password — the store wrap, the recovery wrap, a vault wrap under the master key and every state file stay as
   they are. There is no "lock off": the password cannot become empty.
-- **Recovery** (`recover_master_password`, [`api/core.rs#L115`](../../rust/fuzzy_crypto_core/src/api/core.rs#L115)):
+- **Recovery** (`recover_master_password`, [`api/core.rs#L125`](../../rust/fuzzy_crypto_core/src/api/core.rs#L125)):
   read the typed key, unwrap the master key from the recovery wrap, wrap it under the new master password, open
-  the store. The recovery key stays valid. Two Argon2id runs.
-- **New recovery key** (`new_recovery_key`, [`api/core.rs#L140`](../../rust/fuzzy_crypto_core/src/api/core.rs#L140)):
-  the master password opens the master key, a new recovery key is drawn and the master key wrapped under it. The
-  app deletes the old recovery wrap at once and stores the new one when the user confirms it is saved; once the
-  old wrap is gone the old key opens nothing.
+  the store. The recovery key, its lock and a vault box sealed to it stay valid. Two Argon2id runs.
+- **New recovery key** (`new_recovery_key`, [`api/core.rs#L154`](../../rust/fuzzy_crypto_core/src/api/core.rs#L154)):
+  the master password opens the master key, a new recovery key is drawn and the master key wrapped under it; its
+  lock is sealed under the store key of the open store (a closed store is `StoreLocked`). Two Argon2id runs. When
+  the vault has its own password, its password seals the vault key to the new lock (`vault_seal_for_recovery`,
+  §10.6) — the master password alone cannot, by design; a wrong vault password stops the change before anything
+  is deleted. The app then deletes the old recovery wrap, lock and vault box at once and stores the new ones when
+  the user confirms the key is saved; once they are gone the old key opens nothing.
 - **Lock** (`close`): the handle drops the store key and every cached state; every later call on the handle is
   `StoreLocked`. The app closes it on the Lock button, after the idle time, after the time in the background, and
   on every path that ends the session.
@@ -885,7 +931,7 @@ recovery key ─────Argon2id──▶ 0x10 "master-key-recovery" ──�
 ### 10.3 Sealed per-chat state files
 
 `<chat_id>.state` is a `0x20` blob (§6.9): `AEAD(store key, random nonce, aad = "chat-state" ‖ chat_id,
-body)` ([`store.rs#L45`](../../rust/fuzzy_crypto_core/src/store.rs#L45), no separator — the chat id is fixed-length).
+body)` ([`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46), no separator — the chat id is fixed-length).
 Vector: `state_file` with its decrypted body in `state_file.body.json`.
 
 The body is compact serde JSON of `ChatState` ([`state.rs#L57`](../../rust/fuzzy_crypto_core/src/state.rs#L57)) —
@@ -915,8 +961,8 @@ One AEAD scheme with random nonces covers all local state. The JSON is produced 
 that is wiped after use ([`state.rs#L27`](../../rust/fuzzy_crypto_core/src/state.rs#L27)), so no partial copy of a
 key is left on the heap by buffer growth.
 
-**Atomic write, save-before-return** ([`store.rs#L374`](../../rust/fuzzy_crypto_core/src/store.rs#L374),
-[`#L555`](../../rust/fuzzy_crypto_core/src/store.rs#L555)): every mutation (pairing step, message, file key, flag)
+**Atomic write, save-before-return** ([`store.rs#L375`](../../rust/fuzzy_crypto_core/src/store.rs#L375),
+[`#L556`](../../rust/fuzzy_crypto_core/src/store.rs#L556)): every mutation (pairing step, message, file key, flag)
 runs inside `with_state_mut`: load (lazily cached), mutate, seal, write `<chat_id>.state.tmp` (mode `0o600`),
 `fsync`, rename over `<chat_id>.state`, `fsync` the directory (unix). The result of the operation is returned
 only after the rename. If the mutation, the seal or the write fails, the cached copy is evicted and the next
@@ -924,7 +970,7 @@ call re-reads the disk — the cache never holds a state that is not on disk, an
 the file byte-identical. On decrypt this means: a crash *between* Olm decrypt and the write leaves the message
 key on disk, so the user re-pastes once; a crash *after* the write has already returned the plaintext.
 
-**Delete** ([`store.rs#L579`](../../rust/fuzzy_crypto_core/src/store.rs#L579)): overwrite a stale `.tmp` and the
+**Delete** ([`store.rs#L580`](../../rust/fuzzy_crypto_core/src/store.rs#L580)): overwrite a stale `.tmp` and the
 state file with zeros **in place** — opened without truncation, so the zeros land on the blocks that held the
 ciphertext rather than on newly allocated ones — `fsync`, then unlink (since 2026-10-26; before, the file was
 truncated first, which freed the old blocks unwritten). Best effort: on a copy-on-write file system (APFS on
@@ -945,8 +991,8 @@ row, plaintext)` in a `0x20` blob, stored base64 in the database row. `row` is t
 forms it: the direction byte (`01` sent, `00` received) ‖ the UTF-8 of the row's `Fuzz/` blob text (the chat id is
 fixed-length, so no separator is needed). A seal copied onto another row — of this chat or another — or a row
 flipped between sent and received no longer opens (`Corrupt`; security review 2026-10-22)
-([`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46), [`#L200`](../../rust/fuzzy_crypto_core/src/store.rs#L200),
-[`#L609`](../../rust/fuzzy_crypto_core/src/store.rs#L609)); `open_local(chat_id, row, blob)` is the inverse. The
+([`store.rs#L47`](../../rust/fuzzy_crypto_core/src/store.rs#L47), [`#L201`](../../rust/fuzzy_crypto_core/src/store.rs#L201),
+[`#L610`](../../rust/fuzzy_crypto_core/src/store.rs#L610)); `open_local(chat_id, row, blob)` is the inverse. The
 history key is the chat's own (§3): it is read from that chat's sealed state — the cached copy when the state is
 loaded, else the file — so a chat the store does not know is `UnknownChat`, a tag failure (a tampered blob,
 another chat's key, the right key under another chat's id or another row, which the AAD binds) is `Corrupt`. Vector:
@@ -1004,24 +1050,40 @@ master password), so the master password opens the vault (`vault_unlock_with_mas
 the key is wrapped under the new password) and back, `vault_use_master_password` (the vault password opens the
 `0x10`, the master password opens the master key, the key is wrapped under it). Which one a vault uses is read from
 the wrapped key's type byte (`vault_uses_own_password`, synchronous, no key). Either way the vault key opens no
-chat, and neither the store key nor any history key opens a vault item. The recovery key reaches the vault only
-through the master key: **a vault with its own password is not recoverable** — the app says so where the user
-chooses it. An empty vault password is refused.
+chat, and neither the store key nor any history key opens a vault item. An empty vault password is refused.
+
+**The recovery key opens a vault with its own password too** (owner, 2026-10-26); the master password alone still
+does not. A vault under the master key needs nothing more: the recovery key opens the master key. A vault with its
+own password is also **sealed to the recovery lock** (a `0x11`, AAD `vault-key-recovery`, §6.10), when a recovery key
+is kept: `vault_init` and `vault_use_own_password` take the lock (the `0x20` under the store key, opened with the
+open store's key) and hand back the box with the wrapping
+([`api/vault.rs#L100`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L100), [`#L165`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L165)).
+The master password reaches the master key, the store key and the lock's public half, none of which opens the box.
+The box needs no update when the vault password changes (`vault_rewrap`) — the vault key does not change — and is
+deleted when the vault goes back under the master key. With the recovery key (a typo is `Corrupt`, before any
+Argon2 run; another device's key `WrongPassword`) the vault gets a new password of its own, `vault_recover` (one
+Argon2id run, [`#L209`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L209)), or goes back under the master key,
+`vault_recover_to_master` (the recovery key also opens the master key's recovery wrap; one Argon2id run,
+[`#L231`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L231)); either way the vault is open and no item is
+re-encrypted. A new recovery key reseals the box with the vault password (`vault_seal_for_recovery`,
+[`#L191`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L191); §10.2). Without a kept recovery key no box exists and
+a vault with its own password is lost with its password; the app says which applies where the user chooses it.
 
 Items are sealed under the vault key **directly** (no sub-key: the key has one purpose) as `0x20` blobs with AAD
-`vault-item` ‖ u32 BE version ‖ item id ([`vault.rs#L110`](../../rust/fuzzy_crypto_core/src/vault.rs#L110)); a tag
+`vault-item` ‖ u32 BE version ‖ item id ([`vault.rs#L129`](../../rust/fuzzy_crypto_core/src/vault.rs#L129)); a tag
 failure is `Corrupt`. The version is the item's content version in the vault index (its database row); the app
 writes the item file first and the row second, so after a stop between the two it opens the file at the row's
 version or one ahead (and records the newer version). An item file copied over another item, or an older copy of
 the same item put back, does not open (security review 2026-10-22). A password change or a switch re-wraps the
 key; items are never re-encrypted. The key is held in an opaque handle (`VaultKey`) that behaves like the store
 handle (`close` → later calls `StoreLocked`). The vault's auto-lock is a constant of the app (5 minutes after
-opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`.
+opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`,
+`recovery_lock`, `vault_key_recovery`.
 
 ### 10.7 Sealed app settings
 
 A setting that guards the app — today only the auto-lock times — is sealed under the **store key** as a `0x20` with
-AAD `app-setting` ‖ name ([`store.rs#L45`](../../rust/fuzzy_crypto_core/src/store.rs#L45); `seal_setting` /
+AAD `app-setting` ‖ name ([`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48); `seal_setting` /
 `open_setting` on the store handle, name 1..=64 bytes). An edited blob is `Corrupt`, and the app then uses its
 standard times; the app also accepts only the times it offers. The settings can be read only while the store is
 open.
@@ -1030,14 +1092,15 @@ open.
 
 ## 11. Password formats
 
-**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L100`](../../rust/fuzzy_crypto_core/src/store.rs#L100)),
+**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L101`](../../rust/fuzzy_crypto_core/src/store.rs#L101)),
 is the crate's only Argon2 entry: the master key (under the master password and under the recovery key), a vault
-key under its own password, password-sealed blobs and password-mode files all go through it.
+key under its own password, password-sealed blobs and password-mode files all go through it. The one key derived
+without it is the recovery lock (§10.2): its input is the crate-drawn 152-bit recovery key, not a password.
 
 | Parameter | Value written by this build | Where |
 |---|---|---|
 | algorithm | Argon2id, version 0x13 | `argon2` 0.6.0 |
-| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L31`](../../rust/fuzzy_crypto_core/src/store.rs#L31) |
+| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L32`](../../rust/fuzzy_crypto_core/src/store.rs#L32) |
 | `t_cost` | 4 | same |
 | `p_cost` | 1 | same |
 | output | 32 bytes | same |
@@ -1051,12 +1114,12 @@ changed parameter derives a different KEK.
 
 **Caps on attacker-controlled headers.** Because a pasted `0x05` blob, a received container or a tampered
 `0x10` blob dictates the cost, the decoder refuses `m_cost > 262 144 KiB (256 MiB)`
-([`store.rs#L40`](../../rust/fuzzy_crypto_core/src/store.rs#L40)) or `t_cost > 16`
-([`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43)) — and anything `argon2::Params::new` rejects, e.g.
+([`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41)) or `t_cost > 16`
+([`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44)) — and anything `argon2::Params::new` rejects, e.g.
 `p = 0` or `m < 8·p` — as `Corrupt` **before allocating a single block**. The worst header a peer can make the
 device compute is therefore 256 MiB × 16 passes (≈ 2 s on a 2021 laptop in release, more on a phone). All
 Argon2 runs in the process are serialised by one lock, taken *before* the block buffer is allocated
-([`store.rs#L54`](../../rust/fuzzy_crypto_core/src/store.rs#L54)), so peak memory is one buffer, and that buffer
+([`store.rs#L55`](../../rust/fuzzy_crypto_core/src/store.rs#L55)), so peak memory is one buffer, and that buffer
 is owned by the crate and wiped after the run (the `argon2` crate does not wipe its own).
 
 **Password-sealed blob `0x05`** (§6.7; vector `password_sealed_text`): `open_bytes`
@@ -1111,23 +1174,24 @@ Fuzzzy Ink is a Flutter app; the crate is reached through `flutter_rust_bridge` 
 is drawn so that **no key material ever crosses it**.
 
 **Crosses the FFI, Dart → Rust:** passwords and a typed recovery key (as strings; moved into wiped buffers
-immediately), the wrapped `0x10`/`0x20` key blobs (ciphertext), a history row's binding (direction byte and blob
+immediately), the wrapped `0x10`/`0x11`/`0x20` key blobs (ciphertext; the recovery lock is a `0x20`), a history row's binding (direction byte and blob
 text), a vault item's id and version, a setting's name, `Fuzz/` blob texts and container paths (attacker-controlled input), chat ids
 (validated by shape on entry), plaintext the user typed (to be encrypted), file paths, the verified flag.
 
-**Crosses the FFI, Rust → Dart:** `Fuzz/` blob texts and `0x10`/`0x20`/`0x05` blobs (ciphertext), a new recovery
+**Crosses the FFI, Rust → Dart:** `Fuzz/` blob texts and `0x10`/`0x11`/`0x20`/`0x05` blobs (ciphertext), a new recovery
 key's text, once, to be shown to the user (it is a password for the master key, like the master password the user
 types; the app never stores it), the plaintext the user asked to see (a decrypted message, an opened local seal, a decrypted vault item), the
 safety-number string, status enums, progress events, file names, and the 13 `CoreError` variants
 (payload-free — no OS error text, no path, no key or digit ever appears in an error).
 
-**Never crosses:** the master key, the store key, the KEK, the history keys, the vault key, file keys, Olm accounts and
+**Never crosses:** the master key, the store key, the KEK, the history keys, the vault key, the recovery lock's
+secret half and a box's ephemeral secret, file keys, Olm accounts and
 sessions, message keys, state-file bodies. They live inside four opaque handles the Dart side holds by
 reference only — `CryptoCore` (the unlocked store), `VaultKey`, `FileTicket` (a prepared file job with its
 key), `FileJob` (a pause/cancel word, no secret) — and every function that touches a key is asynchronous
 (runs on frb's thread pool). The only synchronous functions in the crate are `blob_type_of`, `vault_uses_own_password` (a type byte),
 `peek_chat_id`
-([`api/formats.rs#L22`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L22), [`#L40`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L40))
+([`api/formats.rs#L22`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L22), [`#L41`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L41))
 and the three `FileJob` controls ([`api/files.rs#L85`](../../rust/fuzzy_crypto_core/src/api/files.rs#L85)) — none
 touches a key. `peek_chat_id` reads the chat id out of an `0x01`/`0x02` blob **without** verifying its
 signature and **without** the uuid shape check — Dart receives whatever 1..=255 bytes of UTF-8 the blob
@@ -1212,18 +1276,19 @@ build without a lock-file change. Toolchain: Rust 1.98.1 (`rust-toolchain.toml`)
 | `chacha20poly1305` | 0.11.0 (`zeroize`) | XChaCha20-Poly1305 for every AEAD use (§6.7–6.9, §9) | RustCrypto AEADs; NCC Group audit of the `chacha20poly1305` crate, 2020, no significant findings (report linked from the crate README: https://github.com/RustCrypto/AEADs/tree/master/chacha20poly1305). Also present at 0.10.1 as vodozemac's dependency |
 | `aead-stream` | 0.6.0 (`alloc`) | the STREAM construction (BE32 nonce layout) of §9.1 | RustCrypto AEADs (same repository); implements the STREAM construction of Hoang, Reyhanitabar, Rogaway, Vizár (2015) |
 | `argon2` | 0.6.0 (`zeroize`) | Argon2id of §11 | RustCrypto password-hashes; RFC 9106; parameters per OWASP Password Storage Cheat Sheet |
-| `sha2` | 0.11.0 | SHA-512 for the safety number (§5) — the crate's only direct hash use. The crate calls no HKDF of its own: the `hkdf` dependency became callerless when the store-derived local key was replaced by per-chat history keys (§3, §10.4) and was removed from `Cargo.toml`, the lock and the SBOM; the only HKDF in the core is inside vodozemac's ratchet | RustCrypto hashes (`sha2` 0.10.9 and `hkdf` 0.12.4 are also present as vodozemac's transitive dependencies) |
+| `sha2` | 0.11.0 | SHA-512 for the safety number (§5); SHA-256 for the recovery key's check byte and for the X9.63 KDF of the recovery lock and box (§6.10, §10.2) — the crate's only direct hash uses. The crate calls no HKDF of its own: the `hkdf` dependency became callerless when the store-derived local key was replaced by per-chat history keys (§3, §10.4) and was removed from `Cargo.toml`, the lock and the SBOM; the only HKDF in the core is inside vodozemac's ratchet | RustCrypto hashes (`sha2` 0.10.9 and `hkdf` 0.12.4 are also present as vodozemac's transitive dependencies) |
 | `subtle` | 2.6.1 | constant-time comparisons (§4.4, §7.2) | dalek-cryptography |
 | `zeroize` | 1.9.0 (`zeroize_derive`) | wiped buffers and structs (§13) | RustCrypto utils |
 | `getrandom` | 0.4.3 (`sys_rng`) | the only randomness source: nonces, salts, keys, one-time-key seeds (through vodozemac's own `rand`/`getrandom` 0.2.17 for its keys) | rust-random |
 | `base64` | 0.22.1 | base64url-no-pad text envelope (§6.1) | marshallpierce/rust-base64 |
-| `ed25519-dalek` / `x25519-dalek` / `curve25519-dalek` | 2.2.0 / 2.0.1 / 4.1.3 | vodozemac's curves (transitive) | dalek-cryptography (transitive through vodozemac; not separately audited for this project) |
+| `ed25519-dalek` / `x25519-dalek` / `curve25519-dalek` | 2.2.0 / 2.0.1 / 4.1.3 | vodozemac's curves (transitive); the recovery lock's X25519 goes through vodozemac's `Curve25519SecretKey`/`Curve25519PublicKey` (§6.10) | dalek-cryptography (transitive through vodozemac; not separately audited for this project) |
 | `serde` / `serde_json` | 1.0.229 / 1.0.151 | state-file body only (§10.3) | — |
 | `flutter_rust_bridge` | 2.13.0 (Rust, Dart and codegen in lockstep) | the FFI (§13) | — |
 | `thiserror` | 2.0.20 | `CoreError` | — |
 
-Nothing else in the crate is cryptographic: there is no hand-written primitive, no custom KDF, no custom MAC,
-no custom encoding of Olm messages. `vodozemac`'s `libolm-compat` feature is disabled — libolm pickles are
+Nothing else in the crate is cryptographic: there is no hand-written primitive, no custom MAC, no custom encoding
+of Olm messages. The one KDF the crate composes itself is the standard ANSI X9.63 / SEC 1 KDF with SHA-256, one
+output block (a single `SHA-256(Z ‖ 00000001 ‖ shared info)` call), for the recovery lock and box (§6.10). `vodozemac`'s `libolm-compat` feature is disabled — libolm pickles are
 never read. The crate must never be built with `--cfg fuzzing`: under it vodozemac's `Ed25519PublicKey::verify`
 is a no-op (a standing comment at the top of `lib.rs` records this).
 
@@ -1279,7 +1344,7 @@ Stated so a reviewer does not have to discover them.
 10. **One process per store.** In-process access is serialised; across processes the store directory carries an
     exclusive OS file lock (`<application support directory>/fuzzy_crypto_store.lock`, `flock` on Linux, macOS,
     Android and iOS, `LockFileEx` on Windows), taken by `open_store` and released when the last handle closes or
-    the process ends ([`store.rs#L383`](../../rust/fuzzy_crypto_core/src/store.rs#L383)). A second copy of the app
+    the process ends ([`store.rs#L422`](../../rust/fuzzy_crypto_core/src/store.rs#L422)). A second copy of the app
     gets `Io` from `open_store` (after about a second of retries) instead of racing the first one's atomic
     writes — so it can neither corrupt a chat's state nor reuse a counter or a message key. Handles in one
     process share the lock (since 2026-10-26).
@@ -1298,12 +1363,20 @@ Stated so a reviewer does not have to discover them.
     secrecy. A file the user saves or shares leaves as plaintext, and an archive export is the chat's plaintext
     under a user-chosen password (§9.5); once outside the app, neither is sealed by the store, gated by the
     master password, or covered by forward secrecy. A hand-off copy is plain on disk while it is in use (§10.5).
+16. **The recovery key opens everything, the vault with its own password included** (§10.6). A vault's own
+    password protects it from someone who has the master password, not from someone who has the recovery key.
+    A new recovery key needs the vault's password to keep that vault recoverable; without it the change is
+    refused rather than made with a key that would not open the vault. The lock is sealed under the store key,
+    which the master password reaches: someone who has the master password **and** can write the app's secure
+    storage could plant a lock of their own, and a vault given its own password after that would be sealed to it.
+    The vault's own password assumes the device was not tampered with by someone who already holds the master
+    password.
 
 ---
 
 ## Appendix A — Test vectors
 
-`documents/security/vectors/` holds 19 vectors (43 files) as `.hex` (bytes, 32 per line — `xxd -r -p name.hex | xxd`),
+`documents/security/vectors/` holds 21 vectors (47 files) as `.hex` (bytes, 32 per line — `xxd -r -p name.hex | xxd`),
 `.txt` (the `Fuzz/` form of wire blobs) and `.json` (inputs), plus `state_file.body.json`. They are
 generated by `rust/fuzzy_crypto_core/src/vectors.rs` from fixed inputs through the production code paths
 (randomness injected through the crate's `*_with` hooks) and **checked on every `cargo test`**: the test
@@ -1331,6 +1404,8 @@ and the independent derivation it was checked against.
 | `wrapped_vault_key` | §6.8/10.6 | 103 | same, AAD `vault-key` |
 | `store_key_wrap` | §6.9/10.2 | 78 | master key `33×32`, key `66×32`, nonce `44×24`, AAD `store-key-wrap` |
 | `vault_key_wrap` | §6.9/10.6 | 78 | same, AAD `vault-key-wrap` |
+| `recovery_lock` | §6.10/10.2 | 32 | the recovery key `00 01 … 12` ‖ check byte |
+| `vault_key_recovery` | §6.10/10.6 | 110 | vault key `33×32` sealed to `recovery_lock`, ephemeral secret `55×32`, nonce `22×24`, AAD `vault-key-recovery` |
 | `local_seal_chat` | §6.9/10.4 | 51 | history key `55×32`, chat id, row `01` ‖ `Fuzz/RlVaWgEDAd6tvu8`, `hello`, nonce `44×24` |
 | `vault_item` | §6.9/10.6 | 50 | `item`, item id, version 3, nonce `44×24` |
 | `password_sealed_text` | §6.7 | 76 | `pw`, salt `11×16`, nonce `22×24`, `hello` |
@@ -1375,27 +1450,31 @@ a file job's terminal event carries.
 | envelope version | `0x01` | [`formats.rs#L19`](../../rust/fuzzy_crypto_core/src/formats.rs#L19) |
 | envelope length | 6 | [`formats.rs#L21`](../../rust/fuzzy_crypto_core/src/formats.rs#L21) |
 | signature length | 64 | [`formats.rs#L23`](../../rust/fuzzy_crypto_core/src/formats.rs#L23) |
-| type bytes | `01 02 03 04 05 10 20` | [`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37) |
-| key modes | chat `0x01`, password `0x02` | [`formats.rs#L439`](../../rust/fuzzy_crypto_core/src/formats.rs#L439) |
+| type bytes | `01 02 03 04 05 10 11 20` | [`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37) |
+| key modes | chat `0x01`, password `0x02` | [`formats.rs#L482`](../../rust/fuzzy_crypto_core/src/formats.rs#L482) |
 | chunk size written / accepted | 1 048 576 / 65 536..=16 777 216 | [`formats.rs#L25`](../../rust/fuzzy_crypto_core/src/formats.rs#L25) |
 | wrapped-key ciphertext length | 48 | [`formats.rs#L31`](../../rust/fuzzy_crypto_core/src/formats.rs#L31) |
-| Poly1305 tag length | 16 | [`formats.rs#L644`](../../rust/fuzzy_crypto_core/src/formats.rs#L644) |
-| inner header version | `0x01` | [`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513) |
-| direction bytes | A→B `0x00`, B→A `0x01` | [`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519) |
-| content types | `0x00 0x01 0x02` | [`formats.rs#L537`](../../rust/fuzzy_crypto_core/src/formats.rs#L537) |
-| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L31`](../../rust/fuzzy_crypto_core/src/store.rs#L31) |
-| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L40`](../../rust/fuzzy_crypto_core/src/store.rs#L40) |
-| AAD `master-key` / `master-key-recovery` (0x10) | | [`master.rs#L22`](../../rust/fuzzy_crypto_core/src/master.rs#L22) |
-| AAD `store-key-wrap` / `vault-key-wrap` (0x20) | | [`master.rs#L26`](../../rust/fuzzy_crypto_core/src/master.rs#L26) |
-| recovery key | 19 random bytes + 1 check byte, 32 base32 characters in groups of 4, check domain `fuzzy-recovery-check-v1` | [`master.rs#L31`](../../rust/fuzzy_crypto_core/src/master.rs#L31) |
-| AAD `chat-state` ‖ chat id | | [`store.rs#L45`](../../rust/fuzzy_crypto_core/src/store.rs#L45) |
-| AAD `local-seal` ‖ chat id ‖ row | | [`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46) |
-| AAD `app-setting` ‖ name (≤ 64 bytes) | | [`store.rs#L47`](../../rust/fuzzy_crypto_core/src/store.rs#L47) |
-| AAD `kept-file-key` ‖ chat id | | [`store.rs#L659`](../../rust/fuzzy_crypto_core/src/store.rs#L659) |
-| AAD `vault-key` (0x10) / `vault-item` ‖ u32 BE version ‖ item id | | [`vault.rs#L18`](../../rust/fuzzy_crypto_core/src/vault.rs#L18) |
+| Poly1305 tag length | 16 | [`formats.rs#L687`](../../rust/fuzzy_crypto_core/src/formats.rs#L687) |
+| inner header version | `0x01` | [`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556) |
+| direction bytes | A→B `0x00`, B→A `0x01` | [`formats.rs#L562`](../../rust/fuzzy_crypto_core/src/formats.rs#L562) |
+| content types | `0x00 0x01 0x02` | [`formats.rs#L580`](../../rust/fuzzy_crypto_core/src/formats.rs#L580) |
+| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L32`](../../rust/fuzzy_crypto_core/src/store.rs#L32) |
+| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41) |
+| AAD `master-key` / `master-key-recovery` (0x10) | | [`master.rs#L31`](../../rust/fuzzy_crypto_core/src/master.rs#L31) |
+| AAD `store-key-wrap` / `vault-key-wrap` (0x20) | | [`master.rs#L35`](../../rust/fuzzy_crypto_core/src/master.rs#L35) |
+| recovery key | 19 random bytes + 1 check byte, 32 base32 characters in groups of 4, check domain `fuzzy-recovery-check-v1` | [`master.rs#L46`](../../rust/fuzzy_crypto_core/src/master.rs#L46) |
+| AAD `recovery-lock` (0x20 under the store key) | | [`master.rs#L39`](../../rust/fuzzy_crypto_core/src/master.rs#L39) |
+| recovery lock / box KDF domains | `fuzzy-recovery-lock-v1` / `fuzzy-recovery-box-v1` (X9.63, SHA-256) | [`master.rs#L41`](../../rust/fuzzy_crypto_core/src/master.rs#L41) |
+| AAD `vault-key-recovery` (0x11) | | [`vault.rs#L25`](../../rust/fuzzy_crypto_core/src/vault.rs#L25) |
+| recovery box length | 110 | [`formats.rs#L405`](../../rust/fuzzy_crypto_core/src/formats.rs#L405) |
+| AAD `chat-state` ‖ chat id | | [`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46) |
+| AAD `local-seal` ‖ chat id ‖ row | | [`store.rs#L47`](../../rust/fuzzy_crypto_core/src/store.rs#L47) |
+| AAD `app-setting` ‖ name (≤ 64 bytes) | | [`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48) |
+| AAD `kept-file-key` ‖ chat id | | [`store.rs#L683`](../../rust/fuzzy_crypto_core/src/store.rs#L683) |
+| AAD `vault-key` (0x10) / `vault-item` ‖ u32 BE version ‖ item id | | [`vault.rs#L23`](../../rust/fuzzy_crypto_core/src/vault.rs#L23) |
 | `0x05` AAD length | 31 | [`passwords.rs#L18`](../../rust/fuzzy_crypto_core/src/passwords.rs#L18) |
-| store directory | `fuzzy_crypto_store` | [`store.rs#L29`](../../rust/fuzzy_crypto_core/src/store.rs#L29) |
-| state file extensions | `.state`, `.state.tmp` | [`store.rs#L50`](../../rust/fuzzy_crypto_core/src/store.rs#L50) |
+| store directory | `fuzzy_crypto_store` | [`store.rs#L30`](../../rust/fuzzy_crypto_core/src/store.rs#L30) |
+| state file extensions | `.state`, `.state.tmp` | [`store.rs#L51`](../../rust/fuzzy_crypto_core/src/store.rs#L51) |
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
 | safety-number version / domain / groups / bytes / modulus | 1 / `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25) |
