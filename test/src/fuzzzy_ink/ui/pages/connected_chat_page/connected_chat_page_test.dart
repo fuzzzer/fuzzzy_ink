@@ -134,8 +134,7 @@ void main() {
       );
       sl.safeRegisterSingleton<MessageDataRepository>(mockRepo);
       sl.safeRegisterSingleton<CryptoCoreService>(mockService);
-      when(() => mockService.safetyNumber(_chatId))
-          .thenAnswer(
+      when(() => mockService.safetyNumber(_chatId)).thenAnswer(
         (_) async => const CryptoCoreSuccess(
           SafetyNumber(version: 1, digits: '12345 67890'),
         ),

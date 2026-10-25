@@ -2,6 +2,7 @@ part of 'safety_number_cubit.dart';
 
 class SafetyNumberState {
   final StateStatus status;
+
   /// The digits and the version of the computation that produced them; the
   /// page shows both.
   final SafetyNumber? safetyNumber;
