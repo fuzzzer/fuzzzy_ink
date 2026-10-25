@@ -23,6 +23,7 @@ class BasicEncryptionPage extends StatelessWidget {
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
             userFileStore: sl.get<UserFileStore>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
             processingOption: const FileEncryptionOption(),
           ),
         ),
@@ -30,6 +31,7 @@ class BasicEncryptionPage extends StatelessWidget {
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
             userFileStore: sl.get<UserFileStore>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
             processingOption: const FileDecryptionOption(),
           ),
         ),
@@ -126,10 +128,18 @@ class _ProvidedBasicEncryptionPageState
         .toList();
 
     if (filesToEncrypt.isNotEmpty) {
-      encryptionCubit.addFilesToProcess(
+      final isQueued = encryptionCubit.addFilesToProcess(
         filePaths: filesToEncrypt,
         customKey: key,
       );
+      if (!isQueued) {
+        // The selection stays, so a stronger password can be typed.
+        FuzzzyToast.show(
+          context,
+          message: _localizeFailureMessage(context, 'basicsPasswordTooWeak'),
+        );
+        return;
+      }
     }
     if (filesToDecrypt.isNotEmpty) {
       decryptionCubit.addFilesToProcess(

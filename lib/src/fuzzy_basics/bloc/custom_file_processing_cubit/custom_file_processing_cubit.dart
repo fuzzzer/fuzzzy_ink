@@ -12,11 +12,13 @@ class CustomFileProcessingCubit<
     extends Cubit<CustomFileProcessingState> {
   final CryptoCoreService cryptoCoreService;
   final UserFileStore userFileStore;
+  final PasswordStrengthService passwordStrengthService;
   final ActualProcessingOption processingOption;
 
   CustomFileProcessingCubit({
     required this.cryptoCoreService,
     required this.userFileStore,
+    required this.passwordStrengthService,
     required this.processingOption,
   }) : super(const CustomFileProcessingState());
 
@@ -47,10 +49,19 @@ class CustomFileProcessingCubit<
     );
   }
 
-  void addFilesToProcess({
+  /// Queues [filePaths] under [customKey]. A password that seals files must
+  /// reach the app's bar, as for Basics text ("good" or better, security
+  /// review 2026-10-22): a weaker one queues nothing and returns `false`.
+  /// Opening accepts any password, since the sender chose it.
+  bool addFilesToProcess({
     required List<String> filePaths,
     required String customKey,
   }) {
+    if (processingOption is FileEncryptionOption &&
+        !passwordStrengthService.isStrongEnough(customKey)) {
+      return false;
+    }
+
     final now = DateTime.now();
 
     final newFilesToBeProcessed = filePaths.map(
@@ -75,6 +86,7 @@ class CustomFileProcessingCubit<
         customKey: customKey,
       );
     }
+    return true;
   }
 
   void _startNextFileProcessing({

@@ -54,6 +54,7 @@ void main() {
       CustomFileProcessingCubit<FileEncryptionOption>(
         cryptoCoreService: mockService,
         userFileStore: store,
+        passwordStrengthService: PasswordStrengthService(),
         processingOption: const FileEncryptionOption(),
       );
 
@@ -61,6 +62,7 @@ void main() {
       CustomFileProcessingCubit<FileDecryptionOption>(
         cryptoCoreService: mockService,
         userFileStore: store,
+        passwordStrengthService: PasswordStrengthService(),
         processingOption: const FileDecryptionOption(),
       );
 
@@ -169,6 +171,60 @@ void main() {
         ),
       ),
     );
+  });
+
+  group('password strength', () {
+    test('a weak password seals no file: nothing is queued or fuzzed', () {
+      final cubit = buildEncrypt();
+      addTearDown(cubit.close);
+
+      final isQueued = cubit.addFilesToProcess(
+        filePaths: ['/pick/photo.jpg'],
+        customKey: '1234',
+      );
+
+      expect(isQueued, isFalse);
+      expect(cubit.state.toBeProcessedFiles, isEmpty);
+      expect(cubit.state.currentProcessingFile, isNull);
+      verifyNever(
+        () => mockService.encryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      );
+    });
+
+    test('opening accepts any password: the sender chose it', () async {
+      when(
+        () => mockService.decryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).thenAnswer(
+        (_) async => const CryptoCoreFailure(CryptoCoreFailureType.internal),
+      );
+      final cubit = buildDecrypt();
+      addTearDown(cubit.close);
+
+      expect(
+        cubit.addFilesToProcess(
+          filePaths: ['/pick/photo.jpg.fuzz'],
+          customKey: '1234',
+        ),
+        isTrue,
+      );
+      // Let the queued run finish before the cubit closes.
+      await cubit.stream.firstWhere((state) => state.processedFiles.isNotEmpty);
+      verify(
+        () => mockService.decryptFileWithPassword(
+          password: '1234',
+          inputPath: '/pick/photo.jpg.fuzz',
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).called(1);
+    });
   });
 
   group('FileDecryptionOption', () {
