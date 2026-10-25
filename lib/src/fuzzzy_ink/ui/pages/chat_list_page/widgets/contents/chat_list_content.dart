@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 
 class ChatListContent extends StatelessWidget {
   final List<ChatGeneralData> chatGeneralDataList;
+  final Set<String> unverifiedChatIds;
 
   const ChatListContent({
     super.key,
     required this.chatGeneralDataList,
+    this.unverifiedChatIds = const {},
   });
 
   @override
@@ -80,6 +82,8 @@ class ChatListContent extends StatelessWidget {
                       )
                     : ConnectedChatTile(
                         name: chatGeneralData.chatName,
+                        isVerified:
+                            !unverifiedChatIds.contains(chatGeneralData.chatId),
                         onLongPress: () {
                           showChatDeletionDialog(
                             context,

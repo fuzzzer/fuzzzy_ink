@@ -37,6 +37,7 @@ class _ProvidedChatListPageState extends State<ProvidedChatListPage> {
             onLoading: () => const FuzzyLoadingPagebuilder(),
             onSuccess: () => ChatListContent(
               chatGeneralDataList: state.chatList!,
+              unverifiedChatIds: state.unverifiedChatIds,
             ),
             onFailure: () => FuzzyScaffold(
               hasAutomaticBackButton: false,

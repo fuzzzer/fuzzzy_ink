@@ -26,19 +26,10 @@ class AcceptanceContent extends StatelessWidget {
     );
   }
 
-  void _shareAsLink(BuildContext context) {
-    final link = FuzzyLinkGenerator.generateAcceptanceLink(acceptanceContent);
-    final shareable = FuzzyLinkGenerator.generateShareableContent(
-      link: link,
-      rawFuzz: acceptanceContent,
-      type: FuzzyLinkType.acceptance,
-    );
-    ShareHelper.share(shareable, context: context);
-  }
-
   void _copyAsLink(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final link = FuzzyLinkGenerator.generateAcceptanceLink(acceptanceContent);
+    if (link == null) return;
     Clipboard.setData(ClipboardData(text: link));
     FuzzzyToast.show(
       context,
@@ -85,14 +76,10 @@ class AcceptanceContent extends StatelessWidget {
               FuzzzyButton(
                 label: localizations.shareAcceptance,
                 icon: const Icon(Icons.share),
-                onPressed: () =>
-                    ShareHelper.share(acceptanceContent, context: context),
-              ),
-              const SizedBox(height: 12),
-              FuzzzyButton(
-                label: localizations.shareAsLink,
-                icon: const Icon(Icons.share),
-                onPressed: () => _shareAsLink(context),
+                onPressed: () => showSealedShareSheet(
+                  context,
+                  content: SealedShareContent.acceptance(acceptanceContent),
+                ),
               ),
               const SizedBox(height: 12),
               FuzzzyButton(

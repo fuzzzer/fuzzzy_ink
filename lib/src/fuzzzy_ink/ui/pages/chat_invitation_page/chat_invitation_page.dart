@@ -71,6 +71,7 @@ class _ProvidedChatInvitationPageState
     }
 
     acceptanceTextController.addListener(() {
+      acceptanceTextController.unwrapPastedLink(FuzzyLinkType.acceptance);
       setState(() {});
     });
   }

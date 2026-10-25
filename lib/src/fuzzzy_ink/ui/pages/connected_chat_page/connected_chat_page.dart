@@ -104,6 +104,7 @@ class _ProvidedConnectedChatPageState extends State<ProvidedConnectedChatPage> {
   }
 
   void _onMessageUpdated() {
+    _messageController.unwrapPastedLink(FuzzyLinkType.message);
     setState(() {
       isEncrypting = !_messageController.text.startsWith(fuzzIdentificator);
     });

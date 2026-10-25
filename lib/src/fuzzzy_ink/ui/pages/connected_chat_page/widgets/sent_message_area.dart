@@ -105,21 +105,19 @@ class _SentMessageAreaState extends State<SentMessageArea> {
       widget.message.chatId,
       encryptedMessage,
     );
+    if (link == null) return;
     Clipboard.setData(ClipboardData(text: link));
     FuzzzyToast.show(context, message: localizations.linkCopiedToClipboard);
   }
 
-  void _shareFuzzLink(String encryptedMessage) {
-    final link = FuzzyLinkGenerator.generateFuzzLink(
-      widget.message.chatId,
-      encryptedMessage,
+  void _shareMessage(String encryptedMessage) {
+    showSealedShareSheet(
+      context,
+      content: SealedShareContent.message(
+        chatId: widget.message.chatId,
+        encryptedMessage: encryptedMessage,
+      ),
     );
-    final shareable = FuzzyLinkGenerator.generateShareableContent(
-      link: link,
-      rawFuzz: _prepareEncrypredMessage(encryptedMessage),
-      type: FuzzyLinkType.fuzz,
-    );
-    ShareHelper.share(shareable, context: context);
   }
 
   Future<void> _openEncryptedFileDirectory({
@@ -234,7 +232,7 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                                         },
                                       ),
                                       TextAction(
-                                        label: localizations.shareFile,
+                                        label: localizations.share,
                                         onTap: () {
                                           _shareEncryptedFile(
                                             encryptedMessage: encryptedMessage,
@@ -262,23 +260,6 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                                           closeOverlay();
                                         },
                                       ),
-                                      TextAction(
-                                        label: '🔗',
-                                        onTap: () {
-                                          _shareFuzzLink(encryptedMessage);
-                                          closeOverlay();
-                                        },
-                                      ),
-                                      TextAction(
-                                        label: localizations.copyAsLink,
-                                        onTap: () {
-                                          _copyFuzzLink(
-                                            encryptedMessage: encryptedMessage,
-                                            localizations: localizations,
-                                          );
-                                          closeOverlay();
-                                        },
-                                      ),
                                     ]
                                   : <TextAction>[
                                       TextAction(
@@ -295,16 +276,7 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                                       TextAction(
                                         label: localizations.share,
                                         onTap: () {
-                                          final preparedEncryptedMessage =
-                                              _prepareEncrypredMessage(
-                                            encryptedMessage,
-                                          );
-
-                                          ShareHelper.share(
-                                            preparedEncryptedMessage,
-                                            context: context,
-                                          );
-
+                                          _shareMessage(encryptedMessage);
                                           closeOverlay();
                                         },
                                       ),
@@ -315,13 +287,6 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                                             encryptedMessage: encryptedMessage,
                                             localizations: localizations,
                                           );
-                                          closeOverlay();
-                                        },
-                                      ),
-                                      TextAction(
-                                        label: '🔗',
-                                        onTap: () {
-                                          _shareFuzzLink(encryptedMessage);
                                           closeOverlay();
                                         },
                                       ),

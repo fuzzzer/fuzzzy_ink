@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:mocktail/mocktail.dart';
 
 // ---------------------------------------------------------------------------
@@ -65,6 +66,7 @@ void main() {
   Future<FuzzyLinkHandler> pumpApp(WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
         navigatorKey: navigatorKey,
         scaffoldMessengerKey: scaffoldMessengerKey,
         localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
@@ -102,7 +104,7 @@ void main() {
 
     await receive(
       tester,
-      FuzzyLinkGenerator.generateInvitationLink(_invitation),
+      FuzzyLinkGenerator.generateInvitationLink(_invitation)!,
     );
 
     expect(find.text("You can't accept your own invitation."), findsOneWidget);
@@ -113,15 +115,17 @@ void main() {
   });
 
   testWidgets(
-      'an acceptance link for a connected chat shows alreadyConnected, '
-      'stays on the list and throws nothing', (tester) async {
+      'the acceptance that paired a connected chat, arriving again, shows '
+      'alreadyConnected, stays on the list and throws nothing', (tester) async {
     when(() => chatRepository.getChatById(_chatId))
         .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
+    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
+        .thenAnswer((_) async => true);
     final handler = await pumpApp(tester);
 
     await receive(
       tester,
-      FuzzyLinkGenerator.generateAcceptanceLink(_acceptance),
+      FuzzyLinkGenerator.generateAcceptanceLink(_acceptance)!,
     );
 
     expect(find.text('Already connected!'), findsOneWidget);
@@ -129,6 +133,65 @@ void main() {
     expect(navigatorKey.currentState!.canPop(), isFalse);
     expect(tester.takeException(), isNull);
     await settleMessage(tester);
+    handler.dispose();
+  });
+
+  testWidgets(
+      'a different acceptance for a connected chat warns that someone else '
+      'may have accepted, never says "connected"', (tester) async {
+    when(() => chatRepository.getChatById(_chatId))
+        .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
+    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
+        .thenAnswer((_) async => false);
+    final handler = await pumpApp(tester);
+
+    await receive(
+      tester,
+      FuzzyLinkGenerator.generateAcceptanceLink(_acceptance)!,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Someone else may have accepted your invitation'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Your chat with Alice'), findsOneWidget);
+    expect(find.text('Verify safety number'), findsOneWidget);
+    expect(find.text('Already connected!'), findsNothing);
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Someone else may have accepted your invitation'),
+      findsNothing,
+    );
+    handler.dispose();
+  });
+
+  testWidgets(
+      'a link that arrives while the app is locked waits for the unlock',
+      (tester) async {
+    when(() => authStore.state).thenReturn(
+      const FuzzyAuthState.initial().copyWith(status: AuthStateStatus.locked),
+    );
+    when(() => chatRepository.getChatById(_chatId))
+        .thenAnswer((_) async => null);
+    final handler = await pumpApp(tester);
+
+    await receive(
+      tester,
+      FuzzyLinkGenerator.generateInvitationLink(_invitation)!,
+    );
+
+    expect(handler.hasPendingPayload, isTrue);
+    verifyNever(() => chatRepository.getChatById(any()));
+
+    handler.processPendingPayload();
+    await tester.pump();
+
+    expect(handler.hasPendingPayload, isFalse);
+    verify(() => chatRepository.getChatById(_chatId)).called(1);
     handler.dispose();
   });
 
@@ -141,7 +204,7 @@ void main() {
 
     await receive(
       tester,
-      FuzzyLinkGenerator.generateInvitationLink(_invitation),
+      FuzzyLinkGenerator.generateInvitationLink(_invitation)!,
     );
 
     expect(find.byType(SnackBar), findsNothing);
@@ -153,7 +216,7 @@ void main() {
   testWidgets('an unparsable link shows invalidLink', (tester) async {
     final handler = await pumpApp(tester);
 
-    await receive(tester, 'fuzzylink://invite/not-valid-base64!!!');
+    await receive(tester, 'https://ink.fuzzzycore.com/invite#not-valid!!!');
 
     expect(find.byType(SnackBar), findsOneWidget);
     verifyNever(() => chatRepository.getChatById(any()));

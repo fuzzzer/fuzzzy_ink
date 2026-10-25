@@ -103,7 +103,7 @@ void main() {
   // the file manager, which a missing file cannot do.
   group('file bubble (T-0366)', () {
     testWidgets(
-        'sent file: name + location, Show / Share File / Copy / link actions '
+        'sent file: name + location, Show / Share / Copy actions, no link, '
         'all on a 360dp screen, a missing file toasts', (tester) async {
       await _withMissingFiles(() async {
         await tester.pumpWidget(
@@ -117,14 +117,12 @@ void main() {
         await tester.tap(find.text('secret.jpg.fuzz'));
         await tester.pumpAndSettle();
 
-        for (final label in [
-          'Show',
-          'Share File',
-          'Copy',
-          '🔗',
-          'Copy as Link',
-        ]) {
+        for (final label in ['Show', 'Share', 'Copy']) {
           expect(find.text(label), findsOneWidget, reason: label);
+        }
+        // A file never travels as a link: a "link" to it carried its path.
+        for (final label in ['🔗', 'Copy as Link', 'Share File']) {
+          expect(find.text(label), findsNothing, reason: label);
         }
         _expectPillOnScreen(tester);
 
@@ -139,9 +137,9 @@ void main() {
     });
 
     testWidgets(
-        'received file: name + location, Show / Open / Share File / link / '
-        'Copy actions all on a 360dp screen, "Open" on a missing file toasts',
-        (tester) async {
+        'received file: name + location, Show / Open / Share File / Copy '
+        'actions, no link, all on a 360dp screen, "Open" on a missing file '
+        'toasts', (tester) async {
       await _withMissingFiles(() async {
         await tester.pumpWidget(
           _host(ReceivedFileMessageArea(message: _fileRow(isSent: false))),
@@ -154,15 +152,11 @@ void main() {
         await tester.tap(find.text('secret.jpg.fuzz'));
         await tester.pumpAndSettle();
 
-        for (final label in [
-          'Show',
-          'Open',
-          'Share File',
-          '🔗',
-          'Copy as Link',
-          'Copy',
-        ]) {
+        for (final label in ['Show', 'Open', 'Share File', 'Copy']) {
           expect(find.text(label), findsOneWidget, reason: label);
+        }
+        for (final label in ['🔗', 'Copy as Link']) {
+          expect(find.text(label), findsNothing, reason: label);
         }
         _expectPillOnScreen(tester);
 

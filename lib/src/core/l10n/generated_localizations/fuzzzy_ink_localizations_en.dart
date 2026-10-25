@@ -354,9 +354,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Received messages are selectable and can be copied directly without a warning.';
 
   @override
-  String get shareAsLink => 'Share as Link';
-
-  @override
   String get copyAsLink => 'Copy as Link';
 
   @override
@@ -381,10 +378,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get alreadyConnected => 'Already connected!';
 
   @override
-  String get updateRequired =>
-      'This link requires a newer version of Fuzzzy Ink.';
-
-  @override
   String get cantAcceptOwnInvitation =>
       'You can\'t accept your own invitation.';
 
@@ -393,12 +386,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get incomingInvitation => 'Incoming invitation detected.';
-
-  @override
-  String get invitationLinkExpired => 'This invitation link has expired.';
-
-  @override
-  String get acceptanceLinkExpired => 'This acceptance link has expired.';
 
   @override
   String get chatNotFoundForAcceptance =>
@@ -1014,4 +1001,41 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get vaultMoveUnfinishedMessage =>
       'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
+
+  @override
+  String get shareAsLinkOption => 'Send as a link';
+
+  @override
+  String get shareAsLinkOptionHint =>
+      'Opens straight in Fuzzzy Ink. Without the app, the link shows where to get it.';
+
+  @override
+  String get shareAsQrCodeOption => 'Show a QR code';
+
+  @override
+  String get shareAsQrCodeOptionHint =>
+      'The other phone scans it with its camera.';
+
+  @override
+  String get shareAsFileOption => 'Send as a file';
+
+  @override
+  String get shareAsFileOptionHint =>
+      'For e-mail, or a chat that cuts long links.';
+
+  @override
+  String get qrCodeHint =>
+      'Point the other phone\'s camera at this code. It opens Fuzzzy Ink there, or the download page if the app is missing.';
+
+  @override
+  String get notVerified => 'Not verified';
+
+  @override
+  String get pairingWarningTitle =>
+      'Someone else may have accepted your invitation';
+
+  @override
+  String pairingWarningMessage(Object chatName) {
+    return 'Your chat with $chatName is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with $chatName in person or on a call before you trust this chat.';
+  }
 }

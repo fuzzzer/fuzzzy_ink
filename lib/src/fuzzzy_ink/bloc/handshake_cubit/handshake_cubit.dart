@@ -35,6 +35,13 @@ class HandshakeCubit extends Cubit<HandshakeState> {
         return;
       }
 
+      // Kept to tell a later, different acceptance from this one arriving
+      // again (FuzzyLinkHandler warns on the first).
+      await chatGeneralDataListRepository.rememberPairedAcceptance(
+        chatId,
+        acceptanceContent,
+      );
+
       final chatData = await chatGeneralDataListRepository.getChatById(chatId);
       if (chatData != null) {
         final updatedChatData =

@@ -41,6 +41,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         state.copyWith(
           status: StateStatus.success,
           chatList: chats,
+          unverifiedChatIds: await _unverifiedChatIdsOf(chats),
         ),
       );
     } catch (ex) {
@@ -60,6 +61,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
       emit(
         state.copyWith(
           chatList: chats,
+          unverifiedChatIds: await _unverifiedChatIdsOf(chats),
         ),
       );
     } catch (ex) {
@@ -70,6 +72,26 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         ),
       );
     }
+  }
+
+  /// Re-reads every connected chat's verified flag from the core: after a
+  /// safety number is marked or unmarked, and after an unlock.
+  Future<void> refreshVerification() async {
+    final chats = state.chatList;
+    if (chats == null) return;
+    emit(state.copyWith(unverifiedChatIds: await _unverifiedChatIdsOf(chats)));
+  }
+
+  Future<Set<String>> _unverifiedChatIdsOf(List<ChatGeneralData> chats) async {
+    final unverified = <String>{};
+    for (final chat in chats) {
+      if (chat.setupStatus != ChatSetupStatus.connected) continue;
+      final verifiedRes = await cryptoCoreService.isVerified(chat.chatId);
+      final isVerified =
+          verifiedRes is CryptoCoreSuccess<bool> && verifiedRes.data;
+      if (!isVerified) unverified.add(chat.chatId);
+    }
+    return unverified;
   }
 
   Future<void> deleteChat({

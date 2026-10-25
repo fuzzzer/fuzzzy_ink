@@ -111,8 +111,17 @@ class ProvidedSafetyNumberPage extends StatelessWidget {
                             ? Icons.shield_outlined
                             : Icons.verified_user,
                       ),
-                      onPressed: () =>
-                          context.read<SafetyNumberCubit>().toggleVerified(),
+                      onPressed: () async {
+                        await context
+                            .read<SafetyNumberCubit>()
+                            .toggleVerified();
+                        // The chat list shows an "unverified" mark too.
+                        if (context.mounted) {
+                          await context
+                              .read<ChatGeneralDataListCubit>()
+                              .refreshVerification();
+                        }
+                      },
                     ),
                     const SizedBox(height: 120),
                   ],

@@ -68,20 +68,6 @@ class FuzzyLinkHandler {
       return;
     }
 
-    if (!payload.isSupported) {
-      _showMessage(_l10n.updateRequired);
-      return;
-    }
-
-    if (payload is InvitationLinkPayload && payload.isExpired) {
-      _showMessage(_l10n.invitationLinkExpired);
-      return;
-    }
-    if (payload is AcceptanceLinkPayload && payload.isExpired) {
-      _showMessage(_l10n.acceptanceLinkExpired);
-      return;
-    }
-
     _routePayload(payload);
   }
 
@@ -144,7 +130,17 @@ class FuzzyLinkHandler {
       }
 
       if (chat.setupStatus == ChatSetupStatus.connected) {
-        _showMessage(_l10n.alreadyConnected);
+        // The same acceptance again is harmless. A different one means a
+        // second person accepted this invitation: say so, never "connected".
+        final isSameAcceptance = await _chatRepository.isPairedAcceptance(
+          chatId,
+          payload.rawAcceptanceContent,
+        );
+        if (isSameAcceptance) {
+          _showMessage(_l10n.alreadyConnected);
+        } else {
+          _showPairingWarning(chat);
+        }
         return;
       }
 
@@ -180,6 +176,17 @@ class FuzzyLinkHandler {
     } catch (_) {
       _showMessage(_l10n.failedToProcessMessage);
     }
+  }
+
+  void _showPairingWarning(ChatGeneralData chat) {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+    showPairingWarningDialog(
+      context,
+      chatName: chat.chatName,
+      onCheckSafetyNumber: () =>
+          AppRouter.routerInstance?.push(AppRouter.chatVerify, extra: chat),
+    );
   }
 
   void _navigateCleanly(String path, {Object? extra}) {

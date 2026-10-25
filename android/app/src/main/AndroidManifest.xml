@@ -41,12 +41,27 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- FuzzyLink deep link handler -->
-            <intent-filter android:autoVerify="false">
+            <!-- Links are read by app_links (FuzzyLinkHandler) only; Flutter's
+                 own deep linking would also hand them to the router. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
+            <!-- Fuzzzy Ink links, https://ink.fuzzzycore.com/<kind>#<payload>.
+                 Verified App Links: Android opens them in the app only once it
+                 has checked https://ink.fuzzzycore.com/.well-known/assetlinks.json
+                 (link_site/) against this build's signing certificate; until
+                 then they open the link page in the browser. The payload after
+                 # never reaches that server. No custom scheme: another app
+                 could claim it, and any web page could fire it. -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="fuzzylink" />
+                <data android:scheme="https" />
+                <data android:host="ink.fuzzzycore.com" />
+                <data android:path="/invite" />
+                <data android:path="/accept" />
+                <data android:path="/message" />
             </intent-filter>
         </activity>
 
