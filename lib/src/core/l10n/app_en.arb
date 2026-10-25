@@ -194,30 +194,14 @@
   "@stepNameThisChat": {},
   "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "Choose a local name for this chat. This is only visible to you.",
   "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
-  "securityWarning": "Security Warning",
-  "@securityWarning": {},
-  "areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": "Are you sure you want to copy unencrypted data to your clipboard? This could compromise your secure chat.",
-  "@areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": {},
   "copyFuzz": "Copy Fuzz",
   "@copyFuzz": {},
-  "copyPlaintext": "Copy Plaintext",
-  "@copyPlaintext": {},
   "firstEncryption": "First Encryption",
   "@firstEncryption": {},
   "typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": "Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.",
   "@typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": {},
   "settings": "Settings",
   "@settings": {},
-  "securityLevel": "Security Level",
-  "@securityLevel": {},
-  "strict": "Strict",
-  "@strict": {},
-  "moderate": "Moderate",
-  "@moderate": {},
-  "strictSecurityDescription": "Shows a confirmation dialog before copying any decrypted text. Recommended for maximum privacy.",
-  "@strictSecurityDescription": {},
-  "moderateSecurityDescription": "Received messages are selectable and can be copied directly without a warning.",
-  "@moderateSecurityDescription": {},
   "shareAsLink": "Share as Link",
   "@shareAsLink": {},
   "copyAsLink": "Copy as Link",
@@ -309,8 +293,6 @@
   "@vaultPasswordLabel": {},
   "vaultNoteLabel": "Note",
   "@vaultNoteLabel": {},
-  "vaultCopyingNotImplemented": "Copying not fully implemented yet.",
-  "@vaultCopyingNotImplemented": {},
   "vaultFailedToLoadItem": "Failed to load item",
   "@vaultFailedToLoadItem": {},
   "vaultSearchHint": "Search passwords & notes",
@@ -652,5 +634,29 @@
   "vaultMoveUnfinishedTitle": "Vault not moved",
   "@vaultMoveUnfinishedTitle": {},
   "vaultMoveUnfinishedMessage": "Your vault couldn't be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.",
-  "@vaultMoveUnfinishedMessage": {}
+  "@vaultMoveUnfinishedMessage": {},
+  "copyRefused": "Only sealed text can be copied.",
+  "@copyRefused": {},
+  "copyPolicyTitle": "Copying",
+  "@copyPolicyTitle": {},
+  "copyPolicyDescription": "Only the sealed text you send can be copied out of the app. Decrypted messages, notes and file locations stay inside. Anything copied is removed from the clipboard after a short time.",
+  "@copyPolicyDescription": {},
+  "copyPolicyVaultPasswordNote": "Vault passwords are the one exception: a copied password is kept out of clipboard history where the system allows it and is removed after {seconds} seconds.",
+  "@copyPolicyVaultPasswordNote": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "vaultCopyPassword": "Copy password",
+  "@vaultCopyPassword": {},
+  "vaultPasswordCopiedClearsIn": "Password copied. It is removed from the clipboard in {seconds} seconds.",
+  "@vaultPasswordCopiedClearsIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  }
 }

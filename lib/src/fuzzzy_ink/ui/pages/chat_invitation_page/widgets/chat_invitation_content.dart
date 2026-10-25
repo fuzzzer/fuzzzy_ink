@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
@@ -72,15 +71,12 @@ class _ChatInvitationContentState extends State<ChatInvitationContent> {
                 icon: const Icon(Icons.copy),
                 onPressed: () {
                   deboucer.run(() {
-                    Clipboard.setData(
-                      ClipboardData(text: widget.invitationContent),
-                    ).then((_) {
-                      if (!context.mounted) return;
-                      FuzzzyToast.show(
-                        context,
-                        message: localizations.invitationCopiedToClipboard,
-                      );
-                    });
+                    CopyGuard.copy(
+                      context,
+                      text: widget.invitationContent,
+                      content: CopyContent.sealedInvitation,
+                      copiedMessage: localizations.invitationCopiedToClipboard,
+                    );
                   });
                 },
               ),
@@ -117,13 +113,12 @@ class _ChatInvitationContentState extends State<ChatInvitationContent> {
                     final link = FuzzyLinkGenerator.generateInvitationLink(
                       widget.invitationContent,
                     );
-                    Clipboard.setData(ClipboardData(text: link)).then((_) {
-                      if (!context.mounted) return;
-                      FuzzzyToast.show(
-                        context,
-                        message: localizations.linkCopiedToClipboard,
-                      );
-                    });
+                    CopyGuard.copy(
+                      context,
+                      text: link,
+                      content: CopyContent.sealedLink,
+                      copiedMessage: localizations.linkCopiedToClipboard,
+                    );
                   });
                 },
               ),

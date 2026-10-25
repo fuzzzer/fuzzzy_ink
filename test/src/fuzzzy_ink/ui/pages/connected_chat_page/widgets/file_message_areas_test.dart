@@ -103,7 +103,7 @@ void main() {
   // the file manager, which a missing file cannot do.
   group('file bubble (T-0366)', () {
     testWidgets(
-        'sent file: name + location, Show / Share File / Copy / link actions '
+        'sent file: name + location, Show / Share File / link actions '
         'all on a 360dp screen, a missing file toasts', (tester) async {
       await _withMissingFiles(() async {
         await tester.pumpWidget(
@@ -120,12 +120,13 @@ void main() {
         for (final label in [
           'Show',
           'Share File',
-          'Copy',
           '🔗',
-          'Copy as Link',
         ]) {
           expect(find.text(label), findsOneWidget, reason: label);
         }
+        // A file's path is never copied (copy_guard).
+        expect(find.text('Copy'), findsNothing);
+        expect(find.text('Copy as Link'), findsNothing);
         _expectPillOnScreen(tester);
 
         await tester.tap(find.text('Show'));
@@ -139,8 +140,8 @@ void main() {
     });
 
     testWidgets(
-        'received file: name + location, Show / Open / Share File / link / '
-        'Copy actions all on a 360dp screen, "Open" on a missing file toasts',
+        'received file: name + location, Show / Open / Share File / link '
+        'actions all on a 360dp screen, "Open" on a missing file toasts',
         (tester) async {
       await _withMissingFiles(() async {
         await tester.pumpWidget(
@@ -159,11 +160,12 @@ void main() {
           'Open',
           'Share File',
           '🔗',
-          'Copy as Link',
-          'Copy',
         ]) {
           expect(find.text(label), findsOneWidget, reason: label);
         }
+        // A file's path is never copied (copy_guard).
+        expect(find.text('Copy'), findsNothing);
+        expect(find.text('Copy as Link'), findsNothing);
         _expectPillOnScreen(tester);
 
         await tester.tap(find.text('Open'));

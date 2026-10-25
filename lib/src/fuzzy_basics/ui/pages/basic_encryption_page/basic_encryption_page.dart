@@ -50,6 +50,7 @@ class _ProvidedBasicEncryptionPageState
   final TextEditingController _textController = TextEditingController();
 
   String _resultText = '';
+  bool _isResultSealed = false;
   List<String>? _selectedFilePaths;
 
   @override
@@ -151,6 +152,7 @@ class _ProvidedBasicEncryptionPageState
             if (state.status.isSuccess) {
               setState(() {
                 _resultText = state.result ?? '';
+                _isResultSealed = state.isResultSealed;
               });
             } else if (state.status.isFailed) {
               setState(() {
@@ -183,6 +185,7 @@ class _ProvidedBasicEncryptionPageState
           keyController: _keyController,
           textController: _textController,
           resultText: _resultText,
+          isResultSealed: _isResultSealed,
           selectedFilePaths: _selectedFilePaths,
           onFilesSelected: _onFilesSelected,
           onProcessFiles: _processFiles,

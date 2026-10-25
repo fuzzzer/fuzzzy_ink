@@ -9,6 +9,10 @@ class BasicEncryptionContent extends StatelessWidget {
   final TextEditingController keyController;
   final TextEditingController textController;
   final String resultText;
+
+  /// Sealed output can be copied; an opened (decrypted) result is shown but
+  /// never selectable or copyable (copy_guard).
+  final bool isResultSealed;
   final List<String>? selectedFilePaths;
   final SelectedFilesCallback onFilesSelected;
   final VoidCallback onProcessFiles;
@@ -18,6 +22,7 @@ class BasicEncryptionContent extends StatelessWidget {
     required this.keyController,
     required this.textController,
     required this.resultText,
+    required this.isResultSealed,
     required this.selectedFilePaths,
     required this.onFilesSelected,
     required this.onProcessFiles,
@@ -108,7 +113,20 @@ class BasicEncryptionContent extends StatelessWidget {
                   children: [
                     Text('${context.fuzzzyInkLocalizations.result}:'),
                     const SizedBox(height: 8),
-                    SelectableText(resultText),
+                    Text(resultText),
+                    if (isResultSealed) ...[
+                      const SizedBox(height: 8),
+                      FuzzzyButton(
+                        label: context.fuzzzyInkLocalizations.copy,
+                        icon: const Icon(Icons.copy),
+                        qaId: 'basics.copy_sealed',
+                        onPressed: () => CopyGuard.copy(
+                          context,
+                          text: resultText,
+                          content: CopyContent.sealedText,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                   ],
                 ),

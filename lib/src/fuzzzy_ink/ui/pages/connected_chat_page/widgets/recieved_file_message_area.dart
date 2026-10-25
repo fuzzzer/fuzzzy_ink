@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
@@ -159,34 +158,8 @@ class _ReceivedFileMessageAreaState extends State<ReceivedFileMessageArea> {
                         closeOverlay();
                       },
                     ),
-                    TextAction(
-                      label: localizations.copyAsLink,
-                      onTap: () {
-                        final link = FuzzyLinkGenerator.generateFuzzLink(
-                          widget.message.chatId,
-                          widget.message.encryptedMessage,
-                        );
-                        Clipboard.setData(ClipboardData(text: link));
-                        FuzzzyToast.show(
-                          context,
-                          message: localizations.linkCopiedToClipboard,
-                        );
-                        closeOverlay();
-                      },
-                    ),
-                    TextAction(
-                      label: localizations.copy,
-                      onTap: () {
-                        final filePath = widget.message.encryptedMessage
-                            .replaceAll(fuzzIdentificator, '');
-                        Clipboard.setData(ClipboardData(text: filePath));
-                        FuzzzyToast.show(
-                          context,
-                          message: localizations.copiedToTheClipboard,
-                        );
-                        closeOverlay();
-                      },
-                    ),
+                    // A file's path is never copied, and neither is a link
+                    // made of it (copy_guard).
                   ],
                 );
               },

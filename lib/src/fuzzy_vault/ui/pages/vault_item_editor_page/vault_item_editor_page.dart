@@ -404,38 +404,48 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (_type != VaultItemType.password) ...[
-                          FuzzzyTextField(
+                          VaultPlaintextField(
                             controller: _titleController,
                             label: currentContextLocalization.vaultTitle,
                           ),
                           const SizedBox(height: 16),
                         ],
                         if (_type == VaultItemType.password) ...[
-                          FuzzzyTextField(
+                          VaultPlaintextField(
                             controller: _usernameController,
                             label:
                                 currentContextLocalization.vaultUsernameEmail,
                           ),
                           const SizedBox(height: 16),
-                          FuzzzyTextField(
+                          VaultPlaintextField(
                             controller: _passwordController,
                             label:
                                 currentContextLocalization.vaultPasswordLabel,
                             obscure: !_isPasswordVisible,
-                            suffix: IconButton(
-                              icon: Icon(
-                                _isPasswordVisible
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: context.fuzzzyColors.inkMute,
-                              ),
-                              onPressed: () => setState(
-                                () => _isPasswordVisible = !_isPasswordVisible,
-                              ),
+                            suffix: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (allowVaultPasswordCopy)
+                                  VaultPasswordCopyButton(
+                                    password: () => _passwordController.text,
+                                  ),
+                                IconButton(
+                                  icon: Icon(
+                                    _isPasswordVisible
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: context.fuzzzyColors.inkMute,
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _isPasswordVisible =
+                                        !_isPasswordVisible,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 16),
-                          FuzzzyTextField(
+                          VaultPlaintextField(
                             controller: _urlController,
                             label: currentContextLocalization.vaultUrlWebsite,
                           ),
@@ -542,7 +552,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                           const SizedBox(height: 16),
                         ],
                         if (_type != VaultItemType.file) ...[
-                          FuzzzyTextField(
+                          VaultPlaintextField(
                             controller: _notesController,
                             label: _type == VaultItemType.password
                                 ? currentContextLocalization.vaultNotesOptional

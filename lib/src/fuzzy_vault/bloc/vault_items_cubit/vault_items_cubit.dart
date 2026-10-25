@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -16,7 +15,6 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   final VaultRepository vaultRepository;
   late final StreamSubscription<VaultDataUpdated> _updatesSubscription;
-  Timer? _clipboardClearTimer;
   final Debouncer _autoSaveDebouncer = Debouncer(milliseconds: 2000);
 
   Future<void> loadItems() async {
@@ -123,24 +121,6 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
     }
   }
 
-  Future<void> copyToClipboard(
-    String text, {
-    int clearAfterSeconds = 45,
-  }) async {
-    await Clipboard.setData(ClipboardData(text: text));
-
-    _clipboardClearTimer?.cancel();
-    if (clearAfterSeconds > 0) {
-      _clipboardClearTimer =
-          Timer(Duration(seconds: clearAfterSeconds), () async {
-        final data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data?.text == text) {
-          await Clipboard.setData(const ClipboardData(text: ''));
-        }
-      });
-    }
-  }
-
   void autoSaveNote(
     VaultItem item,
     VaultKey masterKey, {
@@ -167,7 +147,6 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   @override
   Future<void> close() {
-    _clipboardClearTimer?.cancel();
     _updatesSubscription.cancel();
     _autoSaveDebouncer.close();
     return super.close();

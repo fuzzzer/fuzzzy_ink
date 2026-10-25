@@ -168,22 +168,12 @@ class _VaultItemCardState extends State<VaultItemCard> {
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : IconButton(
-                icon: Icon(
-                  Icons.copy,
-                  color: context.fuzzzyColors.inkMute,
-                ),
-                onPressed: () {
-                  // Need to fetch full item and decrypt to copy. For now just placeholder
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        currentContextLocalization.vaultCopyingNotImplemented,
-                      ),
-                    ),
-                  );
-                },
-              ),
+            // Only a password is ever copied out of the vault (copy_guard).
+            : isPassword && allowVaultPasswordCopy
+                ? VaultPasswordCopyButton(
+                    password: () => _openPassword(context),
+                  )
+                : null,
         onTap: _isLoading
             ? null
             : () async {
@@ -225,6 +215,16 @@ class _VaultItemCardState extends State<VaultItemCard> {
         onLongPress: _isLoading ? null : () => _showMoveToGroupSheet(context),
       ),
     );
+  }
+
+  Future<String?> _openPassword(BuildContext context) async {
+    final masterKey = context.read<VaultAuthCubit>().state.masterKey;
+    if (masterKey == null) return null;
+    final res = await sl
+        .get<VaultRepository>()
+        .getItem(widget.itemMetadata.id, masterKey);
+    if (res is! VaultSuccess<VaultItem>) return null;
+    return res.data.passwordContent?.password;
   }
 
   void _showMoveToGroupSheet(BuildContext context) {

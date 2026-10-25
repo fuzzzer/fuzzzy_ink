@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -17,14 +16,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late CopySecurityLevel _securityLevel;
   late final FileBenchmarkCubit? _fileBenchmarkCubit;
   final PackageInfo _packageInfo = sl.get<PackageInfo>();
 
   @override
   void initState() {
     super.initState();
-    _securityLevel = sl.get<PreferencesService>().copySecurityLevel;
     _fileBenchmarkCubit = isFileBenchmarkEnabled
         ? FileBenchmarkCubit(cryptoCoreService: sl.get<CryptoCoreService>())
         : null;
@@ -34,13 +31,6 @@ class _SettingsPageState extends State<SettingsPage> {
   void dispose() {
     _fileBenchmarkCubit?.close();
     super.dispose();
-  }
-
-  void _onSecurityLevelChanged(CopySecurityLevel level) {
-    sl.get<PreferencesService>().setCopySecurityLevel(level);
-    setState(() {
-      _securityLevel = level;
-    });
   }
 
   String _benchmarkSummary(
@@ -74,13 +64,11 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: [
             TextButton(
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: summary)).then((_) {
-                  if (!context.mounted) return;
-                  FuzzzyToast.show(
-                    context,
-                    message: localizations.copiedToTheClipboard,
-                  );
-                });
+                CopyGuard.copy(
+                  context,
+                  text: summary,
+                  content: CopyContent.benchmarkReport,
+                );
               },
               style: TextButton.styleFrom(
                 foregroundColor: context.fuzzzyColors.focus,
@@ -120,7 +108,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final fuzzzyTextStyles = context.fuzzzyTextStyles;
     final localizations = context.fuzzzyInkLocalizations;
 
-    final isStrict = _securityLevel == CopySecurityLevel.strict;
     final fileBenchmarkCubit = _fileBenchmarkCubit;
 
     return FuzzyScaffold(
@@ -138,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    localizations.securityLevel,
+                    localizations.copyPolicyTitle,
                     style: fuzzzyTextStyles.titleM.copyWith(
                       color: fuzzzyColors.ink,
                       fontWeight: FontWeight.bold,
@@ -146,35 +133,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isStrict
-                        ? localizations.strictSecurityDescription
-                        : localizations.moderateSecurityDescription,
+                    localizations.copyPolicyDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: fuzzzyColors.inkMute,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  _SecurityLevelTile(
-                    label: localizations.strict,
-                    icon: Icons.lock,
-                    isSelected: isStrict,
-                    color: fuzzzyColors.destructiveText,
-                    onTap: () =>
-                        _onSecurityLevelChanged(CopySecurityLevel.strict),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 12),
-                  _SecurityLevelTile(
-                    label: localizations.moderate,
-                    icon: Icons.lock_open,
-                    isSelected: !isStrict,
-                    color: fuzzzyColors.focus,
-                    onTap: () =>
-                        _onSecurityLevelChanged(CopySecurityLevel.moderate),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
+                  if (allowVaultPasswordCopy) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      localizations.copyPolicyVaultPasswordNote(
+                        CopyPolicy.vaultPasswordClearAfter.inSeconds,
+                      ),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: fuzzzyColors.inkMute,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 32),
                   _SettingsLinkTile(
                     icon: Icons.shield_outlined,
@@ -365,67 +339,6 @@ class _SettingsLinkTile extends StatelessWidget {
               color: fuzzzyColors.inkMute,
               size: 22,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SecurityLevelTile extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool isSelected;
-  final Color color;
-  final VoidCallback onTap;
-  final FuzzzyColors fuzzzyColors;
-  final FuzzzyTextStyles fuzzzyTextStyles;
-
-  const _SecurityLevelTile({
-    required this.label,
-    required this.icon,
-    required this.isSelected,
-    required this.color,
-    required this.onTap,
-    required this.fuzzzyColors,
-    required this.fuzzzyTextStyles,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color:
-              isSelected ? color.withValues(alpha: 0.12) : fuzzzyColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color:
-                isSelected ? color : fuzzzyColors.focus.withValues(alpha: 0.2),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? color : fuzzzyColors.inkMute,
-              size: 22,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: fuzzzyTextStyles.body.copyWith(
-                  color: isSelected ? color : fuzzzyColors.ink,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-            if (isSelected) Icon(Icons.check_circle, color: color, size: 20),
           ],
         ),
       ),

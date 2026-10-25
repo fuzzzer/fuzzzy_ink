@@ -194,30 +194,14 @@
   "@stepNameThisChat": {},
   "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.",
   "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
-  "securityWarning": "უსაფრთხოების გაფრთხილება",
-  "@securityWarning": {},
-  "areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": "დარწმუნებული ხართ, რომ გსურთ დაუშიფრავი მონაცემების ბუფერში კოპირება? ამან შეიძლება საფრთხე შეუქმნას თქვენს უსაფრთხო ჩატს.",
-  "@areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": {},
   "copyFuzz": "Fuzz-ის კოპირება",
   "@copyFuzz": {},
-  "copyPlaintext": "ტექსტის კოპირება",
-  "@copyPlaintext": {},
   "firstEncryption": "პირველი დაშიფვრა",
   "@firstEncryption": {},
   "typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": "აკრიფეთ მესიჯი და დააჭირეთ გაგზავნას. ის ლოკალურად დაშიფრდება, რის შემდეგაც შეგეძლებათ უსაფრთხო, დაშიფრული ტექსტის კოპირება.",
   "@typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": {},
   "settings": "პარამეტრები",
   "@settings": {},
-  "securityLevel": "უსაფრთხოების დონე",
-  "@securityLevel": {},
-  "strict": "მკაცრი",
-  "@strict": {},
-  "moderate": "ზომიერი",
-  "@moderate": {},
-  "strictSecurityDescription": "ნებისმიერი გაშიფრული ტექსტის კოპირებამდე გამოჩნდება დადასტურების დიალოგი. რეკომენდებულია მაქსიმალური კონფიდენციალურობისთვის.",
-  "@strictSecurityDescription": {},
-  "moderateSecurityDescription": "მიღებული შეტყობინებები იკითხება და კოპირება შესაძლებელია გაფრთხილების გარეშე.",
-  "@moderateSecurityDescription": {},
   "shareAsLink": "ბმულით გაზიარება",
   "@shareAsLink": {},
   "copyAsLink": "ბმულის კოპირება",
@@ -309,8 +293,6 @@
   "@vaultPasswordLabel": {},
   "vaultNoteLabel": "ჩანაწერი",
   "@vaultNoteLabel": {},
-  "vaultCopyingNotImplemented": "კოპირება ჯერ სრულად არ არის განხორციელებული.",
-  "@vaultCopyingNotImplemented": {},
   "vaultFailedToLoadItem": "ელემენტის ჩატვირთვა ვერ მოხერხდა",
   "@vaultFailedToLoadItem": {},
   "vaultSearchHint": "პაროლების და ჩანაწერების ძიება",
@@ -652,5 +634,29 @@
   "vaultMoveUnfinishedTitle": "საცავის გადატანა ვერ მოხერხდა",
   "@vaultMoveUnfinishedTitle": {},
   "vaultMoveUnfinishedMessage": "საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.",
-  "@vaultMoveUnfinishedMessage": {}
+  "@vaultMoveUnfinishedMessage": {},
+  "copyRefused": "კოპირება მხოლოდ დაშიფრული ტექსტის შეიძლება.",
+  "@copyRefused": {
+    "description": "Draft Georgian, needs a native read."
+  },
+  "copyPolicyTitle": "კოპირება",
+  "@copyPolicyTitle": {
+    "description": "Draft Georgian, needs a native read."
+  },
+  "copyPolicyDescription": "აპლიკაციიდან მხოლოდ თქვენ მიერ გასაგზავნი დაშიფრული ტექსტი კოპირდება. გაშიფრული შეტყობინებები, ჩანაწერები და ფაილების მდებარეობა აპლიკაციაში რჩება. დაკოპირებული ტექსტი ბუფერიდან მალევე იშლება.",
+  "@copyPolicyDescription": {
+    "description": "Draft Georgian, needs a native read."
+  },
+  "copyPolicyVaultPasswordNote": "გამონაკლისი მხოლოდ საცავის პაროლია: დაკოპირებული პაროლი, სადაც სისტემა ამის საშუალებას იძლევა, ბუფერის ისტორიაში არ ინახება და {seconds} წამში იშლება.",
+  "@copyPolicyVaultPasswordNote": {
+    "description": "Draft Georgian, needs a native read."
+  },
+  "vaultCopyPassword": "პაროლის კოპირება",
+  "@vaultCopyPassword": {
+    "description": "Draft Georgian, needs a native read."
+  },
+  "vaultPasswordCopiedClearsIn": "პაროლი დაკოპირდა. ბუფერიდან {seconds} წამში წაიშლება.",
+  "@vaultPasswordCopiedClearsIn": {
+    "description": "Draft Georgian, needs a native read."
+  }
 }

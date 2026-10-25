@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
@@ -84,12 +83,11 @@ class _SentMessageAreaState extends State<SentMessageArea> {
       }
     });
 
-    Clipboard.setData(
-      ClipboardData(text: _prepareEncrypredMessage(encryptedMessage)),
+    CopyGuard.copy(
+      context,
+      text: _prepareEncrypredMessage(encryptedMessage),
+      content: CopyContent.sealedMessage,
     ).then((_) async {
-      if (!mounted) return;
-      FuzzzyToast.show(context, message: localizations.copiedToTheClipboard);
-
       final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator) {
         await Vibration.vibrate();
@@ -105,8 +103,12 @@ class _SentMessageAreaState extends State<SentMessageArea> {
       widget.message.chatId,
       encryptedMessage,
     );
-    Clipboard.setData(ClipboardData(text: link));
-    FuzzzyToast.show(context, message: localizations.linkCopiedToClipboard);
+    CopyGuard.copy(
+      context,
+      text: link,
+      content: CopyContent.sealedLink,
+      copiedMessage: localizations.linkCopiedToClipboard,
+    );
   }
 
   void _shareFuzzLink(String encryptedMessage) {
@@ -243,39 +245,13 @@ class _SentMessageAreaState extends State<SentMessageArea> {
                                           closeOverlay();
                                         },
                                       ),
-                                      TextAction(
-                                        label: localizations.copy,
-                                        onTap: () {
-                                          final filePath =
-                                              encryptedMessage.replaceAll(
-                                            fuzzIdentificator,
-                                            '',
-                                          );
-                                          Clipboard.setData(
-                                            ClipboardData(text: filePath),
-                                          );
-                                          FuzzzyToast.show(
-                                            context,
-                                            message: localizations
-                                                .copiedToTheClipboard,
-                                          );
-                                          closeOverlay();
-                                        },
-                                      ),
+                                      // A file's path is never copied, and
+                                      // neither is a link made of it
+                                      // (copy_guard).
                                       TextAction(
                                         label: '🔗',
                                         onTap: () {
                                           _shareFuzzLink(encryptedMessage);
-                                          closeOverlay();
-                                        },
-                                      ),
-                                      TextAction(
-                                        label: localizations.copyAsLink,
-                                        onTap: () {
-                                          _copyFuzzLink(
-                                            encryptedMessage: encryptedMessage,
-                                            localizations: localizations,
-                                          );
                                           closeOverlay();
                                         },
                                       ),
