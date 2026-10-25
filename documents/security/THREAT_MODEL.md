@@ -86,7 +86,7 @@ platform limit (Windows Credential Manager, 2 560 bytes).
 Two things the reader must know:
 
 1. **macOS development flavour uses the login keychain**, not the data-protection keychain
-   (`lib/src/core/constants/default_constants.dart`: `useDataProtectionKeyChain: appFlavor != 'development'`).
+   (`lib/src/core/constants/default_constants.dart`: `usesDataProtectionKeychain: appFlavor != 'development'`).
    The data-protection keychain needs a provisioned signature and this project's build machine holds no
    Apple certificate (owner decision D-3); unsigned developer builds would otherwise throw at boot. Staging
    and production builds use the data-protection keychain. A development build's wrapped key is readable
