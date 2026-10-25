@@ -2267,6 +2267,816 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Too many wrong passwords. Wait a moment and try again.'**
   String get vaultTooManyAttempts;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe'**
+  String get tabMySafe;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get tabSettings;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get homeLockTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'For one person'**
+  String get homeLockSubtitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get homeOpenTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What you got'**
+  String get homeOpenSubtitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get homePeople;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'People · {count}'**
+  String homePeopleCount(int count);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get homeAdd;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person'**
+  String get homeAddPerson;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No one yet'**
+  String get homeNoOneYet;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your people. Close and open the app again.'**
+  String get homeLoadError;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You send an invite'**
+  String get stepYouSendInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They reply'**
+  String get stepTheyReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Invite sent'**
+  String get stepInviteSent;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} replies'**
+  String stepNameReplies(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for each other'**
+  String get stepLockForEachOther;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String stepsProgress(int step, int total);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total} · {label}'**
+  String stepsProgressWithLabel(int step, int total, String label);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done: {step}'**
+  String stepDone(String step);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String stepNext(String step);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send an invite'**
+  String get addSendInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You start'**
+  String get addYouStart;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got an invite'**
+  String get addGotInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They started'**
+  String get addTheyStarted;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for reply'**
+  String get chipWaitingForReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get chipChecked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked'**
+  String get chipNotChecked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then you can lock for each other'**
+  String get personRowWaitingLine;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Once {name} replies, you can lock messages for each other.'**
+  String waitNoteReply(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send the invite any way, even publicly. It stays safe.'**
+  String get waitNoteAnyWay;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why?'**
+  String get linkWhy;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How?'**
+  String get linkHow;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get linkMore;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens an explanation'**
+  String get linkOpensExplanation;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why no reset?'**
+  String get infoNoResetTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your password never leaves this phone.'**
+  String get infoNoResetLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t see it, so no one can reset it.'**
+  String get infoNoResetLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key is the only spare.'**
+  String get infoNoResetLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key'**
+  String get infoRecoveryKeyTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare if you forget the password.'**
+  String get infoRecoveryKeyLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It opens Fuzzzy Ink, and My safe too.'**
+  String get infoRecoveryKeyLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print it or save it off this phone. Anyone with it and your phone can open everything.'**
+  String get infoRecoveryKeyLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why only once?'**
+  String get infoOpensOnceTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each locked thing has its own key.'**
+  String get infoOpensOnceLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening it uses the key up, on any phone.'**
+  String get infoOpensOnceLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A copy stays in your history, locked.'**
+  String get infoOpensOnceLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to send anywhere'**
+  String get infoSafeAnywhereTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'An invite can\'t open anything.'**
+  String get infoSafeAnywhereLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only their reply connects you two.'**
+  String get infoSafeAnywhereLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then you check numbers together, so you know it\'s them.'**
+  String get infoSafeAnywhereLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why check numbers?'**
+  String get infoCheckNumbersTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone who saw your invite could answer it.'**
+  String get infoCheckNumbersLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers on both phones: nobody got in between.'**
+  String get infoCheckNumbersLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Where do files go?'**
+  String get infoFilesTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink keeps only the locked copy.'**
+  String get infoFilesLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open shows it here. Nothing is saved.'**
+  String get infoFilesLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. From then on it\'s yours to protect.'**
+  String get infoFilesLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why no copying?'**
+  String get infoNoCopyingTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What you open stays inside Fuzzzy Ink.'**
+  String get infoNoCopyingLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only locked text can be copied. It is safe anywhere.'**
+  String get infoNoCopyingLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking with a password'**
+  String get infoPasswordLockingTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with the password can open it.'**
+  String get infoPasswordLockingLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Say the password. Never send it with the locked thing.'**
+  String get infoPasswordLockingLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe\'s own password'**
+  String get infoSafePasswordTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One more password to remember.'**
+  String get infoSafePasswordLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot it? Your recovery key opens My safe too.'**
+  String get infoSafePasswordLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No copy · no screenshots'**
+  String get tagNoCopyNoScreenshots;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No copy'**
+  String get tagNoCopy;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No screenshots'**
+  String get tagNoScreenshots;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s it for?'**
+  String get lockWhoTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock with a password'**
+  String get lockWithPassword;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No invite needed'**
+  String get lockNoInviteNeeded;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person first'**
+  String get lockAddPersonFirst;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orDivider;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open what you got'**
+  String get openWhatYouGot;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Paste it'**
+  String get openPasteIt;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked text, invite or reply'**
+  String get openPasteItHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Links and QR codes open here by themselves.'**
+  String get openLinksTip;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the locked text first.'**
+  String get openNothingToPaste;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a link here. Locked text opens on the person\'s page.'**
+  String get openPasteNotALink;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get openLockedWithPassword;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get shareTitleInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share reply'**
+  String get shareTitleReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share locked message'**
+  String get shareTitleMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share locked file'**
+  String get shareTitleFile;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Any way. Even publicly.'**
+  String get shareLineInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Any way you like.'**
+  String get shareLineReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only {name} can open it.'**
+  String shareLineForName(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They need the password.'**
+  String get shareLinePassword;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send a link'**
+  String get shareSendLink;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens in the app'**
+  String get shareSendLinkHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Show a QR code'**
+  String get shareShowQr;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They scan it'**
+  String get shareShowQrHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send as a file'**
+  String get shareSendFile;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A small file'**
+  String get shareSendFileHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy as text'**
+  String get shareCopyText;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Stays locked anywhere'**
+  String get shareCopyTextHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too big. Send it as a file.'**
+  String get shareTooBig;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. It stays locked.'**
+  String get shareCopiedStaysLocked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite'**
+  String get qrLabelInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your reply'**
+  String get qrLabelReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked message'**
+  String get qrLabelMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Let {name} scan this.'**
+  String qrLetNameScan(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Let them scan this.'**
+  String get qrLetThemScan;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to show anyone. Only their reply connects you.'**
+  String get qrSafeToShowAnyone;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only show it to the right person.'**
+  String get qrOnlyRightPerson;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked a message'**
+  String get historyYouLockedMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You opened a message'**
+  String get historyYouOpenedMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked {file}'**
+  String historyYouLockedFile(String file);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You opened {file}'**
+  String historyYouOpenedFile(String file);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'tap to read'**
+  String get historyTapToRead;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'tap to see'**
+  String get historyTapToSee;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get fileCardLocked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Kept locked in My safe'**
+  String get fileCardKeptInSafe;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked version · safe to send'**
+  String get lockedPreviewLabel;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get confirmCopied;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Handed over'**
+  String get confirmHandedOver;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safety numbers'**
+  String get safetyGridLabel;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Wait {time}'**
+  String lockoutWaitLeft(String time);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look and language'**
+  String get settingsLookAndLanguage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look'**
+  String get settingsLook;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Like my phone'**
+  String get lookLikeMyPhone;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lookLight;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get lookDark;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'ქართული'**
+  String get languageGeorgian;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Cast'**
+  String get fuzzzyCast;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzz reacts when you lock and open.'**
+  String get fuzzzyCastLine;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Cast is on.'**
+  String get fuzzzyCastOn;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Soft sounds'**
+  String get softSounds;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Never on silent'**
+  String get softSoundsLine;
 }
 
 class _FuzzzyInkLocalizationsDelegate

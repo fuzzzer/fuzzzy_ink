@@ -1208,4 +1208,447 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get vaultTooManyAttempts =>
       'Too many wrong passwords. Wait a moment and try again.';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String get tabMySafe => 'My safe';
+
+  @override
+  String get tabSettings => 'Settings';
+
+  @override
+  String get homeLockTitle => 'Lock';
+
+  @override
+  String get homeLockSubtitle => 'For one person';
+
+  @override
+  String get homeOpenTitle => 'Open';
+
+  @override
+  String get homeOpenSubtitle => 'What you got';
+
+  @override
+  String get homePeople => 'People';
+
+  @override
+  String homePeopleCount(int count) {
+    return 'People · $count';
+  }
+
+  @override
+  String get homeAdd => 'Add';
+
+  @override
+  String get homeAddPerson => 'Add a person';
+
+  @override
+  String get homeNoOneYet => 'No one yet';
+
+  @override
+  String get homeLoadError =>
+      'Couldn\'t load your people. Close and open the app again.';
+
+  @override
+  String get stepYouSendInvite => 'You send an invite';
+
+  @override
+  String get stepTheyReply => 'They reply';
+
+  @override
+  String get stepInviteSent => 'Invite sent';
+
+  @override
+  String stepNameReplies(String name) {
+    return '$name replies';
+  }
+
+  @override
+  String get stepLockForEachOther => 'Lock for each other';
+
+  @override
+  String stepsProgress(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String stepsProgressWithLabel(int step, int total, String label) {
+    return 'Step $step of $total · $label';
+  }
+
+  @override
+  String stepDone(String step) {
+    return 'Done: $step';
+  }
+
+  @override
+  String stepNext(String step) {
+    return 'Next: $step';
+  }
+
+  @override
+  String get addSendInvite => 'Send an invite';
+
+  @override
+  String get addYouStart => 'You start';
+
+  @override
+  String get addGotInvite => 'I got an invite';
+
+  @override
+  String get addTheyStarted => 'They started';
+
+  @override
+  String get chipWaitingForReply => 'Waiting for reply';
+
+  @override
+  String get chipChecked => 'Checked';
+
+  @override
+  String get chipNotChecked => 'Not checked';
+
+  @override
+  String get personRowWaitingLine => 'Then you can lock for each other';
+
+  @override
+  String waitNoteReply(String name) {
+    return 'Once $name replies, you can lock messages for each other.';
+  }
+
+  @override
+  String get waitNoteAnyWay =>
+      'Send the invite any way, even publicly. It stays safe.';
+
+  @override
+  String get linkWhy => 'Why?';
+
+  @override
+  String get linkHow => 'How?';
+
+  @override
+  String get linkMore => 'More';
+
+  @override
+  String get linkOpensExplanation => 'Opens an explanation';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String get infoNoResetTitle => 'Why no reset?';
+
+  @override
+  String get infoNoResetLine1 => 'Your password never leaves this phone.';
+
+  @override
+  String get infoNoResetLine2 => 'We can\'t see it, so no one can reset it.';
+
+  @override
+  String get infoNoResetLine3 => 'Your recovery key is the only spare.';
+
+  @override
+  String get infoRecoveryKeyTitle => 'Your recovery key';
+
+  @override
+  String get infoRecoveryKeyLine1 => 'Your spare if you forget the password.';
+
+  @override
+  String get infoRecoveryKeyLine2 => 'It opens Fuzzzy Ink, and My safe too.';
+
+  @override
+  String get infoRecoveryKeyLine3 =>
+      'Print it or save it off this phone. Anyone with it and your phone can open everything.';
+
+  @override
+  String get infoOpensOnceTitle => 'Why only once?';
+
+  @override
+  String get infoOpensOnceLine1 => 'Each locked thing has its own key.';
+
+  @override
+  String get infoOpensOnceLine2 => 'Opening it uses the key up, on any phone.';
+
+  @override
+  String get infoOpensOnceLine3 => 'A copy stays in your history, locked.';
+
+  @override
+  String get infoSafeAnywhereTitle => 'Safe to send anywhere';
+
+  @override
+  String get infoSafeAnywhereLine1 => 'An invite can\'t open anything.';
+
+  @override
+  String get infoSafeAnywhereLine2 => 'Only their reply connects you two.';
+
+  @override
+  String get infoSafeAnywhereLine3 =>
+      'Then you check numbers together, so you know it\'s them.';
+
+  @override
+  String get infoCheckNumbersTitle => 'Why check numbers?';
+
+  @override
+  String get infoCheckNumbersLine1 =>
+      'Anyone who saw your invite could answer it.';
+
+  @override
+  String get infoCheckNumbersLine2 =>
+      'Same numbers on both phones: nobody got in between.';
+
+  @override
+  String get infoFilesTitle => 'Where do files go?';
+
+  @override
+  String get infoFilesLine1 => 'Fuzzzy Ink keeps only the locked copy.';
+
+  @override
+  String get infoFilesLine2 => 'Open shows it here. Nothing is saved.';
+
+  @override
+  String get infoFilesLine3 =>
+      'Save gives you a normal copy. From then on it\'s yours to protect.';
+
+  @override
+  String get infoNoCopyingTitle => 'Why no copying?';
+
+  @override
+  String get infoNoCopyingLine1 => 'What you open stays inside Fuzzzy Ink.';
+
+  @override
+  String get infoNoCopyingLine2 =>
+      'Only locked text can be copied. It is safe anywhere.';
+
+  @override
+  String get infoPasswordLockingTitle => 'Locking with a password';
+
+  @override
+  String get infoPasswordLockingLine1 =>
+      'Anyone with the password can open it.';
+
+  @override
+  String get infoPasswordLockingLine2 =>
+      'Say the password. Never send it with the locked thing.';
+
+  @override
+  String get infoSafePasswordTitle => 'My safe\'s own password';
+
+  @override
+  String get infoSafePasswordLine1 => 'One more password to remember.';
+
+  @override
+  String get infoSafePasswordLine2 =>
+      'Forgot it? Your recovery key opens My safe too.';
+
+  @override
+  String get tagNoCopyNoScreenshots => 'No copy · no screenshots';
+
+  @override
+  String get tagNoCopy => 'No copy';
+
+  @override
+  String get tagNoScreenshots => 'No screenshots';
+
+  @override
+  String get lockWhoTitle => 'Who\'s it for?';
+
+  @override
+  String get lockWithPassword => 'Lock with a password';
+
+  @override
+  String get lockNoInviteNeeded => 'No invite needed';
+
+  @override
+  String get lockAddPersonFirst => 'Add a person first';
+
+  @override
+  String get orDivider => 'or';
+
+  @override
+  String get openWhatYouGot => 'Open what you got';
+
+  @override
+  String get openPasteIt => 'Paste it';
+
+  @override
+  String get openPasteItHint => 'Locked text, invite or reply';
+
+  @override
+  String get openLinksTip => 'Links and QR codes open here by themselves.';
+
+  @override
+  String get openNothingToPaste =>
+      'Nothing to paste. Copy the locked text first.';
+
+  @override
+  String get openPasteNotALink =>
+      'Paste a link here. Locked text opens on the person\'s page.';
+
+  @override
+  String get openLockedWithPassword => 'Locked with a password';
+
+  @override
+  String get shareTitleInvite => 'Share invite';
+
+  @override
+  String get shareTitleReply => 'Share reply';
+
+  @override
+  String get shareTitleMessage => 'Share locked message';
+
+  @override
+  String get shareTitleFile => 'Share locked file';
+
+  @override
+  String get shareLineInvite => 'Any way. Even publicly.';
+
+  @override
+  String get shareLineReply => 'Any way you like.';
+
+  @override
+  String shareLineForName(String name) {
+    return 'Only $name can open it.';
+  }
+
+  @override
+  String get shareLinePassword => 'They need the password.';
+
+  @override
+  String get shareSendLink => 'Send a link';
+
+  @override
+  String get shareSendLinkHint => 'Opens in the app';
+
+  @override
+  String get shareShowQr => 'Show a QR code';
+
+  @override
+  String get shareShowQrHint => 'They scan it';
+
+  @override
+  String get shareSendFile => 'Send as a file';
+
+  @override
+  String get shareSendFileHint => 'A small file';
+
+  @override
+  String get shareCopyText => 'Copy as text';
+
+  @override
+  String get shareCopyTextHint => 'Stays locked anywhere';
+
+  @override
+  String get shareTooBig => 'Too big. Send it as a file.';
+
+  @override
+  String get shareCopiedStaysLocked => 'Copied. It stays locked.';
+
+  @override
+  String get qrLabelInvite => 'Your invite';
+
+  @override
+  String get qrLabelReply => 'Your reply';
+
+  @override
+  String get qrLabelMessage => 'Locked message';
+
+  @override
+  String qrLetNameScan(String name) {
+    return 'Let $name scan this.';
+  }
+
+  @override
+  String get qrLetThemScan => 'Let them scan this.';
+
+  @override
+  String get qrSafeToShowAnyone =>
+      'Safe to show anyone. Only their reply connects you.';
+
+  @override
+  String get qrOnlyRightPerson => 'Only show it to the right person.';
+
+  @override
+  String get historyYouLockedMessage => 'You locked a message';
+
+  @override
+  String get historyYouOpenedMessage => 'You opened a message';
+
+  @override
+  String historyYouLockedFile(String file) {
+    return 'You locked $file';
+  }
+
+  @override
+  String historyYouOpenedFile(String file) {
+    return 'You opened $file';
+  }
+
+  @override
+  String get historyTapToRead => 'tap to read';
+
+  @override
+  String get historyTapToSee => 'tap to see';
+
+  @override
+  String get fileCardLocked => 'Locked';
+
+  @override
+  String get fileCardKeptInSafe => 'Kept locked in My safe';
+
+  @override
+  String get lockedPreviewLabel => 'Locked version · safe to send';
+
+  @override
+  String get confirmCopied => 'Copied';
+
+  @override
+  String get confirmHandedOver => 'Handed over';
+
+  @override
+  String get safetyGridLabel => 'Safety numbers';
+
+  @override
+  String lockoutWaitLeft(String time) {
+    return 'Wait $time';
+  }
+
+  @override
+  String get settingsLookAndLanguage => 'Look and language';
+
+  @override
+  String get settingsLook => 'Look';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get lookLikeMyPhone => 'Like my phone';
+
+  @override
+  String get lookLight => 'Light';
+
+  @override
+  String get lookDark => 'Dark';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageGeorgian => 'ქართული';
+
+  @override
+  String get fuzzzyCast => 'Fuzzzy Cast';
+
+  @override
+  String get fuzzzyCastLine => 'Fuzzz reacts when you lock and open.';
+
+  @override
+  String get fuzzzyCastOn => 'Fuzzzy Cast is on.';
+
+  @override
+  String get softSounds => 'Soft sounds';
+
+  @override
+  String get softSoundsLine => 'Never on silent';
 }

@@ -1216,4 +1216,449 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get vaultTooManyAttempts =>
       'ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.';
+
+  @override
+  String get tabHome => 'მთავარი';
+
+  @override
+  String get tabMySafe => 'ჩემი სეიფი';
+
+  @override
+  String get tabSettings => 'პარამეტრები';
+
+  @override
+  String get homeLockTitle => 'ჩაკეტვა';
+
+  @override
+  String get homeLockSubtitle => 'ერთი ადამიანისთვის';
+
+  @override
+  String get homeOpenTitle => 'გახსნა';
+
+  @override
+  String get homeOpenSubtitle => 'რაც მიიღეთ';
+
+  @override
+  String get homePeople => 'ადამიანები';
+
+  @override
+  String homePeopleCount(int count) {
+    return 'ადამიანები · $count';
+  }
+
+  @override
+  String get homeAdd => 'დამატება';
+
+  @override
+  String get homeAddPerson => 'ადამიანის დამატება';
+
+  @override
+  String get homeNoOneYet => 'ჯერ არავინაა';
+
+  @override
+  String get homeLoadError =>
+      'ადამიანების ჩატვირთვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით აპი.';
+
+  @override
+  String get stepYouSendInvite => 'აგზავნით მოწვევას';
+
+  @override
+  String get stepTheyReply => 'პასუხი მოდის';
+
+  @override
+  String get stepInviteSent => 'მოწვევა გაიგზავნა';
+
+  @override
+  String stepNameReplies(String name) {
+    return 'პასუხი: $name';
+  }
+
+  @override
+  String get stepLockForEachOther => 'ერთმანეთისთვის ჩაკეტვა';
+
+  @override
+  String stepsProgress(int step, int total) {
+    return 'ნაბიჯი $step / $total';
+  }
+
+  @override
+  String stepsProgressWithLabel(int step, int total, String label) {
+    return 'ნაბიჯი $step / $total · $label';
+  }
+
+  @override
+  String stepDone(String step) {
+    return 'შესრულდა: $step';
+  }
+
+  @override
+  String stepNext(String step) {
+    return 'შემდეგი: $step';
+  }
+
+  @override
+  String get addSendInvite => 'მოწვევის გაგზავნა';
+
+  @override
+  String get addYouStart => 'თქვენ იწყებთ';
+
+  @override
+  String get addGotInvite => 'მოწვევა მივიღე';
+
+  @override
+  String get addTheyStarted => 'მან დაიწყო';
+
+  @override
+  String get chipWaitingForReply => 'ველოდებით პასუხს';
+
+  @override
+  String get chipChecked => 'შემოწმებულია';
+
+  @override
+  String get chipNotChecked => 'არ არის შემოწმებული';
+
+  @override
+  String get personRowWaitingLine => 'მერე ერთმანეთისთვის ჩაკეტვას შეძლებთ';
+
+  @override
+  String waitNoteReply(String name) {
+    return 'პასუხის მიღების შემდეგ ერთმანეთისთვის შეტყობინებების ჩაკეტვას შეძლებთ.';
+  }
+
+  @override
+  String get waitNoteAnyWay =>
+      'მოწვევა ნებისმიერი გზით გააგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.';
+
+  @override
+  String get linkWhy => 'რატომ?';
+
+  @override
+  String get linkHow => 'როგორ?';
+
+  @override
+  String get linkMore => 'მეტი';
+
+  @override
+  String get linkOpensExplanation => 'განმარტებას ხსნის';
+
+  @override
+  String get gotIt => 'გასაგებია';
+
+  @override
+  String get infoNoResetTitle => 'რატომ არ აღდგება?';
+
+  @override
+  String get infoNoResetLine1 => 'თქვენი პაროლი ამ ტელეფონს არ ტოვებს.';
+
+  @override
+  String get infoNoResetLine2 =>
+      'ჩვენ მას ვერ ვხედავთ, ამიტომ ვერავინ აღადგენს.';
+
+  @override
+  String get infoNoResetLine3 => 'ერთადერთი სათადარიგო გზა აღდგენის გასაღებია.';
+
+  @override
+  String get infoRecoveryKeyTitle => 'აღდგენის გასაღები';
+
+  @override
+  String get infoRecoveryKeyLine1 => 'სათადარიგო, თუ პაროლი დაგავიწყდათ.';
+
+  @override
+  String get infoRecoveryKeyLine2 => 'ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.';
+
+  @override
+  String get infoRecoveryKeyLine3 =>
+      'ამობეჭდეთ ან ამ ტელეფონის გარეთ შეინახეთ. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.';
+
+  @override
+  String get infoOpensOnceTitle => 'რატომ მხოლოდ ერთხელ?';
+
+  @override
+  String get infoOpensOnceLine1 => 'ყოველ ჩაკეტილს თავისი გასაღები აქვს.';
+
+  @override
+  String get infoOpensOnceLine2 =>
+      'გახსნისას გასაღები იხარჯება, ნებისმიერ ტელეფონზე.';
+
+  @override
+  String get infoOpensOnceLine3 => 'ასლი ისტორიაში რჩება, ჩაკეტილი.';
+
+  @override
+  String get infoSafeAnywhereTitle => 'ყველგან უსაფრთხოა';
+
+  @override
+  String get infoSafeAnywhereLine1 => 'მოწვევა თავისით ვერაფერს ხსნის.';
+
+  @override
+  String get infoSafeAnywhereLine2 => 'დაგაკავშირებთ მხოლოდ მისი პასუხი.';
+
+  @override
+  String get infoSafeAnywhereLine3 =>
+      'მერე ციფრებს ერთად შეამოწმებთ, რომ დარწმუნდეთ, ნამდვილად ის არის.';
+
+  @override
+  String get infoCheckNumbersTitle => 'რატომ ციფრები?';
+
+  @override
+  String get infoCheckNumbersLine1 =>
+      'თქვენს მოწვევას ნებისმიერი უპასუხებდა, ვინც ის ნახა.';
+
+  @override
+  String get infoCheckNumbersLine2 =>
+      'ორივე ტელეფონზე ერთნაირი ციფრები ნიშნავს, რომ შუაში არავინ ჩამდგარა.';
+
+  @override
+  String get infoFilesTitle => 'სად მიდის ფაილები?';
+
+  @override
+  String get infoFilesLine1 => 'Fuzzzy Ink მხოლოდ ჩაკეტილ ასლს ინახავს.';
+
+  @override
+  String get infoFilesLine2 => '„გახსნა“ აქვე გაჩვენებთ. არაფერი ინახება.';
+
+  @override
+  String get infoFilesLine3 =>
+      '„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. იქიდან მისი დაცვა თქვენზეა.';
+
+  @override
+  String get infoNoCopyingTitle => 'რატომ არ კოპირდება?';
+
+  @override
+  String get infoNoCopyingLine1 => 'რასაც ხსნით, Fuzzzy Ink-ში რჩება.';
+
+  @override
+  String get infoNoCopyingLine2 =>
+      'მხოლოდ ჩაკეტილი ტექსტი კოპირდება. ის ყველგან უსაფრთხოა.';
+
+  @override
+  String get infoPasswordLockingTitle => 'პაროლით ჩაკეტვა';
+
+  @override
+  String get infoPasswordLockingLine1 => 'ვინც პაროლი იცის, გახსნის.';
+
+  @override
+  String get infoPasswordLockingLine2 =>
+      'პაროლი სიტყვით უთხარით. ჩაკეტილთან ერთად არასდროს გაგზავნოთ.';
+
+  @override
+  String get infoSafePasswordTitle => 'სეიფის საკუთარი პაროლი';
+
+  @override
+  String get infoSafePasswordLine1 => 'კიდევ ერთი დასამახსოვრებელი პაროლი.';
+
+  @override
+  String get infoSafePasswordLine2 =>
+      'დაგავიწყდათ? აღდგენის გასაღები ჩემს სეიფსაც ხსნის.';
+
+  @override
+  String get tagNoCopyNoScreenshots =>
+      'კოპირება და ეკრანის ანაბეჭდი გამორთულია';
+
+  @override
+  String get tagNoCopy => 'კოპირება გამორთულია';
+
+  @override
+  String get tagNoScreenshots => 'ეკრანის ანაბეჭდი გამორთულია';
+
+  @override
+  String get lockWhoTitle => 'ვისთვისაა?';
+
+  @override
+  String get lockWithPassword => 'პაროლით ჩაკეტვა';
+
+  @override
+  String get lockNoInviteNeeded => 'მოწვევა საჭირო არაა';
+
+  @override
+  String get lockAddPersonFirst => 'ჯერ ადამიანი დაამატეთ';
+
+  @override
+  String get orDivider => 'ან';
+
+  @override
+  String get openWhatYouGot => 'გახსენით, რაც მიიღეთ';
+
+  @override
+  String get openPasteIt => 'ჩასმა';
+
+  @override
+  String get openPasteItHint => 'ჩაკეტილი ტექსტი, მოწვევა ან პასუხი';
+
+  @override
+  String get openLinksTip => 'ბმულები და QR კოდები აქ თავისით იხსნება.';
+
+  @override
+  String get openNothingToPaste =>
+      'ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.';
+
+  @override
+  String get openPasteNotALink =>
+      'აქ ბმული ჩასვით. ჩაკეტილი ტექსტი ადამიანის გვერდზე იხსნება.';
+
+  @override
+  String get openLockedWithPassword => 'პაროლით ჩაკეტილი';
+
+  @override
+  String get shareTitleInvite => 'მოწვევის გაზიარება';
+
+  @override
+  String get shareTitleReply => 'პასუხის გაზიარება';
+
+  @override
+  String get shareTitleMessage => 'ჩაკეტილი შეტყობინების გაზიარება';
+
+  @override
+  String get shareTitleFile => 'ჩაკეტილი ფაილის გაზიარება';
+
+  @override
+  String get shareLineInvite => 'ნებისმიერი გზით, თუნდაც საჯაროდ.';
+
+  @override
+  String get shareLineReply => 'როგორც გინდათ.';
+
+  @override
+  String shareLineForName(String name) {
+    return 'გახსნა მხოლოდ მას შეუძლია.';
+  }
+
+  @override
+  String get shareLinePassword => 'პაროლი დასჭირდება.';
+
+  @override
+  String get shareSendLink => 'ბმულის გაგზავნა';
+
+  @override
+  String get shareSendLinkHint => 'აპში იხსნება';
+
+  @override
+  String get shareShowQr => 'QR კოდის ჩვენება';
+
+  @override
+  String get shareShowQrHint => 'კამერით დაასკანერებს';
+
+  @override
+  String get shareSendFile => 'ფაილად გაგზავნა';
+
+  @override
+  String get shareSendFileHint => 'პატარა ფაილი';
+
+  @override
+  String get shareCopyText => 'ტექსტად კოპირება';
+
+  @override
+  String get shareCopyTextHint => 'ყველგან ჩაკეტილი რჩება';
+
+  @override
+  String get shareTooBig => 'ძალიან დიდია. ფაილად გაგზავნეთ.';
+
+  @override
+  String get shareCopiedStaysLocked => 'დაკოპირდა. ჩაკეტილი რჩება.';
+
+  @override
+  String get qrLabelInvite => 'თქვენი მოწვევა';
+
+  @override
+  String get qrLabelReply => 'თქვენი პასუხი';
+
+  @override
+  String get qrLabelMessage => 'ჩაკეტილი შეტყობინება';
+
+  @override
+  String qrLetNameScan(String name) {
+    return 'დაასკანერებინეთ: $name';
+  }
+
+  @override
+  String get qrLetThemScan => 'დაასკანერებინეთ.';
+
+  @override
+  String get qrSafeToShowAnyone =>
+      'ნებისმიერს შეგიძლიათ აჩვენოთ. დაგაკავშირებთ მხოლოდ მისი პასუხი.';
+
+  @override
+  String get qrOnlyRightPerson => 'აჩვენეთ მხოლოდ სწორ ადამიანს.';
+
+  @override
+  String get historyYouLockedMessage => 'ჩაკეტეთ შეტყობინება';
+
+  @override
+  String get historyYouOpenedMessage => 'გახსენით შეტყობინება';
+
+  @override
+  String historyYouLockedFile(String file) {
+    return 'ჩაკეტეთ: $file';
+  }
+
+  @override
+  String historyYouOpenedFile(String file) {
+    return 'გახსენით: $file';
+  }
+
+  @override
+  String get historyTapToRead => 'შეეხეთ წასაკითხად';
+
+  @override
+  String get historyTapToSee => 'შეეხეთ სანახავად';
+
+  @override
+  String get fileCardLocked => 'ჩაკეტილია';
+
+  @override
+  String get fileCardKeptInSafe => 'ჩაკეტილი ინახება ჩემს სეიფში';
+
+  @override
+  String get lockedPreviewLabel => 'ჩაკეტილი ვერსია · უსაფრთხოა გასაგზავნად';
+
+  @override
+  String get confirmCopied => 'დაკოპირდა';
+
+  @override
+  String get confirmHandedOver => 'გადმოგეცათ';
+
+  @override
+  String get safetyGridLabel => 'უსაფრთხოების ციფრები';
+
+  @override
+  String lockoutWaitLeft(String time) {
+    return 'მოიცადეთ $time';
+  }
+
+  @override
+  String get settingsLookAndLanguage => 'იერსახე და ენა';
+
+  @override
+  String get settingsLook => 'იერსახე';
+
+  @override
+  String get settingsLanguage => 'ენა';
+
+  @override
+  String get lookLikeMyPhone => 'როგორც ტელეფონში';
+
+  @override
+  String get lookLight => 'ღია';
+
+  @override
+  String get lookDark => 'მუქი';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageGeorgian => 'ქართული';
+
+  @override
+  String get fuzzzyCast => 'Fuzzzy Cast';
+
+  @override
+  String get fuzzzyCastLine => 'Fuzzz რეაგირებს, როცა კეტავთ ან ხსნით.';
+
+  @override
+  String get fuzzzyCastOn => 'Fuzzzy Cast ჩართულია.';
+
+  @override
+  String get softSounds => 'რბილი ხმები';
+
+  @override
+  String get softSoundsLine => 'უხმო რეჟიმში არასდროს';
 }
