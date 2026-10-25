@@ -265,6 +265,12 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                               ? _onUnlock
                               : null,
                         ),
+                        if (state.isLockedOut) ...[
+                          SizedBox(height: context.fuzzzySpace.s),
+                          LockoutCountdownBar(
+                            remaining: state.lockoutRemaining,
+                          ),
+                        ],
                         if (state.biometricEnabled) ...[
                           const SizedBox(height: 24),
                           InkWell(

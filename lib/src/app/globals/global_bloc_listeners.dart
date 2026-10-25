@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
@@ -92,6 +94,8 @@ class GlobalBlocListeners extends StatelessWidget {
           listenWhen: (previous, current) =>
               !previous.status.hasAccess && current.status.hasAccess,
           listener: (context, __) {
+            // Unlocked: one light buzz; the shell lifts in (LiftIn).
+            unawaited(InkHaptics.light());
             final router = AppRouter.routerInstance;
             if (router != null) {
               final currentLocation =

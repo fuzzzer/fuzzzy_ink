@@ -1,127 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_ink/lib.dart';
+import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
-export 'widgets/widgets.dart';
-
+/// The three tabs, Home · My safe · Settings: a bottom bar on phones, a side
+/// rail from 600 px wide. Every full-screen flow (first run, lock screen,
+/// recovery, Lock, Open, adding a person, a person's page) is a route
+/// outside this shell. The content lifts in once when the shell appears,
+/// which is right after an unlock.
 class MainShellPage extends StatelessWidget {
-  final Widget child;
+  const MainShellPage({
+    super.key,
+    required this.child,
+    required this.preferencesService,
+  });
 
-  const MainShellPage({super.key, required this.child});
+  final Widget child;
+  final PreferencesService preferencesService;
+
+  /// The tabs' locations, in order.
+  static const tabs = [AppRouter.home, AppRouter.vaultHome, AppRouter.settings];
+
+  /// The width from which the side rail replaces the bottom bar.
+  static const double railFrom = 600;
+
+  /// The side rail's own width.
+  static const double railWidth = 232;
+
+  static int indexOf(String location) {
+    if (location.startsWith(AppRouter.vaultHome)) return 1;
+    if (location.startsWith(AppRouter.settings)) return 2;
+    return 0;
+  }
+
+  void _select(BuildContext context, int index) {
+    final location = tabs[index];
+    preferencesService.setLastSelectedTab(location);
+    context.go(location);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentLoc = GoRouterState.of(context).uri.toString();
-    final isChat = currentLoc == AppRouter.home;
-    final isVault = currentLoc.startsWith('/vault');
-    final loc = context.fuzzzyInkLocalizations;
+    final localizations = context.fuzzzyInkLocalizations;
+    final colors = context.fuzzzyColors;
+    final index = indexOf(GoRouterState.of(context).uri.path);
+    final isWide = MediaQuery.sizeOf(context).width >= railFrom;
 
-    String title = '';
-    Widget? rightAction;
+    final labels = [
+      (Icons.home_outlined, localizations.tabHome),
+      (Icons.shield_outlined, localizations.tabMySafe),
+      (Icons.settings_outlined, localizations.tabSettings),
+    ];
 
-    if (isChat) {
-      title = loc.fuzzzyInk;
-      rightAction = const BasicEncryptionNavigatorAction();
-    } else if (isVault) {
-      title = loc.fuzzyVault;
-      rightAction = BlocBuilder<VaultAuthCubit, VaultAuthState>(
-        builder: (context, state) {
-          if (state.authState == VaultAuthEnum.unlocked) {
-            return IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: context.fuzzzyColors.ink,
-              ),
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  backgroundColor: context.fuzzzyColors.ground,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  builder: (sheetContext) {
-                    return SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 4,
-                              margin: const EdgeInsets.only(bottom: 8),
-                              decoration: BoxDecoration(
-                                color: context.fuzzzyColors.inkMute,
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.lock_outline,
-                                color: context.fuzzzyColors.ink,
-                              ),
-                              title: Text(
-                                loc.vaultLockVault,
-                                style: TextStyle(
-                                  color: context.fuzzzyColors.ink,
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.of(sheetContext).pop();
-                                context.read<VaultAuthCubit>().lock();
-                              },
-                            ),
-                          ],
+    final body = LiftIn(
+      child: index == 1 ? _MySafeFrame(child: child) : child,
+    );
+
+    if (isWide) {
+      return Scaffold(
+        backgroundColor: colors.ground,
+        body: SafeArea(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: railWidth,
+                child: FuzzzySideNav(
+                  qaId: 'tabs',
+                  selectedIndex: index,
+                  onSelect: (i) => _select(context, i),
+                  header: Row(
+                    children: [
+                      const InkMark(qaId: 'rail'),
+                      SizedBox(width: context.fuzzzySpace.s),
+                      Flexible(
+                        child: Text(
+                          localizations.fuzzzyInk,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.fuzzzyTextStyles.titleS.copyWith(
+                            color: colors.ink,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                );
-              },
-            );
-          }
-          return const SizedBox();
-        },
+                    ],
+                  ),
+                  items: [
+                    for (final (icon, label) in labels)
+                      FuzzzySideNavItem(icon: Icon(icon), label: label),
+                  ],
+                ),
+              ),
+              Expanded(child: body),
+            ],
+          ),
+        ),
       );
     }
 
-    final shellAppBar = FuzzzyAppBar(
-      title: title,
-      leading: Builder(
-        builder: (context) {
-          return IconButton(
-            padding: EdgeInsets.zero,
-            icon: Icon(
-              Icons.menu,
-              color: context.fuzzzyColors.ink,
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          );
-        },
-      ),
-      actions: [
-        if (rightAction != null) rightAction,
-        const AppLockButton(),
-      ],
-    );
-
     return Scaffold(
-      backgroundColor: context.fuzzzyColors.ground,
-      drawer: const MainDrawer(),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(
-          shellAppBar.preferredSize.height + MediaQuery.of(context).padding.top,
-        ),
-        child: SafeArea(
-          child: shellAppBar,
+      backgroundColor: colors.ground,
+      body: body,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.fuzzzySpace.s,
+            0,
+            context.fuzzzySpace.s,
+            context.fuzzzySpace.s,
+          ),
+          child: FuzzzyBottomNav(
+            qaId: 'tabs',
+            selectedIndex: index,
+            onChanged: (i) => _select(context, i),
+            items: [
+              for (final (icon, label) in labels)
+                FuzzzyNavItem(icon: Icon(icon), label: label),
+            ],
+          ),
         ),
       ),
-      body: child,
+    );
+  }
+}
+
+/// My safe's header: its name and, while it is open, the lock that closes
+/// it (DESIGN.md section 4.11). The safe's own pages sit below.
+class _MySafeFrame extends StatelessWidget {
+  const _MySafeFrame({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FuzzzyAppBar(
+            qaId: 'mySafe',
+            title: localizations.tabMySafe,
+            actions: [
+              BlocBuilder<VaultAuthCubit, VaultAuthState>(
+                builder: (context, state) {
+                  if (state.authState != VaultAuthEnum.unlocked) {
+                    return const SizedBox.shrink();
+                  }
+                  return FuzzzyIconButton(
+                    icon: const Icon(Icons.lock_outline),
+                    semanticLabel: localizations.vaultLockVault,
+                    qaId: 'mySafe.lock',
+                    onPressed: () => context.read<VaultAuthCubit>().lock(),
+                  );
+                },
+              ),
+            ],
+          ),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }

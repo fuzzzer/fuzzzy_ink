@@ -92,12 +92,18 @@ class AppRouter {
         ShellRoute(
           navigatorKey: _shellNavigatorKey,
           builder: (context, state, child) {
-            return MainShellPage(child: child);
+            return MainShellPage(
+              preferencesService: sl.get<PreferencesService>(),
+              child: child,
+            );
           },
+          // The three tabs. Every other page is a full-screen route below.
           routes: [
             GoRoute(
               path: home,
-              builder: (_, __) => const ChatListPage(),
+              builder: (_, __) => HomePage(
+                onPastedText: sl.get<FuzzyLinkHandler>().openPastedText,
+              ),
             ),
             GoRoute(
               path: vaultHome,
@@ -106,6 +112,8 @@ class AppRouter {
               routes: [
                 GoRoute(
                   path: 'editor',
+                  // A full screen over the tabs.
+                  parentNavigatorKey: navigatorKey,
                   builder: (_, state) {
                     final payload = state.extra! as VaultItemEditorPagePayload;
                     return SensitiveScreen(
@@ -114,6 +122,10 @@ class AppRouter {
                   },
                 ),
               ],
+            ),
+            GoRoute(
+              path: settings,
+              builder: (_, __) => const SettingsPage(),
             ),
           ],
         ),
@@ -176,10 +188,6 @@ class AppRouter {
             final chatGeneralData = state.extra! as ChatGeneralData;
             return SafetyNumberPage(chatGeneralData: chatGeneralData);
           },
-        ),
-        GoRoute(
-          path: settings,
-          builder: (_, __) => const SettingsPage(),
         ),
         GoRoute(
           path: aboutEncryption,
