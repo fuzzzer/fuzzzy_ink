@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -254,6 +255,7 @@ void main() {
         return CryptoCoreSuccess(
           CryptoCoreReceivedFile(
             outputPath: path.join(chatFolder(), 'report.pdf'),
+            keptKey: Uint8List(0),
             handler: FileProcessingHandler(
               progressStream: job.stream,
               pause: () {},
@@ -618,6 +620,7 @@ void main() {
         CryptoCoreSuccess(
           CryptoCoreReceivedFile(
             outputPath: path.join(chatFolder(), 'report.pdf'),
+            keptKey: Uint8List(0),
             handler: _FakeHandler([
               FileProcessingProgress(progress: 1 / 3),
               FileProcessingProgress(progress: 2 / 3),
@@ -653,6 +656,7 @@ void main() {
           userFileStore.published.single,
           (
             outputPath: path.join(chatFolder(), 'report.pdf'),
+            keptKey: Uint8List(0),
             chatName: _chatName,
           ),
         );
@@ -694,6 +698,7 @@ void main() {
         CryptoCoreSuccess(
           CryptoCoreReceivedFile(
             outputPath: path.join(chatFolder(), 'report.pdf'),
+            keptKey: Uint8List(0),
             handler: _FakeHandler([
               FileProcessingProgress(progress: 0.5),
               FileProcessingProgress.completedWithFailure(
@@ -727,6 +732,7 @@ void main() {
         CryptoCoreSuccess(
           CryptoCoreReceivedFile(
             outputPath: path.join(chatFolder(), 'report.pdf'),
+            keptKey: Uint8List(0),
             handler: _FakeHandler([
               FileProcessingProgress(progress: 0.25),
               FileProcessingProgress.cancelled(),

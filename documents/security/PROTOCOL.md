@@ -716,6 +716,32 @@ boot sweep (`THREAT_MODEL.md` §2.5, R35). On Android the sealed container is ad
 share sheet under `cache/share_plus/` until the next share — sealed bytes only, as for every file the app
 shares.
 
+### 9.6 Keeping a received file
+
+The app keeps what it receives sealed, never the plaintext (2026-10-26): a received chat-mode container is
+copied into the app's private files folder (§10.1) **before** it is prepared, and the copy is what the core
+opens. Because the container's key message is spent by that first prepare (§9.4), the file key is sealed for
+the app to keep ([`api/files.rs` `keep_received_file`](../../rust/fuzzy_crypto_core/src/api/files.rs)), between
+prepare and run:
+
+| Item | Definition |
+|---|---|
+| kept key | `0x20` local seal (§6.9): `AEAD(history key of chat_id, random nonce, aad = "kept-file-key" ‖ chat_id, file_key)` — exactly 32 bytes of plaintext ([`store.rs` `seal_kept_file_key`](../../rust/fuzzy_crypto_core/src/store.rs)) |
+| stored | base64 in the file's message row (`StoredMessageData.sealedPlaintext`), beside the kept container's path |
+| reopen | `reopen_kept_file(chat_id, container, kept key)`: open the seal (tag failure, another chat's id, a history seal or a body that is not 32 bytes → `Corrupt`; a deleted chat → `UnknownChat`), peek the container's header (truncated → `Corrupt`, password mode → `UnsupportedFormat`), then run a receive ticket — chunk 0 of any container the key was not made for is `Corrupt` (the chunk AAD binds the whole header, §9.4) |
+
+Reopening spends no message and writes no state; it can run any number of times while the chat exists. The
+domain prefix keeps a history seal (`local-seal`, §10.4) from ever opening as a file key and the reverse. A
+send ticket, or a ticket already run, is `Internal` (only the receive side keeps anything; a sender keeps the
+container it produced, which it cannot open — FN-013).
+
+What this costs, stated exactly: a kept file has the **same protection as the chat's text history** (§10.4) —
+the file key is outside forward secrecy once kept, readable by whoever holds the store key (or the app-lock
+password and the OS keystore) and the kept container. Deleting the chat deletes its state file and with it the
+history key, so every kept key of that chat becomes unopenable; the app also deletes the chat's files folder
+(§10.1). No test vector covers the kept key: it is the `0x20` of §6.9 under a new AAD, and the Rust tests
+assert round trip, tamper, cross-chat, cross-domain and length rules.
+
 ---
 
 ## 10. Local state
@@ -1217,6 +1243,7 @@ a file job's terminal event carries.
 | AAD `store-key` | | [`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41) |
 | AAD `chat-state` ‖ chat id | | [`store.rs#L42`](../../rust/fuzzy_crypto_core/src/store.rs#L42) |
 | AAD `local-seal` ‖ chat id | | [`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43) |
+| AAD `kept-file-key` ‖ chat id | | [`store.rs#L510`](../../rust/fuzzy_crypto_core/src/store.rs#L510) |
 | AAD `vault-key` / `vault-item` | | [`vault.rs#L15`](../../rust/fuzzy_crypto_core/src/vault.rs#L15) |
 | `0x05` AAD length | 31 | [`passwords.rs#L18`](../../rust/fuzzy_crypto_core/src/passwords.rs#L18) |
 | store directory | `fuzzy_crypto_store` | [`store.rs#L25`](../../rust/fuzzy_crypto_core/src/store.rs#L25) |

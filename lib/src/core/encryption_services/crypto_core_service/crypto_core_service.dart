@@ -228,6 +228,11 @@ class CryptoCoreService {
   /// leave nothing consumed), so a run failure after a success here is
   /// terminal for that container — the sender has to send it again. Never
   /// call this on a file that is still being written.
+  ///
+  /// The answer carries [CryptoCoreReceivedFile.keptKey]: the file key sealed
+  /// under the chat's history key (`PROTOCOL.md` §9.6), with which
+  /// [openKeptFileForChat] opens the same container again — the app keeps
+  /// the container, never the plaintext.
   Future<CryptoCoreResponse<CryptoCoreReceivedFile>> decryptFileForChat({
     required String chatId,
     required String inputPath,
@@ -236,7 +241,10 @@ class CryptoCoreService {
     return _withCore((core) async {
       final ticket =
           await core.prepareFileReceive(chatId: chatId, input: inputPath);
-      // Before the run: a running job holds the ticket's write lock.
+      // Before the run: a running job holds the ticket's write lock, and the
+      // run consumes the key.
+      final keptKey =
+          await core.keepReceivedFile(chatId: chatId, ticket: ticket);
       final outputPath = await UserFileNames.uniqueOutputPath(
         path.join(outputDirectoryPath, await ticket.originalName()),
       );
@@ -244,7 +252,35 @@ class CryptoCoreService {
         (job) =>
             rust_files.runFileJob(ticket: ticket, output: outputPath, job: job),
       );
-      return CryptoCoreReceivedFile(outputPath: outputPath, handler: handler);
+      return CryptoCoreReceivedFile(
+        outputPath: outputPath,
+        handler: handler,
+        keptKey: keptKey,
+      );
+    });
+  }
+
+  /// Unfuzzes a container the app kept after [decryptFileForChat] again, to
+  /// [outputPath], from its [keptKey]. No message is spent and no state is
+  /// written, so this can run any number of times while the chat exists;
+  /// another chat's key is `corrupt`, a deleted chat `unknownChat`, a key
+  /// that is not this container's ends the run with `corrupt`.
+  Future<CryptoCoreResponse<FileProcessingHandler>> openKeptFileForChat({
+    required String chatId,
+    required String inputPath,
+    required Uint8List keptKey,
+    required String outputPath,
+  }) {
+    return _withCore((core) async {
+      final ticket = await core.reopenKeptFile(
+        chatId: chatId,
+        input: inputPath,
+        keptKey: keptKey,
+      );
+      return _startFileJob(
+        (job) =>
+            rust_files.runFileJob(ticket: ticket, output: outputPath, job: job),
+      );
     });
   }
 
