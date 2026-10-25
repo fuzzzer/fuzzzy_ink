@@ -52,23 +52,44 @@ class CryptoCoreService {
 
   bool get isOpen => _core != null;
 
-  Future<CryptoCoreResponse<Uint8List>> createStoreKey(String password) {
-    return _serialized(
-      () => rust_core.createStoreKey(password: password),
-    );
+  /// First run: draws the master key, the store key and a recovery key in
+  /// the core and opens the store. The answer carries the three wrapped
+  /// blobs the app keeps and the recovery key to show once. An empty
+  /// password is `wrongPassword`. Two Argon2id runs, queued.
+  Future<CryptoCoreResponse<CryptoCoreMasterKeySetup>> createMasterKey(
+    String password,
+  ) {
+    return _serialized(() async {
+      final setup = await rust_core.createMasterKey(
+        storeDir: _storeDirectoryPath,
+        password: password,
+      );
+      await _closeNow();
+      _core = setup.core;
+      return CryptoCoreMasterKeySetup(
+        passwordWrap: setup.passwordWrap,
+        recoveryWrap: setup.recoveryWrap,
+        storeWrap: setup.storeWrap,
+        recoveryKey: setup.recoveryKey,
+      );
+    });
   }
 
-  /// Opens the store under [password]. A handle that is already open stays
-  /// in place until the new one exists, then is closed — a wrong password
-  /// never closes an open store, and callers only ever see one handle.
+  /// Opens the store with the master [password]: the master key from
+  /// [passwordWrap], the store key from [storeWrap]. A handle that is
+  /// already open stays in place until the new one exists, then is closed —
+  /// a wrong password never closes an open store, and callers only ever see
+  /// one handle.
   Future<CryptoCoreResponse<void>> openStore({
-    required Uint8List wrapped,
+    required Uint8List passwordWrap,
+    required Uint8List storeWrap,
     required String password,
   }) {
     return _serialized(() async {
       final core = await rust_core.openStore(
         storeDir: _storeDirectoryPath,
-        wrapped: wrapped,
+        passwordWrap: passwordWrap,
+        storeWrap: storeWrap,
         password: password,
       );
       await _closeNow();
@@ -76,18 +97,62 @@ class CryptoCoreService {
     });
   }
 
-  Future<CryptoCoreResponse<Uint8List>> rewrapStoreKey({
-    required Uint8List wrapped,
+  /// Re-wraps the master key under [newPassword]; the answer replaces
+  /// [passwordWrap] and nothing else changes.
+  Future<CryptoCoreResponse<Uint8List>> changeMasterPassword({
+    required Uint8List passwordWrap,
     required String oldPassword,
     required String newPassword,
   }) {
     return _serialized(
-      () => rust_core.rewrapStoreKey(
-        wrapped: wrapped,
+      () => rust_core.changeMasterPassword(
+        passwordWrap: passwordWrap,
         oldPassword: oldPassword,
         newPassword: newPassword,
       ),
     );
+  }
+
+  /// The forgotten-password path: [recoveryKey] opens [recoveryWrap], the
+  /// master key is wrapped under [newPassword] (the answer, which replaces
+  /// the password wrap) and the store opens. A typo in the key is `corrupt`,
+  /// another device's key `wrongPassword`.
+  Future<CryptoCoreResponse<Uint8List>> recoverMasterPassword({
+    required Uint8List recoveryWrap,
+    required Uint8List storeWrap,
+    required String recoveryKey,
+    required String newPassword,
+  }) {
+    return _serialized(() async {
+      final recovered = await rust_core.recoverMasterPassword(
+        storeDir: _storeDirectoryPath,
+        recoveryWrap: recoveryWrap,
+        storeWrap: storeWrap,
+        recoveryKey: recoveryKey,
+        newPassword: newPassword,
+      );
+      await _closeNow();
+      _core = recovered.core;
+      return recovered.passwordWrap;
+    });
+  }
+
+  /// A new recovery key and the master key's wrap under it, once [password]
+  /// opens [passwordWrap]; storing the new wrap ends the old key.
+  Future<CryptoCoreResponse<CryptoCoreRecoveryKey>> newRecoveryKey({
+    required Uint8List passwordWrap,
+    required String password,
+  }) {
+    return _serialized(() async {
+      final created = await rust_core.newRecoveryKey(
+        passwordWrap: passwordWrap,
+        password: password,
+      );
+      return CryptoCoreRecoveryKey(
+        recoveryKey: created.recoveryKey,
+        recoveryWrap: created.recoveryWrap,
+      );
+    });
   }
 
   /// Zeroises the store key and every cached state; later calls on the core
@@ -505,23 +570,51 @@ class CryptoCoreService {
     }
   }
 
-  /// Seals [bytes] of [chatId]'s message history under that chat's own
-  /// history key (0x20 blob) for at-rest storage on this device only; a
-  /// chat the store does not know is `unknownChat`.
+  /// Seals [bytes] of one [row] of [chatId]'s message history under that
+  /// chat's own history key (0x20 blob) for at-rest storage on this device
+  /// only. [row] binds the seal to its row (the row's direction byte and
+  /// blob text), so it opens nowhere else; a chat the store does not know is
+  /// `unknownChat`.
   Future<CryptoCoreResponse<Uint8List>> sealLocal({
     required String chatId,
+    required Uint8List row,
     required Uint8List bytes,
   }) {
-    return _withCore((core) => core.sealLocal(chatId: chatId, bytes: bytes));
+    return _withCore(
+      (core) => core.sealLocal(chatId: chatId, row: row, bytes: bytes),
+    );
   }
 
-  /// Inverse of [sealLocal] for the same chat; a tampered blob or another
-  /// chat's is `corrupt`, a deleted chat's is `unknownChat`.
+  /// Inverse of [sealLocal] for the same chat and row; a tampered blob, or
+  /// one made for another chat or row, is `corrupt`, a deleted chat's is
+  /// `unknownChat`.
   Future<CryptoCoreResponse<Uint8List>> openLocal({
     required String chatId,
+    required Uint8List row,
     required Uint8List blob,
   }) {
-    return _withCore((core) => core.openLocal(chatId: chatId, blob: blob));
+    return _withCore(
+      (core) => core.openLocal(chatId: chatId, row: row, blob: blob),
+    );
+  }
+
+  /// Seals the app setting [name] under the store key, so a setting that
+  /// guards the app (the auto-lock times) cannot be changed by editing a
+  /// file. Needs the open store.
+  Future<CryptoCoreResponse<Uint8List>> sealSetting({
+    required String name,
+    required Uint8List bytes,
+  }) {
+    return _withCore((core) => core.sealSetting(name: name, bytes: bytes));
+  }
+
+  /// Inverse of [sealSetting]; a tampered blob or another store's is
+  /// `corrupt`.
+  Future<CryptoCoreResponse<Uint8List>> openSetting({
+    required String name,
+    required Uint8List blob,
+  }) {
+    return _withCore((core) => core.openSetting(name: name, blob: blob));
   }
 
   /// The chat's 60-digit safety number (12 groups of 5, space-separated)
@@ -548,9 +641,24 @@ class CryptoCoreService {
     return _withCore((core) => core.isVerified(chatId: chatId));
   }
 
-  /// Draws a fresh vault master key and wraps it under [password]: the
-  /// unlocked handle for this session plus the 0x10 blob the vault metadata
-  /// keeps. Queued with the store-key calls (one Argon2id at a time).
+  /// Draws a fresh vault key and wraps it under the master key: the master
+  /// [masterPassword] opens [passwordWrap] (one Argon2id run). The default
+  /// vault — the master password opens it. Queued with the store-key calls.
+  Future<CryptoCoreResponse<CryptoCoreVaultInit>> vaultInitWithMaster({
+    required Uint8List passwordWrap,
+    required String masterPassword,
+  }) {
+    return _serialized(() async {
+      final created = await rust_vault.vaultInitWithMaster(
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+      );
+      return CryptoCoreVaultInit(key: created.key, wrapped: created.wrapped);
+    });
+  }
+
+  /// Draws a fresh vault key and wraps it under the vault's own [password]
+  /// (a 0x10 blob).
   Future<CryptoCoreResponse<CryptoCoreVaultInit>> vaultInit(String password) {
     return _serialized(() async {
       final created = await rust_vault.vaultInit(password: password);
@@ -558,8 +666,17 @@ class CryptoCoreService {
     });
   }
 
-  /// Unwraps the vault master key from [wrapped]; a wrong password (or a
-  /// tampered blob) is `wrongPassword`.
+  /// Whether the vault whose key is [wrapped] has its own password (`true`)
+  /// or opens with the master password (`false`). Reads the blob's type
+  /// only.
+  CryptoCoreResponse<bool> vaultUsesOwnPassword(Uint8List wrapped) {
+    return _guardedSync(
+      () => rust_vault.vaultUsesOwnPassword(wrapped: wrapped),
+    );
+  }
+
+  /// Unwraps a vault key wrapped under its own password; a wrong password
+  /// (or a tampered blob) is `wrongPassword`.
   Future<CryptoCoreResponse<VaultKey>> vaultUnlock({
     required Uint8List wrapped,
     required String password,
@@ -569,9 +686,26 @@ class CryptoCoreService {
     );
   }
 
-  /// Re-wraps the same master key under [newPassword] (fresh salt and
-  /// nonce). The key does not change, so no vault item is re-encrypted; the
-  /// caller stores the returned blob in place of [wrapped].
+  /// Unwraps a vault key wrapped under the master key with the master
+  /// password; a wrong one is `wrongPassword`.
+  Future<CryptoCoreResponse<VaultKey>> vaultUnlockWithMaster({
+    required Uint8List passwordWrap,
+    required String masterPassword,
+    required Uint8List wrapped,
+  }) {
+    return _serialized(
+      () => rust_vault.vaultUnlockWithMaster(
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+        wrapped: wrapped,
+      ),
+    );
+  }
+
+  /// Re-wraps a vault key under its own password from [oldPassword] to
+  /// [newPassword] (fresh salt and nonce). The key does not change, so no
+  /// vault item is re-encrypted; the caller stores the returned blob in
+  /// place of [wrapped].
   Future<CryptoCoreResponse<Uint8List>> vaultRewrap({
     required Uint8List wrapped,
     required String oldPassword,
@@ -586,21 +720,76 @@ class CryptoCoreService {
     );
   }
 
-  /// Seals one vault item under [key] (0x20 blob, AAD `vault-item`); a
-  /// closed handle answers `storeLocked`.
-  Future<CryptoCoreResponse<Uint8List>> vaultSeal({
-    required VaultKey key,
-    required Uint8List bytes,
+  /// Gives a vault the master password opens its own [newPassword]; the
+  /// answer replaces [wrapped].
+  Future<CryptoCoreResponse<Uint8List>> vaultUseOwnPassword({
+    required Uint8List passwordWrap,
+    required String masterPassword,
+    required Uint8List wrapped,
+    required String newPassword,
   }) {
-    return _guarded(() => rust_vault.vaultSeal(key: key, bytes: bytes));
+    return _serialized(
+      () => rust_vault.vaultUseOwnPassword(
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+        wrapped: wrapped,
+        newPassword: newPassword,
+      ),
+    );
   }
 
-  /// Inverse of [vaultSeal]; a tampered or foreign blob is `corrupt`.
+  /// Puts a vault with its own password back under the master key; the
+  /// answer replaces [wrapped].
+  Future<CryptoCoreResponse<Uint8List>> vaultUseMasterPassword({
+    required Uint8List wrapped,
+    required String vaultPassword,
+    required Uint8List passwordWrap,
+    required String masterPassword,
+  }) {
+    return _serialized(
+      () => rust_vault.vaultUseMasterPassword(
+        wrapped: wrapped,
+        vaultPassword: vaultPassword,
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+      ),
+    );
+  }
+
+  /// Seals version [version] of the item [itemId] under [key] (0x20 blob,
+  /// AAD `vault-item` ‖ version ‖ id); a closed handle answers `storeLocked`.
+  Future<CryptoCoreResponse<Uint8List>> vaultSeal({
+    required VaultKey key,
+    required String itemId,
+    required int version,
+    required Uint8List bytes,
+  }) {
+    return _guarded(
+      () => rust_vault.vaultSeal(
+        key: key,
+        itemId: itemId,
+        version: version,
+        bytes: bytes,
+      ),
+    );
+  }
+
+  /// Inverse of [vaultSeal] for the same item and version; a tampered or
+  /// foreign blob — another item's or another version's — is `corrupt`.
   Future<CryptoCoreResponse<Uint8List>> vaultOpen({
     required VaultKey key,
+    required String itemId,
+    required int version,
     required Uint8List blob,
   }) {
-    return _guarded(() => rust_vault.vaultOpen(key: key, blob: blob));
+    return _guarded(
+      () => rust_vault.vaultOpen(
+        key: key,
+        itemId: itemId,
+        version: version,
+        blob: blob,
+      ),
+    );
   }
 
   /// [passwordSealText] for arbitrary bytes, as the binary 0x05 blob — the

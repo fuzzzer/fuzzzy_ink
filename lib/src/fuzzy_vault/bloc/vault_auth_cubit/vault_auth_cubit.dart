@@ -9,17 +9,32 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     required this.cryptoRepository,
     required this.vaultRepository,
     required this.biometricAuthRepository,
-  }) : super(const VaultAuthState());
+    required this.appLockThrottleRepository,
+    DateTime Function()? now,
+  })  : _now = now ?? DateTime.now,
+        super(const VaultAuthState());
+
+  /// The vault locks itself this long after it was opened. A constant of the
+  /// app, not a value in `vault.meta`, so editing a file cannot change it
+  /// (security review 2026-10-22); the whole app's auto-lock comes on top.
+  static const autoLockAfter = Duration(minutes: 5);
 
   final VaultCryptoRepository cryptoRepository;
   final VaultRepository vaultRepository;
   final BiometricAuthRepository biometricAuthRepository;
+
+  /// The app lock's wrong-password count: a vault under the master key is a
+  /// second door to the master password and shares its wait.
+  final AppLockThrottleRepository appLockThrottleRepository;
+  final DateTime Function() _now;
   Timer? _autoLockTimer;
 
   Future<void> checkVaultStatus() async {
     emit(state.copyWith(status: StateStatus.loading));
     final metaRes = await vaultRepository.getMetadata();
     if (metaRes is VaultSuccess) {
+      final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
+      final ownRes = cryptoRepository.usesOwnPassword(metadata);
       final biometricEnabled =
           await biometricAuthRepository.isEnabled(BiometricScope.vault);
       emit(
@@ -27,6 +42,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           status: StateStatus.success,
           authState: VaultAuthEnum.locked,
           biometricEnabled: biometricEnabled,
+          usesOwnPassword: ownRes is VaultSuccess<bool> && ownRes.data,
         ),
       );
     } else if (metaRes is VaultFailure<VaultMetadata> &&
@@ -45,6 +61,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
           status: StateStatus.success,
           authState: VaultAuthEnum.noVault,
           biometricEnabled: false,
+          usesOwnPassword: false,
         ),
       );
     }
@@ -118,10 +135,22 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     emit(state.copyWith(biometricEnabled: false));
   }
 
-  Future<void> createVault(String password) async {
+  /// The master password changed: a vault it opens loses its biometric
+  /// copy, which held the old password.
+  Future<void> onMasterPasswordChanged() async {
+    if (state.usesOwnPassword) return;
+    await disableBiometric();
+  }
+
+  /// By default [password] is the master password and the master key wraps
+  /// the vault key; with [ownPassword] the vault gets [password] as its own.
+  Future<void> createVault(String password, {bool ownPassword = false}) async {
     emit(state.copyWith(status: StateStatus.loading));
 
-    final initRes = await cryptoRepository.initializeVault(password);
+    final initRes = await cryptoRepository.initializeVault(
+      password,
+      ownPassword: ownPassword,
+    );
     if (initRes is VaultFailure) {
       emit(
         state.copyWith(
@@ -157,18 +186,36 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     }
 
     final masterKey = (keyRes as VaultSuccess<VaultKey>).data;
-    _startAutoLockTimer(metadata.autoLockMinutes);
+    _startAutoLockTimer();
 
     emit(
       state.copyWith(
         status: StateStatus.success,
         authState: VaultAuthEnum.unlocked,
         masterKey: masterKey,
+        usesOwnPassword: ownPassword,
       ),
     );
   }
 
+  /// [password] is the vault's own password, or the master password for a
+  /// vault under the master key — which then counts toward the app lock's
+  /// wait like any other master-password attempt.
   Future<void> unlock(String password) async {
+    final usesMaster = !state.usesOwnPassword;
+    if (usesMaster) {
+      final throttle = await appLockThrottleRepository.read();
+      if (throttle.remainingAt(_now()) > Duration.zero) {
+        emit(
+          state.copyWith(
+            status: StateStatus.failed,
+            failureType: VaultFailureType.tooManyAttempts,
+            authState: VaultAuthEnum.locked,
+          ),
+        );
+        return;
+      }
+    }
     emit(
       state.copyWith(
         status: StateStatus.loading,
@@ -192,22 +239,28 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     final keyRes = await cryptoRepository.unlock(password, metadata);
 
     if (keyRes is VaultFailure) {
+      final type = (keyRes as VaultFailure).type;
+      if (usesMaster && type == VaultFailureType.incorrectMasterPassword) {
+        final before = await appLockThrottleRepository.read();
+        await appLockThrottleRepository.save(before.afterFailure(_now()));
+      }
       emit(
         state.copyWith(
           status: StateStatus.failed,
-          failureType: (keyRes as VaultFailure).type,
+          failureType: type,
           authState: VaultAuthEnum.locked,
         ),
       );
       return;
     }
+    if (usesMaster) await appLockThrottleRepository.clear();
 
     final masterKey = (keyRes as VaultSuccess<VaultKey>).data;
 
     final updatedMetadata = metadata.copyWith(lastUnlockedAt: DateTime.now());
     await vaultRepository.saveMetadata(updatedMetadata);
 
-    _startAutoLockTimer(updatedMetadata.autoLockMinutes);
+    _startAutoLockTimer();
 
     emit(
       state.copyWith(
@@ -216,6 +269,60 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
         masterKey: masterKey,
       ),
     );
+  }
+
+  /// Gives the vault its own password; [masterPassword] proves the change.
+  /// The biometric copy held the master password and is dropped.
+  Future<VaultFailureType?> useOwnPassword({
+    required String masterPassword,
+    required String newPassword,
+  }) {
+    return _changeWrapping(
+      (metadata) => cryptoRepository.useOwnPassword(
+        masterPassword: masterPassword,
+        newPassword: newPassword,
+        metadata: metadata,
+      ),
+      usesOwnPassword: true,
+    );
+  }
+
+  /// Opens the vault with the master password again.
+  Future<VaultFailureType?> useMasterPassword({
+    required String vaultPassword,
+    required String masterPassword,
+  }) {
+    return _changeWrapping(
+      (metadata) => cryptoRepository.useMasterPassword(
+        vaultPassword: vaultPassword,
+        masterPassword: masterPassword,
+        metadata: metadata,
+      ),
+      usesOwnPassword: false,
+    );
+  }
+
+  /// `null` on success.
+  Future<VaultFailureType?> _changeWrapping(
+    Future<VaultResponse<VaultMetadata>> Function(VaultMetadata) rewrap, {
+    required bool usesOwnPassword,
+  }) async {
+    final metaRes = await vaultRepository.getMetadata();
+    if (metaRes is VaultFailure) return (metaRes as VaultFailure).type;
+    final rewrapRes =
+        await rewrap((metaRes as VaultSuccess<VaultMetadata>).data);
+    if (rewrapRes is VaultFailure) return (rewrapRes as VaultFailure).type;
+    final saveRes = await vaultRepository
+        .saveMetadata((rewrapRes as VaultSuccess<VaultMetadata>).data);
+    if (saveRes is VaultFailure) return saveRes.type;
+    await biometricAuthRepository.disable(BiometricScope.vault);
+    emit(
+      state.copyWith(
+        usesOwnPassword: usesOwnPassword,
+        biometricEnabled: false,
+      ),
+    );
+    return null;
   }
 
   Future<void> lock() async {
@@ -227,22 +334,26 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     emit(
       VaultAuthState(
         status: StateStatus.success,
-        authState: VaultAuthEnum.locked,
+        authState: state.authState == VaultAuthEnum.noVault ||
+                state.authState == VaultAuthEnum.moveUnfinished ||
+                state.authState == VaultAuthEnum.initial
+            ? state.authState
+            : VaultAuthEnum.locked,
         biometricEnabled: state.biometricEnabled,
+        usesOwnPassword: state.usesOwnPassword,
       ),
     );
   }
 
-  /// Zeroises the master key in the core and frees the handle.
+  /// Zeroises the vault key in the core and frees the handle.
   Future<void> _closeKey(VaultKey key) async {
     await key.close();
     key.dispose();
   }
 
-  void _startAutoLockTimer(int minutes) {
+  void _startAutoLockTimer() {
     _autoLockTimer?.cancel();
-    if (minutes <= 0) return;
-    _autoLockTimer = Timer(Duration(minutes: minutes), lock);
+    _autoLockTimer = Timer(autoLockAfter, lock);
   }
 
   @override

@@ -2,18 +2,31 @@ use crate::api::core::CryptoCore;
 use crate::error::CoreError;
 
 impl CryptoCore {
-    /// Seals `bytes` of `chat_id`'s message history (F2-8) under that chat's
-    /// own history key (owner decision D-1, F2-12): a 0x20 blob with a fresh
-    /// random nonce and AAD `local-seal` ‖ chat id. A chat the store does not
-    /// know is `UnknownChat`.
-    pub fn seal_local(&self, chat_id: String, bytes: Vec<u8>) -> Result<Vec<u8>, CoreError> {
-        self.opened()?.seal_local(&chat_id, &bytes)
+    /// Seals `bytes` of one row of `chat_id`'s message history (F2-8) under
+    /// that chat's own history key (owner decision D-1, F2-12): a 0x20 blob
+    /// with a fresh random nonce and AAD `local-seal` ‖ chat id ‖ `row`. The
+    /// app passes the row's direction byte and `Fuzz/` blob text as `row`, so
+    /// a seal opens only on the row it was made for. A chat the store does
+    /// not know is `UnknownChat`.
+    pub fn seal_local(
+        &self,
+        chat_id: String,
+        row: Vec<u8>,
+        bytes: Vec<u8>,
+    ) -> Result<Vec<u8>, CoreError> {
+        self.opened()?.seal_local(&chat_id, &row, &bytes)
     }
 
-    /// Inverse of [`CryptoCore::seal_local`] for the same chat; a tampered
-    /// blob or another chat's is `Corrupt`, a deleted chat's is `UnknownChat`.
-    pub fn open_local(&self, chat_id: String, blob: Vec<u8>) -> Result<Vec<u8>, CoreError> {
-        self.opened()?.open_local(&chat_id, &blob)
+    /// Inverse of [`CryptoCore::seal_local`] for the same chat and row; a
+    /// tampered blob, another chat's or another row's is `Corrupt`, a deleted
+    /// chat's is `UnknownChat`.
+    pub fn open_local(
+        &self,
+        chat_id: String,
+        row: Vec<u8>,
+        blob: Vec<u8>,
+    ) -> Result<Vec<u8>, CoreError> {
+        self.opened()?.open_local(&chat_id, &row, &blob)
     }
 }
 
@@ -23,41 +36,36 @@ mod tests {
     use std::path::PathBuf;
 
     use super::*;
-    use crate::api::core::{create_store_key, open_store};
+    use crate::store::random_array;
     use crate::store::test_support::temp_dir;
 
     const CHAT_X: &str = "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d";
     const CHAT_Y: &str = "0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d";
+    const ROW: &[u8] = b"\x01Fuzz/row";
 
     /// One device: its own store directory and store key.
     struct Device {
         dir: PathBuf,
-        wrapped: Vec<u8>,
+        store_key: [u8; 32],
         core: CryptoCore,
     }
 
     impl Device {
         fn new() -> Self {
             let dir = temp_dir();
-            let wrapped = create_store_key("".into()).unwrap();
-            let core = open_store(
-                dir.to_string_lossy().into_owned(),
-                wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
-            Self { dir, wrapped, core }
+            let store_key = random_array().unwrap();
+            let core = CryptoCore::open_for_tests(&dir, store_key);
+            Self {
+                dir,
+                store_key,
+                core,
+            }
         }
 
         /// Drops the handle and opens the same store again (clears the cache).
         fn reopen(&mut self) {
             self.core.close();
-            self.core = open_store(
-                self.dir.to_string_lossy().into_owned(),
-                self.wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
+            self.core = CryptoCore::open_for_tests(&self.dir, self.store_key);
         }
 
         fn history_key(&self, chat_id: &str) -> [u8; 32] {
@@ -90,39 +98,45 @@ mod tests {
 
         let blob = device
             .core
-            .seal_local(CHAT_X.into(), b"history".to_vec())
+            .seal_local(CHAT_X.into(), ROW.to_vec(), b"history".to_vec())
             .unwrap();
         assert_eq!(&blob[..6], b"FUZZ\x01\x20");
         assert_eq!(
-            device.core.open_local(CHAT_X.into(), blob.clone()).unwrap(),
+            device
+                .core
+                .open_local(CHAT_X.into(), ROW.to_vec(), blob.clone())
+                .unwrap(),
             b"history"
         );
 
         let mut tampered = blob;
         tampered[40] ^= 1;
         assert_eq!(
-            device.core.open_local(CHAT_X.into(), tampered).unwrap_err(),
+            device
+                .core
+                .open_local(CHAT_X.into(), ROW.to_vec(), tampered)
+                .unwrap_err(),
             CoreError::Corrupt
         );
         // A chat the store does not know cannot seal or open anything.
         assert_eq!(
             device
                 .core
-                .seal_local(CHAT_Y.into(), b"x".to_vec())
+                .seal_local(CHAT_Y.into(), ROW.to_vec(), b"x".to_vec())
                 .unwrap_err(),
             CoreError::UnknownChat
         );
         assert_eq!(
             device
                 .core
-                .open_local(CHAT_Y.into(), vec![0; 60])
+                .open_local(CHAT_Y.into(), ROW.to_vec(), vec![0; 60])
                 .unwrap_err(),
             CoreError::UnknownChat
         );
         assert_eq!(
             device
                 .core
-                .seal_local("../x".into(), b"x".to_vec())
+                .seal_local("../x".into(), ROW.to_vec(), b"x".to_vec())
                 .unwrap_err(),
             CoreError::Corrupt
         );
@@ -157,22 +171,50 @@ mod tests {
 
         let sealed_x = a
             .core
-            .seal_local(CHAT_X.into(), b"for X only".to_vec())
+            .seal_local(CHAT_X.into(), ROW.to_vec(), b"for X only".to_vec())
             .unwrap();
         assert_eq!(
-            a.core.open_local(CHAT_X.into(), sealed_x.clone()).unwrap(),
+            a.core
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed_x.clone())
+                .unwrap(),
             b"for X only"
         );
         // Another chat on the same device: another key (and another AAD).
         assert_eq!(
             a.core
-                .open_local(CHAT_Y.into(), sealed_x.clone())
+                .open_local(CHAT_Y.into(), ROW.to_vec(), sealed_x.clone())
                 .unwrap_err(),
             CoreError::Corrupt
         );
         // The same chat id on another device: another key.
         assert_eq!(
-            other.core.open_local(CHAT_X.into(), sealed_x).unwrap_err(),
+            other
+                .core
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed_x)
+                .unwrap_err(),
+            CoreError::Corrupt
+        );
+    }
+
+    /// Security review 2026-10-22: a seal copied onto another row of the same
+    /// chat does not open there.
+    #[test]
+    fn cross_row_seal_rejected() {
+        let a = invited(CHAT_X);
+        let sealed = a
+            .core
+            .seal_local(CHAT_X.into(), ROW.to_vec(), b"row one".to_vec())
+            .unwrap();
+        assert_eq!(
+            a.core
+                .open_local(CHAT_X.into(), b"\x00Fuzz/row".to_vec(), sealed.clone())
+                .unwrap_err(),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            a.core
+                .open_local(CHAT_X.into(), b"\x01Fuzz/other".to_vec(), sealed)
+                .unwrap_err(),
             CoreError::Corrupt
         );
     }
@@ -183,13 +225,15 @@ mod tests {
         let key = a.history_key(CHAT_X);
         let sealed = a
             .core
-            .seal_local(CHAT_X.into(), b"before the restart".to_vec())
+            .seal_local(CHAT_X.into(), ROW.to_vec(), b"before the restart".to_vec())
             .unwrap();
 
         a.reopen();
         assert_eq!(a.history_key(CHAT_X), key);
         assert_eq!(
-            a.core.open_local(CHAT_X.into(), sealed.clone()).unwrap(),
+            a.core
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed.clone())
+                .unwrap(),
             b"before the restart"
         );
 
@@ -208,7 +252,9 @@ mod tests {
         a.reopen();
         assert_eq!(a.history_key(CHAT_X), key);
         assert_eq!(
-            a.core.open_local(CHAT_X.into(), sealed).unwrap(),
+            a.core
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed)
+                .unwrap(),
             b"before the restart"
         );
     }
@@ -218,13 +264,13 @@ mod tests {
         let mut a = invited(CHAT_X);
         let sealed = a
             .core
-            .seal_local(CHAT_X.into(), b"gone with the chat".to_vec())
+            .seal_local(CHAT_X.into(), ROW.to_vec(), b"gone with the chat".to_vec())
             .unwrap();
 
         a.core.delete_chat(CHAT_X.into()).unwrap();
         assert_eq!(
             a.core
-                .open_local(CHAT_X.into(), sealed.clone())
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed.clone())
                 .unwrap_err(),
             CoreError::UnknownChat
         );
@@ -232,7 +278,9 @@ mod tests {
         // seals stay unreadable by design.
         a.core.create_invitation(CHAT_X.into()).unwrap();
         assert_eq!(
-            a.core.open_local(CHAT_X.into(), sealed).unwrap_err(),
+            a.core
+                .open_local(CHAT_X.into(), ROW.to_vec(), sealed)
+                .unwrap_err(),
             CoreError::Corrupt
         );
     }

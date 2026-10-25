@@ -20,6 +20,7 @@ class VaultAuthState {
     this.failureType,
     this.biometricEnabled = false,
     this.biometricInvalidated = false,
+    this.usesOwnPassword = false,
   });
 
   final StateStatus status;
@@ -29,6 +30,9 @@ class VaultAuthState {
   final bool biometricEnabled;
   final bool biometricInvalidated;
 
+  /// The vault has its own password; otherwise the master password opens it.
+  final bool usesOwnPassword;
+
   VaultAuthState copyWith({
     StateStatus? status,
     VaultAuthEnum? authState,
@@ -36,6 +40,7 @@ class VaultAuthState {
     VaultFailureType? failureType,
     bool? biometricEnabled,
     bool? biometricInvalidated,
+    bool? usesOwnPassword,
   }) {
     return VaultAuthState(
       status: status ?? this.status,
@@ -45,6 +50,7 @@ class VaultAuthState {
           (status == StateStatus.success ? null : this.failureType),
       biometricEnabled: biometricEnabled ?? this.biometricEnabled,
       biometricInvalidated: biometricInvalidated ?? false,
+      usesOwnPassword: usesOwnPassword ?? this.usesOwnPassword,
     );
   }
 }

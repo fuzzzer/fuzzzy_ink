@@ -33,7 +33,6 @@ class VaultRepository {
           verificationToken: jsonMap['verificationToken'] as String,
           createdAt: DateTime.parse(jsonMap['createdAt'] as String),
           lastUnlockedAt: DateTime.parse(jsonMap['lastUnlockedAt'] as String),
-          autoLockMinutes: jsonMap['autoLockMinutes'] as int,
           customDirectoryPath: jsonMap['customDirectoryPath'] as String?,
         ),
       );
@@ -54,7 +53,6 @@ class VaultRepository {
         'verificationToken': metadata.verificationToken,
         'createdAt': metadata.createdAt.toIso8601String(),
         'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
-        'autoLockMinutes': metadata.autoLockMinutes,
         'customDirectoryPath': metadata.customDirectoryPath,
       };
       final bytes = utf8.encode(jsonEncode(jsonMap));
@@ -110,6 +108,8 @@ class VaultRepository {
       final encryptedRes = await cryptoRepository.encryptContent(
         content,
         masterKey,
+        itemId: item.metadata.id,
+        version: item.metadata.contentVersion,
         customPassword: customPassword,
       );
 
@@ -164,20 +164,31 @@ class VaultRepository {
         );
       }
 
-      final metadata = VaultItemMetadata.fromStored(storedItem);
+      var metadata = VaultItemMetadata.fromStored(storedItem);
 
       final decryptedRes = await cryptoRepository.decryptContent(
         Uint8List.fromList(encryptedBytes),
         masterKey,
         metadata.type,
+        itemId: metadata.id,
+        version: metadata.contentVersion,
         customPassword: customPassword,
       );
 
-      if (decryptedRes is VaultFailure) {
+      if (decryptedRes is VaultFailure<VaultDecryptedContent>) {
         return VaultFailure(decryptedRes.type, message: decryptedRes.message);
       }
 
-      final content = (decryptedRes as VaultSuccess<dynamic>).data;
+      final decrypted =
+          (decryptedRes as VaultSuccess<VaultDecryptedContent>).data;
+      final content = decrypted.content;
+      if (decrypted.version != metadata.contentVersion) {
+        // The file was written and the app stopped before the index caught
+        // up: the index learns the version the file carries.
+        storedItem.contentVersion = decrypted.version;
+        await itemDataSource.saveItem(storedItem);
+        metadata = metadata.copyWith(contentVersion: decrypted.version);
+      }
 
       if (metadata.type == VaultItemType.password) {
         return VaultSuccess(
@@ -220,9 +231,12 @@ class VaultRepository {
         return const VaultFailure(VaultFailureType.itemNotFound);
       }
 
+      // One past the version the index holds, whatever the caller sent: the
+      // sealed file is bound to this number, and [getItem] accepts a file
+      // exactly one ahead of its row.
       final updatedMetadata = item.metadata.copyWith(
         updatedAt: DateTime.now(),
-        contentVersion: item.metadata.contentVersion + 1,
+        contentVersion: storedItem.contentVersion + 1,
       );
 
       final content = updatedMetadata.type == VaultItemType.password
@@ -234,6 +248,8 @@ class VaultRepository {
       final encryptedRes = await cryptoRepository.encryptContent(
         content,
         masterKey,
+        itemId: updatedMetadata.id,
+        version: updatedMetadata.contentVersion,
         customPassword: customPassword,
       );
 
@@ -243,6 +259,8 @@ class VaultRepository {
       }
       final encryptedBytes = (encryptedRes as VaultSuccess<Uint8List>).data;
 
+      // The file first, then the index: a stop in between leaves the file
+      // one version ahead, which [getItem] accepts and records.
       await fileDataSource.writeItemAtomic(updatedMetadata.id, encryptedBytes);
 
       storedItem

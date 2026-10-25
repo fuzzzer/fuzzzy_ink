@@ -53,7 +53,7 @@ void main() {
     when(() => linkService.onLinkReceived).thenAnswer((_) => links.stream);
     when(() => authStore.state).thenReturn(
       const FuzzyAuthState.initial()
-          .copyWith(status: AuthStateStatus.noAuthRequired),
+          .copyWith(status: AuthStateStatus.authenticated),
     );
     when(() => cryptoCoreService.peekChatId(_invitation))
         .thenReturn(const CryptoCoreSuccess(_chatId));

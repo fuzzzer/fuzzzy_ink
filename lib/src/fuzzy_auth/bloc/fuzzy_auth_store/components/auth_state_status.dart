@@ -1,19 +1,27 @@
 enum AuthStateStatus {
-  /// Boot: the store is still opening. No access yet, like [locked].
+  /// Boot: the secure storage is still being read. No access, like [locked].
   initial,
 
-  noAuthRequired,
+  /// No master password yet: the first run sets one. No access.
+  setupRequired,
 
   locked,
 
   unlocking,
 
-  authenticated;
+  authenticated,
+
+  /// The secure storage could not be read. The app fails closed: no access
+  /// until a retry reads it.
+  storageUnavailable;
 
   bool get isInitial => this == initial;
-  bool get isNoAuthRequired => this == noAuthRequired;
+  bool get isSetupRequired => this == setupRequired;
   bool get isLocked => this == locked;
   bool get isUnlocking => this == unlocking;
   bool get isAuthenticated => this == authenticated;
-  bool get hasAccess => this == authenticated || this == noAuthRequired;
+  bool get isStorageUnavailable => this == storageUnavailable;
+
+  /// Only an unlocked store gives access; there is no "lock off" state.
+  bool get hasAccess => this == authenticated;
 }

@@ -85,6 +85,19 @@ class MessageDataRepository {
     await localDataSource.deleteAllMessagesForChat(chatId);
   }
 
+  /// What a seal is bound to: the row's direction and its own `Fuzz/` blob
+  /// text. A seal copied onto another row, or a row flipped between sent
+  /// and received, no longer opens (security review 2026-10-22).
+  static Uint8List _rowBinding({
+    required bool isSent,
+    required String encryptedMessage,
+  }) {
+    return Uint8List.fromList([
+      if (isSent) 1 else 0,
+      ...utf8.encode(encryptedMessage),
+    ]);
+  }
+
   /// A file row carries no text seal: a received file row keeps its sealed
   /// file key there instead (`PROTOCOL.md` §9.6). A text row whose seal
   /// cannot be made is still written, with the warning logged, so the blob is
@@ -94,6 +107,10 @@ class MessageDataRepository {
 
     final sealRes = await cryptoCoreService.sealLocal(
       chatId: message.chatId,
+      row: _rowBinding(
+        isSent: message.isSent,
+        encryptedMessage: message.encryptedMessage,
+      ),
       bytes: Uint8List.fromList(utf8.encode(message.decryptedMessage)),
     );
 
@@ -146,6 +163,10 @@ class MessageDataRepository {
 
     final openRes = await cryptoCoreService.openLocal(
       chatId: stored.chatId,
+      row: _rowBinding(
+        isSent: stored.isSent,
+        encryptedMessage: stored.encryptedMessage,
+      ),
       blob: sealed,
     );
 

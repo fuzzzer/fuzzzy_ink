@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
+/// The master password's settings: change it, the biometric shortcut, the
+/// recovery key, the auto-lock times, and which password opens the vault.
+/// The master password itself cannot be switched off.
 class FuzzyUserAuthPage extends StatelessWidget {
   const FuzzyUserAuthPage({super.key});
 
@@ -14,7 +17,7 @@ class FuzzyUserAuthPage extends StatelessWidget {
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
-      ),
+      )..loadRecoveryKeyStatus(),
       child: const _FuzzyUserAuthPageContent(),
     );
   }
@@ -32,16 +35,22 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _oldPasswordController = TextEditingController();
+  final _recoveryPasswordController = TextEditingController();
   final _vaultPasswordController = TextEditingController();
-  bool _isPasswordVisible = false;
   bool _isVaultPasswordVisible = false;
-  bool _showMismatchError = false;
 
   @override
   void initState() {
     super.initState();
-    // The strength meter follows the new password as it is typed.
-    _passwordController.addListener(() => setState(() {}));
+    // The strength meter and the buttons follow the fields as they are typed.
+    for (final controller in [
+      _passwordController,
+      _confirmPasswordController,
+      _oldPasswordController,
+      _recoveryPasswordController,
+    ]) {
+      controller.addListener(() => setState(() {}));
+    }
   }
 
   @override
@@ -49,6 +58,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _oldPasswordController.dispose();
+    _recoveryPasswordController.dispose();
     _vaultPasswordController.dispose();
     super.dispose();
   }
@@ -57,61 +67,22 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     _passwordController.clear();
     _confirmPasswordController.clear();
     _oldPasswordController.clear();
-    setState(() {
-      _showMismatchError = false;
-    });
-  }
-
-  void _togglePasswordVisibility() {
-    setState(() => _isPasswordVisible = !_isPasswordVisible);
-  }
-
-  void _onEnableAuth() {
-    final password = _passwordController.text;
-    final confirm = _confirmPasswordController.text;
-
-    if (password.isEmpty) return;
-
-    if (password != confirm) {
-      setState(() => _showMismatchError = true);
-      return;
-    }
-
-    setState(() => _showMismatchError = false);
-    context.read<FuzzyUserAuthPreferencesCubit>().enableAuth(password);
+    _recoveryPasswordController.clear();
   }
 
   void _onChangePassword() {
     final oldPassword = _oldPasswordController.text;
-    final newPassword = _passwordController.text;
-    final confirm = _confirmPasswordController.text;
-
-    if (oldPassword.isEmpty || newPassword.isEmpty) return;
-
-    if (newPassword != confirm) {
-      setState(() => _showMismatchError = true);
+    if (oldPassword.isEmpty ||
+        !NewPasswordFields.isReady(
+          password: _passwordController.text,
+          confirm: _confirmPasswordController.text,
+        )) {
       return;
     }
-
-    setState(() => _showMismatchError = false);
     context.read<FuzzyUserAuthPreferencesCubit>().changePassword(
           oldPassword: oldPassword,
-          newPassword: newPassword,
+          newPassword: _passwordController.text,
         );
-  }
-
-  void _onDisableAuth() {
-    final oldPassword = _oldPasswordController.text;
-    if (oldPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(currentContextLocalization.chatAuthEnterPassword),
-        ),
-      );
-      return;
-    }
-
-    context.read<FuzzyUserAuthPreferencesCubit>().disableAuth(oldPassword);
   }
 
   void _onEnableBiometric() {
@@ -131,6 +102,12 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
 
   void _onDisableBiometric() {
     context.read<FuzzyUserAuthPreferencesCubit>().disableBiometric();
+  }
+
+  void _onNewRecoveryKey() {
+    final password = _recoveryPasswordController.text;
+    if (password.isEmpty) return;
+    context.read<FuzzyUserAuthPreferencesCubit>().newRecoveryKey(password);
   }
 
   void _toggleVaultPasswordVisibility() {
@@ -176,35 +153,35 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
     final theme = Theme.of(context);
     final fuzzzyColors = context.fuzzzyColors;
     final localizations = context.fuzzzyInkLocalizations;
-    final authStatus = context.watch<FuzzyAuthStore>().state.status;
-    final isAuthEnabled = authStatus.isAuthenticated || authStatus.isLocked;
-    final isNewPasswordStrongEnough = context
-        .read<FuzzyUserAuthPreferencesCubit>()
-        .isStrongEnough(_passwordController.text);
 
     return BlocConsumer<FuzzyUserAuthPreferencesCubit,
         FuzzyUserAuthPreferencesState>(
       listener: (context, state) {
         if (state.activationStatus == StateStatus.success) {
-          _clearFields();
-          final String message;
+          final String? message;
           switch (state.lastAction) {
-            case AuthPreferencesAction.enable:
-              message = localizations.chatAuthEnabled;
-            case AuthPreferencesAction.disable:
-              message = localizations.chatAuthDisabled;
             case AuthPreferencesAction.changePassword:
+              _clearFields();
+              context.read<VaultAuthCubit>().onMasterPasswordChanged();
               message = localizations.chatAuthPasswordChanged;
             case AuthPreferencesAction.enableBiometric:
+              _clearFields();
               message = localizations.chatAuthBiometricEnabled;
+            case AuthPreferencesAction.newRecoveryKey:
+              _clearFields();
+              message = null;
+            case AuthPreferencesAction.saveRecoveryKey:
+              message = localizations.recoveryKeyIsSet;
             case AuthPreferencesAction.disableBiometric:
-              message = localizations.chatAuthDisabled;
+            case AuthPreferencesAction.skipRecoveryKey:
             case AuthPreferencesAction.none:
-              message = localizations.chatAuthEnabled;
+              message = null;
           }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          );
+          if (message != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          }
         } else if (state.activationStatus == StateStatus.failed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -217,6 +194,8 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
       },
       builder: (context, state) {
         final isLoading = state.activationStatus == StateStatus.loading;
+        final pendingRecoveryKey = state.pendingRecoveryKey;
+        final cubit = context.read<FuzzyUserAuthPreferencesCubit>();
 
         return Stack(
           children: [
@@ -224,8 +203,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
               body: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child:
-                        FuzzzyAppBar(title: localizations.chatAuthSetupTitle),
+                    child: FuzzzyAppBar(title: localizations.masterPassword),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -243,37 +221,38 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          if (isAuthEnabled) ...[
-                            _ChangePasswordSection(
-                              passwordController: _passwordController,
-                              confirmPasswordController:
-                                  _confirmPasswordController,
-                              oldPasswordController: _oldPasswordController,
-                              isPasswordVisible: _isPasswordVisible,
-                              showMismatchError: _showMismatchError,
-                              isPasswordStrongEnough: isNewPasswordStrongEnough,
-                              onTogglePasswordVisibility:
-                                  _togglePasswordVisibility,
-                              onChangePassword: _onChangePassword,
-                              onDisableAuth: _onDisableAuth,
+                          _ChangePasswordSection(
+                            passwordController: _passwordController,
+                            confirmPasswordController:
+                                _confirmPasswordController,
+                            oldPasswordController: _oldPasswordController,
+                            onChangePassword: _onChangePassword,
+                          ),
+                          const SizedBox(height: 16),
+                          _BiometricSection(
+                            onEnableBiometric: _onEnableBiometric,
+                            onDisableBiometric: _onDisableBiometric,
+                          ),
+                          const SizedBox(height: 32),
+                          _SectionTitle(localizations.recoveryKeyTitle),
+                          const SizedBox(height: 8),
+                          if (pendingRecoveryKey != null)
+                            RecoveryKeyPanel(
+                              recoveryKey: pendingRecoveryKey,
+                              busy: isLoading,
+                              onConfirmed: cubit.confirmRecoveryKeySaved,
+                              onSkipped: cubit.skipRecoveryKey,
+                            )
+                          else
+                            _RecoveryKeySection(
+                              hasRecoveryKey: state.hasRecoveryKey,
+                              passwordController: _recoveryPasswordController,
+                              onCreate: isLoading ? null : _onNewRecoveryKey,
                             ),
-                            const SizedBox(height: 16),
-                            _BiometricSection(
-                              onEnableBiometric: _onEnableBiometric,
-                              onDisableBiometric: _onDisableBiometric,
-                            ),
-                          ] else
-                            _SetupPasswordSection(
-                              passwordController: _passwordController,
-                              confirmPasswordController:
-                                  _confirmPasswordController,
-                              isPasswordVisible: _isPasswordVisible,
-                              showMismatchError: _showMismatchError,
-                              isPasswordStrongEnough: isNewPasswordStrongEnough,
-                              onTogglePasswordVisibility:
-                                  _togglePasswordVisibility,
-                              onEnableAuth: _onEnableAuth,
-                            ),
+                          const SizedBox(height: 32),
+                          _SectionTitle(localizations.autoLockTitle),
+                          const SizedBox(height: 8),
+                          const _AutoLockSection(),
                           const SizedBox(height: 32),
                           Divider(
                             color: fuzzzyColors.focus.withValues(alpha: 0.2),
@@ -293,6 +272,8 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                               color: fuzzzyColors.inkMute,
                             ),
                           ),
+                          const SizedBox(height: 16),
+                          const VaultPasswordModeSection(),
                           const SizedBox(height: 16),
                           _VaultBiometricSection(
                             passwordController: _vaultPasswordController,
@@ -320,9 +301,7 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
                       const CircularProgressIndicator(),
                       const SizedBox(height: 16),
                       Text(
-                        state.lastAction == AuthPreferencesAction.changePassword
-                            ? localizations.chatAuthResecuringKeys
-                            : localizations.chatAuthMigratingKeys,
+                        localizations.chatAuthResecuringKeys,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: context.fuzzzyColors.ink,
                         ),
@@ -338,73 +317,17 @@ class _FuzzyUserAuthPageContentState extends State<_FuzzyUserAuthPageContent> {
   }
 }
 
-class _SetupPasswordSection extends StatelessWidget {
-  const _SetupPasswordSection({
-    required this.passwordController,
-    required this.confirmPasswordController,
-    required this.isPasswordVisible,
-    required this.showMismatchError,
-    required this.isPasswordStrongEnough,
-    required this.onTogglePasswordVisibility,
-    required this.onEnableAuth,
-  });
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.text);
 
-  final TextEditingController passwordController;
-  final TextEditingController confirmPasswordController;
-  final bool isPasswordVisible;
-  final bool showMismatchError;
-  final bool isPasswordStrongEnough;
-  final VoidCallback onTogglePasswordVisibility;
-  final VoidCallback onEnableAuth;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    final localizations = context.fuzzzyInkLocalizations;
-
-    return BlocBuilder<FuzzyUserAuthPreferencesCubit,
-        FuzzyUserAuthPreferencesState>(
-      builder: (context, state) {
-        final isLoading = state.activationStatus == StateStatus.loading;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            FuzzzyTextField(
-              controller: passwordController,
-              label: localizations.chatAuthPassword,
-              obscure: !isPasswordVisible,
-              suffix: _PasswordVisibilityToggle(
-                isVisible: isPasswordVisible,
-                onPressed: onTogglePasswordVisibility,
-              ),
-            ),
-            _NewPasswordStrength(
-              password: passwordController.text,
-              isStrongEnough: isPasswordStrongEnough,
-            ),
-            const SizedBox(height: 12),
-            FuzzzyTextField(
-              controller: confirmPasswordController,
-              label: localizations.chatAuthConfirmPassword,
-              obscure: !isPasswordVisible,
-              onSubmitted: (_) => onEnableAuth(),
-            ),
-            if (showMismatchError) ...[
-              const SizedBox(height: 8),
-              Text(
-                localizations.chatAuthPasswordsDoNotMatch,
-                style: TextStyle(color: context.fuzzzyColors.destructiveText),
-              ),
-            ],
-            const SizedBox(height: 24),
-            FuzzzyButton(
-              label: localizations.chatAuthEnableProtection,
-              onPressed:
-                  !isLoading && isPasswordStrongEnough ? onEnableAuth : null,
-            ),
-          ],
-        );
-      },
+    return Text(
+      text,
+      style: context.fuzzzyTextStyles.titleM
+          .copyWith(color: context.fuzzzyColors.ink),
     );
   }
 }
@@ -414,23 +337,13 @@ class _ChangePasswordSection extends StatelessWidget {
     required this.passwordController,
     required this.confirmPasswordController,
     required this.oldPasswordController,
-    required this.isPasswordVisible,
-    required this.showMismatchError,
-    required this.isPasswordStrongEnough,
-    required this.onTogglePasswordVisibility,
     required this.onChangePassword,
-    required this.onDisableAuth,
   });
 
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final TextEditingController oldPasswordController;
-  final bool isPasswordVisible;
-  final bool showMismatchError;
-  final bool isPasswordStrongEnough;
-  final VoidCallback onTogglePasswordVisibility;
   final VoidCallback onChangePassword;
-  final VoidCallback onDisableAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -441,59 +354,39 @@ class _ChangePasswordSection extends StatelessWidget {
         FuzzyUserAuthPreferencesState>(
       builder: (context, state) {
         final isLoading = state.activationStatus == StateStatus.loading;
+        final isReady = oldPasswordController.text.isNotEmpty &&
+            NewPasswordFields.isReady(
+              password: passwordController.text,
+              confirm: confirmPasswordController.text,
+            );
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _StatusBadge(
-              text: localizations.chatAuthEnabled,
+              text: localizations.masterPasswordIsOn,
               color: fuzzzyColors.focus,
             ),
             const SizedBox(height: 24),
             FuzzzyTextField(
               controller: oldPasswordController,
               label: localizations.chatAuthCurrentPassword,
-              obscure: !isPasswordVisible,
+              obscure: true,
+              qaId: 'auth.currentPassword',
             ),
             const SizedBox(height: 12),
-            FuzzzyTextField(
-              controller: passwordController,
+            NewPasswordFields(
+              passwordController: passwordController,
+              confirmController: confirmPasswordController,
               label: localizations.chatAuthNewPassword,
-              obscure: !isPasswordVisible,
-              suffix: _PasswordVisibilityToggle(
-                isVisible: isPasswordVisible,
-                onPressed: onTogglePasswordVisibility,
-              ),
+              onSubmitted: onChangePassword,
+              qaId: 'auth.newPassword',
             ),
-            _NewPasswordStrength(
-              password: passwordController.text,
-              isStrongEnough: isPasswordStrongEnough,
-            ),
-            const SizedBox(height: 12),
-            FuzzzyTextField(
-              controller: confirmPasswordController,
-              label: localizations.chatAuthConfirmPassword,
-              obscure: !isPasswordVisible,
-              onSubmitted: (_) => onChangePassword(),
-            ),
-            if (showMismatchError) ...[
-              const SizedBox(height: 8),
-              Text(
-                localizations.chatAuthPasswordsDoNotMatch,
-                style: TextStyle(color: context.fuzzzyColors.destructiveText),
-              ),
-            ],
             const SizedBox(height: 24),
             FuzzzyButton(
               label: localizations.chatAuthSetPassword,
-              onPressed: !isLoading && isPasswordStrongEnough
-                  ? onChangePassword
-                  : null,
-            ),
-            const SizedBox(height: 12),
-            FuzzzyButton(
-              label: localizations.chatAuthDisableProtection,
-              onPressed: !isLoading ? onDisableAuth : null,
+              qaId: 'auth.changePassword',
+              onPressed: !isLoading && isReady ? onChangePassword : null,
             ),
           ],
         );
@@ -502,37 +395,125 @@ class _ChangePasswordSection extends StatelessWidget {
   }
 }
 
-/// The vault's strength meter under a new app-lock password, and why the
-/// button stays off until the password reaches "good".
-class _NewPasswordStrength extends StatelessWidget {
-  const _NewPasswordStrength({
-    required this.password,
-    required this.isStrongEnough,
+class _RecoveryKeySection extends StatelessWidget {
+  const _RecoveryKeySection({
+    required this.hasRecoveryKey,
+    required this.passwordController,
+    required this.onCreate,
   });
 
-  final String password;
-  final bool isStrongEnough;
+  final bool? hasRecoveryKey;
+  final TextEditingController passwordController;
+  final VoidCallback? onCreate;
 
   @override
   Widget build(BuildContext context) {
-    if (password.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: EdgeInsets.only(top: context.fuzzzySpace.m),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          PasswordStrengthIndicator(password: password),
-          if (!isStrongEnough) ...[
-            SizedBox(height: context.fuzzzySpace.s),
-            Text(
-              context.fuzzzyInkLocalizations.chatAuthPasswordTooWeak,
-              style: context.fuzzzyTextStyles.bodyS.copyWith(
-                color: context.fuzzzyColors.destructiveText,
-              ),
+    final localizations = context.fuzzzyInkLocalizations;
+    final colors = context.fuzzzyColors;
+    final hasKey = hasRecoveryKey;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hasKey != null)
+          Text(
+            hasKey
+                ? localizations.recoveryKeyIsSet
+                : localizations.recoveryKeyNotSet,
+            key: const ValueKey('auth.recoveryKeyStatus'),
+            style: context.fuzzzyTextStyles.bodyS.copyWith(
+              color: hasKey ? colors.inkMute : colors.destructiveText,
             ),
+          ),
+        const SizedBox(height: 8),
+        Text(
+          localizations.recoveryKeyCreateNewDescription,
+          style: context.fuzzzyTextStyles.bodyS.copyWith(color: colors.inkMute),
+        ),
+        const SizedBox(height: 12),
+        FuzzzyTextField(
+          controller: passwordController,
+          label: localizations.masterPassword,
+          obscure: true,
+          qaId: 'auth.recoveryPassword',
+        ),
+        const SizedBox(height: 12),
+        FuzzzyButton(
+          label: localizations.recoveryKeyCreateNew,
+          variant: FuzzzyButtonVariant.secondary,
+          qaId: 'auth.newRecoveryKey',
+          onPressed: passwordController.text.isEmpty ? null : onCreate,
+        ),
+      ],
+    );
+  }
+}
+
+/// The two auto-lock times, as the offered choices.
+class _AutoLockSection extends StatelessWidget {
+  const _AutoLockSection();
+
+  String _labelOf(BuildContext context, Duration duration) {
+    final localizations = context.fuzzzyInkLocalizations;
+    return duration == Duration.zero
+        ? localizations.autoLockImmediately
+        : localizations.autoLockMinutes(duration.inMinutes);
+  }
+
+  Future<void> _update(BuildContext context, AutoLockSettings settings) async {
+    final saved = await context.read<AutoLockCubit>().update(settings);
+    if (!saved && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.fuzzzyInkLocalizations.autoLockSaveFailed),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final settings = context.watch<AutoLockCubit>().state;
+    final labelStyle = context.fuzzzyTextStyles.bodyS
+        .copyWith(color: context.fuzzzyColors.inkMute);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(localizations.autoLockIdle, style: labelStyle),
+        const SizedBox(height: 8),
+        FuzzzySegmentedControl(
+          segments: [
+            for (final choice in AutoLockSettings.idleChoices)
+              _labelOf(context, choice),
           ],
-        ],
-      ),
+          selectedIndex: AutoLockSettings.idleChoices.indexOf(settings.idle),
+          qaId: 'auth.autoLockIdle',
+          onChanged: (index) => _update(
+            context,
+            settings.copyWith(idle: AutoLockSettings.idleChoices[index]),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(localizations.autoLockBackground, style: labelStyle),
+        const SizedBox(height: 8),
+        FuzzzySegmentedControl(
+          segments: [
+            for (final choice in AutoLockSettings.backgroundChoices)
+              _labelOf(context, choice),
+          ],
+          selectedIndex:
+              AutoLockSettings.backgroundChoices.indexOf(settings.background),
+          qaId: 'auth.autoLockBackground',
+          onChanged: (index) => _update(
+            context,
+            settings.copyWith(
+              background: AutoLockSettings.backgroundChoices[index],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -730,7 +711,9 @@ class _VaultBiometricSectionState extends State<_VaultBiometricSection> {
           const SizedBox(height: 12),
           FuzzzyTextField(
             controller: widget.passwordController,
-            label: localizations.vaultPassword,
+            label: vaultState.usesOwnPassword
+                ? localizations.vaultPassword
+                : localizations.masterPassword,
             obscure: !widget.isPasswordVisible,
             suffix: _PasswordVisibilityToggle(
               isVisible: widget.isPasswordVisible,

@@ -25,16 +25,18 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlobalBlocProviders(
       child: GlobalBlocListeners(
-        child: FuzzyLinkListener(
-          child: MaterialApp.router(
-            scaffoldMessengerKey: scaffoldMessengerKey,
-            theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
-            localizationsDelegates:
-                FuzzzyInkLocalizations.localizationsDelegates,
-            supportedLocales: FuzzzyInkLocalizations.supportedLocales,
-            routerConfig: AppRouter.router(
-              navigatorKey: navigatorKey,
+        child: AppAutoLock(
+          child: FuzzyLinkListener(
+            child: MaterialApp.router(
               scaffoldMessengerKey: scaffoldMessengerKey,
+              theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
+              localizationsDelegates:
+                  FuzzzyInkLocalizations.localizationsDelegates,
+              supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+              routerConfig: AppRouter.router(
+                navigatorKey: navigatorKey,
+                scaffoldMessengerKey: scaffoldMessengerKey,
+              ),
             ),
           ),
         ),

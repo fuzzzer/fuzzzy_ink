@@ -27,7 +27,6 @@ final _metadata = VaultMetadata(
   verificationToken: 'b2xk',
   createdAt: DateTime(2026),
   lastUnlockedAt: DateTime(2026, 2),
-  autoLockMinutes: 5,
 );
 
 Map<String, dynamic> _metaJson(VaultMetadata metadata) => {
@@ -35,7 +34,6 @@ Map<String, dynamic> _metaJson(VaultMetadata metadata) => {
       'verificationToken': metadata.verificationToken,
       'createdAt': metadata.createdAt.toIso8601String(),
       'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
-      'autoLockMinutes': metadata.autoLockMinutes,
       'customDirectoryPath': metadata.customDirectoryPath,
     };
 

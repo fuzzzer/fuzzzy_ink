@@ -5,10 +5,16 @@ part 'basic_encryption_state.dart';
 
 class BasicEncryptionCubit extends Cubit<BasicEncryptionState> {
   final CryptoCoreService cryptoCoreService;
+  final PasswordStrengthService passwordStrengthService;
 
   BasicEncryptionCubit({
     required this.cryptoCoreService,
+    required this.passwordStrengthService,
   }) : super(const BasicEncryptionState(status: StateStatus.initial));
+
+  /// A password that seals text must reach the app's bar ("good" or
+  /// better, security review 2026-10-22); opening accepts any password,
+  /// since the sender chose it.
 
   Future<void> encryptText({required String text, required String key}) async {
     if (text.isEmpty || key.isEmpty) {
@@ -16,6 +22,15 @@ class BasicEncryptionCubit extends Cubit<BasicEncryptionState> {
         BasicEncryptionState(
           status: StateStatus.failed,
           failure: DefaultFailure(message: 'textAndKeyCannotBeEmpty'),
+        ),
+      );
+      return;
+    }
+    if (!passwordStrengthService.isStrongEnough(key)) {
+      emit(
+        BasicEncryptionState(
+          status: StateStatus.failed,
+          failure: DefaultFailure(message: 'basicsPasswordTooWeak'),
         ),
       );
       return;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatUnlockPage extends StatefulWidget {
   const ChatUnlockPage({super.key});
@@ -70,6 +71,46 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
 
   void _onBiometricUnlock() {
     context.read<FuzzyAuthStore>().unlockWithBiometrics();
+  }
+
+  /// The way out for someone with neither the password nor the recovery
+  /// key: everything is erased after an explicit confirmation.
+  Future<void> _onErase() async {
+    final localizations = context.fuzzzyInkLocalizations;
+    final erase = await FuzzzyDialog.show<bool>(
+      context,
+      title: localizations.eraseTitle,
+      qaId: 'unlock.eraseConfirm',
+      content: Text(
+        localizations.eraseMessage,
+        style: context.fuzzzyTextStyles.body
+            .copyWith(color: context.fuzzzyColors.ink),
+      ),
+      actions: [
+        FuzzzyButton(
+          label: localizations.cancel,
+          variant: FuzzzyButtonVariant.secondary,
+          qaId: 'unlock.eraseCancel',
+          onPressed: () =>
+              Navigator.of(context, rootNavigator: true).pop(false),
+        ),
+        FuzzzyButton(
+          label: localizations.eraseConfirm,
+          variant: FuzzzyButtonVariant.destructive,
+          qaId: 'unlock.eraseYes',
+          onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
+        ),
+      ],
+    );
+    if (!(erase ?? false) || !mounted) return;
+    final eraseRes = await context.read<FuzzyAuthStore>().eraseEverything();
+    if (eraseRes is CryptoCoreFailure<void> && mounted) {
+      FuzzzyToast.show(
+        context,
+        message: localizations.unknownError,
+        kind: FuzzzyToastKind.error,
+      );
+    }
   }
 
   @override
@@ -145,105 +186,141 @@ class _ChatUnlockPageState extends State<ChatUnlockPage>
                         ),
                       ],
                       const SizedBox(height: 40),
-                      AnimatedBuilder(
-                        animation: _shakeController,
-                        builder: (context, child) {
-                          final sineValue = math.sin(
-                                4 * 3.14159265 * _shakeController.value,
-                              ) *
-                              8 *
-                              (1 - _shakeController.value);
-                          return Transform.translate(
-                            offset: Offset(sineValue, 0),
-                            child: child,
-                          );
-                        },
-                        child: FuzzzyTextField(
-                          controller: _passwordController,
-                          label: currentContextLocalization.chatAuthPassword,
-                          obscure: !_isPasswordVisible,
-                          onSubmitted: (_) => _onUnlock(),
-                          suffix: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: context.fuzzzyColors.inkMute,
-                            ),
-                            onPressed: () => setState(
-                              () => _isPasswordVisible = !_isPasswordVisible,
+                      if (state.status.isStorageUnavailable) ...[
+                        Text(
+                          currentContextLocalization.storageUnavailable,
+                          key: const ValueKey('unlock.storageUnavailable'),
+                          style: context.fuzzzyTextStyles.body.copyWith(
+                            color: context.fuzzzyColors.destructiveText,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: context.fuzzzySpace.l),
+                        FuzzzyButton(
+                          label: currentContextLocalization.tryAgain,
+                          qaId: 'unlock.retry',
+                          onPressed: () =>
+                              context.read<FuzzyAuthStore>().checkAuthStatus(),
+                        ),
+                      ] else ...[
+                        AnimatedBuilder(
+                          animation: _shakeController,
+                          builder: (context, child) {
+                            final sineValue = math.sin(
+                                  4 * 3.14159265 * _shakeController.value,
+                                ) *
+                                8 *
+                                (1 - _shakeController.value);
+                            return Transform.translate(
+                              offset: Offset(sineValue, 0),
+                              child: child,
+                            );
+                          },
+                          child: FuzzzyTextField(
+                            controller: _passwordController,
+                            label: currentContextLocalization.chatAuthPassword,
+                            obscure: !_isPasswordVisible,
+                            onSubmitted: (_) => _onUnlock(),
+                            suffix: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: context.fuzzzyColors.inkMute,
+                              ),
+                              onPressed: () => setState(
+                                () => _isPasswordVisible = !_isPasswordVisible,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (state.isLockedOut) ...[
-                        SizedBox(height: context.fuzzzySpace.s),
-                        Text(
-                          currentContextLocalization.chatAuthLockedOut(
-                            _formatWait(state.lockoutRemaining),
+                        if (state.isLockedOut) ...[
+                          SizedBox(height: context.fuzzzySpace.s),
+                          Text(
+                            currentContextLocalization.chatAuthLockedOut(
+                              _formatWait(state.lockoutRemaining),
+                            ),
+                            style: context.fuzzzyTextStyles.bodyS.copyWith(
+                              color: context.fuzzzyColors.destructiveText,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
+                        ] else if (state.verificationFailed) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            currentContextLocalization
+                                .chatAuthIncorrectPassword,
+                            style: TextStyle(
+                              color: context.fuzzzyColors.destructiveText,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        const SizedBox(height: 40),
+                        FuzzzyButton(
+                          label: currentContextLocalization.chatAuthUnlock,
+                          onPressed: _passwordController.text.isNotEmpty &&
+                                  !isLoading &&
+                                  !state.isLockedOut
+                              ? _onUnlock
+                              : null,
+                        ),
+                        if (state.biometricEnabled) ...[
+                          const SizedBox(height: 24),
+                          InkWell(
+                            onTap: isLoading ? null : _onBiometricUnlock,
+                            borderRadius: BorderRadius.circular(48),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.fingerprint,
+                                    size: 56,
+                                    color: context.fuzzzyColors.ink,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    currentContextLocalization
+                                        .chatAuthBiometricUnlock,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: context.fuzzzyColors.inkMute,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 40),
+                        Text(
+                          currentContextLocalization.chatUnlockForgot,
                           style: context.fuzzzyTextStyles.bodyS.copyWith(
-                            color: context.fuzzzyColors.destructiveText,
+                            color: context.fuzzzyColors.inkMute,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                      ] else if (state.verificationFailed) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          currentContextLocalization.chatAuthIncorrectPassword,
-                          style: TextStyle(
-                            color: context.fuzzzyColors.destructiveText,
-                          ),
-                          textAlign: TextAlign.center,
+                        SizedBox(height: context.fuzzzySpace.s),
+                        FuzzzyButton(
+                          label: currentContextLocalization
+                              .chatUnlockUseRecoveryKey,
+                          variant: FuzzzyButtonVariant.secondary,
+                          qaId: 'unlock.recover',
+                          onPressed: isLoading
+                              ? null
+                              : () => context.go(AppRouter.recover),
+                        ),
+                        SizedBox(height: context.fuzzzySpace.s),
+                        FuzzzyButton(
+                          label: currentContextLocalization.chatUnlockErase,
+                          variant: FuzzzyButtonVariant.ghost,
+                          qaId: 'unlock.erase',
+                          onPressed: isLoading ? null : _onErase,
                         ),
                       ],
-                      const SizedBox(height: 40),
-                      FuzzzyButton(
-                        label: currentContextLocalization.chatAuthUnlock,
-                        onPressed: _passwordController.text.isNotEmpty &&
-                                !isLoading &&
-                                !state.isLockedOut
-                            ? _onUnlock
-                            : null,
-                      ),
-                      if (state.biometricEnabled) ...[
-                        const SizedBox(height: 24),
-                        InkWell(
-                          onTap: isLoading ? null : _onBiometricUnlock,
-                          borderRadius: BorderRadius.circular(48),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.fingerprint,
-                                  size: 56,
-                                  color: context.fuzzzyColors.ink,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  currentContextLocalization
-                                      .chatAuthBiometricUnlock,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: context.fuzzzyColors.inkMute,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 40),
-                      Text(
-                        currentContextLocalization.chatAuthForgotPassword,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: context.fuzzzyColors.inkMute,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
                     ],
                   ),
                 ),

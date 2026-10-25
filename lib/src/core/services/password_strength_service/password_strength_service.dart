@@ -53,6 +53,15 @@ class PasswordStrengthService {
   static final _repeatingPattern = RegExp(r'(.)\1{2,}');
   static final _nonLetterEdgesPattern = RegExp(r'^[^a-z]+|[^a-z]+$');
 
+  /// The bar every new password in the app must reach — the master
+  /// password, a vault password, a Basics password, an archive password:
+  /// "good" or better.
+  bool isStrongEnough(String password) {
+    final level = assess(password).level;
+    return level == PasswordStrengthLevel.good ||
+        level == PasswordStrengthLevel.strong;
+  }
+
   PasswordStrength assess(String password) {
     final criteria = _evaluateCriteria(password);
 

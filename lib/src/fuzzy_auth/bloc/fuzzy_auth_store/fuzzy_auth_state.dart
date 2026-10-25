@@ -1,8 +1,9 @@
 part of 'fuzzy_auth_cubit.dart';
 
+/// The app lock's state. It never holds the master password: the store
+/// handle in the core is the only proof of an unlock.
 class FuzzyAuthState {
   final AuthStateStatus status;
-  final AuthData authData;
   final bool verificationFailed;
   final bool biometricEnabled;
   final bool biometricInvalidated;
@@ -14,44 +15,48 @@ class FuzzyAuthState {
   /// Time left before the next password may be tried; zero when none.
   final Duration lockoutRemaining;
 
+  /// The first run found data an earlier build left (its own key): the
+  /// setup explains that it cannot be opened and starts fresh.
+  final bool previousDataFound;
+
   const FuzzyAuthState._({
     required this.status,
-    required this.authData,
     this.verificationFailed = false,
     this.biometricEnabled = false,
     this.biometricInvalidated = false,
     this.biometricReset = false,
     this.lockoutRemaining = Duration.zero,
+    this.previousDataFound = false,
   });
 
   const FuzzyAuthState.initial()
       : status = AuthStateStatus.initial,
-        authData = const AuthData(password: ''),
         verificationFailed = false,
         biometricEnabled = false,
         biometricInvalidated = false,
         biometricReset = false,
-        lockoutRemaining = Duration.zero;
+        lockoutRemaining = Duration.zero,
+        previousDataFound = false;
 
   bool get isLockedOut => lockoutRemaining > Duration.zero;
 
   FuzzyAuthState copyWith({
     AuthStateStatus? status,
-    AuthData? authData,
     bool? verificationFailed,
     bool? biometricEnabled,
     bool? biometricInvalidated,
     bool? biometricReset,
     Duration? lockoutRemaining,
+    bool? previousDataFound,
   }) {
     return FuzzyAuthState._(
       status: status ?? this.status,
-      authData: authData ?? this.authData,
       verificationFailed: verificationFailed ?? false,
       biometricEnabled: biometricEnabled ?? this.biometricEnabled,
       biometricInvalidated: biometricInvalidated ?? false,
       biometricReset: biometricReset ?? false,
       lockoutRemaining: lockoutRemaining ?? this.lockoutRemaining,
+      previousDataFound: previousDataFound ?? this.previousDataFound,
     );
   }
 }

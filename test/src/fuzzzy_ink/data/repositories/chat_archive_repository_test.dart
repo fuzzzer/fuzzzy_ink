@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,9 +32,6 @@ class FakeMessageDataLocalDataSource extends Fake
   }
 }
 
-Uint8List? _blobOf(CryptoCoreResponse<Uint8List?> readRes) =>
-    (readRes as CryptoCoreSuccess<Uint8List?>).data;
-
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _chatName = 'Alice';
 const _password = 'correct horse battery staple';
@@ -62,7 +58,6 @@ void main() {
   late Directory workDir;
   late Directory outDir;
   late CryptoCoreService service;
-  late CryptoStoreKeyRepository storeKeyRepository;
   late FakeMessageDataLocalDataSource dataSource;
   late MessageDataRepository messageDataRepository;
   late ChatArchiveRepository repository;
@@ -72,13 +67,9 @@ void main() {
       path.join(workDir.path, 'chat_archive_$_chatId.jsonl');
 
   Future<void> openStore() async {
-    await storeKeyRepository.ensureStoreKey('');
     expect(
-      await service.openStore(
-        wrapped: _blobOf(await storeKeyRepository.read())!,
-        password: '',
-      ),
-      isA<CryptoCoreSuccess<void>>(),
+      await service.createMasterKey('test password'),
+      isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>(),
     );
   }
 
@@ -115,7 +106,6 @@ void main() {
     workDir = Directory.systemTemp.createTempSync('fuzzy_archive_work_');
     outDir = Directory.systemTemp.createTempSync('fuzzy_archive_out_');
     service = CryptoCoreService(storeDirectoryPath: storeDir.path);
-    storeKeyRepository = CryptoStoreKeyRepository(cryptoCoreService: service);
     dataSource = FakeMessageDataLocalDataSource();
     messageDataRepository = MessageDataRepository(
       localDataSource: dataSource,

@@ -16,6 +16,9 @@ class MockBiometricAuthRepository extends Mock
 
 class MockVaultKey extends Mock implements VaultKey {}
 
+class MockAppLockThrottleRepository extends Mock
+    implements AppLockThrottleRepository {}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -25,7 +28,6 @@ final _metadata = VaultMetadata(
   verificationToken: 'd3JhcHBlZA==',
   createdAt: DateTime(2026),
   lastUnlockedAt: DateTime(2026),
-  autoLockMinutes: 0,
 );
 
 void main() {
@@ -33,10 +35,13 @@ void main() {
   late MockVaultRepository mockVaultRepo;
   late MockBiometricAuthRepository mockBiometricRepo;
   late MockVaultKey key;
+  late MockAppLockThrottleRepository mockThrottle;
+  var throttle = AppLockThrottleData.none;
 
   setUpAll(() {
     registerFallbackValue(_metadata);
     registerFallbackValue(BiometricScope.vault);
+    registerFallbackValue(AppLockThrottleData.none);
   });
 
   setUp(() {
@@ -44,6 +49,15 @@ void main() {
     mockVaultRepo = MockVaultRepository();
     mockBiometricRepo = MockBiometricAuthRepository();
     key = MockVaultKey();
+    mockThrottle = MockAppLockThrottleRepository();
+    throttle = AppLockThrottleData.none;
+    when(() => mockThrottle.read()).thenAnswer((_) async => throttle);
+    when(() => mockThrottle.save(any())).thenAnswer((invocation) async {
+      throttle = invocation.positionalArguments.first as AppLockThrottleData;
+    });
+    when(() => mockThrottle.clear()).thenAnswer((_) async {
+      throttle = AppLockThrottleData.none;
+    });
 
     when(() => key.close()).thenAnswer((_) async {});
     when(() => key.dispose()).thenReturn(null);
@@ -57,6 +71,7 @@ void main() {
         cryptoRepository: mockCryptoRepo,
         vaultRepository: mockVaultRepo,
         biometricAuthRepository: mockBiometricRepo,
+        appLockThrottleRepository: mockThrottle,
       );
 
   // -----------------------------------------------------------------------
@@ -254,6 +269,7 @@ void main() {
     blocTest<VaultAuthCubit, VaultAuthState>(
       'locking without a key touches no handle',
       build: buildCubit,
+      seed: () => const VaultAuthState(authState: VaultAuthEnum.locked),
       act: (cubit) => cubit.lock(),
       expect: () => [
         isA<VaultAuthState>()
@@ -264,6 +280,150 @@ void main() {
         verifyNever(() => key.close());
       },
     );
+  });
+
+  // -----------------------------------------------------------------------
+  // The whole app locks the vault too; a vault that does not exist stays so
+  // -----------------------------------------------------------------------
+  group('lock without a vault', () {
+    blocTest<VaultAuthCubit, VaultAuthState>(
+      'keeps noVault, so the create page still shows after an app lock',
+      build: buildCubit,
+      seed: () => const VaultAuthState(authState: VaultAuthEnum.noVault),
+      act: (cubit) => cubit.lock(),
+      expect: () => [
+        isA<VaultAuthState>()
+            .having((s) => s.authState, 'authState', VaultAuthEnum.noVault),
+      ],
+    );
+  });
+
+  // -----------------------------------------------------------------------
+  // The master password opens the vault by default; a vault under the master
+  // key shares the app lock's wrong-password wait
+  // -----------------------------------------------------------------------
+  group('master password', () {
+    test('the vault auto-lock is a constant, not a vault.meta value', () {
+      expect(VaultAuthCubit.autoLockAfter, const Duration(minutes: 5));
+    });
+
+    test('a wrong master password counts toward the app lock wait', () async {
+      when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = buildCubit();
+      await cubit.unlock('nope');
+      expect(throttle.failedAttempts, 1);
+      await cubit.close();
+    });
+
+    test('a running wait refuses the attempt without trying it', () async {
+      throttle = AppLockThrottleData(
+        failedAttempts: 9,
+        lockedUntil: DateTime.now().add(const Duration(minutes: 5)),
+      );
+      final cubit = buildCubit();
+      await cubit.unlock('pw');
+      expect(cubit.state.failureType, VaultFailureType.tooManyAttempts);
+      verifyNever(() => mockCryptoRepo.unlock(any(), any()));
+      await cubit.close();
+    });
+
+    test('the right master password clears the count', () async {
+      throttle = const AppLockThrottleData(failedAttempts: 2);
+      when(() => mockCryptoRepo.unlock('pw', _metadata))
+          .thenAnswer((_) async => VaultSuccess(key));
+      final cubit = buildCubit();
+      await cubit.unlock('pw');
+      expect(cubit.state.authState, VaultAuthEnum.unlocked);
+      expect(throttle.failedAttempts, 0);
+      await cubit.close();
+    });
+
+    test('a vault with its own password is outside the app lock count',
+        () async {
+      when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = buildCubit()
+        ..emit(const VaultAuthState(usesOwnPassword: true));
+      await cubit.unlock('nope');
+      verifyNever(() => mockThrottle.save(any()));
+      await cubit.close();
+    });
+
+    test(
+        'switching to an own password stores the new wrap, drops the '
+        'biometric copy and says so', () async {
+      final rewrapped = VaultMetadata(
+        vaultId: 'vault-1',
+        verificationToken: 'b3du',
+        createdAt: DateTime(2026),
+        lastUnlockedAt: DateTime(2026),
+      );
+      when(
+        () => mockCryptoRepo.useOwnPassword(
+          masterPassword: 'master',
+          newPassword: 'Vault-Only-9',
+          metadata: _metadata,
+        ),
+      ).thenAnswer((_) async => VaultSuccess(rewrapped));
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+
+      final cubit = buildCubit();
+      final failure = await cubit.useOwnPassword(
+        masterPassword: 'master',
+        newPassword: 'Vault-Only-9',
+      );
+
+      expect(failure, isNull);
+      expect(cubit.state.usesOwnPassword, isTrue);
+      verify(() => mockVaultRepo.saveMetadata(rewrapped)).called(1);
+      verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
+      await cubit.close();
+    });
+
+    test('a wrong master password changes nothing', () async {
+      when(
+        () => mockCryptoRepo.useOwnPassword(
+          masterPassword: 'nope',
+          newPassword: 'Vault-Only-9',
+          metadata: _metadata,
+        ),
+      ).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = buildCubit();
+      expect(
+        await cubit.useOwnPassword(
+          masterPassword: 'nope',
+          newPassword: 'Vault-Only-9',
+        ),
+        VaultFailureType.incorrectMasterPassword,
+      );
+      verifyNever(() => mockVaultRepo.saveMetadata(any()));
+      expect(cubit.state.usesOwnPassword, isFalse);
+      await cubit.close();
+    });
+
+    test(
+        'a master password change drops the vault biometric copy only when '
+        'the master password opens the vault', () async {
+      when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
+      final masterVault = buildCubit();
+      await masterVault.onMasterPasswordChanged();
+      verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
+
+      final ownVault = buildCubit()
+        ..emit(const VaultAuthState(usesOwnPassword: true));
+      await ownVault.onMasterPasswordChanged();
+      verifyNever(() => mockBiometricRepo.disable(any()));
+      await masterVault.close();
+      await ownVault.close();
+    });
   });
 
   // -----------------------------------------------------------------------

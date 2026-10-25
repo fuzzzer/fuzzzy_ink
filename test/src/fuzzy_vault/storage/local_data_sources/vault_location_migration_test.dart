@@ -295,7 +295,6 @@ void main() {
           verificationToken: 'new',
           createdAt: DateTime(2026),
           lastUnlockedAt: DateTime(2026),
-          autoLockMinutes: 5,
         ),
       );
       expect(created, isA<VaultFailure<void>>());

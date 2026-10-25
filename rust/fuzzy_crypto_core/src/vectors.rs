@@ -32,6 +32,7 @@ use crate::formats::{
     encode_text, Acceptance, ContentType, Direction, FileHeader, FileKeyBody, FileKeyMode,
     InnerHeader, Message, OlmType, CHUNK_SIZE, MIN_CHUNK_SIZE, SIGNATURE_LEN,
 };
+use crate::master;
 use crate::pairing;
 use crate::passwords;
 use crate::safety;
@@ -51,6 +52,10 @@ const NONCE_44: [u8; 24] = [0x44; 24];
 const STORE_KEY_33: [u8; 32] = [0x33; 32];
 /// A chat's history key (F2-12) — random in production, fixed here.
 const HISTORY_KEY_55: [u8; 32] = [0x55; 32];
+/// The store (or vault) key wrapped under the master key `STORE_KEY_33`.
+const STORE_KEY_66: [u8; 32] = [0x66; 32];
+/// A history row's binding: direction byte (sent) ‖ the row's blob text.
+const LOCAL_ROW: &[u8] = b"\x01Fuzz/RlVaWgEDAd6tvu8";
 const FILE_KEY_42: [u8; 32] = [0x42; 32];
 const NONCE_PREFIX_90: [u8; 19] = [
     0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f,
@@ -363,15 +368,49 @@ fn all_vectors() -> Vec<Vector> {
     ));
 
     vectors.push(Vector::bytes(
-        "wrapped_store_key",
-        store::wrap_store_key_with(&STORE_KEY_33, PASSWORD, SALT_11, NONCE_22).expect("wrap"),
+        "wrapped_master_key",
+        master::wrap_with_password_with(&STORE_KEY_33, PASSWORD, SALT_11, NONCE_22).expect("wrap"),
         json!({
-            "store_key": hex(&STORE_KEY_33),
+            "master_key": hex(&STORE_KEY_33),
             "password": "pw",
             "salt": hex(&SALT_11),
             "nonce": hex(&NONCE_22),
             "argon2": argon2,
-            "aad": "store-key",
+            "aad": "master-key",
+        }),
+    ));
+
+    vectors.push(Vector::bytes(
+        "store_key_wrap",
+        master::wrap_key_with(
+            &STORE_KEY_33,
+            &STORE_KEY_66,
+            master::STORE_KEY_WRAP_AAD,
+            NONCE_44,
+        )
+        .expect("store key wrap"),
+        json!({
+            "master_key": hex(&STORE_KEY_33),
+            "store_key": hex(&STORE_KEY_66),
+            "nonce": hex(&NONCE_44),
+            "aad": "store-key-wrap",
+        }),
+    ));
+
+    vectors.push(Vector::bytes(
+        "vault_key_wrap",
+        master::wrap_key_with(
+            &STORE_KEY_33,
+            &STORE_KEY_66,
+            master::VAULT_KEY_WRAP_AAD,
+            NONCE_44,
+        )
+        .expect("vault key wrap"),
+        json!({
+            "master_key": hex(&STORE_KEY_33),
+            "vault_key": hex(&STORE_KEY_66),
+            "nonce": hex(&NONCE_44),
+            "aad": "vault-key-wrap",
         }),
     ));
 
@@ -379,7 +418,7 @@ fn all_vectors() -> Vec<Vector> {
         "wrapped_vault_key",
         vault::wrap_with(&STORE_KEY_33, PASSWORD, SALT_11, NONCE_22).expect("vault wrap"),
         json!({
-            "vault_master_key": hex(&STORE_KEY_33),
+            "vault_key": hex(&STORE_KEY_33),
             "password": "pw",
             "salt": hex(&SALT_11),
             "nonce": hex(&NONCE_22),
@@ -390,23 +429,27 @@ fn all_vectors() -> Vec<Vector> {
 
     vectors.push(Vector::bytes(
         "local_seal_chat",
-        store::seal_local_with(&HISTORY_KEY_55, CHAT_ID, b"hello", NONCE_44).expect("history seal"),
+        store::seal_local_with(&HISTORY_KEY_55, CHAT_ID, LOCAL_ROW, b"hello", NONCE_44)
+            .expect("history seal"),
         json!({
             "history_key": hex(&HISTORY_KEY_55),
             "chat_id": CHAT_ID,
+            "row": hex(LOCAL_ROW),
             "nonce": hex(&NONCE_44),
-            "aad": format!("local-seal{CHAT_ID}"),
+            "aad": format!("local-seal{CHAT_ID} ‖ row (01 ‖ \"Fuzz/RlVaWgEDAd6tvu8\")"),
             "plaintext": "hello",
         }),
     ));
 
     vectors.push(Vector::bytes(
         "vault_item",
-        vault::seal_item_with(&STORE_KEY_33, b"item", NONCE_44).expect("vault item"),
+        vault::seal_item_with(&STORE_KEY_33, CHAT_ID, 3, b"item", NONCE_44).expect("vault item"),
         json!({
-            "vault_master_key": hex(&STORE_KEY_33),
+            "vault_key": hex(&STORE_KEY_33),
+            "item_id": CHAT_ID,
+            "version": 3,
             "nonce": hex(&NONCE_44),
-            "aad": "vault-item",
+            "aad": format!("vault-item ‖ 00000003 ‖ {CHAT_ID}"),
             "plaintext": "item",
         }),
     ));

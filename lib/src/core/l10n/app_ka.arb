@@ -291,16 +291,8 @@
   "@vaultSearchHint": {},
   "vaultCreateYourVault": "შექმენით თქვენი საცავი",
   "@vaultCreateYourVault": {},
-  "vaultCreateDescription": "თქვენი საცავი ყველა პაროლსა და ჩანაწერს ლოკალურად შიფრავს თქვენს მოწყობილობაზე.\nაირჩიეთ ძლიერი მთავარი პაროლი.",
-  "@vaultCreateDescription": {},
   "vaultPassword": "ვოლტის პაროლი",
   "@vaultPassword": {},
-  "vaultConfirmPassword": "პაროლის დადასტურება",
-  "@vaultConfirmPassword": {},
-  "vaultPasswordsDoNotMatch": "პაროლები არ ემთხვევა",
-  "@vaultPasswordsDoNotMatch": {},
-  "vaultPasswordCannotBeReset": "ეს პაროლი აღდგენადი არ არის. თუ დაგავიწყდათ, თქვენი მონაცემები სამუდამოდ დაიკარგება.",
-  "@vaultPasswordCannotBeReset": {},
   "vaultCreateVault": "საცავის შექმნა",
   "@vaultCreateVault": {},
   "vaultFailedToCreate": "საცავის შექმნა ვერ მოხერხდა: {failureType}",
@@ -362,18 +354,16 @@
   "@processingFailed": {},
   "chatUnlockTitle": "Fuzzzy Ink-ის განბლოკვა",
   "@chatUnlockTitle": {},
-  "chatUnlockSubtitle": "ჩატებზე წვდომისთვის შეიყვანეთ პაროლი.",
-  "@chatUnlockSubtitle": {},
+  "chatUnlockSubtitle": "აპის გასახსნელად შეიყვანეთ მთავარი პაროლი.",
+  "@chatUnlockSubtitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
   "chatAuthPassword": "პაროლი",
   "@chatAuthPassword": {},
   "chatAuthIncorrectPassword": "არასწორი პაროლი",
   "@chatAuthIncorrectPassword": {},
   "chatAuthUnlock": "განბლოკვა",
   "@chatAuthUnlock": {},
-  "chatAuthForgotPassword": "დაგავიწყდათ პაროლი? თქვენი დაშიფრული მონაცემების აღდგენა მის გარეშე შეუძლებელია.",
-  "@chatAuthForgotPassword": {},
-  "chatAuthSetupTitle": "ჩატების დაცვა",
-  "@chatAuthSetupTitle": {},
   "chatAuthSetupDescription": "დააყენეთ პაროლი ჩატის გასაღებების დასაშიფრად. ეს თქვენს საუბრებს დამატებით დაცვას მისცემს.",
   "@chatAuthSetupDescription": {},
   "chatAuthSetPassword": "პაროლის დაყენება",
@@ -382,24 +372,20 @@
   "@chatAuthConfirmPassword": {},
   "chatAuthPasswordsDoNotMatch": "პაროლები არ ემთხვევა",
   "@chatAuthPasswordsDoNotMatch": {},
-  "chatAuthEnabled": "ჩატის დაცვა ჩართულია",
-  "@chatAuthEnabled": {},
-  "chatAuthDisabled": "ჩატის დაცვა გამორთულია",
-  "@chatAuthDisabled": {},
-  "chatAuthEnableProtection": "ჩატის დაცვის ჩართვა",
-  "@chatAuthEnableProtection": {},
-  "chatAuthDisableProtection": "ჩატის დაცვის გამორთვა",
-  "@chatAuthDisableProtection": {},
-  "chatAuthProtectionDescription": "ჩართვის შემთხვევაში, ჩატებზე წვდომისთვის პაროლის შეყვანა მოგეთხოვებათ. თქვენი გასაღებები ამ პაროლით იქნება დაშიფრული.",
-  "@chatAuthProtectionDescription": {},
-  "chatAuthMigratingKeys": "გასაღებების დაშიფვრა...",
-  "@chatAuthMigratingKeys": {},
+  "chatAuthProtectionDescription": "მთავარი პაროლი აპის ყველა გასაღებს იცავს: ჩატებს, ისტორიას და საცავს, თუ მას საკუთარი პაროლი არ აქვს. მისი გამორთვა შეუძლებელია.",
+  "@chatAuthProtectionDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
   "chatAuthResecuringKeys": "გასაღებების ხელახლა დაცვა…",
   "@chatAuthResecuringKeys": {},
-  "chatAuthentication": "ჩატის ავთენტიფიკაცია",
-  "@chatAuthentication": {},
-  "chatAuthenticationDescription": "ჩატის პაროლით დაცვის მართვა",
-  "@chatAuthenticationDescription": {},
+  "chatAuthentication": "მთავარი პაროლი",
+  "@chatAuthentication": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "chatAuthenticationDescription": "პაროლი, აღდგენის გასაღები და ავტომატური დაბლოკვა",
+  "@chatAuthenticationDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
   "benchmarkFileEncryption": "ფაილის დაშიფვრის ბენჩმარკი (dev)",
   "@benchmarkFileEncryption": {},
   "benchmarkFileEncryptionDescription": "ფაზავს და ხსნის 64 MiB დროებით ფაილს და აჩვენებს MB/s-ს",
@@ -480,8 +466,6 @@
   "@chatAuthCurrentPassword": {},
   "chatAuthNewPassword": "ახალი პაროლი",
   "@chatAuthNewPassword": {},
-  "chatAuthEnterPassword": "გთხოვთ შეიყვანოთ მიმდინარე პაროლი",
-  "@chatAuthEnterPassword": {},
   "chatAuthPasswordChanged": "ჩატის პაროლი შეიცვალა",
   "@chatAuthPasswordChanged": {},
   "vaultFileSaveWarning": "⚠️ ორიგინალი ფაილი არ იშლება ავტომატურად. შენახვის შემდეგ ფაილი რჩება მოწყობილობაზე. გთხოვთ წაშალოთ ის უსაფრთხოების მიზნით.",
@@ -688,5 +672,247 @@
   "fileNoPreview": "ამ ფაილს აპლიკაცია ვერ აჩვენებს. შეინახეთ და სხვა აპლიკაციით გახსენით.",
   "@fileNoPreview": {},
   "basicsFuzzedFilesTitle": "აპლიკაციაში შენახული დაფაზული ფაილები",
-  "@basicsFuzzedFilesTitle": {}
+  "@basicsFuzzedFilesTitle": {},
+  "masterPassword": "მთავარი პაროლი",
+  "@masterPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordSetupTitle": "შექმენით მთავარი პაროლი",
+  "@masterPasswordSetupTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordSetupDescription": "ერთი პაროლი იცავს ყველაფერს Fuzzzy Ink-ში: ჩატებს, ისტორიას და საცავს. აპის ყოველ გახსნაზე ამ პაროლს შეიყვანთ.",
+  "@masterPasswordSetupDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.",
+  "@masterPasswordPreviousData": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordCreate": "მთავარი პაროლის შექმნა",
+  "@masterPasswordCreate": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordCreating": "ვქმნით თქვენს გასაღებებს…",
+  "@masterPasswordCreating": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.",
+  "@masterPasswordFailed": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "masterPasswordIsOn": "მთავარი პაროლი ჩართულია",
+  "@masterPasswordIsOn": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyTitle": "აღდგენის გასაღები",
+  "@recoveryKeyTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyDescription": "თუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. ჩაიწერეთ ან შეინახეთ და მოწყობილობისგან მოშორებით, უსაფრთხო ადგილას გადადეთ. მას მხოლოდ ახლა ხედავთ.",
+  "@recoveryKeyDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyWarning": "პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.",
+  "@recoveryKeyWarning": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySave": "შენახვა ან ამობეჭდვა…",
+  "@recoveryKeySave": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySaved": "აღდგენის გასაღები ფაილში შეინახა",
+  "@recoveryKeySaved": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySaveFailed": "აღდგენის გასაღები ვერ შეინახა.",
+  "@recoveryKeySaveFailed": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyConfirm": "აღდგენის გასაღები შევინახე",
+  "@recoveryKeyConfirm": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyContinue": "გაგრძელება",
+  "@recoveryKeyContinue": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySkip": "გაგრძელება აღდგენის გასაღების გარეშე",
+  "@recoveryKeySkip": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySkipTitle": "გააგრძელებთ აღდგენის გასაღების გარეშე?",
+  "@recoveryKeySkipTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySkipMessage": "თუ მთავარ პაროლს დაგავიწყდებათ, ჩატები, ისტორია და საცავი სამუდამოდ დაიკარგება. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.",
+  "@recoveryKeySkipMessage": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeySkipConfirm": "გაგრძელება მის გარეშე",
+  "@recoveryKeySkipConfirm": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyFileText": "Fuzzzy Ink-ის აღდგენის გასაღები\n\n{key}\n\nთუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან მოშორებით. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n",
+  "@recoveryKeyFileText": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)",
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryKeyIsSet": "აღდგენის გასაღები დაყენებულია.",
+  "@recoveryKeyIsSet": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyNotSet": "აღდგენის გასაღები არ გაქვთ. თუ მთავარ პაროლს დაგავიწყდებათ, მონაცემები სამუდამოდ დაიკარგება.",
+  "@recoveryKeyNotSet": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyCreateNew": "ახალი აღდგენის გასაღების შექმნა",
+  "@recoveryKeyCreateNew": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyCreateNewDescription": "ახალი აღდგენის გასაღების შესაქმნელად შეიყვანეთ მთავარი პაროლი. ძველი გასაღები აღარ იმუშავებს.",
+  "@recoveryKeyCreateNewDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryTitle": "ახალი პაროლი აღდგენის გასაღებით",
+  "@recoveryTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryDescription": "შეიყვანეთ აპის დაყენებისას შენახული აღდგენის გასაღები და აირჩიეთ ახალი მთავარი პაროლი.",
+  "@recoveryDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyField": "აღდგენის გასაღები",
+  "@recoveryKeyField": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoverySubmit": "ახალი პაროლის დაყენება",
+  "@recoverySubmit": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyTypo": "აღდგენის გასაღებში შეცდომაა. გადაამოწმეთ ოთხ-ოთხი სიმბოლოს ჯგუფები.",
+  "@recoveryKeyTypo": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "recoveryKeyWrong": "ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.",
+  "@recoveryKeyWrong": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "chatUnlockForgot": "დაგავიწყდათ პაროლი?",
+  "@chatUnlockForgot": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "chatUnlockUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
+  "@chatUnlockUseRecoveryKey": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "chatUnlockErase": "ყველაფრის წაშლა და თავიდან დაწყება",
+  "@chatUnlockErase": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "eraseTitle": "წავშალოთ ყველაფერი?",
+  "@eraseTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "eraseMessage": "ჩატები, ისტორია, საცავი და პარამეტრები ამ მოწყობილობიდან წაიშლება და მათ ვეღარ დააბრუნებთ. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.",
+  "@eraseMessage": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "eraseConfirm": "ყველაფრის წაშლა",
+  "@eraseConfirm": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "storageUnavailable": "Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ დაბლოკილი რჩება. სცადეთ თავიდან; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.",
+  "@storageUnavailable": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "tryAgain": "თავიდან ცდა",
+  "@tryAgain": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "appLockNow": "Fuzzzy Ink-ის დაბლოკვა",
+  "@appLockNow": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "autoLockTitle": "ავტომატური დაბლოკვა",
+  "@autoLockTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "autoLockIdle": "დაბლოკვა, თუ აპს არ იყენებთ",
+  "@autoLockIdle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "autoLockBackground": "დაბლოკვა აპიდან გასვლის შემდეგ",
+  "@autoLockBackground": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "autoLockImmediately": "მაშინვე",
+  "@autoLockImmediately": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "autoLockMinutes": "{count} წთ",
+  "@autoLockMinutes": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "autoLockSaveFailed": "პარამეტრი ვერ შეინახა.",
+  "@autoLockSaveFailed": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultPasswordModeTitle": "საცავის პაროლი",
+  "@vaultPasswordModeTitle": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultUsesMasterPassword": "საცავს მთავარი პაროლი ხსნის.",
+  "@vaultUsesMasterPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultUsesOwnPassword": "საცავს საკუთარი პაროლი აქვს.",
+  "@vaultUsesOwnPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultUseOwnPassword": "საცავისთვის სხვა პაროლი",
+  "@vaultUseOwnPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultUseMasterPassword": "საცავის გახსნა მთავარი პაროლით",
+  "@vaultUseMasterPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultOwnPasswordNote": "საკუთარი პაროლის მქონე საცავს აღდგენის გასაღები ვერ ხსნის. ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.",
+  "@vaultOwnPasswordNote": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultOwnNewPassword": "საცავის ახალი პაროლი",
+  "@vaultOwnNewPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultCurrentPassword": "საცავის მიმდინარე პაროლი",
+  "@vaultCurrentPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultPasswordModeChanged": "საცავის პაროლი განახლდა",
+  "@vaultPasswordModeChanged": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultCreateWithMasterDescription": "საცავი პაროლებს, ჩანაწერებსა და ფაილებს ამ მოწყობილობაზე დალუქულად ინახავს. მას მთავარი პაროლი ხსნის — საცავის შესაქმნელად შეიყვანეთ ის.",
+  "@vaultCreateWithMasterDescription": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultForgotMasterPassword": "დაგავიწყდათ მთავარი პაროლი? დაბლოკეთ აპი და გამოიყენეთ აღდგენის გასაღები.",
+  "@vaultForgotMasterPassword": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "vaultTooManyAttempts": "ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.",
+  "@vaultTooManyAttempts": {
+    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  }
 }

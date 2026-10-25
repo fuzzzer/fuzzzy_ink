@@ -477,21 +477,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultCreateYourVault => 'შექმენით თქვენი საცავი';
 
   @override
-  String get vaultCreateDescription =>
-      'თქვენი საცავი ყველა პაროლსა და ჩანაწერს ლოკალურად შიფრავს თქვენს მოწყობილობაზე.\nაირჩიეთ ძლიერი მთავარი პაროლი.';
-
-  @override
   String get vaultPassword => 'ვოლტის პაროლი';
-
-  @override
-  String get vaultConfirmPassword => 'პაროლის დადასტურება';
-
-  @override
-  String get vaultPasswordsDoNotMatch => 'პაროლები არ ემთხვევა';
-
-  @override
-  String get vaultPasswordCannotBeReset =>
-      'ეს პაროლი აღდგენადი არ არის. თუ დაგავიწყდათ, თქვენი მონაცემები სამუდამოდ დაიკარგება.';
 
   @override
   String get vaultCreateVault => 'საცავის შექმნა';
@@ -571,7 +557,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatUnlockTitle => 'Fuzzzy Ink-ის განბლოკვა';
 
   @override
-  String get chatUnlockSubtitle => 'ჩატებზე წვდომისთვის შეიყვანეთ პაროლი.';
+  String get chatUnlockSubtitle => 'აპის გასახსნელად შეიყვანეთ მთავარი პაროლი.';
 
   @override
   String get chatAuthPassword => 'პაროლი';
@@ -581,13 +567,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get chatAuthUnlock => 'განბლოკვა';
-
-  @override
-  String get chatAuthForgotPassword =>
-      'დაგავიწყდათ პაროლი? თქვენი დაშიფრული მონაცემების აღდგენა მის გარეშე შეუძლებელია.';
-
-  @override
-  String get chatAuthSetupTitle => 'ჩატების დაცვა';
 
   @override
   String get chatAuthSetupDescription =>
@@ -603,32 +582,18 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatAuthPasswordsDoNotMatch => 'პაროლები არ ემთხვევა';
 
   @override
-  String get chatAuthEnabled => 'ჩატის დაცვა ჩართულია';
-
-  @override
-  String get chatAuthDisabled => 'ჩატის დაცვა გამორთულია';
-
-  @override
-  String get chatAuthEnableProtection => 'ჩატის დაცვის ჩართვა';
-
-  @override
-  String get chatAuthDisableProtection => 'ჩატის დაცვის გამორთვა';
-
-  @override
   String get chatAuthProtectionDescription =>
-      'ჩართვის შემთხვევაში, ჩატებზე წვდომისთვის პაროლის შეყვანა მოგეთხოვებათ. თქვენი გასაღებები ამ პაროლით იქნება დაშიფრული.';
-
-  @override
-  String get chatAuthMigratingKeys => 'გასაღებების დაშიფვრა...';
+      'მთავარი პაროლი აპის ყველა გასაღებს იცავს: ჩატებს, ისტორიას და საცავს, თუ მას საკუთარი პაროლი არ აქვს. მისი გამორთვა შეუძლებელია.';
 
   @override
   String get chatAuthResecuringKeys => 'გასაღებების ხელახლა დაცვა…';
 
   @override
-  String get chatAuthentication => 'ჩატის ავთენტიფიკაცია';
+  String get chatAuthentication => 'მთავარი პაროლი';
 
   @override
-  String get chatAuthenticationDescription => 'ჩატის პაროლით დაცვის მართვა';
+  String get chatAuthenticationDescription =>
+      'პაროლი, აღდგენის გასაღები და ავტომატური დაბლოკვა';
 
   @override
   String get benchmarkFileEncryption => 'ფაილის დაშიფვრის ბენჩმარკი (dev)';
@@ -746,9 +711,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get chatAuthNewPassword => 'ახალი პაროლი';
-
-  @override
-  String get chatAuthEnterPassword => 'გთხოვთ შეიყვანოთ მიმდინარე პაროლი';
 
   @override
   String get chatAuthPasswordChanged => 'ჩატის პაროლი შეიცვალა';
@@ -1061,4 +1023,197 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get basicsFuzzedFilesTitle => 'აპლიკაციაში შენახული დაფაზული ფაილები';
+
+  @override
+  String get masterPassword => 'მთავარი პაროლი';
+
+  @override
+  String get masterPasswordSetupTitle => 'შექმენით მთავარი პაროლი';
+
+  @override
+  String get masterPasswordSetupDescription =>
+      'ერთი პაროლი იცავს ყველაფერს Fuzzzy Ink-ში: ჩატებს, ისტორიას და საცავს. აპის ყოველ გახსნაზე ამ პაროლს შეიყვანთ.';
+
+  @override
+  String get masterPasswordPreviousData =>
+      'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
+
+  @override
+  String get masterPasswordCreate => 'მთავარი პაროლის შექმნა';
+
+  @override
+  String get masterPasswordCreating => 'ვქმნით თქვენს გასაღებებს…';
+
+  @override
+  String get masterPasswordFailed => 'გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.';
+
+  @override
+  String get masterPasswordIsOn => 'მთავარი პაროლი ჩართულია';
+
+  @override
+  String get recoveryKeyTitle => 'აღდგენის გასაღები';
+
+  @override
+  String get recoveryKeyDescription =>
+      'თუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. ჩაიწერეთ ან შეინახეთ და მოწყობილობისგან მოშორებით, უსაფრთხო ადგილას გადადეთ. მას მხოლოდ ახლა ხედავთ.';
+
+  @override
+  String get recoveryKeyWarning =>
+      'პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.';
+
+  @override
+  String get recoveryKeySave => 'შენახვა ან ამობეჭდვა…';
+
+  @override
+  String get recoveryKeySaved => 'აღდგენის გასაღები ფაილში შეინახა';
+
+  @override
+  String get recoveryKeySaveFailed => 'აღდგენის გასაღები ვერ შეინახა.';
+
+  @override
+  String get recoveryKeyConfirm => 'აღდგენის გასაღები შევინახე';
+
+  @override
+  String get recoveryKeyContinue => 'გაგრძელება';
+
+  @override
+  String get recoveryKeySkip => 'გაგრძელება აღდგენის გასაღების გარეშე';
+
+  @override
+  String get recoveryKeySkipTitle => 'გააგრძელებთ აღდგენის გასაღების გარეშე?';
+
+  @override
+  String get recoveryKeySkipMessage =>
+      'თუ მთავარ პაროლს დაგავიწყდებათ, ჩატები, ისტორია და საცავი სამუდამოდ დაიკარგება. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.';
+
+  @override
+  String get recoveryKeySkipConfirm => 'გაგრძელება მის გარეშე';
+
+  @override
+  String recoveryKeyFileText(String key) {
+    return 'Fuzzzy Ink-ის აღდგენის გასაღები\n\n$key\n\nთუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან მოშორებით. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n';
+  }
+
+  @override
+  String get recoveryKeyIsSet => 'აღდგენის გასაღები დაყენებულია.';
+
+  @override
+  String get recoveryKeyNotSet =>
+      'აღდგენის გასაღები არ გაქვთ. თუ მთავარ პაროლს დაგავიწყდებათ, მონაცემები სამუდამოდ დაიკარგება.';
+
+  @override
+  String get recoveryKeyCreateNew => 'ახალი აღდგენის გასაღების შექმნა';
+
+  @override
+  String get recoveryKeyCreateNewDescription =>
+      'ახალი აღდგენის გასაღების შესაქმნელად შეიყვანეთ მთავარი პაროლი. ძველი გასაღები აღარ იმუშავებს.';
+
+  @override
+  String get recoveryTitle => 'ახალი პაროლი აღდგენის გასაღებით';
+
+  @override
+  String get recoveryDescription =>
+      'შეიყვანეთ აპის დაყენებისას შენახული აღდგენის გასაღები და აირჩიეთ ახალი მთავარი პაროლი.';
+
+  @override
+  String get recoveryKeyField => 'აღდგენის გასაღები';
+
+  @override
+  String get recoverySubmit => 'ახალი პაროლის დაყენება';
+
+  @override
+  String get recoveryKeyTypo =>
+      'აღდგენის გასაღებში შეცდომაა. გადაამოწმეთ ოთხ-ოთხი სიმბოლოს ჯგუფები.';
+
+  @override
+  String get recoveryKeyWrong => 'ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.';
+
+  @override
+  String get chatUnlockForgot => 'დაგავიწყდათ პაროლი?';
+
+  @override
+  String get chatUnlockUseRecoveryKey => 'აღდგენის გასაღების გამოყენება';
+
+  @override
+  String get chatUnlockErase => 'ყველაფრის წაშლა და თავიდან დაწყება';
+
+  @override
+  String get eraseTitle => 'წავშალოთ ყველაფერი?';
+
+  @override
+  String get eraseMessage =>
+      'ჩატები, ისტორია, საცავი და პარამეტრები ამ მოწყობილობიდან წაიშლება და მათ ვეღარ დააბრუნებთ. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
+
+  @override
+  String get eraseConfirm => 'ყველაფრის წაშლა';
+
+  @override
+  String get storageUnavailable =>
+      'Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ დაბლოკილი რჩება. სცადეთ თავიდან; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.';
+
+  @override
+  String get tryAgain => 'თავიდან ცდა';
+
+  @override
+  String get appLockNow => 'Fuzzzy Ink-ის დაბლოკვა';
+
+  @override
+  String get autoLockTitle => 'ავტომატური დაბლოკვა';
+
+  @override
+  String get autoLockIdle => 'დაბლოკვა, თუ აპს არ იყენებთ';
+
+  @override
+  String get autoLockBackground => 'დაბლოკვა აპიდან გასვლის შემდეგ';
+
+  @override
+  String get autoLockImmediately => 'მაშინვე';
+
+  @override
+  String autoLockMinutes(int count) {
+    return '$count წთ';
+  }
+
+  @override
+  String get autoLockSaveFailed => 'პარამეტრი ვერ შეინახა.';
+
+  @override
+  String get vaultPasswordModeTitle => 'საცავის პაროლი';
+
+  @override
+  String get vaultUsesMasterPassword => 'საცავს მთავარი პაროლი ხსნის.';
+
+  @override
+  String get vaultUsesOwnPassword => 'საცავს საკუთარი პაროლი აქვს.';
+
+  @override
+  String get vaultUseOwnPassword => 'საცავისთვის სხვა პაროლი';
+
+  @override
+  String get vaultUseMasterPassword => 'საცავის გახსნა მთავარი პაროლით';
+
+  @override
+  String get vaultOwnPasswordNote =>
+      'საკუთარი პაროლის მქონე საცავს აღდგენის გასაღები ვერ ხსნის. ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.';
+
+  @override
+  String get vaultOwnNewPassword => 'საცავის ახალი პაროლი';
+
+  @override
+  String get vaultCurrentPassword => 'საცავის მიმდინარე პაროლი';
+
+  @override
+  String get vaultPasswordModeChanged => 'საცავის პაროლი განახლდა';
+
+  @override
+  String get vaultCreateWithMasterDescription =>
+      'საცავი პაროლებს, ჩანაწერებსა და ფაილებს ამ მოწყობილობაზე დალუქულად ინახავს. მას მთავარი პაროლი ხსნის — საცავის შესაქმნელად შეიყვანეთ ის.';
+
+  @override
+  String get vaultForgotMasterPassword =>
+      'დაგავიწყდათ მთავარი პაროლი? დაბლოკეთ აპი და გამოიყენეთ აღდგენის გასაღები.';
+
+  @override
+  String get vaultTooManyAttempts =>
+      'ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.';
 }

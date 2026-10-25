@@ -152,10 +152,22 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  MasterKeySetup dco_decode_master_key_setup(dynamic raw);
+
+  @protected
+  NewRecoveryKey dco_decode_new_recovery_key(dynamic raw);
+
+  @protected
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
+  RecoveredStore dco_decode_recovered_store(dynamic raw);
+
+  @protected
   SafetyNumber dco_decode_safety_number(dynamic raw);
+
+  @protected
+  int dco_decode_u_32(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
@@ -282,10 +294,22 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  MasterKeySetup sse_decode_master_key_setup(SseDeserializer deserializer);
+
+  @protected
+  NewRecoveryKey sse_decode_new_recovery_key(SseDeserializer deserializer);
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
+  RecoveredStore sse_decode_recovered_store(SseDeserializer deserializer);
+
+  @protected
   SafetyNumber sse_decode_safety_number(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_u_32(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -414,10 +438,25 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
       Uint8List self, SseSerializer serializer);
 
   @protected
+  void sse_encode_master_key_setup(
+      MasterKeySetup self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_new_recovery_key(
+      NewRecoveryKey self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_recovered_store(
+      RecoveredStore self, SseSerializer serializer);
+
+  @protected
   void sse_encode_safety_number(SafetyNumber self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_u_32(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);

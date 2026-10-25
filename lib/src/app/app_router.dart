@@ -8,6 +8,8 @@ class AppRouter {
   static const home = '/';
   static const onboarding = '/onboarding';
   static const chatUnlock = '/chat-unlock';
+  static const setup = '/setup';
+  static const recover = '/recover';
   static const chatCreate = '/chat/create';
   static const chatInvitation = '/chat/invitation';
   static const chatAccept = '/chat/accept';
@@ -21,13 +23,14 @@ class AppRouter {
   static const vaultHome = '/vault';
   static const vaultItemEditor = '/vault/editor';
 
+  /// Reachable without the master password. Everything else — Basics and
+  /// the settings included — sits behind it: there is no "lock off".
   static const _unprotectedRoutes = {
     onboarding,
     chatUnlock,
-    settings,
+    setup,
+    recover,
     aboutEncryption,
-    auth,
-    basics,
   };
 
   static GoRouter? _routerInstance;
@@ -63,14 +66,23 @@ class AppRouter {
         final matchedLocation = state.matchedLocation;
         final isUnprotected = _unprotectedRoutes.contains(matchedLocation);
 
-        // `initial` is the boot window while `openStore('')` still runs:
-        // gated like `locked`, so no chat is reachable before the store is
-        // open (T-0329).
+        // No master password yet: the first run sets one before anything.
+        if (authStatus.isSetupRequired) {
+          return matchedLocation == setup ? null : setup;
+        }
+        if (matchedLocation == setup) {
+          return authStatus.hasAccess ? AppRouter.home : chatUnlock;
+        }
+
+        // `initial` is the boot window while the secure storage is read:
+        // gated like `locked`, so nothing is reachable before the store is
+        // open (T-0329). A storage error fails closed the same way.
         if (!isUnprotected && !authStatus.hasAccess) {
           return chatUnlock;
         }
 
-        if (matchedLocation == chatUnlock && authStatus.hasAccess) {
+        if ((matchedLocation == chatUnlock || matchedLocation == recover) &&
+            authStatus.hasAccess) {
           return AppRouter.home;
         }
 
@@ -112,6 +124,14 @@ class AppRouter {
         GoRoute(
           path: chatUnlock,
           builder: (_, __) => const SensitiveScreen(child: ChatUnlockPage()),
+        ),
+        GoRoute(
+          path: setup,
+          builder: (_, __) => const MasterPasswordSetupPage(),
+        ),
+        GoRoute(
+          path: recover,
+          builder: (_, __) => const MasterPasswordRecoveryPage(),
         ),
         GoRoute(
           path: chatCreate,

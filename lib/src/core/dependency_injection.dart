@@ -67,28 +67,26 @@ class DependencyInjection {
     await userFileStore.wipeTemporaryPlainCopies();
     sl.safeRegisterSingleton<UserFileStore>(userFileStore);
 
-    sl.safeRegisterSingleton<UserAuthPreferencesRepository>(
-      UserAuthPreferencesRepository(
-        localDataSource: UserAuthPreferencesLocalDataSource(isar: sl.get()),
-      ),
-    );
-
     sl.safeRegisterSingleton<CryptoCoreService>(
       CryptoCoreService(
         storeDirectoryPath: sl.get<AppSupportDirectory>().directory.path,
       ),
     );
 
-    sl.safeRegisterSingleton<CryptoStoreKeyRepository>(
-      CryptoStoreKeyRepository(
-        cryptoCoreService: sl.get<CryptoCoreService>(),
-      ),
+    sl.safeRegisterSingleton<MasterKeyLocalDataSource>(
+      MasterKeyLocalDataSource(),
     );
 
     sl.safeRegisterSingleton<ChatAuthRepository>(
       ChatAuthRepository(
-        userAuthPreferencesRepository: sl.get<UserAuthPreferencesRepository>(),
-        cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
+        localDataSource: sl.get<MasterKeyLocalDataSource>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
+      ),
+    );
+
+    sl.safeRegisterSingleton<AutoLockSettingsRepository>(
+      AutoLockSettingsRepository(
+        localDataSource: AutoLockSettingsLocalDataSource(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
       ),
     );
@@ -103,13 +101,24 @@ class DependencyInjection {
       ),
     );
 
+    sl.safeRegisterSingleton<AppResetRepository>(
+      AppResetRepository(
+        localDataSource: AppResetLocalDataSource(
+          supportDirectoryPath: sl.get<AppSupportDirectory>().directory.path,
+        ),
+        masterKeyLocalDataSource: sl.get<MasterKeyLocalDataSource>(),
+        biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        cryptoCoreService: sl.get<CryptoCoreService>(),
+      ),
+    );
+
     sl.safeRegisterSingleton<FuzzyAuthStore>(
       FuzzyAuthStore(
         chatAuthRepository: sl.get<ChatAuthRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
-        cryptoStoreKeyRepository: sl.get<CryptoStoreKeyRepository>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
         appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
+        appResetRepository: sl.get<AppResetRepository>(),
       ),
     );
 
@@ -181,6 +190,7 @@ class DependencyInjection {
       VaultCryptoRepository(
         passwordStrengthService: sl.get<PasswordStrengthService>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
+        chatAuthRepository: sl.get<ChatAuthRepository>(),
       ),
     );
 
@@ -207,6 +217,7 @@ class DependencyInjection {
         vaultRepository: sl.get<VaultRepository>(),
         cryptoRepository: sl.get<VaultCryptoRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
       ),
     );
 

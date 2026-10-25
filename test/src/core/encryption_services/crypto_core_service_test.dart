@@ -5,19 +5,10 @@ import 'dart:typed_data';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
-import 'package:mocktail/mocktail.dart';
 
 import '../../../helpers/crypto_core_test_init.dart';
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
-class MockUserAuthPreferencesRepository extends Mock
-    implements UserAuthPreferencesRepository {}
-
-Uint8List? _blobOf(CryptoCoreResponse<Uint8List?> readRes) =>
-    (readRes as CryptoCoreSuccess<Uint8List?>).data;
+T _dataOf<T>(CryptoCoreResponse<T> res) => (res as CryptoCoreSuccess<T>).data;
 
 CryptoCoreFailureType _failureOf(CryptoCoreResponse<dynamic> res) =>
     (res as CryptoCoreFailure).type;
@@ -40,13 +31,10 @@ void main() {
 
   late Directory storeDir;
   late CryptoCoreService service;
-  late CryptoStoreKeyRepository storeKeyRepository;
-
   setUp(() {
     FlutterSecureStorage.setMockInitialValues({});
     storeDir = Directory.systemTemp.createTempSync('fuzzy_crypto_core_');
     service = CryptoCoreService(storeDirectoryPath: storeDir.path);
-    storeKeyRepository = CryptoStoreKeyRepository(cryptoCoreService: service);
   });
 
   tearDown(() async {
@@ -54,28 +42,17 @@ void main() {
     if (storeDir.existsSync()) storeDir.deleteSync(recursive: true);
   });
 
-  group('CryptoCoreService + CryptoStoreKeyRepository (real library)', () {
+  group('CryptoCoreService master key (real library)', () {
     test(
-        'ensureStoreKey → openStore → rewrap → open with new password → '
-        'old password rejected → close', () async {
+        'createMasterKey opens the store → close → the password reopens it → '
+        'a wrong one is refused and keeps an open store open', () async {
+      final setup = _dataOf(await service.createMasterKey('first'));
+      expect(setup.passwordWrap.length, 103, reason: '0x10: 6+16+9+24+48');
+      expect(setup.recoveryWrap.length, 103);
+      expect(setup.storeWrap.length, 78, reason: '0x20: 6+24+32+16');
       expect(
-        await storeKeyRepository.ensureStoreKey('a'),
-        isA<CryptoCoreSuccess<void>>(),
-      );
-      final wrapped = _blobOf(await storeKeyRepository.read());
-      expect(wrapped, isNotNull);
-      expect(wrapped!.length, 103, reason: '0x10 blob: 6 + 16 + 9 + 24 + 48');
-
-      // A second call is a no-op: the same blob stays in place.
-      expect(
-        await storeKeyRepository.ensureStoreKey('other'),
-        isA<CryptoCoreSuccess<void>>(),
-      );
-      expect(_blobOf(await storeKeyRepository.read()), wrapped);
-
-      expect(
-        await service.openStore(wrapped: wrapped, password: 'a'),
-        isA<CryptoCoreSuccess<void>>(),
+        setup.recoveryKey,
+        matches(RegExp(r'^([A-Z2-7]{4}-){7}[A-Z2-7]{4}$')),
       );
       expect(service.isOpen, isTrue);
       expect(
@@ -83,24 +60,26 @@ void main() {
         isTrue,
       );
 
+      await service.close();
+      expect(service.isOpen, isFalse);
       expect(
-        await storeKeyRepository.rewrap(oldPassword: 'a', newPassword: 'b'),
-        isA<CryptoCoreSuccess<void>>(),
-      );
-      final rewrapped = _blobOf(await storeKeyRepository.read());
-      expect(rewrapped, isNot(wrapped));
-
-      expect(
-        await service.openStore(wrapped: rewrapped!, password: 'b'),
+        await service.openStore(
+          passwordWrap: setup.passwordWrap,
+          storeWrap: setup.storeWrap,
+          password: 'first',
+        ),
         isA<CryptoCoreSuccess<void>>(),
       );
       expect(service.isOpen, isTrue);
 
-      final wrongRes =
-          await service.openStore(wrapped: rewrapped, password: 'a');
-      expect(wrongRes, isA<CryptoCoreFailure<void>>());
       expect(
-        (wrongRes as CryptoCoreFailure<void>).type,
+        _failureOf(
+          await service.openStore(
+            passwordWrap: setup.passwordWrap,
+            storeWrap: setup.storeWrap,
+            password: 'wrong',
+          ),
+        ),
         CryptoCoreFailureType.wrongPassword,
       );
       expect(
@@ -110,186 +89,219 @@ void main() {
       );
 
       await service.close();
-      expect(service.isOpen, isFalse);
       await service.close();
       expect(service.isOpen, isFalse, reason: 'close is idempotent');
     });
 
-    test('rewrap with the wrong old password changes nothing', () async {
-      await storeKeyRepository.ensureStoreKey('a');
-      final wrapped = _blobOf(await storeKeyRepository.read());
-
-      final rewrapRes =
-          await storeKeyRepository.rewrap(oldPassword: 'x', newPassword: 'b');
-      expect(rewrapRes, isA<CryptoCoreFailure<void>>());
+    test('the empty password is gone: no master key is made under it',
+        () async {
       expect(
-        (rewrapRes as CryptoCoreFailure<void>).type,
+        _failureOf(await service.createMasterKey('')),
         CryptoCoreFailureType.wrongPassword,
       );
-      expect(_blobOf(await storeKeyRepository.read()), wrapped);
+      expect(service.isOpen, isFalse);
     });
 
-    test('rewrap without a store key is internal', () async {
-      final rewrapRes =
-          await storeKeyRepository.rewrap(oldPassword: '', newPassword: 'b');
-      expect(rewrapRes, isA<CryptoCoreFailure<void>>());
-      expect(
-        (rewrapRes as CryptoCoreFailure<void>).type,
-        CryptoCoreFailureType.internal,
-      );
-    });
-
-    test('concurrent createStoreKey calls queue and all succeed', () async {
+    test('concurrent createMasterKey calls queue and all succeed', () async {
       final results = await Future.wait([
-        service.createStoreKey('a'),
-        service.createStoreKey('b'),
-        service.createStoreKey('c'),
+        service.createMasterKey('a'),
+        service.createMasterKey('b'),
+        service.createMasterKey('c'),
       ]);
-      expect(results, everyElement(isA<CryptoCoreSuccess<Uint8List>>()));
-      final blobs = results
-          .map((res) => (res as CryptoCoreSuccess<Uint8List>).data)
-          .toList();
-      expect(blobs.toSet().length, 3);
+      expect(
+        results,
+        everyElement(isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>()),
+      );
+      final wraps = results.map((res) => _dataOf(res).passwordWrap).toList();
+      expect(wraps.map(base64Encode).toSet().length, 3);
+    });
+
+    test('app settings are sealed under the store key', () async {
+      expect(
+        _failureOf(
+          await service.sealSetting(name: 'auto-lock', bytes: Uint8List(1)),
+        ),
+        CryptoCoreFailureType.storeLocked,
+      );
+      _dataOf(await service.createMasterKey('pw'));
+      final sealed = _dataOf(
+        await service.sealSetting(
+          name: 'auto-lock',
+          bytes: Uint8List.fromList(utf8.encode('{}')),
+        ),
+      );
+      expect(
+        utf8.decode(
+          _dataOf(await service.openSetting(name: 'auto-lock', blob: sealed)),
+        ),
+        '{}',
+      );
+      sealed[sealed.length - 1] ^= 1;
+      expect(
+        _failureOf(await service.openSetting(name: 'auto-lock', blob: sealed)),
+        CryptoCoreFailureType.corrupt,
+      );
     });
   });
 
-  group('ChatAuthRepository change-password round trip (real library)', () {
-    late MockUserAuthPreferencesRepository userAuthPreferencesRepository;
+  group('ChatAuthRepository: the master password (real library)', () {
     late ChatAuthRepository chatAuthRepository;
 
     setUp(() {
-      userAuthPreferencesRepository = MockUserAuthPreferencesRepository();
-      when(() => userAuthPreferencesRepository.updateUserAuthPreferences(any()))
-          .thenAnswer((_) async {});
       chatAuthRepository = ChatAuthRepository(
-        userAuthPreferencesRepository: userAuthPreferencesRepository,
-        cryptoStoreKeyRepository: storeKeyRepository,
+        localDataSource: MasterKeyLocalDataSource(),
         cryptoCoreService: service,
       );
     });
 
-    setUpAll(() {
-      registerFallbackValue(
-        UserAuthPreferences(isAuthenticationOnceEnabled: false),
+    test('notSetUp → setUp → ready → unlock → change → old rejected', () async {
+      expect(
+        _dataOf(await chatAuthRepository.status()),
+        MasterKeyStatus.notSetUp,
       );
-    });
+      expect(_dataOf(await chatAuthRepository.hasLegacyData()), isFalse);
 
-    test('setup → verify → change → verify new → old rejected → disable',
-        () async {
-      // Lock disabled: the key is wrapped under '' and the store opens with it.
-      await storeKeyRepository.ensureStoreKey('');
-      expect(await chatAuthRepository.verifyPassword(''), isTrue);
-
-      expect(await chatAuthRepository.setupPassword('first'), isTrue);
-      expect(await chatAuthRepository.verifyPassword('wrong'), isFalse);
+      final setup = _dataOf(await chatAuthRepository.setUp('first'));
       expect(service.isOpen, isTrue);
-      expect(await chatAuthRepository.verifyPassword('first'), isTrue);
-
+      expect(_dataOf(await chatAuthRepository.status()), MasterKeyStatus.ready);
       expect(
-        await chatAuthRepository.changePassword(
-          oldPassword: 'wrong',
-          newPassword: 'second',
-        ),
+        _dataOf(await chatAuthRepository.hasRecoveryKey()),
         isFalse,
+        reason: 'kept only once the user confirms saving it',
       );
+      _dataOf(await chatAuthRepository.saveRecoveryWrap(setup.recoveryWrap));
+      expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isTrue);
+
+      await service.close();
+      expect(
+        _failureOf(await chatAuthRepository.unlock('wrong')),
+        CryptoCoreFailureType.wrongPassword,
+      );
+      expect(service.isOpen, isFalse);
+      _dataOf(await chatAuthRepository.unlock('first'));
+      expect(service.isOpen, isTrue);
 
       expect(
+        _failureOf(
+          await chatAuthRepository.changePassword(
+            oldPassword: 'wrong',
+            newPassword: 'second',
+          ),
+        ),
+        CryptoCoreFailureType.wrongPassword,
+      );
+      _dataOf(
         await chatAuthRepository.changePassword(
           oldPassword: 'first',
           newPassword: 'second',
         ),
-        isTrue,
       );
-
-      expect(await chatAuthRepository.verifyPassword('second'), isTrue);
-      expect(await chatAuthRepository.verifyPassword('first'), isFalse);
-
-      expect(await chatAuthRepository.disableAuth('second'), isTrue);
-      expect(await chatAuthRepository.verifyPassword(''), isTrue);
-      expect(await chatAuthRepository.verifyPassword('second'), isFalse);
+      expect(
+        _failureOf(await chatAuthRepository.unlock('first')),
+        CryptoCoreFailureType.wrongPassword,
+      );
+      _dataOf(await chatAuthRepository.unlock('second'));
     });
 
-    test('verifyPassword without a store key is false', () async {
-      expect(await chatAuthRepository.verifyPassword('any'), isFalse);
-      expect(service.isOpen, isFalse);
-    });
-
-    test('isChatAuthEnabled without a store key is false', () async {
-      when(() => userAuthPreferencesRepository.getUserAuthPreferences())
-          .thenAnswer(
-        (_) async => UserAuthPreferences(isAuthenticationOnceEnabled: true),
-      );
-
-      expect(await chatAuthRepository.isChatAuthEnabled(), isFalse);
-      expect(service.isOpen, isFalse);
-      verifyNever(
-        () => userAuthPreferencesRepository.updateUserAuthPreferences(any()),
-      );
-    });
-
-    // A kill between the two writes of enable / disable leaves the blob
-    // rewrapped and the preference stale (F2-6 review R1). Each half of
-    // `setupPassword` / `disableAuth` is replayed by hand: the rewrap lands,
-    // the preference write never does.
-    test('kill between the enable writes: blob wins, preference repaired',
-        () async {
-      await storeKeyRepository.ensureStoreKey('');
-      when(() => userAuthPreferencesRepository.getUserAuthPreferences())
-          .thenAnswer((_) async => null);
-
-      await storeKeyRepository.rewrap(oldPassword: '', newPassword: 'pw');
-
-      expect(await chatAuthRepository.isChatAuthEnabled(), isTrue);
-      expect(service.isOpen, isFalse, reason: "'' no longer opens the store");
-      final repaired = verify(
-        () => userAuthPreferencesRepository.updateUserAuthPreferences(
-          captureAny(),
+    test(
+        'the recovery key sets a new password and keeps every chat; a typo '
+        'is corrupt; a new key ends the old one', () async {
+      const chatId = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
+      final setup = _dataOf(await chatAuthRepository.setUp('first'));
+      _dataOf(await chatAuthRepository.saveRecoveryWrap(setup.recoveryWrap));
+      _dataOf(await service.createInvitation(chatId));
+      final row = Uint8List.fromList([1, ...utf8.encode('Fuzz/row')]);
+      final sealed = _dataOf(
+        await service.sealLocal(
+          chatId: chatId,
+          row: row,
+          bytes: Uint8List.fromList(utf8.encode('kept')),
         ),
-      ).captured.single as UserAuthPreferences;
-      expect(repaired.isAuthenticationOnceEnabled, isTrue);
-
-      expect(await chatAuthRepository.verifyPassword('pw'), isTrue);
-    });
-
-    test('kill between the disable writes: blob wins, preference repaired',
-        () async {
-      await storeKeyRepository.ensureStoreKey('');
-      expect(await chatAuthRepository.setupPassword('pw'), isTrue);
-      when(() => userAuthPreferencesRepository.getUserAuthPreferences())
-          .thenAnswer(
-        (_) async => UserAuthPreferences(isAuthenticationOnceEnabled: true),
       );
+      await service.close();
 
-      await storeKeyRepository.rewrap(oldPassword: 'pw', newPassword: '');
-
-      expect(await chatAuthRepository.isChatAuthEnabled(), isFalse);
-      expect(service.isOpen, isTrue, reason: "'' opens the store again");
-      final repaired = verify(
-        () => userAuthPreferencesRepository.updateUserAuthPreferences(
-          captureAny(),
+      expect(
+        _failureOf(
+          await chatAuthRepository.recover(
+            recoveryKey: 'AAAA-AAAA',
+            newPassword: 'fresh',
+          ),
         ),
-      ).captured.last as UserAuthPreferences;
-      expect(repaired.isAuthenticationOnceEnabled, isFalse);
+        CryptoCoreFailureType.corrupt,
+      );
+      _dataOf(
+        await chatAuthRepository.recover(
+          recoveryKey: setup.recoveryKey.toLowerCase(),
+          newPassword: 'fresh',
+        ),
+      );
+      expect(service.isOpen, isTrue);
+      expect(
+        utf8.decode(
+          _dataOf(
+            await service.openLocal(chatId: chatId, row: row, blob: sealed),
+          ),
+        ),
+        'kept',
+      );
+      expect(
+        _failureOf(await chatAuthRepository.unlock('first')),
+        CryptoCoreFailureType.wrongPassword,
+      );
+      _dataOf(await chatAuthRepository.unlock('fresh'));
+
+      // A new recovery key: the old one is gone at once, the new one counts
+      // once saved.
+      final fresh = _dataOf(await chatAuthRepository.newRecoveryKey('fresh'));
+      expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isFalse);
+      _dataOf(await chatAuthRepository.saveRecoveryWrap(fresh.recoveryWrap));
+      expect(
+        _failureOf(
+          await chatAuthRepository.recover(
+            recoveryKey: setup.recoveryKey,
+            newPassword: 'third',
+          ),
+        ),
+        CryptoCoreFailureType.wrongPassword,
+      );
+      _dataOf(
+        await chatAuthRepository.recover(
+          recoveryKey: fresh.recoveryKey,
+          newPassword: 'third',
+        ),
+      );
     });
 
-    test('consistent states leave the preference alone', () async {
-      await storeKeyRepository.ensureStoreKey('');
-      when(() => userAuthPreferencesRepository.getUserAuthPreferences())
-          .thenAnswer((_) async => null);
-      expect(await chatAuthRepository.isChatAuthEnabled(), isFalse);
-      verifyNever(
-        () => userAuthPreferencesRepository.updateUserAuthPreferences(any()),
+    test('without a saved recovery key nothing recovers', () async {
+      final setup = _dataOf(await chatAuthRepository.setUp('first'));
+      expect(
+        _failureOf(
+          await chatAuthRepository.recover(
+            recoveryKey: setup.recoveryKey,
+            newPassword: 'fresh',
+          ),
+        ),
+        CryptoCoreFailureType.wrongPassword,
       );
+    });
 
-      expect(await chatAuthRepository.setupPassword('pw'), isTrue);
-      when(() => userAuthPreferencesRepository.getUserAuthPreferences())
-          .thenAnswer(
-        (_) async => UserAuthPreferences(isAuthenticationOnceEnabled: true),
+    test('an install from before the master password is recognised', () async {
+      FlutterSecureStorage.setMockInitialValues({
+        MasterKeyLocalDataSource.legacyStoreKeyKey: 'old',
+      });
+      expect(_dataOf(await chatAuthRepository.hasLegacyData()), isTrue);
+      expect(
+        _dataOf(await chatAuthRepository.status()),
+        MasterKeyStatus.notSetUp,
       );
-      expect(await chatAuthRepository.isChatAuthEnabled(), isTrue);
-      verify(
-        () => userAuthPreferencesRepository.updateUserAuthPreferences(any()),
-      ).called(1);
+    });
+
+    test('unlock before the first run is internal and opens nothing', () async {
+      expect(
+        _failureOf(await chatAuthRepository.unlock('any')),
+        CryptoCoreFailureType.internal,
+      );
+      expect(service.isOpen, isFalse);
     });
   });
 
@@ -297,26 +309,11 @@ void main() {
     late Directory bDir;
     late CryptoCoreService b;
 
-    Future<void> openWithoutPassword(
-      CryptoCoreService service,
-      CryptoStoreKeyRepository repository,
-    ) async {
-      await repository.ensureStoreKey('');
-      await service.openStore(
-        wrapped: _blobOf(await repository.read())!,
-        password: '',
-      );
-    }
-
     setUp(() async {
       bDir = Directory.systemTemp.createTempSync('fuzzy_crypto_core_b_');
       b = CryptoCoreService(storeDirectoryPath: bDir.path);
-      await openWithoutPassword(service, storeKeyRepository);
-      // B's blob replaces A's in the mock secure storage; A is already open.
-      await openWithoutPassword(
-        b,
-        CryptoStoreKeyRepository(cryptoCoreService: b),
-      );
+      _dataOf(await service.createMasterKey('a'));
+      _dataOf(await b.createMasterKey('b'));
     });
 
     tearDown(() async {
