@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:d5883e7a-7a42-47c7-86fa-2913b6a7ed6a",
+  "serialNumber": "urn:uuid:c49b72ef-76e3-4ed5-9d43-f97998bc7ed3",
   "metadata": {
-    "timestamp": "2026-09-13T11:55:30.996953000Z",
+    "timestamp": "2026-10-25T20:54:29.476197000Z",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -1423,16 +1423,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.2",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.4",
       "author": "RustCrypto Developers",
       "name": "ctutils",
-      "version": "0.4.2",
+      "version": "0.4.4",
       "description": "Constant-time utility library with selection and equality testing support targeting cryptographic applications. Supports `const fn` where appropriate. Built on the `cmov` crate which provides architecture-specific predication intrinsics. Heavily inspired by the `subtle` crate. ",
       "scope": "required",
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7d5515a3834141de9eafb9717ad39eea8247b5674e6066c404e8c4b365d2a29e"
+          "content": "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
         }
       ],
       "licenses": [
@@ -1440,11 +1440,11 @@
           "expression": "Apache-2.0 OR MIT"
         }
       ],
-      "purl": "pkg:cargo/ctutils@0.4.2",
+      "purl": "pkg:cargo/ctutils@0.4.4",
       "externalReferences": [
         {
-          "type": "website",
-          "url": "https://github.com/RustCrypto/utils/tree/master/ctselect"
+          "type": "documentation",
+          "url": "https://docs.rs/ctutils"
         },
         {
           "type": "vcs",
@@ -4587,16 +4587,16 @@
     },
     {
       "type": "library",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.53.1",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.54.1",
       "author": "Tokio Contributors <team@tokio.rs>",
       "name": "tokio",
-      "version": "1.53.1",
+      "version": "1.54.1",
       "description": "An event-driven, non-blocking I/O platform for writing asynchronous I/O backed applications. ",
       "scope": "required",
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
+          "content": "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
         }
       ],
       "licenses": [
@@ -4604,7 +4604,7 @@
           "expression": "MIT"
         }
       ],
-      "purl": "pkg:cargo/tokio@1.53.1",
+      "purl": "pkg:cargo/tokio@1.54.1",
       "externalReferences": [
         {
           "type": "website",
@@ -5630,7 +5630,7 @@
       ]
     },
     {
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.2",
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.4",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#cmov@0.5.4"
       ]
@@ -5702,7 +5702,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
         "registry+https://github.com/rust-lang/crates.io-index#const-oid@0.10.2",
         "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
-        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.2"
+        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.4"
       ]
     },
     {
@@ -5764,7 +5764,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#oslog@0.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#portable-atomic@1.15.0",
         "registry+https://github.com/rust-lang/crates.io-index#threadpool@1.8.1",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.53.1",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.54.1",
         "registry+https://github.com/rust-lang/crates.io-index#wasm-bindgen@0.2.128",
         "registry+https://github.com/rust-lang/crates.io-index#wasm-bindgen-futures@0.4.78",
         "registry+https://github.com/rust-lang/crates.io-index#web-sys@0.3.105"
@@ -6030,7 +6030,7 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#phc@0.6.1",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#base64ct@1.8.3",
-        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.2",
+        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.4",
         "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.3"
       ]
     },
@@ -6290,7 +6290,7 @@
       ]
     },
     {
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.53.1",
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.54.1",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.17"
       ]
@@ -6333,7 +6333,7 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#universal-hash@0.6.1",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
-        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.2"
+        "registry+https://github.com/rust-lang/crates.io-index#ctutils@0.4.4"
       ]
     },
     {

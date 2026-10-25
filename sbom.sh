@@ -18,9 +18,16 @@ case $half in
     cargo cyclonedx --version | grep -q ' 0\.5\.9$' || { echo "sbom.sh: need cargo-cyclonedx 0.5.9 (have: $(cargo cyclonedx --version))"; exit 1; }
     # --target all: the crate ships for android/ios/macos/windows/linux, so the SBOM lists every target's deps
     cargo cyclonedx --manifest-path rust/fuzzy_crypto_core/Cargo.toml --format json --spec-version 1.5 --target all --override-filename rust.cdx
-    # cargo's package id for the crate itself is path+file://<absolute checkout path>; make it checkout-independent
-    sed "s|path+file://$PWD/|path+file:///|g" rust/fuzzy_crypto_core/rust.cdx.json > "$tmp/new.json"
+    # cargo's package id for the crate itself is path+file://<absolute checkout path>, percent-encoded (a space
+    # is %20), so it differs per checkout. Rewrite it to the repo-relative form in every string, whatever the
+    # checkout path is or how it is encoded; a plain text substitution of "$PWD" missed encoded paths.
+    jq 'walk(if type == "string"
+             then gsub("path\\+file://[^#\"]*/rust/fuzzy_crypto_core#"; "path+file:///rust/fuzzy_crypto_core#")
+             else . end)' rust/fuzzy_crypto_core/rust.cdx.json > "$tmp/new.json"
     rm rust/fuzzy_crypto_core/rust.cdx.json
+    if grep -q 'path+file:///[^r]' "$tmp/new.json"; then
+      echo "sbom.sh: an absolute checkout path survived in the Rust SBOM"; exit 1
+    fi
     ;;
   flutter)
     # `**/build/**` keeps cargokit's copies of build_tool/pubspec.lock in local build output out of the BOM
