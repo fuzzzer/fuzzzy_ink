@@ -85,13 +85,16 @@ class AppRouter {
             ),
             GoRoute(
               path: vaultHome,
-              builder: (_, __) => const VaultEntryPage(),
+              builder: (_, __) =>
+                  const SensitiveScreen(child: VaultEntryPage()),
               routes: [
                 GoRoute(
                   path: 'editor',
                   builder: (_, state) {
                     final payload = state.extra! as VaultItemEditorPagePayload;
-                    return VaultItemEditorPage(payload: payload);
+                    return SensitiveScreen(
+                      child: VaultItemEditorPage(payload: payload),
+                    );
                   },
                 ),
               ],
@@ -104,7 +107,7 @@ class AppRouter {
         ),
         GoRoute(
           path: chatUnlock,
-          builder: (_, __) => const ChatUnlockPage(),
+          builder: (_, __) => const SensitiveScreen(child: ChatUnlockPage()),
         ),
         GoRoute(
           path: chatCreate,
@@ -137,7 +140,7 @@ class AppRouter {
           path: chatConnected,
           builder: (_, state) {
             final payload = state.extra! as ConnectedChatPagePayload;
-            return ConnectedChatPage(payload: payload);
+            return SensitiveScreen(child: ConnectedChatPage(payload: payload));
           },
         ),
         GoRoute(
@@ -161,7 +164,8 @@ class AppRouter {
         ),
         GoRoute(
           path: basics,
-          builder: (_, __) => const BasicEncryptionPage(),
+          builder: (_, __) =>
+              const SensitiveScreen(child: BasicEncryptionPage()),
         ),
       ],
     );

@@ -15,6 +15,8 @@ class MainFlutterWindow: NSWindow {
     excludeAppFoldersFromBackup()
     RegisterGeneratedPlugins(registry: flutterViewController)
     registerBackupChannel(messenger: flutterViewController.engine.binaryMessenger)
+    InkGuard.shared.register(
+      window: self, messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }
@@ -84,5 +86,83 @@ class MainFlutterWindow: NSWindow {
       }
       result(MainFlutterWindow.excludeFromBackup(URL(fileURLWithPath: path, isDirectory: true)))
     }
+  }
+}
+
+/// The native side of the screen and copy guard (`screen_guard.dart`,
+/// `copy_guard.dart`).
+///
+/// - `setSecure`: the window's sharing type is none while a sensitive screen
+///   is visible, which leaves it out of screenshots and screen recordings that
+///   respect it.
+/// - `copy`: a sensitive copy is marked concealed and transient (the
+///   nspasteboard.org convention), so clipboard managers hide it and do not
+///   keep it.
+/// - `clearIfOurs`: empties the pasteboard only while it still holds that
+///   copy, judged by its change count, so another app's text is never read.
+final class InkGuard {
+  static let shared = InkGuard()
+
+  private static let concealedType = NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType")
+  private static let transientType = NSPasteboard.PasteboardType("org.nspasteboard.TransientType")
+
+  private weak var window: NSWindow?
+  private var channel: FlutterMethodChannel?
+  private var ourChangeCount: Int?
+
+  func register(window: NSWindow, messenger: FlutterBinaryMessenger) {
+    self.window = window
+    let channel = FlutterMethodChannel(
+      name: "com.fuzzzycore.ink/guard", binaryMessenger: messenger)
+    channel.setMethodCallHandler { [weak self] call, result in
+      self?.handle(call, result: result)
+    }
+    self.channel = channel
+  }
+
+  private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+    case "setSecure":
+      let isSecure = call.arguments as? Bool ?? false
+      window?.sharingType = isSecure ? .none : .readOnly
+      result(true)
+    case "copy":
+      guard let arguments = call.arguments as? [String: Any],
+        let text = arguments["text"] as? String
+      else {
+        result(FlutterError(code: "badArguments", message: "text is missing", details: nil))
+        return
+      }
+      copy(text, isSensitive: arguments["sensitive"] as? Bool ?? false)
+      result(true)
+    case "clearIfOurs":
+      result(clearIfOurs())
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  private func copy(_ text: String, isSensitive: Bool) {
+    let pasteboard = NSPasteboard.general
+    var types: [NSPasteboard.PasteboardType] = [.string]
+    if isSensitive {
+      types += [InkGuard.concealedType, InkGuard.transientType]
+    }
+    pasteboard.declareTypes(types, owner: nil)
+    pasteboard.setString(text, forType: .string)
+    if isSensitive {
+      pasteboard.setData(Data(), forType: InkGuard.concealedType)
+      pasteboard.setData(Data(), forType: InkGuard.transientType)
+    }
+    ourChangeCount = pasteboard.changeCount
+  }
+
+  /// Answers `cleared` or `notOurs` (see `ClipboardClearResult`).
+  private func clearIfOurs() -> String {
+    guard let count = ourChangeCount else { return "notOurs" }
+    ourChangeCount = nil
+    guard NSPasteboard.general.changeCount == count else { return "notOurs" }
+    NSPasteboard.general.clearContents()
+    return "cleared"
   }
 }

@@ -14,6 +14,7 @@ import Flutter
     GeneratedPluginRegistrant.register(with: self)
     excludeAppFoldersFromBackup()
     registerBackupChannel()
+    registerGuardChannel()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -75,5 +76,166 @@ import Flutter
       }
       result(AppDelegate.excludeFromBackup(URL(fileURLWithPath: path, isDirectory: true)))
     }
+  }
+}
+
+// MARK: - Screen and copy guard
+
+extension AppDelegate {
+  fileprivate func registerGuardChannel() {
+    guard let registrar = registrar(forPlugin: "FuzzzyGuard") else { return }
+    let channel = FlutterMethodChannel(
+      name: InkGuard.channelName, binaryMessenger: registrar.messenger())
+    channel.setMethodCallHandler { call, result in
+      InkGuard.shared.handle(call, result: result)
+    }
+  }
+}
+
+/// The native side of the screen and copy guard (`screen_guard.dart`,
+/// `copy_guard.dart`).
+///
+/// - `setSecure`: while a sensitive screen is visible the Flutter content is
+///   drawn inside a secure text field's layer, which iOS leaves out of
+///   screenshots, screen recordings and mirroring; a blur covers the window
+///   while the app is inactive (the app switcher snapshot) and while the
+///   screen is being recorded or mirrored.
+/// - `copy`: a sensitive copy stays on this device (no Universal Clipboard);
+///   every copy expires on its own after the time Dart gives.
+/// - `clearIfOurs`: empties the pasteboard only while it still holds that
+///   copy, judged by its change count, so another app's text is never read.
+final class InkGuard: NSObject {
+  static let channelName = "com.fuzzzycore.ink/guard"
+  static let shared = InkGuard()
+
+  private var isSecure = false
+  private var isInactive = false
+  private var secureField: UITextField?
+  private var cover: UIView?
+  private var ourChangeCount: Int?
+
+  private override init() {
+    super.init()
+    let center = NotificationCenter.default
+    center.addObserver(
+      self, selector: #selector(willResignActive),
+      name: UIApplication.willResignActiveNotification, object: nil)
+    center.addObserver(
+      self, selector: #selector(didBecomeActive),
+      name: UIApplication.didBecomeActiveNotification, object: nil)
+    center.addObserver(
+      self, selector: #selector(captureChanged),
+      name: UIScreen.capturedDidChangeNotification, object: nil)
+  }
+
+  private var window: UIWindow? {
+    UIApplication.shared.delegate?.window ?? nil
+  }
+
+  func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+    case "setSecure":
+      setSecure(call.arguments as? Bool ?? false)
+      result(true)
+    case "copy":
+      guard let arguments = call.arguments as? [String: Any],
+        let text = arguments["text"] as? String
+      else {
+        result(FlutterError(code: "badArguments", message: "text is missing", details: nil))
+        return
+      }
+      copy(
+        text, isSensitive: arguments["sensitive"] as? Bool ?? false,
+        expiresInMs: arguments["expiresInMs"] as? Int ?? 0)
+      result(true)
+    case "clearIfOurs":
+      result(clearIfOurs())
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  private func setSecure(_ secure: Bool) {
+    isSecure = secure
+    if secure { installSecureLayer() }
+    secureField?.isSecureTextEntry = secure
+    updateCover()
+  }
+
+  /// Moves the window's layer into a secure text field's canvas once; after
+  /// that, `isSecureTextEntry` switches the protection on and off.
+  private func installSecureLayer() {
+    guard secureField == nil, let window = window, let superlayer = window.layer.superlayer
+    else { return }
+    let field = UITextField()
+    field.isUserInteractionEnabled = false
+    field.translatesAutoresizingMaskIntoConstraints = false
+    window.addSubview(field)
+    field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
+    field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
+    superlayer.addSublayer(field.layer)
+    let canvas: CALayer?
+    if #available(iOS 17.0, *) {
+      canvas = field.layer.sublayers?.last
+    } else {
+      canvas = field.layer.sublayers?.first
+    }
+    guard let canvas = canvas else {
+      field.layer.removeFromSuperlayer()
+      field.removeFromSuperview()
+      return
+    }
+    canvas.addSublayer(window.layer)
+    secureField = field
+  }
+
+  @objc private func willResignActive() {
+    isInactive = true
+    updateCover()
+  }
+
+  @objc private func didBecomeActive() {
+    isInactive = false
+    updateCover()
+  }
+
+  @objc private func captureChanged() {
+    updateCover()
+  }
+
+  private func updateCover() {
+    let shouldCover = isSecure && (isInactive || UIScreen.main.isCaptured)
+    if shouldCover {
+      guard cover == nil, let window = window else { return }
+      let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+      blur.frame = window.bounds
+      blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      window.addSubview(blur)
+      cover = blur
+    } else {
+      cover?.removeFromSuperview()
+      cover = nil
+    }
+  }
+
+  private func copy(_ text: String, isSensitive: Bool, expiresInMs: Int) {
+    var options: [UIPasteboard.OptionsKey: Any] = [:]
+    if isSensitive {
+      options[.localOnly] = true
+    }
+    if expiresInMs > 0 {
+      options[.expirationDate] = Date().addingTimeInterval(Double(expiresInMs) / 1000)
+    }
+    UIPasteboard.general.setItems([["public.utf8-plain-text": text]], options: options)
+    ourChangeCount = UIPasteboard.general.changeCount
+  }
+
+  /// Answers `cleared` or `notOurs` (see `ClipboardClearResult`).
+  private func clearIfOurs() -> String {
+    guard let count = ourChangeCount else { return "notOurs" }
+    ourChangeCount = nil
+    guard UIPasteboard.general.changeCount == count else { return "notOurs" }
+    UIPasteboard.general.items = []
+    return "cleared"
   }
 }
