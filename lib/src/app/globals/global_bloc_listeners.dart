@@ -96,10 +96,15 @@ class GlobalBlocListeners extends StatelessWidget {
             if (router != null) {
               final currentLocation =
                   router.routerDelegate.currentConfiguration.uri.toString();
-              if (currentLocation == AppRouter.chatUnlock) {
+              if (currentLocation == AppRouter.chatUnlock ||
+                  currentLocation == AppRouter.recover ||
+                  currentLocation == AppRouter.setup) {
                 router.go(AppRouter.home);
               }
             }
+
+            // A first run, a recovery or an erase may have changed the vault.
+            context.read<VaultAuthCubit>().checkVaultStatus();
 
             final handler = sl.get<FuzzyLinkHandler>();
             if (handler.hasPendingPayload) {
@@ -109,10 +114,28 @@ class GlobalBlocListeners extends StatelessWidget {
         ),
         BlocListener<FuzzyAuthStore, FuzzyAuthState>(
           listenWhen: (previous, current) =>
-              !previous.status.isLocked && current.status.isLocked,
-          listener: (context, __) {
+              previous.status.hasAccess && !current.status.hasAccess,
+          // The whole app locks: the vault's key is wiped with the store's.
+          listener: (context, __) => context.read<VaultAuthCubit>().lock(),
+        ),
+        BlocListener<FuzzyAuthStore, FuzzyAuthState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              (current.status.isLocked ||
+                  current.status.isStorageUnavailable ||
+                  current.status.isSetupRequired),
+          listener: (context, state) {
             final router = AppRouter.routerInstance;
-            if (router != null) {
+            if (router == null) return;
+            if (state.status.isSetupRequired) {
+              context.read<VaultAuthCubit>().checkVaultStatus();
+              router.go(AppRouter.setup);
+              return;
+            }
+            final currentLocation =
+                router.routerDelegate.currentConfiguration.uri.toString();
+            // The recovery page is the locked app's own way in.
+            if (currentLocation != AppRouter.recover) {
               router.go(AppRouter.chatUnlock);
             }
           },

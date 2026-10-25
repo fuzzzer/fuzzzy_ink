@@ -38,7 +38,6 @@ mod tests {
     use vodozemac::olm::{DecryptionError, Message as OlmNormalMessage, OlmMessage, PreKeyMessage};
 
     use super::*;
-    use crate::api::core::{create_store_key, open_store};
     use crate::formats::{
         decode_text, encode_text, ContentType, Direction, InnerHeader, Message, OlmType,
     };
@@ -52,33 +51,27 @@ mod tests {
     /// One device: its own store directory, wrapped key and open handle.
     struct Device {
         dir: PathBuf,
-        wrapped: Vec<u8>,
+        store_key: [u8; 32],
         core: CryptoCore,
     }
 
     impl Device {
         fn new() -> Self {
             let dir = temp_dir();
-            let wrapped = create_store_key("".into()).unwrap();
-            let core = open_store(
-                dir.to_string_lossy().into_owned(),
-                wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
-            Self { dir, wrapped, core }
+            let store_key = crate::store::random_array().unwrap();
+            let core = CryptoCore::open_for_tests(&dir, store_key);
+            Self {
+                dir,
+                store_key,
+                core,
+            }
         }
 
         /// Drops the handle and opens the same store again (clears the cache —
         /// every later read comes from disk, as after a restart).
         fn reopen(&mut self) {
             self.core.close();
-            self.core = open_store(
-                self.dir.to_string_lossy().into_owned(),
-                self.wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
+            self.core = CryptoCore::open_for_tests(&self.dir, self.store_key);
         }
 
         fn state_file(&self, chat_id: &str) -> PathBuf {

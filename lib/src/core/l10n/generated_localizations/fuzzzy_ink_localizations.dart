@@ -1050,35 +1050,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Create Your Vault'**
   String get vaultCreateYourVault;
 
-  /// No description provided for @vaultCreateDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Your vault encrypts all passwords and notes locally on your device.\nChoose a strong master password.'**
-  String get vaultCreateDescription;
-
   /// No description provided for @vaultPassword.
   ///
   /// In en, this message translates to:
   /// **'Vault Password'**
   String get vaultPassword;
-
-  /// No description provided for @vaultConfirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Password'**
-  String get vaultConfirmPassword;
-
-  /// No description provided for @vaultPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get vaultPasswordsDoNotMatch;
-
-  /// No description provided for @vaultPasswordCannotBeReset.
-  ///
-  /// In en, this message translates to:
-  /// **'This password cannot be reset. If you forget it, your data will be permanently lost.'**
-  String get vaultPasswordCannotBeReset;
 
   /// No description provided for @vaultCreateVault.
   ///
@@ -1215,7 +1191,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @chatUnlockSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your password to access your chats.'**
+  /// **'Enter your master password to open the app.'**
   String get chatUnlockSubtitle;
 
   /// No description provided for @chatAuthPassword.
@@ -1235,18 +1211,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Unlock'**
   String get chatAuthUnlock;
-
-  /// No description provided for @chatAuthForgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot password? Your encrypted data cannot be recovered without it.'**
-  String get chatAuthForgotPassword;
-
-  /// No description provided for @chatAuthSetupTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Protect Your Chats'**
-  String get chatAuthSetupTitle;
 
   /// No description provided for @chatAuthSetupDescription.
   ///
@@ -1272,41 +1236,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Passwords do not match'**
   String get chatAuthPasswordsDoNotMatch;
 
-  /// No description provided for @chatAuthEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Protection Enabled'**
-  String get chatAuthEnabled;
-
-  /// No description provided for @chatAuthDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Protection Disabled'**
-  String get chatAuthDisabled;
-
-  /// No description provided for @chatAuthEnableProtection.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Chat Protection'**
-  String get chatAuthEnableProtection;
-
-  /// No description provided for @chatAuthDisableProtection.
-  ///
-  /// In en, this message translates to:
-  /// **'Disable Chat Protection'**
-  String get chatAuthDisableProtection;
-
   /// No description provided for @chatAuthProtectionDescription.
   ///
   /// In en, this message translates to:
-  /// **'When enabled, you must enter a password to access your chats. Your keys will be encrypted with this password.'**
+  /// **'Your master password protects every key in the app: your chats, your history and, unless it has its own password, the vault. It cannot be switched off.'**
   String get chatAuthProtectionDescription;
-
-  /// No description provided for @chatAuthMigratingKeys.
-  ///
-  /// In en, this message translates to:
-  /// **'Encrypting your keys...'**
-  String get chatAuthMigratingKeys;
 
   /// No description provided for @chatAuthResecuringKeys.
   ///
@@ -1317,13 +1251,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @chatAuthentication.
   ///
   /// In en, this message translates to:
-  /// **'Chat Authentication'**
+  /// **'Master password'**
   String get chatAuthentication;
 
   /// No description provided for @chatAuthenticationDescription.
   ///
   /// In en, this message translates to:
-  /// **'Manage chat password protection'**
+  /// **'Password, recovery key and auto-lock'**
   String get chatAuthenticationDescription;
 
   /// No description provided for @benchmarkFileEncryption.
@@ -1524,12 +1458,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'New Password'**
   String get chatAuthNewPassword;
-
-  /// No description provided for @chatAuthEnterPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter your current password'**
-  String get chatAuthEnterPassword;
 
   /// No description provided for @chatAuthPasswordChanged.
   ///
@@ -1938,6 +1866,354 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
   String get vaultMoveUnfinishedMessage;
+
+  /// No description provided for @masterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Master password'**
+  String get masterPassword;
+
+  /// No description provided for @masterPasswordSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your master password'**
+  String get masterPasswordSetupTitle;
+
+  /// No description provided for @masterPasswordSetupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'One password protects everything in Fuzzzy Ink: your chats, your history and your vault. You will enter it each time you open the app.'**
+  String get masterPasswordSetupDescription;
+
+  /// No description provided for @masterPasswordPreviousData.
+  ///
+  /// In en, this message translates to:
+  /// **'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.'**
+  String get masterPasswordPreviousData;
+
+  /// No description provided for @masterPasswordCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create master password'**
+  String get masterPasswordCreate;
+
+  /// No description provided for @masterPasswordCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating your keys…'**
+  String get masterPasswordCreating;
+
+  /// No description provided for @masterPasswordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your keys could not be created. Try again.'**
+  String get masterPasswordFailed;
+
+  /// No description provided for @masterPasswordIsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Master password is on'**
+  String get masterPasswordIsOn;
+
+  /// No description provided for @recoveryKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get recoveryKeyTitle;
+
+  /// No description provided for @recoveryKeyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget your master password, this key lets you set a new one. Write it down or save it, and keep it somewhere safe, away from this device. You see it only now.'**
+  String get recoveryKeyDescription;
+
+  /// No description provided for @recoveryKeyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Without your password or this recovery key, nobody — not even us — can get your data back.'**
+  String get recoveryKeyWarning;
+
+  /// No description provided for @recoveryKeySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or print…'**
+  String get recoveryKeySave;
+
+  /// No description provided for @recoveryKeySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key saved to a file'**
+  String get recoveryKeySaved;
+
+  /// No description provided for @recoveryKeySaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The recovery key was not saved.'**
+  String get recoveryKeySaveFailed;
+
+  /// No description provided for @recoveryKeyConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'I have saved my recovery key'**
+  String get recoveryKeyConfirm;
+
+  /// No description provided for @recoveryKeyContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get recoveryKeyContinue;
+
+  /// No description provided for @recoveryKeySkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue without a recovery key'**
+  String get recoveryKeySkip;
+
+  /// No description provided for @recoveryKeySkipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go on without a recovery key?'**
+  String get recoveryKeySkipTitle;
+
+  /// No description provided for @recoveryKeySkipMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget your master password, your chats, history and vault are lost for good. Without your password or this recovery key, nobody — not even us — can get your data back.'**
+  String get recoveryKeySkipMessage;
+
+  /// No description provided for @recoveryKeySkipConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue without it'**
+  String get recoveryKeySkipConfirm;
+
+  /// No description provided for @recoveryKeyFileText.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink recovery key\n\n{key}\n\nIf you forget your master password, this key lets you set a new one. Keep it somewhere safe, away from the device. Without your password or this recovery key, nobody — not even us — can get your data back.\n'**
+  String recoveryKeyFileText(String key);
+
+  /// No description provided for @recoveryKeyIsSet.
+  ///
+  /// In en, this message translates to:
+  /// **'A recovery key is set.'**
+  String get recoveryKeyIsSet;
+
+  /// No description provided for @recoveryKeyNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No recovery key. If you forget your master password, your data is lost for good.'**
+  String get recoveryKeyNotSet;
+
+  /// No description provided for @recoveryKeyCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new recovery key'**
+  String get recoveryKeyCreateNew;
+
+  /// No description provided for @recoveryKeyCreateNewDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your master password to create a new recovery key. The old one stops working.'**
+  String get recoveryKeyCreateNewDescription;
+
+  /// No description provided for @recoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New password with your recovery key'**
+  String get recoveryTitle;
+
+  /// No description provided for @recoveryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the recovery key you saved when you set up the app, then choose a new master password.'**
+  String get recoveryDescription;
+
+  /// No description provided for @recoveryKeyField.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get recoveryKeyField;
+
+  /// No description provided for @recoverySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get recoverySubmit;
+
+  /// No description provided for @recoveryKeyTypo.
+  ///
+  /// In en, this message translates to:
+  /// **'This recovery key has a typo. Check each group of four.'**
+  String get recoveryKeyTypo;
+
+  /// No description provided for @recoveryKeyWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'This recovery key does not open this app.'**
+  String get recoveryKeyWrong;
+
+  /// No description provided for @chatUnlockForgot.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your password?'**
+  String get chatUnlockForgot;
+
+  /// No description provided for @chatUnlockUseRecoveryKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my recovery key'**
+  String get chatUnlockUseRecoveryKey;
+
+  /// No description provided for @chatUnlockErase.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything and start over'**
+  String get chatUnlockErase;
+
+  /// No description provided for @eraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything?'**
+  String get eraseTitle;
+
+  /// No description provided for @eraseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.'**
+  String get eraseMessage;
+
+  /// No description provided for @eraseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything'**
+  String get eraseConfirm;
+
+  /// No description provided for @storageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink can\'t read this device\'s secure key storage, so it stays locked. Try again; if it keeps happening, restart the device.'**
+  String get storageUnavailable;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @appLockNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Fuzzzy Ink'**
+  String get appLockNow;
+
+  /// No description provided for @autoLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-lock'**
+  String get autoLockTitle;
+
+  /// No description provided for @autoLockIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after no activity for'**
+  String get autoLockIdle;
+
+  /// No description provided for @autoLockBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after leaving the app'**
+  String get autoLockBackground;
+
+  /// No description provided for @autoLockImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'At once'**
+  String get autoLockImmediately;
+
+  /// No description provided for @autoLockMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String autoLockMinutes(int count);
+
+  /// No description provided for @autoLockSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The setting was not saved.'**
+  String get autoLockSaveFailed;
+
+  /// No description provided for @vaultPasswordModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault password'**
+  String get vaultPasswordModeTitle;
+
+  /// No description provided for @vaultUsesMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Your master password opens the vault.'**
+  String get vaultUsesMasterPassword;
+
+  /// No description provided for @vaultUsesOwnPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The vault has its own password.'**
+  String get vaultUsesOwnPassword;
+
+  /// No description provided for @vaultUseOwnPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different password for the vault'**
+  String get vaultUseOwnPassword;
+
+  /// No description provided for @vaultUseMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the vault with the master password'**
+  String get vaultUseMasterPassword;
+
+  /// No description provided for @vaultOwnPasswordNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The recovery key does not open a vault with its own password. Without that password the vault is lost for good.'**
+  String get vaultOwnPasswordNote;
+
+  /// No description provided for @vaultOwnNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New vault password'**
+  String get vaultOwnNewPassword;
+
+  /// No description provided for @vaultCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current vault password'**
+  String get vaultCurrentPassword;
+
+  /// No description provided for @vaultPasswordModeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault password updated'**
+  String get vaultPasswordModeChanged;
+
+  /// No description provided for @vaultCreateWithMasterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault keeps passwords, notes and files sealed on this device. Your master password opens it; enter it to create the vault.'**
+  String get vaultCreateWithMasterDescription;
+
+  /// No description provided for @vaultForgotMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your master password? Lock the app and use your recovery key.'**
+  String get vaultForgotMasterPassword;
+
+  /// No description provided for @vaultTooManyAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong passwords. Wait a moment and try again.'**
+  String get vaultTooManyAttempts;
 }
 
 class _FuzzzyInkLocalizationsDelegate

@@ -191,7 +191,7 @@ class FuzzyLinkHandler {
 
   Future<bool> _isAppLocked() async {
     final status = _authStore.state.status;
-    return status.isInitial || status.isLocked || status.isUnlocking;
+    return !status.hasAccess;
   }
 
   void dispose() {

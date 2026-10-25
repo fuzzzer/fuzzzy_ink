@@ -9,9 +9,9 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   FuzzyAuthStore({
     required this.chatAuthRepository,
     required this.biometricAuthRepository,
-    required this.cryptoStoreKeyRepository,
     required this.cryptoCoreService,
     required this.appLockThrottleRepository,
+    required this.appResetRepository,
     DateTime Function()? now,
   })  : _now = now ?? DateTime.now,
         super(
@@ -20,9 +20,9 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
 
   final ChatAuthRepository chatAuthRepository;
   final BiometricAuthRepository biometricAuthRepository;
-  final CryptoStoreKeyRepository cryptoStoreKeyRepository;
   final CryptoCoreService cryptoCoreService;
   final AppLockThrottleRepository appLockThrottleRepository;
+  final AppResetRepository appResetRepository;
   final DateTime Function() _now;
 
   /// When the current wait ends, measured on [_now]; null when none runs.
@@ -34,38 +34,42 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   /// for the wrong-password count.
   bool _attemptRunning = false;
 
-  /// The store is open whenever the status is `noAuthRequired` or
-  /// `authenticated`, and closed on [lock]. Whether the lock is enabled is
-  /// read from the store-key blob, not the preference
-  /// ([ChatAuthRepository.isChatAuthEnabled]).
+  /// Reads where the master password stands. The store opens only on an
+  /// unlock: there is no state without a password. A secure storage that
+  /// cannot be read fails closed (`storageUnavailable`), never open.
   Future<void> checkAuthStatus() async {
-    final ensureRes = await cryptoStoreKeyRepository.ensureStoreKey('');
-    if (ensureRes is CryptoCoreFailure) {
-      logger.e('Store key could not be created: ${ensureRes.type}');
+    final statusRes = await chatAuthRepository.status();
+    if (statusRes is CryptoCoreFailure<MasterKeyStatus>) {
+      logger.e('Secure storage unreadable at launch: ${statusRes.type}');
+      await cryptoCoreService.close();
+      emit(state.copyWith(status: AuthStateStatus.storageUnavailable));
+      return;
     }
-
-    final enabled = await chatAuthRepository.isChatAuthEnabled();
-    final biometricReset = enabled &&
-        await biometricAuthRepository.discardOutdatedCopy(BiometricScope.chat);
-    final biometricEnabled =
-        enabled && await biometricAuthRepository.isEnabled(BiometricScope.chat);
-    if (enabled) {
-      final throttle = await appLockThrottleRepository.read();
-      emit(
-        state.copyWith(
-          status: AuthStateStatus.locked,
-          biometricEnabled: biometricEnabled,
-          biometricReset: biometricReset,
-          lockoutRemaining: _startWait(throttle.remainingAt(_now())),
-        ),
-      );
-    } else {
-      emit(
-        state.copyWith(
-          status: AuthStateStatus.noAuthRequired,
-          biometricEnabled: false,
-        ),
-      );
+    switch ((statusRes as CryptoCoreSuccess<MasterKeyStatus>).data) {
+      case MasterKeyStatus.notSetUp:
+        final legacyRes = await chatAuthRepository.hasLegacyData();
+        emit(
+          state.copyWith(
+            status: AuthStateStatus.setupRequired,
+            biometricEnabled: false,
+            previousDataFound:
+                legacyRes is CryptoCoreSuccess<bool> && legacyRes.data,
+          ),
+        );
+      case MasterKeyStatus.ready:
+        final biometricReset = await biometricAuthRepository
+            .discardOutdatedCopy(BiometricScope.chat);
+        final biometricEnabled =
+            await biometricAuthRepository.isEnabled(BiometricScope.chat);
+        final throttle = await appLockThrottleRepository.read();
+        emit(
+          state.copyWith(
+            status: AuthStateStatus.locked,
+            biometricEnabled: biometricEnabled,
+            biometricReset: biometricReset,
+            lockoutRemaining: _startWait(throttle.remainingAt(_now())),
+          ),
+        );
     }
   }
 
@@ -129,20 +133,24 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
     }
   }
 
+  /// The password itself is never kept: on success only the open store
+  /// handle in the core remains.
   Future<void> _verify(String password) async {
     emit(state.copyWith(status: AuthStateStatus.unlocking));
 
-    final isValid = await chatAuthRepository.verifyPassword(password);
+    final unlockRes = await chatAuthRepository.unlock(password);
 
-    if (isValid) {
+    if (unlockRes is CryptoCoreSuccess<void>) {
       await appLockThrottleRepository.clear();
       emit(
         state.copyWith(
           status: AuthStateStatus.authenticated,
-          authData: AuthData(password: password),
           lockoutRemaining: _startWait(Duration.zero),
         ),
       );
+    } else if ((unlockRes as CryptoCoreFailure<void>).type ==
+        CryptoCoreFailureType.io) {
+      emit(state.copyWith(status: AuthStateStatus.storageUnavailable));
     } else {
       // The count as saved now, not as read before the check: anything
       // recorded meanwhile is kept, and this failure is added on top.
@@ -191,54 +199,51 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
     return super.close();
   }
 
-  Future<void> authenticate(AuthData authData) async {
-    emit(
-      state.copyWith(
-        status: AuthStateStatus.authenticated,
-        authData: authData,
-      ),
-    );
-  }
-
+  /// Closes the store (its key is wiped in the core) and asks for the
+  /// master password again. Only an unlocked app locks; the first run and a
+  /// failed storage keep their own state.
   Future<void> lock() async {
     await cryptoCoreService.close();
-    emit(
-      state.copyWith(
-        status: AuthStateStatus.locked,
-        authData: const AuthData(password: ''),
-      ),
-    );
+    if (!state.status.isAuthenticated) return;
+    emit(state.copyWith(status: AuthStateStatus.locked));
   }
 
-  Future<void> onPasswordSetup(String password) async {
+  /// The first run finished (master password set, recovery key saved or
+  /// skipped): the store it opened is the session's.
+  void onSetUpComplete() {
     emit(
       state.copyWith(
         status: AuthStateStatus.authenticated,
-        authData: AuthData(password: password),
+        biometricEnabled: false,
+        previousDataFound: false,
       ),
     );
   }
 
-  Future<bool> changePassword({
-    required String oldPassword,
-    required String newPassword,
-  }) async {
-    final success = await chatAuthRepository.changePassword(
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    );
-
-    if (success) {
-      await biometricAuthRepository.disable(BiometricScope.chat);
-      emit(
-        state.copyWith(
-          authData: AuthData(password: newPassword),
-          biometricEnabled: false,
-        ),
-      );
+  /// A recovery key set a new master password and opened the store. Every
+  /// biometric copy holds the old password, so they are dropped, and the
+  /// wrong-password count starts again.
+  Future<void> onRecovered() async {
+    for (final scope in BiometricScope.values) {
+      await biometricAuthRepository.disable(scope);
     }
+    await appLockThrottleRepository.clear();
+    emit(
+      state.copyWith(
+        status: AuthStateStatus.authenticated,
+        biometricEnabled: false,
+        lockoutRemaining: _startWait(Duration.zero),
+      ),
+    );
+  }
 
-    return success;
+  /// "Erase everything and start over": keys, chats, history, vault and
+  /// settings go; the app then asks for a new master password.
+  Future<CryptoCoreResponse<void>> eraseEverything() async {
+    final eraseRes = await appResetRepository.eraseEverything();
+    _startWait(Duration.zero);
+    await checkAuthStatus();
+    return eraseRes;
   }
 
   Future<void> setBiometricEnabled({required bool enabled}) async {

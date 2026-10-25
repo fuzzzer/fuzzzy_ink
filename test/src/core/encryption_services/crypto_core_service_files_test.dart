@@ -43,10 +43,10 @@ class _Device {
   static Future<_Device> open() async {
     final dir = Directory.systemTemp.createTempSync('crypto_core_files_');
     final service = CryptoCoreService(storeDirectoryPath: dir.path);
-    final wrapped = _dataOf(await service.createStoreKey(''));
+    // The first run opens the store; the master password only gates it.
     expect(
-      await service.openStore(wrapped: wrapped, password: ''),
-      isA<CryptoCoreSuccess<void>>(),
+      await service.createMasterKey('test password'),
+      isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>(),
     );
     return _Device._(dir, service);
   }

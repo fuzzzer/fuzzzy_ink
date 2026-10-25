@@ -411,7 +411,6 @@ mod tests {
 
     use vodozemac::olm::DecryptionError;
 
-    use crate::api::core::{create_store_key, open_store};
     use crate::files::ChatFileSetup;
     use crate::formats::{FileHeader, FileKeyMode, OlmType, CHUNK_SIZE};
     use crate::store::test_support::temp_dir;
@@ -429,12 +428,7 @@ mod tests {
     impl Device {
         fn new() -> Self {
             let dir = temp_dir();
-            let core = open_store(
-                dir.to_string_lossy().into_owned(),
-                create_store_key("".into()).unwrap(),
-                "".into(),
-            )
-            .unwrap();
+            let core = CryptoCore::open_for_tests(&dir, crate::store::random_array().unwrap());
             Self { dir, core }
         }
 

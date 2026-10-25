@@ -8,6 +8,7 @@ pub mod error;
 pub mod files;
 pub mod formats;
 mod frb_generated;
+pub mod master;
 pub mod messages;
 pub mod pairing;
 pub mod passwords;

@@ -72,7 +72,7 @@ void main() {
       authStore,
       const Stream<FuzzyAuthState>.empty(),
       initialState: const FuzzyAuthState.initial()
-          .copyWith(status: AuthStateStatus.noAuthRequired),
+          .copyWith(status: AuthStateStatus.authenticated),
     );
 
     injector = ChatFileInjectorCubit(messageDataRepository: mockRepo);

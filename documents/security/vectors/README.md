@@ -28,7 +28,8 @@ which rewrites every file and asserts that a second generation is byte-identical
 | password | `pw` |
 | Argon2id | `m = 65536` KiB, `t = 4`, `p = 1`, 32-byte output, version 0x13 |
 | salt / nonce (blobs) | `11×16` / `22×24` |
-| store key = vault master key | `33×32` |
+| master key = vault key (own-password wrap, items) | `33×32` |
+| store / vault key wrapped under the master key | `66×32` |
 | history key (per-chat, F2-12) | `55×32` |
 | local-seal nonce | `44×24` |
 | file key (fixed-key container), file-key body | `42×32` |
@@ -46,10 +47,12 @@ which rewrites every file and asserts that a second generation is byte-identical
 | `file_key_body` | content-type-0x02 body: key `42×32` ‖ `000a` ‖ `report.pdf` | 44 | F3-2 developer/reviewer golden; F5-1: python |
 | `inner_header_file_key` | A→B, counter 8, content type 0x02, body = `file_key_body` | 160 | F5-1: python |
 | `argon2id_kek` | Argon2id(`pw`, `11×16`, production parameters) | 32 | F5-1: `argon2-cffi` 25.1 `hash_secret_raw(type=ID, version=19)` |
-| `wrapped_store_key` | 0x10, AAD `store-key`: header ‖ ct ‖ tag `0343f644…` | 103 | F2-2 reviewer (`audit_golden_f22.py`: argon2-cffi + pycryptodome 3.23) — byte-identical; negative controls (AAD `store-key\0`, t=3, p=4) differ |
-| `wrapped_vault_key` | 0x10, AAD `vault-key`: same header and ciphertext, tag `47a1848d…` | 103 | F4-1 reviewer's primitives (`review_golden_f41.py`) recomputed for the `fd0850e` AAD change — byte-identical |
-| `local_seal_chat` | 0x20 of `hello` under the chat's history key `55×32`, AAD `local-seal` ‖ chat id (F2-12; replaced `local_key` + `local_seal`, whose store-derived key no longer exists) | 51 | F2-12: pycryptodome `ChaCha20_Poly1305` from the §10.4 rule — byte-identical; AAD without the chat id differs (negative control) |
-| `vault_item` | 0x20 of `item` under the master key directly, AAD `vault-item` | 50 | F4-1 reviewer — byte-identical |
+| `wrapped_master_key` | 0x10, AAD `master-key`: the master key under the master password — same header and ciphertext as every 0x10 here, tag `bfdf3e49…` (master-password build, 2026-10-26; replaced `wrapped_store_key`, AAD `store-key`, whose direct password wrap of the store key no longer exists) | 103 | 2026-10-26: pycryptodome `ChaCha20_Poly1305` under the `argon2id_kek` bytes — byte-identical (`master::tests::password::wrapped_blob_format_exact_bytes`) |
+| `wrapped_vault_key` | 0x10, AAD `vault-key`: a vault under its own password — same header and ciphertext, tag `47a1848d…` | 103 | F4-1 reviewer's primitives (`review_golden_f41.py`) recomputed for the `fd0850e` AAD change — byte-identical |
+| `store_key_wrap` | 0x20 of the store key `66×32` under the master key `33×32`, nonce `44×24`, AAD `store-key-wrap` | 78 | 2026-10-26: pycryptodome — byte-identical (`master::tests::under_master::round_trip_and_golden`) |
+| `vault_key_wrap` | 0x20 of the vault key `66×32` under the master key `33×32`, nonce `44×24`, AAD `vault-key-wrap` — same ciphertext as `store_key_wrap`, another tag | 78 | 2026-10-26: pycryptodome — byte-identical |
+| `local_seal_chat` | 0x20 of `hello` under the chat's history key `55×32`, AAD `local-seal` ‖ chat id ‖ row, row = `01` ‖ `Fuzz/RlVaWgEDAd6tvu8` (2026-10-26: bound to its row; F2-12 replaced `local_key` + `local_seal`, whose store-derived key no longer exists) | 51 | 2026-10-26: pycryptodome `ChaCha20_Poly1305` from the §10.4 rule — byte-identical (`store::tests::local::opens_the_golden_blob`) |
+| `vault_item` | 0x20 of `item` under the vault key `33×32`, AAD `vault-item` ‖ `00000003` ‖ item id (2026-10-26: bound to its item id and version) | 50 | 2026-10-26: pycryptodome — byte-identical (`vault::tests::golden_item`) |
 | `password_sealed_text` | 0x05 of `hello`, AAD = its own first 31 bytes; plus the text form | 76 | F4-1 reviewer (`review_golden_f41.py`) — byte-identical; AAD readings B–E (with nonce / without salt / envelope only / none) all differ |
 | `state_file` | the sealed state file of A's freshly invited chat: AAD `chat-state` ‖ chat id, key = store key, body = `state_file.body.json` | 1662 | F5-1: pycryptodome over the committed body (re-run for F2-12 after the `history_key` field was added) |
 | `file_header_password` | 0x04 header, key mode 0x02, 1 MiB chunk size | 55 | F2-1 reviewer; F3-1 `golden_header` |

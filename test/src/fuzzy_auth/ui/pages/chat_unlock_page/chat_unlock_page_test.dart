@@ -53,7 +53,7 @@ void main() {
       find.text(FuzzzyInkLocalizationsEn().chatAuthLockedOut('1:05')),
       findsOneWidget,
     );
-    final button = tester.widget<FuzzzyButton>(find.byType(FuzzzyButton));
+    final button = tester.widget<FuzzzyButton>(find.byType(FuzzzyButton).first);
     expect(button.onPressed, isNull);
   });
 
@@ -64,7 +64,7 @@ void main() {
     await tester.pump();
 
     expect(find.textContaining('1:05'), findsNothing);
-    final button = tester.widget<FuzzzyButton>(find.byType(FuzzzyButton));
+    final button = tester.widget<FuzzzyButton>(find.byType(FuzzzyButton).first);
     expect(button.onPressed, isNotNull);
   });
 
@@ -105,5 +105,46 @@ void main() {
       find.text(FuzzzyInkLocalizationsEn().chatAuthBiometricReset),
       findsOneWidget,
     );
+  });
+
+  testWidgets(
+      'a secure storage that cannot be read shows the error and a retry, '
+      'never a password field (security review 2026-10-22)', (tester) async {
+    when(() => store.checkAuthStatus()).thenAnswer((_) async {});
+    await pumpPage(
+      tester,
+      const FuzzyAuthState.initial()
+          .copyWith(status: AuthStateStatus.storageUnavailable),
+    );
+
+    expect(find.byKey(const ValueKey('unlock.storageUnavailable')), findsOne);
+    expect(find.byType(TextField), findsNothing);
+    await tester.tap(find.text(FuzzzyInkLocalizationsEn().tryAgain));
+    verify(() => store.checkAuthStatus()).called(1);
+  });
+
+  testWidgets(
+      'forgot password offers the recovery key and an erase that asks first',
+      (tester) async {
+    when(() => store.eraseEverything())
+        .thenAnswer((_) async => const CryptoCoreSuccess(null));
+    await pumpPage(tester, locked);
+    final l10n = FuzzzyInkLocalizationsEn();
+
+    expect(find.text(l10n.chatUnlockUseRecoveryKey), findsOneWidget);
+    await tester.ensureVisible(find.text(l10n.chatUnlockErase));
+    await tester.tap(find.text(l10n.chatUnlockErase));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.eraseMessage), findsOneWidget);
+
+    await tester.tap(find.text(l10n.cancel));
+    await tester.pumpAndSettle();
+    verifyNever(() => store.eraseEverything());
+
+    await tester.tap(find.text(l10n.chatUnlockErase));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.eraseConfirm));
+    await tester.pumpAndSettle();
+    verify(() => store.eraseEverything()).called(1);
   });
 }

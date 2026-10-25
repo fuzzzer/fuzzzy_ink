@@ -9,20 +9,49 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `unlocked`
 
-/// Draws a fresh master key and wraps it under `password`. Password strength
-/// is the app's judgement, not this function's.
+/// Draws a fresh vault key and wraps it under the master key (the default:
+/// the master password opens the vault). `password_wrap` is the master key's
+/// 0x10 blob; one Argon2id run. Wrong master password is `WrongPassword`.
+Future<VaultInitResult> vaultInitWithMaster(
+        {required List<int> passwordWrap, required String masterPassword}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultInitWithMaster(
+        passwordWrap: passwordWrap, masterPassword: masterPassword);
+
+/// Draws a fresh vault key and wraps it under the vault's own `password`.
+/// Password strength is the app's judgement, not this function's; an empty
+/// password is refused (`WrongPassword`).
 Future<VaultInitResult> vaultInit({required String password}) =>
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultInit(password: password);
 
-/// Unwraps the master key; a wrong password (or a tampered blob) is `WrongPassword`.
+/// Which password opens the vault whose key is `wrapped`: `true` for its own
+/// password (0x10), `false` for the master password (0x20). Reads the type
+/// byte only — no key is touched, so it may be synchronous.
+bool vaultUsesOwnPassword({required List<int> wrapped}) =>
+    FuzzyCryptoCoreLib.instance.api
+        .crateApiVaultVaultUsesOwnPassword(wrapped: wrapped);
+
+/// Unwraps a vault key wrapped under its own password; a wrong password (or a
+/// tampered blob) is `WrongPassword`.
 Future<VaultKey> vaultUnlock(
         {required String password, required List<int> wrapped}) =>
     FuzzyCryptoCoreLib.instance.api
         .crateApiVaultVaultUnlock(password: password, wrapped: wrapped);
 
-/// Re-wraps the same master key under `new_password` (fresh salt and nonce).
-/// Because the key does not change, no vault item needs re-encryption; the
-/// caller replaces the stored blob and keeps every item as it is.
+/// Unwraps a vault key wrapped under the master key: the master password
+/// opens `password_wrap` (one Argon2id run; wrong is `WrongPassword`), the
+/// master key opens `wrapped` (foreign or tampered is `Corrupt`).
+Future<VaultKey> vaultUnlockWithMaster(
+        {required List<int> passwordWrap,
+        required String masterPassword,
+        required List<int> wrapped}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultUnlockWithMaster(
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+        wrapped: wrapped);
+
+/// Re-wraps a vault key under its own password from `old_password` to
+/// `new_password` (fresh salt and nonce). Because the key does not change, no
+/// vault item needs re-encryption; the caller replaces the stored blob.
 Future<Uint8List> vaultRewrap(
         {required String oldPassword,
         required String newPassword,
@@ -30,33 +59,72 @@ Future<Uint8List> vaultRewrap(
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultRewrap(
         oldPassword: oldPassword, newPassword: newPassword, wrapped: wrapped);
 
-/// Seals one item under the master key: a 0x20 blob with a fresh nonce and
-/// AAD `vault-item`.
-Future<Uint8List> vaultSeal(
-        {required VaultKey key, required List<int> bytes}) =>
-    FuzzyCryptoCoreLib.instance.api
-        .crateApiVaultVaultSeal(key: key, bytes: bytes);
+/// Gives a vault that the master password opens its own password: the master
+/// password opens the vault key's 0x20 `wrapped`, the key is wrapped again as
+/// a 0x10 under `new_password`. Two Argon2id runs; the caller replaces the
+/// stored blob, after which the master password no longer opens the vault.
+Future<Uint8List> vaultUseOwnPassword(
+        {required List<int> passwordWrap,
+        required String masterPassword,
+        required List<int> wrapped,
+        required String newPassword}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultUseOwnPassword(
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword,
+        wrapped: wrapped,
+        newPassword: newPassword);
 
-/// Inverse of [`vault_seal`]; a tampered or foreign blob is `Corrupt`.
-Future<Uint8List> vaultOpen({required VaultKey key, required List<int> blob}) =>
-    FuzzyCryptoCoreLib.instance.api
-        .crateApiVaultVaultOpen(key: key, blob: blob);
+/// The way back: the vault's own password opens its 0x10 `wrapped`, the
+/// master password opens the master key, and the vault key is wrapped under
+/// it as a 0x20. Two Argon2id runs; the caller replaces the stored blob.
+Future<Uint8List> vaultUseMasterPassword(
+        {required List<int> wrapped,
+        required String vaultPassword,
+        required List<int> passwordWrap,
+        required String masterPassword}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultUseMasterPassword(
+        wrapped: wrapped,
+        vaultPassword: vaultPassword,
+        passwordWrap: passwordWrap,
+        masterPassword: masterPassword);
+
+/// Seals version `version` of the item `item_id` under the vault key: a 0x20
+/// blob with a fresh nonce and AAD `vault-item` ‖ u32 BE version ‖ item id.
+Future<Uint8List> vaultSeal(
+        {required VaultKey key,
+        required String itemId,
+        required int version,
+        required List<int> bytes}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultSeal(
+        key: key, itemId: itemId, version: version, bytes: bytes);
+
+/// Inverse of [`vault_seal`] for the same item and version; a tampered or
+/// foreign blob — another item's, or another version's — is `Corrupt`.
+Future<Uint8List> vaultOpen(
+        {required VaultKey key,
+        required String itemId,
+        required int version,
+        required List<int> blob}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultOpen(
+        key: key, itemId: itemId, version: version, blob: blob);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<VaultKey>>
 abstract class VaultKey implements RustOpaqueInterface {
-  /// Drops the master key (zeroised). Later `vault_seal`/`vault_open` calls
+  /// Drops the vault key (zeroised). Later `vault_seal`/`vault_open` calls
   /// on this handle answer `StoreLocked`; a second `close` is a no-op.
   Future<void> close();
 }
 
-/// What [`vault_init`] hands back: the unlocked key and its wrapping, which
-/// the app stores in the vault metadata and feeds to [`vault_unlock`] later.
-/// `non_opaque` so frb passes the two fields once instead of wrapping the
-/// struct in a second handle with a cloning accessor for the key.
+/// What [`vault_init`] and [`vault_init_with_master`] hand back: the unlocked
+/// key and its wrapping, which the app stores in the vault metadata and feeds
+/// to the unlock call later. `non_opaque` so frb passes the two fields once
+/// instead of wrapping the struct in a second handle with a cloning accessor
+/// for the key.
 class VaultInitResult {
   final VaultKey key;
 
-  /// A 0x10 blob — the master key wrapped under the vault password.
+  /// The vault key wrapped: a 0x20 under the master key, or a 0x10 under
+  /// the vault's own password.
   final Uint8List wrapped;
 
   const VaultInitResult({

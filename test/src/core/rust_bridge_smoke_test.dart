@@ -99,14 +99,28 @@ void main() {
       if (storeDir.existsSync()) storeDir.deleteSync(recursive: true);
     });
 
-    test('createStoreKey → openStore → sealLocal/openLocal → close', () async {
-      final wrapped = await createStoreKey(password: 'pw');
-      expect(wrapped.length, 103, reason: '0x10 blob: 6 + 16 + 9 + 24 + 48');
-      expect(wrapped.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x10]);
+    test(
+        'createMasterKey → close → openStore → sealLocal/openLocal bound to '
+        'chat and row → close', () async {
+      final setup =
+          await createMasterKey(storeDir: storeDir.path, password: 'pw');
+      expect(setup.passwordWrap.length, 103, reason: '0x10: 6+16+9+24+48');
+      expect(
+        setup.passwordWrap.sublist(0, 6),
+        [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x10],
+      );
+      expect(setup.storeWrap.length, 78, reason: '0x20: 6+24+32+16');
+      expect(
+        setup.storeWrap.sublist(0, 6),
+        [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x20],
+      );
+      await setup.core.close();
+      setup.core.dispose();
 
       final core = await openStore(
         storeDir: storeDir.path,
-        wrapped: wrapped,
+        passwordWrap: setup.passwordWrap,
+        storeWrap: setup.storeWrap,
         password: 'pw',
       );
       expect(await core.storeDir(), storeDir.path);
@@ -116,30 +130,42 @@ void main() {
       );
 
       // History is sealed per chat: the chat's key exists from its invitation.
+      final row = [1, ...utf8.encode('Fuzz/row')];
       await expectLater(
-        core.sealLocal(chatId: _chatId, bytes: utf8.encode('history')),
+        core.sealLocal(
+          chatId: _chatId,
+          row: row,
+          bytes: utf8.encode('history'),
+        ),
         throwsA(CoreError.unknownChat),
       );
       await core.createInvitation(chatId: _chatId);
       final sealed = await core.sealLocal(
         chatId: _chatId,
+        row: row,
         bytes: utf8.encode('history'),
       );
       expect(sealed.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x20]);
       expect(
-        utf8.decode(await core.openLocal(chatId: _chatId, blob: sealed)),
+        utf8.decode(
+          await core.openLocal(chatId: _chatId, row: row, blob: sealed),
+        ),
         'history',
+      );
+      await expectLater(
+        core.openLocal(chatId: _chatId, row: [0, ...row.skip(1)], blob: sealed),
+        throwsA(CoreError.corrupt),
       );
 
       final tampered = List<int>.of(sealed)..[40] ^= 1;
       await expectLater(
-        core.openLocal(chatId: _chatId, blob: tampered),
+        core.openLocal(chatId: _chatId, row: row, blob: tampered),
         throwsA(CoreError.corrupt),
       );
 
       await core.close();
       await expectLater(
-        core.sealLocal(chatId: _chatId, bytes: [1]),
+        core.sealLocal(chatId: _chatId, row: row, bytes: [1]),
         throwsA(CoreError.storeLocked),
       );
       await expectLater(
@@ -149,32 +175,82 @@ void main() {
       core.dispose();
     });
 
-    test('wrong password and rewrap', () async {
-      final wrapped = await createStoreKey(password: 'pw');
+    test('wrong password, empty password, change and recovery', () async {
+      final setup =
+          await createMasterKey(storeDir: storeDir.path, password: 'pw');
+      await setup.core.close();
+      setup.core.dispose();
 
       await expectLater(
-        openStore(storeDir: storeDir.path, wrapped: wrapped, password: 'px'),
+        createMasterKey(storeDir: storeDir.path, password: ''),
+        throwsA(CoreError.wrongPassword),
+      );
+      await expectLater(
+        openStore(
+          storeDir: storeDir.path,
+          passwordWrap: setup.passwordWrap,
+          storeWrap: setup.storeWrap,
+          password: 'px',
+        ),
         throwsA(CoreError.wrongPassword),
       );
 
-      final rewrapped = await rewrapStoreKey(
-        wrapped: wrapped,
+      final changed = await changeMasterPassword(
+        passwordWrap: setup.passwordWrap,
         oldPassword: 'pw',
-        newPassword: '',
+        newPassword: 'new',
       );
-      expect(rewrapped, isNot(wrapped));
+      expect(changed, isNot(setup.passwordWrap));
       await expectLater(
-        rewrapStoreKey(wrapped: wrapped, oldPassword: 'nope', newPassword: 'x'),
+        changeMasterPassword(
+          passwordWrap: setup.passwordWrap,
+          oldPassword: 'nope',
+          newPassword: 'x',
+        ),
+        throwsA(CoreError.wrongPassword),
+      );
+      await expectLater(
+        changeMasterPassword(
+          passwordWrap: setup.passwordWrap,
+          oldPassword: 'pw',
+          newPassword: '',
+        ),
         throwsA(CoreError.wrongPassword),
       );
 
+      final recovered = await recoverMasterPassword(
+        storeDir: storeDir.path,
+        recoveryWrap: setup.recoveryWrap,
+        storeWrap: setup.storeWrap,
+        recoveryKey: setup.recoveryKey,
+        newPassword: 'fresh',
+      );
+      await recovered.core.close();
+      recovered.core.dispose();
       final core = await openStore(
         storeDir: storeDir.path,
-        wrapped: rewrapped,
-        password: '',
+        passwordWrap: recovered.passwordWrap,
+        storeWrap: setup.storeWrap,
+        password: 'fresh',
       );
       await core.close();
       core.dispose();
+
+      final fresh = await newRecoveryKey(
+        passwordWrap: recovered.passwordWrap,
+        password: 'fresh',
+      );
+      expect(fresh.recoveryKey, isNot(setup.recoveryKey));
+      await expectLater(
+        recoverMasterPassword(
+          storeDir: storeDir.path,
+          recoveryWrap: fresh.recoveryWrap,
+          storeWrap: setup.storeWrap,
+          recoveryKey: setup.recoveryKey,
+          newPassword: 'x',
+        ),
+        throwsA(CoreError.wrongPassword),
+      );
     });
   });
 
@@ -184,11 +260,8 @@ void main() {
     late CryptoCore a;
     late CryptoCore b;
 
-    Future<CryptoCore> open(Directory dir) async => openStore(
-          storeDir: dir.path,
-          wrapped: await createStoreKey(password: ''),
-          password: '',
-        );
+    Future<CryptoCore> open(Directory dir) async =>
+        (await createMasterKey(storeDir: dir.path, password: 'pw')).core;
 
     setUp(() async {
       aDir = Directory.systemTemp.createTempSync('fuzzy_crypto_core_a_');
@@ -337,11 +410,7 @@ void main() {
 
     setUp(() async {
       dir = Directory.systemTemp.createTempSync('fuzzy_crypto_core_files_');
-      core = await openStore(
-        storeDir: dir.path,
-        wrapped: await createStoreKey(password: ''),
-        password: '',
-      );
+      core = (await createMasterKey(storeDir: dir.path, password: 'pw')).core;
       plain = File('${dir.path}/plain.bin')..writeAsBytesSync(plaintext());
       sealedPath = '${dir.path}/sealed.fuzz';
       openedPath = '${dir.path}/opened.bin';
@@ -461,11 +530,8 @@ void main() {
     late CryptoCore a;
     late CryptoCore b;
 
-    Future<CryptoCore> open(Directory dir) async => openStore(
-          storeDir: dir.path,
-          wrapped: await createStoreKey(password: ''),
-          password: '',
-        );
+    Future<CryptoCore> open(Directory dir) async =>
+        (await createMasterKey(storeDir: dir.path, password: 'pw')).core;
 
     /// 2.5 MiB of non-repeating bytes: three 1 MiB chunks.
     List<int> plaintext() {
@@ -632,17 +698,38 @@ void main() {
         [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x10],
       );
 
-      final item =
-          await vaultSeal(key: created.key, bytes: utf8.encode('secret'));
+      final item = await vaultSeal(
+        key: created.key,
+        itemId: _chatId,
+        version: 1,
+        bytes: utf8.encode('secret'),
+      );
       expect(item.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x20]);
       expect(
-        utf8.decode(await vaultOpen(key: created.key, blob: item)),
+        utf8.decode(
+          await vaultOpen(
+            key: created.key,
+            itemId: _chatId,
+            version: 1,
+            blob: item,
+          ),
+        ),
         'secret',
       );
 
       final unlocked =
           await vaultUnlock(password: 'pw', wrapped: created.wrapped);
-      expect(utf8.decode(await vaultOpen(key: unlocked, blob: item)), 'secret');
+      expect(
+        utf8.decode(
+          await vaultOpen(
+            key: unlocked,
+            itemId: _chatId,
+            version: 1,
+            blob: item,
+          ),
+        ),
+        'secret',
+      );
       await expectLater(
         vaultUnlock(password: 'px', wrapped: created.wrapped),
         throwsA(CoreError.wrongPassword),
@@ -661,29 +748,101 @@ void main() {
       );
       final reopened = await vaultUnlock(password: 'new', wrapped: rewrapped);
       expect(
-        utf8.decode(await vaultOpen(key: reopened, blob: item)),
+        utf8.decode(
+          await vaultOpen(
+            key: reopened,
+            itemId: _chatId,
+            version: 1,
+            blob: item,
+          ),
+        ),
         'secret',
         reason: 'the master key is unchanged — no item re-encryption',
       );
 
       final tampered = List<int>.of(item)..[35] ^= 1;
       await expectLater(
-        vaultOpen(key: reopened, blob: tampered),
+        vaultOpen(key: reopened, itemId: _chatId, version: 1, blob: tampered),
         throwsA(CoreError.corrupt),
       );
 
       await reopened.close();
       await expectLater(
-        vaultSeal(key: reopened, bytes: [1]),
+        vaultSeal(key: reopened, itemId: _chatId, version: 1, bytes: [1]),
         throwsA(CoreError.storeLocked),
       );
       await expectLater(
-        vaultOpen(key: reopened, blob: item),
+        vaultOpen(key: reopened, itemId: _chatId, version: 1, blob: item),
         throwsA(CoreError.storeLocked),
       );
+      await expectLater(
+        vaultOpen(key: unlocked, itemId: _chatId, version: 2, blob: item),
+        throwsA(CoreError.corrupt),
+        reason: 'an item is bound to its version',
+      );
+      expect(vaultUsesOwnPassword(wrapped: created.wrapped), isTrue);
       for (final key in [created.key, unlocked, reopened]) {
         key.dispose();
       }
+    });
+
+    test(
+        'the master password opens the vault by default; own password and '
+        'back keep the item', () async {
+      final storeDir = Directory.systemTemp.createTempSync('fuzzy_vault_m_');
+      addTearDown(() => storeDir.deleteSync(recursive: true));
+      final setup =
+          await createMasterKey(storeDir: storeDir.path, password: 'master');
+      await setup.core.close();
+      setup.core.dispose();
+
+      final created = await vaultInitWithMaster(
+        passwordWrap: setup.passwordWrap,
+        masterPassword: 'master',
+      );
+      expect(created.wrapped.length, 78, reason: '0x20 under the master key');
+      expect(vaultUsesOwnPassword(wrapped: created.wrapped), isFalse);
+      final item = await vaultSeal(
+        key: created.key,
+        itemId: _chatId,
+        version: 1,
+        bytes: utf8.encode('secret'),
+      );
+
+      final own = await vaultUseOwnPassword(
+        passwordWrap: setup.passwordWrap,
+        masterPassword: 'master',
+        wrapped: created.wrapped,
+        newPassword: 'vault',
+      );
+      expect(vaultUsesOwnPassword(wrapped: own), isTrue);
+      final back = await vaultUseMasterPassword(
+        wrapped: own,
+        vaultPassword: 'vault',
+        passwordWrap: setup.passwordWrap,
+        masterPassword: 'master',
+      );
+      final key = await vaultUnlockWithMaster(
+        passwordWrap: setup.passwordWrap,
+        masterPassword: 'master',
+        wrapped: back,
+      );
+      expect(
+        utf8.decode(
+          await vaultOpen(key: key, itemId: _chatId, version: 1, blob: item),
+        ),
+        'secret',
+      );
+      await expectLater(
+        vaultUnlockWithMaster(
+          passwordWrap: setup.passwordWrap,
+          masterPassword: 'wrong',
+          wrapped: back,
+        ),
+        throwsA(CoreError.wrongPassword),
+      );
+      created.key.dispose();
+      key.dispose();
     });
   });
 }

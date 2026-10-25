@@ -6,15 +6,16 @@ class VaultMetadata {
     required this.verificationToken,
     required this.createdAt,
     required this.lastUnlockedAt,
-    required this.autoLockMinutes,
     this.customDirectoryPath,
   });
 
   final String vaultId;
+
+  /// base64 of the wrapped vault key: a 0x20 under the master key, or a 0x10
+  /// under the vault's own password (the type byte tells which).
   final String verificationToken;
   final DateTime createdAt;
   final DateTime lastUnlockedAt;
-  final int autoLockMinutes;
   final String? customDirectoryPath;
 
   factory VaultMetadata.fromStored(StoredVaultMetadata stored) {
@@ -23,7 +24,6 @@ class VaultMetadata {
       verificationToken: stored.verificationTokenBase64,
       createdAt: stored.createdAt,
       lastUnlockedAt: stored.lastUnlockedAt,
-      autoLockMinutes: stored.autoLockMinutes,
       customDirectoryPath: stored.customDirectoryPath,
     );
   }
@@ -33,7 +33,6 @@ class VaultMetadata {
     String? verificationToken,
     DateTime? createdAt,
     DateTime? lastUnlockedAt,
-    int? autoLockMinutes,
     String? customDirectoryPath,
   }) {
     return VaultMetadata(
@@ -41,7 +40,6 @@ class VaultMetadata {
       verificationToken: verificationToken ?? this.verificationToken,
       createdAt: createdAt ?? this.createdAt,
       lastUnlockedAt: lastUnlockedAt ?? this.lastUnlockedAt,
-      autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       customDirectoryPath: customDirectoryPath ?? this.customDirectoryPath,
     );
   }

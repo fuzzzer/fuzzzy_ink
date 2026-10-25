@@ -85,7 +85,7 @@ void main() {
 
     await pumpSettings(tester);
 
-    expect(find.text('Chat Authentication'), findsOneWidget);
+    expect(find.text('Master password'), findsOneWidget);
     expect(find.text('About encryption'), findsOneWidget);
     expect(find.text('Benchmark file encryption (dev)'), findsNothing);
     expect(find.byIcon(Icons.speed), findsNothing);

@@ -510,21 +510,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get vaultCreateYourVault => 'Create Your Vault';
 
   @override
-  String get vaultCreateDescription =>
-      'Your vault encrypts all passwords and notes locally on your device.\nChoose a strong master password.';
-
-  @override
   String get vaultPassword => 'Vault Password';
-
-  @override
-  String get vaultConfirmPassword => 'Confirm Password';
-
-  @override
-  String get vaultPasswordsDoNotMatch => 'Passwords do not match';
-
-  @override
-  String get vaultPasswordCannotBeReset =>
-      'This password cannot be reset. If you forget it, your data will be permanently lost.';
 
   @override
   String get vaultCreateVault => 'Create Vault';
@@ -604,7 +590,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get chatUnlockTitle => 'Unlock Fuzzzy Ink';
 
   @override
-  String get chatUnlockSubtitle => 'Enter your password to access your chats.';
+  String get chatUnlockSubtitle =>
+      'Enter your master password to open the app.';
 
   @override
   String get chatAuthPassword => 'Password';
@@ -614,13 +601,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get chatAuthUnlock => 'Unlock';
-
-  @override
-  String get chatAuthForgotPassword =>
-      'Forgot password? Your encrypted data cannot be recovered without it.';
-
-  @override
-  String get chatAuthSetupTitle => 'Protect Your Chats';
 
   @override
   String get chatAuthSetupDescription =>
@@ -636,32 +616,18 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get chatAuthPasswordsDoNotMatch => 'Passwords do not match';
 
   @override
-  String get chatAuthEnabled => 'Chat Protection Enabled';
-
-  @override
-  String get chatAuthDisabled => 'Chat Protection Disabled';
-
-  @override
-  String get chatAuthEnableProtection => 'Enable Chat Protection';
-
-  @override
-  String get chatAuthDisableProtection => 'Disable Chat Protection';
-
-  @override
   String get chatAuthProtectionDescription =>
-      'When enabled, you must enter a password to access your chats. Your keys will be encrypted with this password.';
-
-  @override
-  String get chatAuthMigratingKeys => 'Encrypting your keys...';
+      'Your master password protects every key in the app: your chats, your history and, unless it has its own password, the vault. It cannot be switched off.';
 
   @override
   String get chatAuthResecuringKeys => 'Re-securing your keys…';
 
   @override
-  String get chatAuthentication => 'Chat Authentication';
+  String get chatAuthentication => 'Master password';
 
   @override
-  String get chatAuthenticationDescription => 'Manage chat password protection';
+  String get chatAuthenticationDescription =>
+      'Password, recovery key and auto-lock';
 
   @override
   String get benchmarkFileEncryption => 'Benchmark file encryption (dev)';
@@ -777,9 +743,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get chatAuthNewPassword => 'New Password';
-
-  @override
-  String get chatAuthEnterPassword => 'Please enter your current password';
 
   @override
   String get chatAuthPasswordChanged => 'Chat Password Changed';
@@ -1014,4 +977,199 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get vaultMoveUnfinishedMessage =>
       'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
+
+  @override
+  String get masterPassword => 'Master password';
+
+  @override
+  String get masterPasswordSetupTitle => 'Create your master password';
+
+  @override
+  String get masterPasswordSetupDescription =>
+      'One password protects everything in Fuzzzy Ink: your chats, your history and your vault. You will enter it each time you open the app.';
+
+  @override
+  String get masterPasswordPreviousData =>
+      'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.';
+
+  @override
+  String get masterPasswordCreate => 'Create master password';
+
+  @override
+  String get masterPasswordCreating => 'Creating your keys…';
+
+  @override
+  String get masterPasswordFailed =>
+      'Your keys could not be created. Try again.';
+
+  @override
+  String get masterPasswordIsOn => 'Master password is on';
+
+  @override
+  String get recoveryKeyTitle => 'Recovery key';
+
+  @override
+  String get recoveryKeyDescription =>
+      'If you forget your master password, this key lets you set a new one. Write it down or save it, and keep it somewhere safe, away from this device. You see it only now.';
+
+  @override
+  String get recoveryKeyWarning =>
+      'Without your password or this recovery key, nobody — not even us — can get your data back.';
+
+  @override
+  String get recoveryKeySave => 'Save or print…';
+
+  @override
+  String get recoveryKeySaved => 'Recovery key saved to a file';
+
+  @override
+  String get recoveryKeySaveFailed => 'The recovery key was not saved.';
+
+  @override
+  String get recoveryKeyConfirm => 'I have saved my recovery key';
+
+  @override
+  String get recoveryKeyContinue => 'Continue';
+
+  @override
+  String get recoveryKeySkip => 'Continue without a recovery key';
+
+  @override
+  String get recoveryKeySkipTitle => 'Go on without a recovery key?';
+
+  @override
+  String get recoveryKeySkipMessage =>
+      'If you forget your master password, your chats, history and vault are lost for good. Without your password or this recovery key, nobody — not even us — can get your data back.';
+
+  @override
+  String get recoveryKeySkipConfirm => 'Continue without it';
+
+  @override
+  String recoveryKeyFileText(String key) {
+    return 'Fuzzzy Ink recovery key\n\n$key\n\nIf you forget your master password, this key lets you set a new one. Keep it somewhere safe, away from the device. Without your password or this recovery key, nobody — not even us — can get your data back.\n';
+  }
+
+  @override
+  String get recoveryKeyIsSet => 'A recovery key is set.';
+
+  @override
+  String get recoveryKeyNotSet =>
+      'No recovery key. If you forget your master password, your data is lost for good.';
+
+  @override
+  String get recoveryKeyCreateNew => 'Create a new recovery key';
+
+  @override
+  String get recoveryKeyCreateNewDescription =>
+      'Enter your master password to create a new recovery key. The old one stops working.';
+
+  @override
+  String get recoveryTitle => 'New password with your recovery key';
+
+  @override
+  String get recoveryDescription =>
+      'Enter the recovery key you saved when you set up the app, then choose a new master password.';
+
+  @override
+  String get recoveryKeyField => 'Recovery key';
+
+  @override
+  String get recoverySubmit => 'Set new password';
+
+  @override
+  String get recoveryKeyTypo =>
+      'This recovery key has a typo. Check each group of four.';
+
+  @override
+  String get recoveryKeyWrong => 'This recovery key does not open this app.';
+
+  @override
+  String get chatUnlockForgot => 'Forgot your password?';
+
+  @override
+  String get chatUnlockUseRecoveryKey => 'Use my recovery key';
+
+  @override
+  String get chatUnlockErase => 'Erase everything and start over';
+
+  @override
+  String get eraseTitle => 'Erase everything?';
+
+  @override
+  String get eraseMessage =>
+      'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.';
+
+  @override
+  String get eraseConfirm => 'Erase everything';
+
+  @override
+  String get storageUnavailable =>
+      'Fuzzzy Ink can\'t read this device\'s secure key storage, so it stays locked. Try again; if it keeps happening, restart the device.';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get appLockNow => 'Lock Fuzzzy Ink';
+
+  @override
+  String get autoLockTitle => 'Auto-lock';
+
+  @override
+  String get autoLockIdle => 'Lock after no activity for';
+
+  @override
+  String get autoLockBackground => 'Lock after leaving the app';
+
+  @override
+  String get autoLockImmediately => 'At once';
+
+  @override
+  String autoLockMinutes(int count) {
+    return '$count min';
+  }
+
+  @override
+  String get autoLockSaveFailed => 'The setting was not saved.';
+
+  @override
+  String get vaultPasswordModeTitle => 'Vault password';
+
+  @override
+  String get vaultUsesMasterPassword => 'Your master password opens the vault.';
+
+  @override
+  String get vaultUsesOwnPassword => 'The vault has its own password.';
+
+  @override
+  String get vaultUseOwnPassword => 'Use a different password for the vault';
+
+  @override
+  String get vaultUseMasterPassword =>
+      'Open the vault with the master password';
+
+  @override
+  String get vaultOwnPasswordNote =>
+      'The recovery key does not open a vault with its own password. Without that password the vault is lost for good.';
+
+  @override
+  String get vaultOwnNewPassword => 'New vault password';
+
+  @override
+  String get vaultCurrentPassword => 'Current vault password';
+
+  @override
+  String get vaultPasswordModeChanged => 'Vault password updated';
+
+  @override
+  String get vaultCreateWithMasterDescription =>
+      'Your vault keeps passwords, notes and files sealed on this device. Your master password opens it; enter it to create the vault.';
+
+  @override
+  String get vaultForgotMasterPassword =>
+      'Forgot your master password? Lock the app and use your recovery key.';
+
+  @override
+  String get vaultTooManyAttempts =>
+      'Too many wrong passwords. Wait a moment and try again.';
 }

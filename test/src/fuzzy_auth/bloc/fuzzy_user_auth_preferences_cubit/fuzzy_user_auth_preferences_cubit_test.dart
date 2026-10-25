@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -10,36 +12,41 @@ class MockFuzzyAuthStore extends Mock implements FuzzyAuthStore {}
 class MockBiometricAuthRepository extends Mock
     implements BiometricAuthRepository {}
 
-/// A new or changed app-lock password must reach the vault's "good" bar
-/// (security review 2026-10-22, item 6).
+/// The master password's settings. A changed password must reach the
+/// vault's "good" bar (security review 2026-10-22, item 6); the password
+/// cannot be switched off; a new recovery key replaces the old one.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const weak = 'a';
   const fair = 'abcdefgh';
   const good = 'Blue-Kettle-42';
+  final recoveryWrap = Uint8List.fromList([1, 2, 3]);
 
   late MockChatAuthRepository chatAuthRepository;
   late MockFuzzyAuthStore store;
   late MockBiometricAuthRepository biometricRepository;
 
+  setUpAll(() {
+    registerFallbackValue(BiometricScope.chat);
+    registerFallbackValue(Uint8List(0));
+  });
+
   setUp(() {
     chatAuthRepository = MockChatAuthRepository();
     store = MockFuzzyAuthStore();
     biometricRepository = MockBiometricAuthRepository();
-    when(() => chatAuthRepository.verifyPassword(any()))
-        .thenAnswer((_) async => true);
-    when(() => store.setBiometricEnabled(enabled: any(named: 'enabled')))
-        .thenAnswer((_) async {});
-    when(() => chatAuthRepository.setupPassword(any()))
-        .thenAnswer((_) async => true);
-    when(() => store.onPasswordSetup(any())).thenAnswer((_) async {});
+    when(() => chatAuthRepository.unlock(any()))
+        .thenAnswer((_) async => const CryptoCoreSuccess(null));
     when(
-      () => store.changePassword(
+      () => chatAuthRepository.changePassword(
         oldPassword: any(named: 'oldPassword'),
         newPassword: any(named: 'newPassword'),
       ),
-    ).thenAnswer((_) async => true);
+    ).thenAnswer((_) async => const CryptoCoreSuccess(null));
+    when(() => store.setBiometricEnabled(enabled: any(named: 'enabled')))
+        .thenAnswer((_) async {});
+    when(() => biometricRepository.disable(any())).thenAnswer((_) async {});
   });
 
   FuzzyUserAuthPreferencesCubit buildCubit() => FuzzyUserAuthPreferencesCubit(
@@ -61,9 +68,10 @@ void main() {
 
   for (final password in [weak, fair]) {
     blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
-      'turning the lock on with "$password" fails and changes nothing',
+      'changing to "$password" fails before the old one is even checked',
       build: buildCubit,
-      act: (cubit) => cubit.enableAuth(password),
+      act: (cubit) =>
+          cubit.changePassword(oldPassword: 'x', newPassword: password),
       expect: () => [
         isA<FuzzyUserAuthPreferencesState>()
             .having((s) => s.activationStatus, 'status', StateStatus.failed)
@@ -74,52 +82,19 @@ void main() {
             ),
       ],
       verify: (_) {
-        verifyNever(() => chatAuthRepository.setupPassword(any()));
-        verifyNever(() => store.onPasswordSetup(any()));
+        verifyNever(
+          () => chatAuthRepository.changePassword(
+            oldPassword: any(named: 'oldPassword'),
+            newPassword: any(named: 'newPassword'),
+          ),
+        );
       },
     );
   }
 
   blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
-    'turning the lock on with a good password goes ahead',
-    build: buildCubit,
-    act: (cubit) => cubit.enableAuth(good),
-    expect: () => [
-      isA<FuzzyUserAuthPreferencesState>()
-          .having((s) => s.activationStatus, 'status', StateStatus.loading),
-      isA<FuzzyUserAuthPreferencesState>()
-          .having((s) => s.activationStatus, 'status', StateStatus.success),
-    ],
-    verify: (_) {
-      verify(() => chatAuthRepository.setupPassword(good)).called(1);
-    },
-  );
-
-  blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
-    'changing to a weak password fails before the old one is even checked',
-    build: buildCubit,
-    act: (cubit) => cubit.changePassword(oldPassword: 'x', newPassword: weak),
-    expect: () => [
-      isA<FuzzyUserAuthPreferencesState>()
-          .having((s) => s.activationStatus, 'status', StateStatus.failed)
-          .having(
-            (s) => s.lastAction,
-            'lastAction',
-            AuthPreferencesAction.changePassword,
-          ),
-    ],
-    verify: (_) {
-      verifyNever(
-        () => store.changePassword(
-          oldPassword: any(named: 'oldPassword'),
-          newPassword: any(named: 'newPassword'),
-        ),
-      );
-    },
-  );
-
-  blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
-    'changing from a weak old password to a good one goes ahead',
+    'changing from a weak old password to a good one re-wraps the master key '
+    'and drops the biometric copy of the old password',
     build: buildCubit,
     act: (cubit) => cubit.changePassword(oldPassword: weak, newPassword: good),
     expect: () => [
@@ -130,12 +105,127 @@ void main() {
     ],
     verify: (_) {
       verify(
-        () => store.changePassword(oldPassword: weak, newPassword: good),
+        () => chatAuthRepository.changePassword(
+          oldPassword: weak,
+          newPassword: good,
+        ),
       ).called(1);
+      verify(() => biometricRepository.disable(BiometricScope.chat)).called(1);
+      verify(() => store.setBiometricEnabled(enabled: false)).called(1);
     },
   );
 
-  setUpAll(() => registerFallbackValue(BiometricScope.chat));
+  blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+    'a wrong current password says so and changes nothing',
+    setUp: () {
+      when(
+        () => chatAuthRepository.changePassword(
+          oldPassword: any(named: 'oldPassword'),
+          newPassword: any(named: 'newPassword'),
+        ),
+      ).thenAnswer(
+        (_) async =>
+            const CryptoCoreFailure(CryptoCoreFailureType.wrongPassword),
+      );
+    },
+    build: buildCubit,
+    act: (cubit) =>
+        cubit.changePassword(oldPassword: 'nope', newPassword: good),
+    skip: 1,
+    expect: () => [
+      isA<FuzzyUserAuthPreferencesState>().having(
+        (s) => s.activationFailure?.message,
+        'message',
+        FuzzzyInkLocalizationsEn().chatAuthIncorrectPassword,
+      ),
+    ],
+    verify: (_) => verifyNever(() => biometricRepository.disable(any())),
+  );
+
+  group('recovery key', () {
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'a new key is shown, and kept only once it is confirmed saved',
+      setUp: () {
+        when(() => chatAuthRepository.newRecoveryKey(good)).thenAnswer(
+          (_) async => CryptoCoreSuccess(
+            CryptoCoreRecoveryKey(
+              recoveryKey: 'AAAA-BBBB',
+              recoveryWrap: recoveryWrap,
+            ),
+          ),
+        );
+        when(() => chatAuthRepository.saveRecoveryWrap(any()))
+            .thenAnswer((_) async => const CryptoCoreSuccess(null));
+      },
+      build: buildCubit,
+      act: (cubit) async {
+        await cubit.newRecoveryKey(good);
+        await cubit.confirmRecoveryKeySaved();
+      },
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.loading),
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.pendingRecoveryKey, 'key', 'AAAA-BBBB')
+            .having((s) => s.hasRecoveryKey, 'hasRecoveryKey', isFalse),
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.loading),
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.pendingRecoveryKey, 'key', isNull)
+            .having((s) => s.hasRecoveryKey, 'hasRecoveryKey', isTrue),
+      ],
+      verify: (_) {
+        verify(() => chatAuthRepository.saveRecoveryWrap(recoveryWrap))
+            .called(1);
+      },
+    );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'skipping keeps no recovery key',
+      setUp: () {
+        when(() => chatAuthRepository.newRecoveryKey(good)).thenAnswer(
+          (_) async => CryptoCoreSuccess(
+            CryptoCoreRecoveryKey(
+              recoveryKey: 'AAAA-BBBB',
+              recoveryWrap: recoveryWrap,
+            ),
+          ),
+        );
+      },
+      build: buildCubit,
+      act: (cubit) async {
+        await cubit.newRecoveryKey(good);
+        cubit.skipRecoveryKey();
+      },
+      skip: 2,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.pendingRecoveryKey, 'key', isNull)
+            .having((s) => s.hasRecoveryKey, 'hasRecoveryKey', isFalse),
+      ],
+      verify: (_) {
+        verifyNever(() => chatAuthRepository.saveRecoveryWrap(any()));
+      },
+    );
+
+    blocTest<FuzzyUserAuthPreferencesCubit, FuzzyUserAuthPreferencesState>(
+      'a wrong master password makes no new key',
+      setUp: () {
+        when(() => chatAuthRepository.newRecoveryKey(any())).thenAnswer(
+          (_) async =>
+              const CryptoCoreFailure(CryptoCoreFailureType.wrongPassword),
+        );
+      },
+      build: buildCubit,
+      act: (cubit) => cubit.newRecoveryKey('nope'),
+      skip: 1,
+      expect: () => [
+        isA<FuzzyUserAuthPreferencesState>()
+            .having((s) => s.activationStatus, 'status', StateStatus.failed)
+            .having((s) => s.pendingRecoveryKey, 'key', isNull),
+      ],
+    );
+  });
 
   for (final (result, message) in [
     (

@@ -104,7 +104,10 @@ class MainShellPage extends StatelessWidget {
           );
         },
       ),
-      actions: rightAction != null ? [rightAction] : null,
+      actions: [
+        if (rightAction != null) rightAction,
+        const AppLockButton(),
+      ],
     );
 
     return Scaffold(

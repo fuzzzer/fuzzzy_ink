@@ -62,10 +62,14 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.failureType == VaultFailureType.incorrectMasterPassword
-                    ? currentContextLocalization.vaultIncorrectPassword
-                    : currentContextLocalization
-                        .vaultUnlockFailed(state.failureType!.name),
+                switch (state.failureType) {
+                  VaultFailureType.incorrectMasterPassword =>
+                    currentContextLocalization.vaultIncorrectPassword,
+                  VaultFailureType.tooManyAttempts =>
+                    currentContextLocalization.vaultTooManyAttempts,
+                  _ => currentContextLocalization
+                      .vaultUnlockFailed(state.failureType!.name),
+                },
               ),
             ),
           );
@@ -121,7 +125,9 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
                     },
                     child: FuzzzyTextField(
                       controller: _passwordController,
-                      label: currentContextLocalization.vaultPassword,
+                      label: state.usesOwnPassword
+                          ? currentContextLocalization.vaultPassword
+                          : currentContextLocalization.masterPassword,
                       obscure: !_isPasswordVisible,
                       onSubmitted: (_) => _onUnlock(),
                       suffix: IconButton(
@@ -137,7 +143,8 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
                       ),
                     ),
                   ),
-                  if (state.failureType != null) ...[
+                  if (state.failureType ==
+                      VaultFailureType.incorrectMasterPassword) ...[
                     const SizedBox(height: 8),
                     Text(
                       currentContextLocalization.vaultIncorrectPassword,
@@ -185,7 +192,9 @@ class _VaultUnlockPageState extends State<VaultUnlockPage>
                   ],
                   const SizedBox(height: 40),
                   Text(
-                    currentContextLocalization.vaultForgotPassword,
+                    state.usesOwnPassword
+                        ? currentContextLocalization.vaultForgotPassword
+                        : currentContextLocalization.vaultForgotMasterPassword,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: context.fuzzzyColors.inkMute,
                         ),
