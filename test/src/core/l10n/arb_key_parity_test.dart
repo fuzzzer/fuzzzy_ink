@@ -36,6 +36,9 @@ void main() {
     'fuzzyVault', // "Fuzzy Vault" — the product name of the vault
     'fuzz', // "Fuzz" — the encrypted text, a technical term
     'defuzz', // "Defuzz" — its inverse, a technical term
+    'fuzzzyCast', // "Fuzzzy Cast" — the character layer's name stays Latin
+    'languageEnglish', // a language is named in its own language
+    'languageGeorgian', // "ქართული" in both lists, for the same reason
   };
 
   test('every Georgian string is translated (T-0413)', () {

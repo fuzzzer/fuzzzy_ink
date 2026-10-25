@@ -12,7 +12,8 @@ class ThemeCubit extends Cubit<ThemeState> with WidgetsBindingObserver {
   ThemeCubit()
       : super(
           ThemeState(
-            chosenBrightness: ChosenBrightness.dark,
+            // Look: "Like my phone" until the person picks Light or Dark.
+            chosenBrightness: ChosenBrightness.system,
           ),
         ) {
     WidgetsBinding.instance.addObserver(this);
