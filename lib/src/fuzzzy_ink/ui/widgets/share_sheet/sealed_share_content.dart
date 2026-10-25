@@ -1,13 +1,29 @@
 import 'package:fuzzzy_ink/src/src.dart';
 
+/// What a [SealedShareContent] carries: it names the Share sheet ("Share
+/// invite", "Share reply", "Share locked message").
+enum SealedShareKind {
+  invitation,
+  acceptance,
+  message;
+
+  /// What "Copy as text" asks the copy guard for.
+  CopyContent get copyContent => switch (this) {
+        invitation => CopyContent.sealedInvitation,
+        acceptance => CopyContent.sealedAcceptance,
+        message => CopyContent.sealedMessage,
+      };
+}
+
 /// One sealed text the Share action sends: an invitation, an acceptance or a
 /// message. [link] is null when the text cannot travel as a link (too long),
-/// and then only the file is offered.
+/// and then only the file and the text are offered.
 class SealedShareContent {
   const SealedShareContent({
     required this.sealedText,
     required this.link,
     required this.fileName,
+    this.kind = SealedShareKind.message,
   });
 
   /// [invitation] is the core's `Fuzz/` text.
@@ -16,6 +32,7 @@ class SealedShareContent {
         sealedText: invitation,
         link: FuzzyLinkGenerator.generateInvitationLink(invitation),
         fileName: 'fuzzzy-ink-invitation.txt',
+        kind: SealedShareKind.invitation,
       );
 
   /// [acceptance] is the core's `Fuzz/` text.
@@ -24,6 +41,7 @@ class SealedShareContent {
         sealedText: acceptance,
         link: FuzzyLinkGenerator.generateAcceptanceLink(acceptance),
         fileName: 'fuzzzy-ink-acceptance.txt',
+        kind: SealedShareKind.acceptance,
       );
 
   /// [encryptedMessage] is the stored blob, without its `Fuzz/` prefix.
@@ -43,6 +61,7 @@ class SealedShareContent {
   final String sealedText;
   final String? link;
   final String fileName;
+  final SealedShareKind kind;
 
   bool get canShowQrCode => link != null && link!.length <= maxQrCodeLinkLength;
 }
