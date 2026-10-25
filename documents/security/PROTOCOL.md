@@ -530,12 +530,31 @@ Vector: `file_key_body` (44 bytes: key `42×32`, name `report.pdf`).
 |---|---|---|---|
 | 0..32 | 32 | `file_key` | the container's AEAD key |
 | 32..34 | 2 | `original_name_len` | `u16 BE`, 1..=65535 |
-| 34.. | n | `original_name` | UTF-8; then validated as a **file name** ([`files.rs#L269`](../../rust/fuzzy_crypto_core/src/files.rs#L269)): not empty, not `.` or `..`, at most 255 bytes ([`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261)), no `/`, `\`, NUL or any byte in `0x00..=0x1f`, `0x7f` |
+| 34.. | n | `original_name` | UTF-8; then **made safe** as a file name ([`files.rs#L305`](../../rust/fuzzy_crypto_core/src/files.rs#L305)) — never refused for its content (below) |
 
-The name check runs on both sides (the sender derives it from a real basename; the receiver checks it inside
-step 9, before the counter commit). It is a file *name*, never a path, so a peer cannot steer the receiver's
-output outside the directory the receiver chose. It is not display-sanitised (a Unicode direction override is
-a valid file name); the UI must treat it as untrusted text. The app does (2026-10-22): every file name and
+The name is cleaned on both sides by the same function, `safe_file_name` (the sender cleans its own basename
+before sealing it, the receiver cleans whatever the peer sent after opening it), with the same rules on every
+platform, so a peer's choice can never make a file impossible to receive and both devices agree on the name
+(since 2026-10-26; before, the receiver *refused* a bad name as `Corrupt` after the message had been spent,
+and accepted names that Windows cannot create):
+
+1. every separator (`/`, `\`), every character Windows forbids (`< > : " | ? *`), every control character
+   (Unicode `Cc`) and every direction or invisible-format control (U+061C, U+200B–U+200F, U+202A–U+202E,
+   U+2066–U+2069, U+FEFF) becomes `_` — so the result is a single name, never a path, and cannot hide its
+   real extension behind a direction override;
+2. a name over **120 bytes** ([`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277)) is cut at a
+   character boundary, keeping an extension of up to 16 bytes whole — 120 leaves room for the app's ` (n)`
+   and the core's `.part` under every platform's 255 limit and keeps a file under the user's Documents
+   folder inside Windows' classic 260-character path limit;
+3. trailing dots and spaces are removed (Windows drops them silently);
+4. a Windows device name before the first dot (`CON`, `PRN`, `AUX`, `NUL`, `CONIN$`, `CONOUT$`, `COM0`–`COM9`,
+   `LPT0`–`LPT9` and their `¹²³` forms; any case; trailing spaces ignored) gets a `_` in front;
+5. an empty result (`.`, `..`, only dots and spaces) becomes `file`.
+
+The function is idempotent and never fails; only the codec's own rules (length 1..=65535, valid UTF-8) can
+still refuse a body, and the app's own sender never produces one that breaks them. The result is a bare *name*,
+so a peer cannot steer the receiver's output outside the directory the receiver chose. It is still untrusted
+text for display (the cleaning is for the file system, not for the eye). The app does (2026-10-22): every file name and
 folder it shows has its direction controls and control characters removed (`UserFileNames.forDisplay`),
 and "Open" refuses a file whose real extension — read after removing direction and invisible characters,
 trailing dots and spaces and any `:stream` part — is a program, installer, script or shortcut on that
@@ -615,7 +634,7 @@ RustCrypto STREAM construction (`aead-stream` 0.6.0, `EncryptorBE32`/`DecryptorB
 | chunk size | `chunk_size` from the header: encoder 1 MiB, decoder accepts 64 KiB..=16 MiB (§6.6) |
 | chunk `i` (`0 ≤ i < n`) | `AEAD(file_key, nonce_i, aad_i, plaintext_i)` = `ct ‖ tag(16)`; every chunk but the last holds exactly `chunk_size` plaintext bytes, the last holds the remainder (0..=`chunk_size`) |
 | `nonce_i` (24 bytes) | `nonce_prefix(19) ‖ i as u32 BE ‖ last_flag` where `last_flag = 0x01` for chunk `n−1`, `0x00` otherwise — built by `aead-stream` (`StreamBE32::aead_nonce`, `aead-stream-0.6.0/src/lib.rs` line 440) |
-| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L487`](../../rust/fuzzy_crypto_core/src/files.rs#L487)) |
+| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L576`](../../rust/fuzzy_crypto_core/src/files.rs#L576)) |
 | `n` (chunks) | encrypt: `max(1, ceil(len / chunk_size))` — an empty file is one 16-byte chunk; decrypt: `ceil(body_len / (chunk_size + 16))` |
 
 Vectors: `file_container_password` (one 43-byte plaintext → one chunk sealed with the last flag; key =
@@ -629,12 +648,12 @@ of the *new* `x` is emitted.
 
 ### 9.2 Decoding and what the tags detect
 
-`decrypt_chunks` ([`files.rs#L343`](../../rust/fuzzy_crypto_core/src/files.rs#L343)), in order:
+`decrypt_chunks` ([`files.rs#L432`](../../rust/fuzzy_crypto_core/src/files.rs#L432)), in order:
 
 1. Read at most `MAX_HEADER_LEN = 65 568` bytes ([`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53)),
    decode the header (§6.6; `UnsupportedFormat` / `Corrupt` as there), keep its exact bytes for the AAD.
 2. Derive the key (password mode: Argon2id from the header's salt and parameters, §11; chat mode: §9.4).
-3. Structural check ([`files.rs#L418`](../../rust/fuzzy_crypto_core/src/files.rs#L418)): `body_len = file_len −
+3. Structural check ([`files.rs#L507`](../../rust/fuzzy_crypto_core/src/files.rs#L507)): `body_len = file_len −
    header_len ≥ 16`, `n = ceil(body_len / (chunk_size + 16))`, and the last chunk `≥ 16` bytes; else `Corrupt`
    — before any output file exists.
 4. For `i in 0..n`: read the chunk, `decrypt_next` for `i < n−1`, `decrypt_last` for `i = n−1`; write the
@@ -662,7 +681,7 @@ of the *new* `x` is emitted.
   `<output>` (the core replaces an existing file silently; the app never names an existing file, or one with
   a `.part` beside it, as `<output>` — it picks `name (1).ext`, `name (2).ext`, … first,
   `UserFileNames.uniqueOutputPath`, 2026-10-22, `THREAT_MODEL.md` R15). On *any* other exit — error, cancel, panic — the `.part`
-  is unlinked by a drop guard ([`files.rs#L499`](../../rust/fuzzy_crypto_core/src/files.rs#L499)). A process kill
+  is unlinked by a drop guard ([`files.rs#L588`](../../rust/fuzzy_crypto_core/src/files.rs#L588)). A process kill
   mid-job can leave a `.part` behind; the next job over the same output truncates it.
 - A job's control word ([`files.rs#L41`](../../rust/fuzzy_crypto_core/src/files.rs#L41)) is read before every
   chunk: paused → sleep 50 ms and re-read; cancelled (terminal) → `Cancelled`, `.part` gone. Progress is one
@@ -674,8 +693,8 @@ of the *new* `x` is emitted.
 ### 9.4 Chat mode — the file key rides in one Olm message
 
 **Send** (`prepare_file_send` → `run_file_job`, [`api/files.rs#L207`](../../rust/fuzzy_crypto_core/src/api/files.rs#L207),
-[`files.rs#L190`](../../rust/fuzzy_crypto_core/src/files.rs#L190)): the input must be a readable regular file
-(`Io` otherwise — checked before anything is spent); its basename is validated as in §7.3; a random 32-byte
+[`files.rs#L191`](../../rust/fuzzy_crypto_core/src/files.rs#L191)): the input must be a readable regular file
+(`Io` otherwise — checked before anything is spent); its basename is made safe as in §7.3; a random 32-byte
 file key is drawn; the file-key body `file_key ‖ name_len ‖ name` is sealed in **one Olm message** on the
 chat's session with content type `0x02` and the next send counter — the sending rules of §7.2 exactly; the
 ratcheted session and counter are persisted; the ticket (key + header) is returned and the core lock
@@ -683,14 +702,14 @@ released. The container header embeds that Olm message; then the chunks are stre
 one ratchet step and has the same forward secrecy as a text message.**
 
 **Receive** (`prepare_file_receive` → `run_file_job`, [`api/files.rs#L248`](../../rust/fuzzy_crypto_core/src/api/files.rs#L248),
-[`files.rs#L220`](../../rust/fuzzy_crypto_core/src/files.rs#L220)): the input must be a regular file; the header is
+[`files.rs#L232`](../../rust/fuzzy_crypto_core/src/files.rs#L232)): the input must be a regular file; the header is
 read and the structural check of §9.2 step 3 runs **first**, so a header-only or truncated container is
 `Corrupt` before the file's message is spent; a password-mode header is `UnsupportedFormat`; then the embedded
 Olm message goes through the receiving chain of §7.2 with `content_type = 0x02` and the file-key body as the
 body parser — `Replay`, `TooOld`, `WrongChat`, `Corrupt` exactly as for text; the state is persisted; the
 ticket carries the key and the original name. The run then opens the chunks with `Corrupt` as the chunk-0
 failure, and additionally refuses to release the key unless the header on disk equals the header the ticket
-was prepared on ([`api/files.rs#L302`](../../rust/fuzzy_crypto_core/src/api/files.rs#L302)) — redundant with the
+was prepared on ([`api/files.rs#L303`](../../rust/fuzzy_crypto_core/src/api/files.rs#L303)) — redundant with the
 AAD, kept as a belt.
 
 **Binding.** The Olm message commits to the inner header only — chat, identities, direction, counter, key,
@@ -1242,7 +1261,7 @@ a file job's terminal event carries.
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
 | safety-number version / domain / groups / bytes / modulus | 1 / `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25) |
-| original name limit | 255 bytes | [`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261) |
+| original name limit (after cleaning) | 120 bytes, extension kept up to 16 | [`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277) |
 | longest header read | 65 568 | [`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53) |
 | pause poll | 50 ms | [`files.rs#L50`](../../rust/fuzzy_crypto_core/src/files.rs#L50) |
 | Olm skipped keys / gap / chains | 40 / 2000 / 5 | `vodozemac-0.10.0/src/olm/session/receiver_chain.rs` lines 50, 31; `session/mod.rs` line 53 |

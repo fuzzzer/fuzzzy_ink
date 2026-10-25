@@ -464,8 +464,12 @@ peer *sends* is treated as attacker-controlled input:
   lock taken before the buffer is allocated (`PROTOCOL.md` §11). Worst accepted header: 256 MiB × 16 passes
   ≈ 2 s on a laptop, of the order of ten seconds on a phone, never an OOM (`PROTOCOL.md` §17.9). Test:
   `files::tests::oversized_argon2_params_rejected_before_any_write`.
-- **A peer cannot steer the receiver's file system.** The original name is validated as a bare *name* on
-  both sides before the counter commits (`PROTOCOL.md` §7.3). The receiver picks the directory.
+- **A peer cannot steer the receiver's file system, nor block a file with its name.** The original name is
+  made safe as a bare *name* on both sides — separators, Windows-forbidden, control and direction characters
+  replaced, trailing dots and spaces removed, device names such as `CON` prefixed, shortened to 120 bytes
+  (`PROTOCOL.md` §7.3). The receiver picks the directory. Tests:
+  `files::tests::safe_file_name_makes_every_name_receivable`,
+  `api::files::tests::hostile_peer_names_are_received_under_a_safe_name`.
 - **A peer cannot make the receiver spend a message on an incomplete file.** The structural check of
   `PROTOCOL.md` §9.2 step 3 runs before the Olm message is opened, so a header-only or truncated container
   is `Corrupt` with nothing consumed. Test: `api::files::tests::incomplete_container_rejected_before_the_message_is_spent`.

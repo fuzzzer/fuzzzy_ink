@@ -181,7 +181,8 @@ impl ChatFileSetup {
 }
 
 /// The send side's Olm step (the whole of it runs under the core lock): draws
-/// a random file key, seals `file_key ‖ original_name` into one Olm message on
+/// a random file key, seals `file_key ‖ name` (the original name made safe by
+/// [`safe_file_name`], so any local file can be sent) into one Olm message on
 /// the chat's session with the next send counter — exactly like a text
 /// message, `content_type 0x02` — and returns the key with the complete header
 /// that embeds the message. The ratchet and counter are committed to `state`;
@@ -192,10 +193,20 @@ pub(crate) fn wrap_file_key(
     original_name: &str,
     setup: &ChatFileSetup,
 ) -> Result<(Key32, FileHeader), CoreError> {
-    validate_original_name(original_name)?;
+    wrap_named_file_key(state, &safe_file_name(original_name), setup)
+}
+
+/// [`wrap_file_key`] without the name cleaning — the body carries `name`
+/// exactly. Production always cleans first; tests use this to play a peer
+/// whose build sends a hostile name.
+pub(crate) fn wrap_named_file_key(
+    state: &mut ChatState,
+    name: &str,
+    setup: &ChatFileSetup,
+) -> Result<(Key32, FileHeader), CoreError> {
     let body = FileKeyBody {
         file_key: Zeroizing::new(store::random_array()?),
-        original_name: original_name.to_owned(),
+        original_name: name.to_owned(),
     };
     let encoded = body.encode()?;
     let message = messages::encrypt_payload(state, ContentType::FileKeyEnvelope, &encoded)?;
@@ -214,7 +225,8 @@ pub(crate) fn wrap_file_key(
 /// The receive side's Olm step: opens the Olm message embedded in `header`
 /// through the same chain as a text message — Olm decrypt (`Replay`, `TooOld`,
 /// `Corrupt`), the inner-header binding (`WrongChat`, `Corrupt`), the counter
-/// window — and returns the file key with the original name. A password-mode
+/// window — and returns the file key with the original name made safe by
+/// [`safe_file_name`]. A password-mode
 /// header is `UnsupportedFormat`. Nothing is committed to `state` unless every
 /// check passed; the caller persists before the key leaves this layer.
 pub(crate) fn unwrap_file_key(
@@ -231,12 +243,13 @@ pub(crate) fn unwrap_file_key(
         ContentType::FileKeyEnvelope,
         |body| {
             let body = Zeroizing::new(body);
-            let body = FileKeyBody::decode(&body)?;
-            validate_original_name(&body.original_name)?;
-            Ok(body)
+            FileKeyBody::decode(&body)
         },
     )?;
-    Ok((body.file_key, body.original_name))
+    // The name is the peer's choice: it is made safe here rather than refused,
+    // so no name — too long, a Windows device name, `:` or a trailing dot —
+    // can make a file impossible to receive (or waste the ratchet step).
+    Ok((body.file_key, safe_file_name(&body.original_name)))
 }
 
 /// Reads and decodes the header of the container at `input` — everything the
@@ -256,28 +269,104 @@ pub(crate) fn peek_header(input: &Path) -> Result<FileHeader, CoreError> {
     Ok(header)
 }
 
-/// Longest original name (NAME_MAX on every target; the sender derives it from
-/// a real basename, so nothing legitimate is lost).
-const MAX_ORIGINAL_NAME_LEN: usize = 255;
+/// Longest file name the core hands out, in UTF-8 bytes: under every target's
+/// limit (255 bytes on Linux and macOS, 255 UTF-16 units on Windows) with room
+/// for the app's ` (n)` suffix and the core's `.part`, and short enough that a
+/// file under the user's Documents folder stays inside Windows' classic
+/// 260-character path limit.
+pub(crate) const MAX_FILE_NAME_LEN: usize = 120;
+/// A longer name keeps an extension of up to this many bytes (dot included)
+/// whole and is shortened before it.
+const MAX_KEPT_EXTENSION_LEN: usize = 16;
+/// Windows device names: a file whose name before the first dot is one of
+/// these (any case, trailing spaces ignored) cannot be created on Windows.
+const WINDOWS_DEVICE_NAMES: &[&str] = &[
+    "CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$", "COM0", "COM1", "COM2", "COM3", "COM4",
+    "COM5", "COM6", "COM7", "COM8", "COM9", "COM¹", "COM²", "COM³", "LPT0", "LPT1", "LPT2", "LPT3",
+    "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9", "LPT¹", "LPT²", "LPT³",
+];
 
-/// The original name is a file *name*, never a path: a peer's name lands in
-/// the receiver's output path (F3-3), so a separator, NUL, `.` or `..` is
-/// `Corrupt` on both sides — the sender only ever derives it from a basename.
-/// It is also bounded to [`MAX_ORIGINAL_NAME_LEN`] bytes and free of control
-/// characters, so a name the OS would refuse (or one that hides a newline)
-/// never gets as far as spending the receiver's ratchet step.
-fn validate_original_name(name: &str) -> Result<(), CoreError> {
-    if name.is_empty()
-        || name == "."
-        || name == ".."
-        || name.len() > MAX_ORIGINAL_NAME_LEN
-        || name
-            .bytes()
-            .any(|byte| matches!(byte, b'/' | b'\\' | 0x00..=0x1f | 0x7f))
-    {
-        return Err(CoreError::Corrupt);
+/// A file *name* that every target can create, from any string — the peer's
+/// choice on receive, the local basename on send. Never fails, so no name can
+/// make a file impossible to send or receive:
+///
+/// - a separator, a character Windows forbids (`<>:"/\|?*`), a control
+///   character or a direction/invisible-format control becomes `_` (so the
+///   result is never a path and never hides its real extension);
+/// - a name longer than [`MAX_FILE_NAME_LEN`] bytes is shortened at a
+///   character boundary, keeping a short extension;
+/// - trailing dots and spaces go (Windows drops them silently);
+/// - a Windows device name (`CON`, `nul.txt`, `LPT1.tar.gz` …) gets a `_` in
+///   front;
+/// - what is left empty (`""`, `.`, `..`, `. .`) becomes `file`.
+///
+/// The same rules apply on every platform, so both devices agree on the name.
+/// The result is idempotent: cleaning a cleaned name changes nothing.
+pub(crate) fn safe_file_name(name: &str) -> String {
+    let cleaned: String = name
+        .chars()
+        .map(|c| if is_unsafe_in_file_name(c) { '_' } else { c })
+        .collect();
+    let mut safe = shorten_file_name(&cleaned);
+    trim_trailing_dots_and_spaces(&mut safe);
+    if is_windows_device_name(&safe) {
+        safe.insert(0, '_');
+        // The `_` can push a name of exactly the maximum one byte over.
+        truncate_at_char_boundary(&mut safe, MAX_FILE_NAME_LEN);
+        trim_trailing_dots_and_spaces(&mut safe);
     }
-    Ok(())
+    if safe.is_empty() {
+        safe.push_str("file");
+    }
+    safe
+}
+
+fn is_unsafe_in_file_name(c: char) -> bool {
+    matches!(c, '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*')
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{061c}' | '\u{200b}'..='\u{200f}' | '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}' | '\u{feff}'
+        )
+}
+
+fn shorten_file_name(name: &str) -> String {
+    if name.len() <= MAX_FILE_NAME_LEN {
+        return name.to_owned();
+    }
+    let extension = match name.rfind('.') {
+        Some(dot) if dot > 0 && name.len() - dot <= MAX_KEPT_EXTENSION_LEN => &name[dot..],
+        _ => "",
+    };
+    let mut stem = name[..name.len() - extension.len()].to_owned();
+    truncate_at_char_boundary(&mut stem, MAX_FILE_NAME_LEN - extension.len());
+    stem + extension
+}
+
+fn truncate_at_char_boundary(text: &mut String, max_len: usize) {
+    if text.len() > max_len {
+        let mut end = max_len;
+        while !text.is_char_boundary(end) {
+            end -= 1;
+        }
+        text.truncate(end);
+    }
+}
+
+fn trim_trailing_dots_and_spaces(text: &mut String) {
+    let kept = text.trim_end_matches(['.', ' ']).len();
+    text.truncate(kept);
+}
+
+fn is_windows_device_name(name: &str) -> bool {
+    let stem = name
+        .split('.')
+        .next()
+        .unwrap_or_default()
+        .trim_end_matches(' ');
+    WINDOWS_DEVICE_NAMES
+        .iter()
+        .any(|device| device.eq_ignore_ascii_case(stem))
 }
 
 // ---------------------------------------------------------------------------
@@ -897,30 +986,100 @@ mod tests {
         decrypt(&files, PASSWORD).unwrap();
     }
 
+    /// Every name a peer can choose comes out as one file name that Windows,
+    /// macOS and Linux all accept — and that can really be created here.
     #[test]
-    fn original_name_is_bounded_and_free_of_control_characters() {
-        let ok = |name: &str| assert!(validate_original_name(name).is_ok(), "{name:?}");
-        let bad = |name: &str| {
-            assert_eq!(
-                validate_original_name(name).unwrap_err(),
-                CoreError::Corrupt,
-                "{name:?}"
-            )
-        };
-        ok("report.pdf");
-        ok(&"a".repeat(MAX_ORIGINAL_NAME_LEN));
-        ok("ანგარიში 2026.pdf");
-        ok("\u{202e}gnp.exe"); // not display-safe, but a name the OS accepts
-        bad(&"a".repeat(MAX_ORIGINAL_NAME_LEN + 1));
-        bad(&"ა".repeat(MAX_ORIGINAL_NAME_LEN / 3 + 1)); // bytes, not chars
-        bad("a\nb");
-        bad("a\tb");
-        bad("a\x7fb");
-        bad("\x01");
-        // The pre-existing rejections still hold.
-        for name in ["", ".", "..", "a/b", "a\\b", "a\0b"] {
-            bad(name);
+    fn safe_file_name_makes_every_name_receivable() {
+        let same = |name: &str| assert_eq!(safe_file_name(name), name, "{name:?}");
+        let cleaned =
+            |name: &str, expected: &str| assert_eq!(safe_file_name(name), expected, "{name:?}");
+
+        // Ordinary names are untouched.
+        same("report.pdf");
+        same("ანგარიში 2026.pdf");
+        same(".hidden");
+        same("a..b");
+        same(&"a".repeat(MAX_FILE_NAME_LEN));
+
+        // Separators and characters Windows forbids.
+        cleaned("a/b", "a_b");
+        cleaned("a\\b", "a_b");
+        cleaned("..\\..\\boot.ini", ".._.._boot.ini");
+        cleaned("../../etc/passwd", ".._.._etc_passwd");
+        cleaned("photo:Zone.Identifier", "photo_Zone.Identifier");
+        cleaned("a<b>c\"d|e?f*g", "a_b_c_d_e_f_g");
+        // Control and direction characters (no hidden newline, no disguised extension).
+        cleaned("a\nb\tc\0d\x7fe", "a_b_c_d_e");
+        cleaned("invoice\u{202e}fdp.exe", "invoice_fdp.exe");
+        cleaned("\u{200f}x\u{2066}y\u{feff}", "_x_y_");
+        // Trailing dots and spaces (Windows drops them).
+        cleaned("notes.txt. . .", "notes.txt");
+        cleaned("name ", "name");
+        // Windows device names, in any case, with or without an extension.
+        for device in [
+            "CON",
+            "con",
+            "Nul.txt",
+            "LPT1.tar.gz",
+            "com9",
+            "COM¹.log",
+            "conin$",
+            "AUX .txt",
+        ] {
+            cleaned(device, &format!("_{device}"));
         }
+        same("CONSOLE.txt");
+        same("com10");
+        // Nothing left.
+        for empty in ["", ".", "..", "...", " . ", "\u{202e}"] {
+            let safe = safe_file_name(empty);
+            assert!(safe == "file" || safe == "_", "{empty:?} -> {safe:?}");
+        }
+
+        // Too long: shortened on a character boundary, the extension kept.
+        let long = format!("{}.pdf", "a".repeat(300));
+        assert_eq!(safe_file_name(&long), format!("{}.pdf", "a".repeat(116)));
+        let georgian = format!("{}.txt", "ა".repeat(100)); // 3 bytes each
+        assert_eq!(safe_file_name(&georgian), format!("{}.txt", "ა".repeat(38)));
+        let no_extension = "ა".repeat(100);
+        assert_eq!(safe_file_name(&no_extension), "ა".repeat(40));
+        let long_extension = format!("x.{}", "e".repeat(200));
+        assert_eq!(safe_file_name(&long_extension).len(), MAX_FILE_NAME_LEN);
+        // Shortening that ends on spaces or dots, and a device name at the limit.
+        let spaces = format!("{}{}", "b".repeat(MAX_FILE_NAME_LEN - 2), " ".repeat(50));
+        assert_eq!(safe_file_name(&spaces), "b".repeat(MAX_FILE_NAME_LEN - 2));
+        let device_at_limit = format!("CON.{}", "x".repeat(MAX_FILE_NAME_LEN - 4));
+        assert!(safe_file_name(&device_at_limit).len() <= MAX_FILE_NAME_LEN);
+
+        // Invariants over hostile names, and each one really is creatable.
+        let dir = crate::store::test_support::temp_dir();
+        let hostile = [
+            long.clone(),
+            georgian,
+            no_extension,
+            long_extension,
+            spaces,
+            device_at_limit,
+            "CON".into(),
+            "a:b".into(),
+            "..".into(),
+            "x. ".into(),
+            "\u{0085}\u{009f}".into(),
+            "日本語のファイル名.docx".into(),
+        ];
+        for name in &hostile {
+            let safe = safe_file_name(name);
+            assert!(!safe.is_empty() && safe != "." && safe != "..", "{name:?}");
+            assert!(safe.len() <= MAX_FILE_NAME_LEN, "{name:?}");
+            assert!(!safe.ends_with(['.', ' ']), "{name:?}");
+            assert!(!safe.chars().any(is_unsafe_in_file_name), "{name:?}");
+            assert!(!is_windows_device_name(&safe), "{name:?}");
+            assert_eq!(safe_file_name(&safe), safe, "idempotent: {name:?}");
+            // With the app's ` (99)` and the core's `.part` it still fits 255 bytes.
+            assert!(safe.len() + " (99)".len() + ".part".len() <= 255);
+            fs::write(dir.join(&safe), b"x").unwrap_or_else(|e| panic!("{name:?}: {e}"));
+        }
+        let _ = fs::remove_dir_all(dir);
     }
 
     #[test]
