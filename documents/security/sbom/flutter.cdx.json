@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:3c8ac3fe-e205-4986-a415-475d807a5963",
+  "serialNumber": "urn:uuid:fc9abc85-a346-4804-b673-88a1a17a7d77",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-25T21:07:45Z",
+    "timestamp": "2026-10-25T21:16:57Z",
     "tools": {
       "components": [
         {
@@ -3532,228 +3532,6 @@
       "purl": "pkg:pub/path_provider_windows@2.3.0",
       "type": "library",
       "bom-ref": "pkg:pub/path_provider_windows@2.3.0",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler",
-      "version": "12.0.1",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "bc917da36261b00137bbc8896bf1482169cd76f866282368948f032c8c1caae1"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler@12.0.1",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler@12.0.1",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler_android",
-      "version": "13.0.1",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "1e3bc410ca1bf84662104b100eb126e066cb55791b7451307f9708d4007350e6"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler_android@13.0.1",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler_android@13.0.1",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler_apple",
-      "version": "9.4.7",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "f000131e755c54cf4d84a5d8bd6e4149e262cc31c5a8b1d698de1ac85fa41023"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler_apple@9.4.7",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler_apple@9.4.7",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler_html",
-      "version": "0.1.3+5",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "38f000e83355abb3392140f6bc3030660cfaef189e1f87824facb76300b4ff24"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler_html@0.1.3%2B5",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler_html@0.1.3+5",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler_platform_interface",
-      "version": "4.3.0",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "eb99b295153abce5d683cac8c02e22faab63e50679b937fa1bf67d58bb282878"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler_platform_interface@4.3.0",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler_platform_interface@4.3.0",
-      "properties": [
-        {
-          "name": "SrcFile",
-          "value": "pubspec.lock"
-        }
-      ],
-      "evidence": {
-        "identity": [
-          {
-            "field": "purl",
-            "confidence": 1,
-            "methods": [
-              {
-                "technique": "manifest-analysis",
-                "confidence": 1,
-                "value": "pubspec.lock"
-              }
-            ],
-            "concludedValue": "pubspec.lock"
-          }
-        ]
-      }
-    },
-    {
-      "group": "",
-      "name": "permission_handler_windows",
-      "version": "0.2.1",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "1a790728016f79a41216d88672dbc5df30e686e811ad4e698bfc51f76ad91f1e"
-        }
-      ],
-      "purl": "pkg:pub/permission_handler_windows@0.2.1",
-      "type": "library",
-      "bom-ref": "pkg:pub/permission_handler_windows@0.2.1",
       "properties": [
         {
           "name": "SrcFile",
@@ -7721,7 +7499,6 @@
         "pkg:pub/path@1.8.0",
         "pkg:pub/path@1.9.1",
         "pkg:pub/path_provider@2.1.5",
-        "pkg:pub/permission_handler@12.0.1",
         "pkg:pub/qr@3.0.2",
         "pkg:pub/share_plus@10.1.4",
         "pkg:pub/shared_preferences@2.5.3",
@@ -7757,7 +7534,7 @@
           ]
         }
       },
-      "timestamp": "2026-10-25T21:07:45Z",
+      "timestamp": "2026-10-25T21:16:57Z",
       "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, October 25, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.4+6'."
     }
   ]
