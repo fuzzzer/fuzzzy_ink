@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
@@ -19,10 +18,11 @@ class AcceptanceContent extends StatelessWidget {
   void _copyAcceptance(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
 
-    Clipboard.setData(ClipboardData(text: acceptanceContent));
-    FuzzzyToast.show(
+    CopyGuard.copy(
       context,
-      message: localizations.acceptanceCopiedToClipboard,
+      text: acceptanceContent,
+      content: CopyContent.sealedAcceptance,
+      copiedMessage: localizations.acceptanceCopiedToClipboard,
     );
   }
 
@@ -39,10 +39,11 @@ class AcceptanceContent extends StatelessWidget {
   void _copyAsLink(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final link = FuzzyLinkGenerator.generateAcceptanceLink(acceptanceContent);
-    Clipboard.setData(ClipboardData(text: link));
-    FuzzzyToast.show(
+    CopyGuard.copy(
       context,
-      message: localizations.linkCopiedToClipboard,
+      text: link,
+      content: CopyContent.sealedLink,
+      copiedMessage: localizations.linkCopiedToClipboard,
     );
   }
 

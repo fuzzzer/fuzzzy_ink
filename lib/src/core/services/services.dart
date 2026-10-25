@@ -6,5 +6,6 @@ export 'fuzzy_hub/fuzzy_hub.dart';
 export 'fuzzy_link/fuzzy_link.dart';
 export 'password_strength_service/password_strength_service.dart';
 export 'preferences_service/preferences_service.dart';
+export 'screen_guard/screen_guard.dart';
 export 'service_locator/service_locator.dart';
 export 'user_file_store/user_file_store.dart';

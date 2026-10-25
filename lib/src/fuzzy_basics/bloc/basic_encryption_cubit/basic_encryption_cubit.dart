@@ -41,6 +41,7 @@ class BasicEncryptionCubit extends Cubit<BasicEncryptionState> {
       state.copyWith(
         status: StateStatus.success,
         result: (res as CryptoCoreSuccess<String>).data,
+        isResultSealed: true,
       ),
     );
   }
@@ -80,6 +81,7 @@ class BasicEncryptionCubit extends Cubit<BasicEncryptionState> {
       state.copyWith(
         status: StateStatus.success,
         result: (res as CryptoCoreSuccess<String>).data,
+        isResultSealed: false,
       ),
     );
   }

@@ -70,6 +70,7 @@ class VaultGroupFilter extends StatelessWidget {
           content: TextField(
             controller: nameController,
             autofocus: true,
+            contextMenuBuilder: CopyGuard.plaintextContextMenuBuilder,
             style: TextStyle(color: context.fuzzzyColors.ink),
             decoration: InputDecoration(
               hintText: currentContextLocalization.vaultGroupName,

@@ -15,9 +15,6 @@ class ReceivedTextMessageArea extends StatelessWidget {
     final fuzzzyColors = context.fuzzzyColors;
     final fuzzzyTextStyles = context.fuzzzyTextStyles;
 
-    final isStrict = sl.get<PreferencesService>().copySecurityLevel ==
-        CopySecurityLevel.strict;
-
     final textStyle = fuzzzyTextStyles.body.copyWith(
       color: fuzzzyColors.ink,
     );
@@ -37,37 +34,18 @@ class ReceivedTextMessageArea extends StatelessWidget {
         width: double.maxFinite,
         child: Align(
           alignment: Alignment.centerLeft,
-          child: isStrict
-              ? InkWell(
-                  onLongPress: () {
-                    CopyGuard.copyPlaintext(
-                      context: context,
-                      textToCopy: message.decryptedMessage,
-                    );
-                  },
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    decoration: decoration,
-                    child: Text(
-                      message.decryptedMessage,
-                      style: textStyle,
-                    ),
-                  ),
-                )
-              : Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.75,
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  decoration: decoration,
-                  child: SelectableText(
-                    message.decryptedMessage,
-                    style: textStyle,
-                  ),
-                ),
+          // Decrypted text: shown, never selectable or copyable (copy_guard).
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.75,
+            ),
+            padding: const EdgeInsets.all(12),
+            decoration: decoration,
+            child: Text(
+              message.decryptedMessage,
+              style: textStyle,
+            ),
+          ),
         ),
       ),
     );

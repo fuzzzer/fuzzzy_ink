@@ -670,30 +670,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Choose a local name for this chat. This is only visible to you.'**
   String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou;
 
-  /// No description provided for @securityWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'Security Warning'**
-  String get securityWarning;
-
-  /// No description provided for @areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to copy unencrypted data to your clipboard? This could compromise your secure chat.'**
-  String
-      get areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat;
-
   /// No description provided for @copyFuzz.
   ///
   /// In en, this message translates to:
   /// **'Copy Fuzz'**
   String get copyFuzz;
-
-  /// No description provided for @copyPlaintext.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Plaintext'**
-  String get copyPlaintext;
 
   /// No description provided for @firstEncryption.
   ///
@@ -713,36 +694,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
-
-  /// No description provided for @securityLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Security Level'**
-  String get securityLevel;
-
-  /// No description provided for @strict.
-  ///
-  /// In en, this message translates to:
-  /// **'Strict'**
-  String get strict;
-
-  /// No description provided for @moderate.
-  ///
-  /// In en, this message translates to:
-  /// **'Moderate'**
-  String get moderate;
-
-  /// No description provided for @strictSecurityDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Shows a confirmation dialog before copying any decrypted text. Recommended for maximum privacy.'**
-  String get strictSecurityDescription;
-
-  /// No description provided for @moderateSecurityDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Received messages are selectable and can be copied directly without a warning.'**
-  String get moderateSecurityDescription;
 
   /// No description provided for @shareAsLink.
   ///
@@ -1025,12 +976,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Note'**
   String get vaultNoteLabel;
-
-  /// No description provided for @vaultCopyingNotImplemented.
-  ///
-  /// In en, this message translates to:
-  /// **'Copying not fully implemented yet.'**
-  String get vaultCopyingNotImplemented;
 
   /// No description provided for @vaultFailedToLoadItem.
   ///
@@ -1944,6 +1889,42 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
   String get vaultMoveUnfinishedMessage;
+
+  /// No description provided for @copyRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Only sealed text can be copied.'**
+  String get copyRefused;
+
+  /// No description provided for @copyPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying'**
+  String get copyPolicyTitle;
+
+  /// No description provided for @copyPolicyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the sealed text you send can be copied out of the app. Decrypted messages, notes and file locations stay inside. Anything copied is removed from the clipboard after a short time.'**
+  String get copyPolicyDescription;
+
+  /// No description provided for @copyPolicyVaultPasswordNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault passwords are the one exception: a copied password is kept out of clipboard history where the system allows it and is removed after {seconds} seconds.'**
+  String copyPolicyVaultPasswordNote(int seconds);
+
+  /// No description provided for @vaultCopyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy password'**
+  String get vaultCopyPassword;
+
+  /// No description provided for @vaultPasswordCopiedClearsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Password copied. It is removed from the clipboard in {seconds} seconds.'**
+  String vaultPasswordCopiedClearsIn(int seconds);
 }
 
 class _FuzzzyInkLocalizationsDelegate

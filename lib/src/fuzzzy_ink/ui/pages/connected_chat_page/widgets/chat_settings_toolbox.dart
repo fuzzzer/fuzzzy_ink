@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -51,17 +50,12 @@ class _SettingsToolboxState extends State<SettingsToolbox> {
     required String acceptanceContent,
     required FuzzzyInkLocalizations localizations,
   }) {
-    Clipboard.setData(
-      ClipboardData(
-        text: acceptanceContent,
-      ),
-    ).then((_) {
-      if (!mounted) return;
-      FuzzzyToast.show(
-        context,
-        message: localizations.acceptanceCopiedToClipboard,
-      );
-    });
+    CopyGuard.copy(
+      context,
+      text: acceptanceContent,
+      content: CopyContent.sealedAcceptance,
+      copiedMessage: localizations.acceptanceCopiedToClipboard,
+    );
   }
 
   @override

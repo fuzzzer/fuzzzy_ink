@@ -86,6 +86,7 @@ class MessageInputField extends StatelessWidget {
                       controller: controller,
                       focusNode: focusNode,
                       maxLines: 7,
+                      contextMenuBuilder: CopyGuard.plaintextContextMenuBuilder,
                       decoration: InputDecoration.collapsed(
                         hintText: '${localizations.textGoesHere}...',
                       ),

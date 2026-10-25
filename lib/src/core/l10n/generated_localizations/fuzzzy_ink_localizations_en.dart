@@ -314,17 +314,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Choose a local name for this chat. This is only visible to you.';
 
   @override
-  String get securityWarning => 'Security Warning';
-
-  @override
-  String get areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat =>
-      'Are you sure you want to copy unencrypted data to your clipboard? This could compromise your secure chat.';
-
-  @override
   String get copyFuzz => 'Copy Fuzz';
-
-  @override
-  String get copyPlaintext => 'Copy Plaintext';
 
   @override
   String get firstEncryption => 'First Encryption';
@@ -335,23 +325,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get settings => 'Settings';
-
-  @override
-  String get securityLevel => 'Security Level';
-
-  @override
-  String get strict => 'Strict';
-
-  @override
-  String get moderate => 'Moderate';
-
-  @override
-  String get strictSecurityDescription =>
-      'Shows a confirmation dialog before copying any decrypted text. Recommended for maximum privacy.';
-
-  @override
-  String get moderateSecurityDescription =>
-      'Received messages are selectable and can be copied directly without a warning.';
 
   @override
   String get shareAsLink => 'Share as Link';
@@ -496,9 +469,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get vaultNoteLabel => 'Note';
-
-  @override
-  String get vaultCopyingNotImplemented => 'Copying not fully implemented yet.';
 
   @override
   String get vaultFailedToLoadItem => 'Failed to load item';
@@ -1019,4 +989,27 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get vaultMoveUnfinishedMessage =>
       'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
+
+  @override
+  String get copyRefused => 'Only sealed text can be copied.';
+
+  @override
+  String get copyPolicyTitle => 'Copying';
+
+  @override
+  String get copyPolicyDescription =>
+      'Only the sealed text you send can be copied out of the app. Decrypted messages, notes and file locations stay inside. Anything copied is removed from the clipboard after a short time.';
+
+  @override
+  String copyPolicyVaultPasswordNote(int seconds) {
+    return 'Vault passwords are the one exception: a copied password is kept out of clipboard history where the system allows it and is removed after $seconds seconds.';
+  }
+
+  @override
+  String get vaultCopyPassword => 'Copy password';
+
+  @override
+  String vaultPasswordCopiedClearsIn(int seconds) {
+    return 'Password copied. It is removed from the clipboard in $seconds seconds.';
+  }
 }

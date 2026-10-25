@@ -319,17 +319,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.';
 
   @override
-  String get securityWarning => 'უსაფრთხოების გაფრთხილება';
-
-  @override
-  String get areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat =>
-      'დარწმუნებული ხართ, რომ გსურთ დაუშიფრავი მონაცემების ბუფერში კოპირება? ამან შეიძლება საფრთხე შეუქმნას თქვენს უსაფრთხო ჩატს.';
-
-  @override
   String get copyFuzz => 'Fuzz-ის კოპირება';
-
-  @override
-  String get copyPlaintext => 'ტექსტის კოპირება';
 
   @override
   String get firstEncryption => 'პირველი დაშიფვრა';
@@ -340,23 +330,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get settings => 'პარამეტრები';
-
-  @override
-  String get securityLevel => 'უსაფრთხოების დონე';
-
-  @override
-  String get strict => 'მკაცრი';
-
-  @override
-  String get moderate => 'ზომიერი';
-
-  @override
-  String get strictSecurityDescription =>
-      'ნებისმიერი გაშიფრული ტექსტის კოპირებამდე გამოჩნდება დადასტურების დიალოგი. რეკომენდებულია მაქსიმალური კონფიდენციალურობისთვის.';
-
-  @override
-  String get moderateSecurityDescription =>
-      'მიღებული შეტყობინებები იკითხება და კოპირება შესაძლებელია გაფრთხილების გარეშე.';
 
   @override
   String get shareAsLink => 'ბმულით გაზიარება';
@@ -505,10 +478,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get vaultNoteLabel => 'ჩანაწერი';
-
-  @override
-  String get vaultCopyingNotImplemented =>
-      'კოპირება ჯერ სრულად არ არის განხორციელებული.';
 
   @override
   String get vaultFailedToLoadItem => 'ელემენტის ჩატვირთვა ვერ მოხერხდა';
@@ -1032,4 +1001,27 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get vaultMoveUnfinishedMessage =>
       'საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.';
+
+  @override
+  String get copyRefused => 'კოპირება მხოლოდ დაშიფრული ტექსტის შეიძლება.';
+
+  @override
+  String get copyPolicyTitle => 'კოპირება';
+
+  @override
+  String get copyPolicyDescription =>
+      'აპლიკაციიდან მხოლოდ თქვენ მიერ გასაგზავნი დაშიფრული ტექსტი კოპირდება. გაშიფრული შეტყობინებები, ჩანაწერები და ფაილების მდებარეობა აპლიკაციაში რჩება. დაკოპირებული ტექსტი ბუფერიდან მალევე იშლება.';
+
+  @override
+  String copyPolicyVaultPasswordNote(int seconds) {
+    return 'გამონაკლისი მხოლოდ საცავის პაროლია: დაკოპირებული პაროლი, სადაც სისტემა ამის საშუალებას იძლევა, ბუფერის ისტორიაში არ ინახება და $seconds წამში იშლება.';
+  }
+
+  @override
+  String get vaultCopyPassword => 'პაროლის კოპირება';
+
+  @override
+  String vaultPasswordCopiedClearsIn(int seconds) {
+    return 'პაროლი დაკოპირდა. ბუფერიდან $seconds წამში წაიშლება.';
+  }
 }

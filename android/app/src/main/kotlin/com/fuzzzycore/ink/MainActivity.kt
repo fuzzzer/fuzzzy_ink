@@ -9,5 +9,7 @@ class MainActivity: FlutterFragmentActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, UserFiles.CHANNEL)
             .setMethodCallHandler(UserFiles(this))
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, Guard.CHANNEL)
+            .setMethodCallHandler(Guard(this))
     }
 }
