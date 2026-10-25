@@ -16,6 +16,7 @@ class BasicEncryptionPage extends StatelessWidget {
         BlocProvider<BasicEncryptionCubit>(
           create: (context) => BasicEncryptionCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
           ),
         ),
         BlocProvider<CustomFileProcessingCubit<FileEncryptionOption>>(
@@ -135,6 +136,8 @@ class _ProvidedBasicEncryptionPageState
             .fuzzzyInkLocalizations.decryptionFailedCheckYourKeyOrEncryptedText;
       case 'basicsWrongPassword':
         return context.fuzzzyInkLocalizations.basicsWrongPassword;
+      case 'basicsPasswordTooWeak':
+        return context.fuzzzyInkLocalizations.chatAuthPasswordTooWeak;
       case 'corruptBlob':
         return context.fuzzzyInkLocalizations.corruptBlob;
       default:

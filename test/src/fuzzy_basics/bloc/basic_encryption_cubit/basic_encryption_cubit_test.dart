@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
-const _key = 'correct horse';
+const _key = 'Correct-Horse-7';
 const _blob = '${fuzzIdentificator}RlVaWgEF';
 
 void main() {
@@ -19,8 +19,10 @@ void main() {
     mockService = MockCryptoCoreService();
   });
 
-  BasicEncryptionCubit build() =>
-      BasicEncryptionCubit(cryptoCoreService: mockService);
+  BasicEncryptionCubit build() => BasicEncryptionCubit(
+        cryptoCoreService: mockService,
+        passwordStrengthService: PasswordStrengthService(),
+      );
 
   void stubSeal(CryptoCoreResponse<String> response) {
     when(
@@ -79,6 +81,32 @@ void main() {
         failed('textAndKeyCannotBeEmpty'),
       ],
       verify: (_) => verifyZeroInteractions(mockService),
+    );
+
+    blocTest<BasicEncryptionCubit, BasicEncryptionState>(
+      'a key below "good" is refused before the service is called '
+      '(security review 2026-10-22)',
+      build: build,
+      act: (cubit) async {
+        await cubit.encryptText(text: 'hello', key: '1234');
+        await cubit.encryptText(text: 'hello', key: 'password123');
+      },
+      expect: () => [
+        failed('basicsPasswordTooWeak'),
+        failed('basicsPasswordTooWeak'),
+      ],
+      verify: (_) => verifyZeroInteractions(mockService),
+    );
+
+    blocTest<BasicEncryptionCubit, BasicEncryptionState>(
+      'opening accepts any key: the sender chose it',
+      setUp: () => stubOpen(const CryptoCoreSuccess('hello')),
+      build: build,
+      act: (cubit) => cubit.decryptText(encryptedText: _blob, key: '1234'),
+      expect: () => [
+        loading(),
+        isA<BasicEncryptionState>().having((s) => s.result, 'result', 'hello'),
+      ],
     );
 
     blocTest<BasicEncryptionCubit, BasicEncryptionState>(
