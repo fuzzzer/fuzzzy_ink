@@ -37,8 +37,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- The files the app produces stay in Documents, which the Files app shows
-	     as "On My iPhone › Fuzzzy Ink"; "Show" opens it there (T-0366). -->
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

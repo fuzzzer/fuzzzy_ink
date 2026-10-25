@@ -160,11 +160,13 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: linux-bundle, path: build/linux/x64/release/bundle }
   windows:
-    # windows-2022 (VS 2022): on windows-latest (= windows-2025-vs2026) the VS 2026 STL turns
-    # <experimental/coroutine> into a hard error, and permission_handler_windows (C++/WinRT under
-    # Flutter's C++17 runner) still includes it — an upstream plugin issue, not a cargokit one.
+    # Pinned to the current Windows image by its full label (what windows-latest points at today),
+    # so a runner change is a reviewed commit. The earlier windows-2022 pin existed only for
+    # permission_handler_windows, whose C++/WinRT code includes <experimental/coroutine> (a hard
+    # error with the VS 2026 STL); that plugin is gone, and no Windows plugin left in
+    # windows/flutter/generated_plugins.cmake includes it.
     permissions: { contents: read }
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
