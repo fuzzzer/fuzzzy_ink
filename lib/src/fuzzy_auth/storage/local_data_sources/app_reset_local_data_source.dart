@@ -5,8 +5,9 @@ import 'package:isar_community/isar.dart';
 import 'package:path/path.dart' as path;
 
 /// Removes the app's own data from this device: the database, the core's
-/// sealed chat states and the vault folder. Files the user unfuzzed are the
-/// user's and are never touched.
+/// sealed chat states, the vault folder, the sealed files the app keeps
+/// (chat and Basics containers) and any hand-off copy. Files the user saved
+/// or shared are the user's and are never touched.
 class AppResetLocalDataSource {
   AppResetLocalDataSource({required this.supportDirectoryPath});
 
@@ -27,4 +28,16 @@ class AppResetLocalDataSource {
   }
 
   Future<void> deleteVault() => sl.get<VaultFileDataSource>().clearAll();
+
+  /// The kept chat and Basics containers (`UserFileStore`'s `sealed_files/`)
+  /// and the hand-off folder of plain copies in use.
+  Future<void> deleteSealedFiles() async {
+    for (final folderName in [
+      UserFileStore.sealedFolderName,
+      UserFileStore.handoffFolderName,
+    ]) {
+      final folder = Directory(path.join(supportDirectoryPath, folderName));
+      if (await folder.exists()) await folder.delete(recursive: true);
+    }
+  }
 }

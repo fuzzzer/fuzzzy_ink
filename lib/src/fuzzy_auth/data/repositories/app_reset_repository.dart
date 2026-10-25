@@ -30,6 +30,7 @@ class AppResetRepository {
       await _localDataSource.clearDatabase();
       await _localDataSource.deleteChatStates();
       await _localDataSource.deleteVault();
+      await _localDataSource.deleteSealedFiles();
       return const CryptoCoreSuccess(null);
     } catch (ex) {
       logger.e('Erase failed: ${ex.runtimeType}');
