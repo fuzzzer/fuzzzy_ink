@@ -2510,9 +2510,10 @@ class FileTicketImpl extends RustOpaque implements FileTicket {
         .instance.api.rust_arc_decrement_strong_count_FileTicketPtr,
   );
 
-  /// The file's name as the sender saw it: the input's file name on a send
-  /// ticket, the name carried inside the Olm message on a receive ticket
-  /// (a bare name — never a path). Readable before and after the run.
+  /// The file's name: the input's file name on a send ticket; on a receive
+  /// ticket the name carried inside the Olm message, made safe for every
+  /// platform (a bare name — never a path, never a Windows device name, at
+  /// most 120 bytes; PROTOCOL.md §7.3). Readable before and after the run.
   Future<String> originalName() =>
       FuzzyCryptoCoreLib.instance.api.crateApiFilesFileTicketOriginalName(
         that: this,
