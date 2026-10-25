@@ -121,3 +121,6 @@ scripts/outputs
 scripts/ai_agent
 # Rust crypto core build output (rust/fuzzy_crypto_core/Cargo.lock is committed)
 rust/fuzzy_crypto_core/target/
+
+# SBOM tool install (sbom.sh, from tools/sbom/package-lock.json)
+tools/sbom/node_modules/

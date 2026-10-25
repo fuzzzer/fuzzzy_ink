@@ -830,7 +830,13 @@ hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were 
 ### 9.1 What is pinned and checked on every push
 
 - **Toolchains:** Rust 1.98.1 (`rust/fuzzy_crypto_core/rust-toolchain.toml`), Flutter 3.41.7 / Dart 3.11.5 (`.fvmrc`),
-  NDK 28.2.13676358, `cargo-ndk` 4.1.2 (`RELEASE.md` §4).
+  NDK 28.2.13676358, `cargo-ndk` 4.1.2 (`RELEASE.md` §4). The app builds (CI and Codemagic store builds)
+  compile the core through cargokit, which since 2026-10-26 uses the toolchain of `rust-toolchain.toml` and
+  `--locked` (§9.4).
+- **Build steps:** every third-party GitHub Action in `.github/workflows/main.yaml` is pinned to a full commit
+  (its version in a comment), so its author cannot swap the code behind a tag; the workflow token has no
+  permissions by default and each job is granted only `contents: read` (the `attest` job adds the
+  `id-token` and `attestations` writes it needs). Since 2026-10-26.
 - **Dependencies:** the pin that matters is **`Cargo.lock` + `--locked`** on every build, CI and release
   alike — every crate, direct and transitive, resolves to the locked version or the build fails. On top of
   that, `Cargo.toml` carries exact `=` pins for the four crates that implement the protocol (`vodozemac`,
@@ -845,7 +851,8 @@ hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were 
   Appendix A; [`vectors/README.md`](vectors/README.md)).
 - **SBOMs:** CycloneDX for the Rust crate ([`sbom/rust.cdx.json`](sbom/rust.cdx.json), `cargo cyclonedx`,
   every target) and for the Flutter app ([`sbom/flutter.cdx.json`](sbom/flutter.cdx.json), cdxgen 12.8.4
-  from `pubspec.lock`); both committed, both regenerated in CI by `./sbom.sh … --check`, which fails the
+  from `pubspec.lock`; cdxgen and everything under it installed by `npm ci` from the committed
+  `tools/sbom/package-lock.json`, exact versions and integrity hashes, no install scripts); both committed, both regenerated in CI by `./sbom.sh … --check`, which fails the
   build if the committed file drifts from the lockfiles. An independent reviewer validated both against the
   CycloneDX schema and cross-checked every `Cargo.lock` entry (F5-3 review).
 - **Dependabot** ([`.github/dependabot.yaml`](../../.github/dependabot.yaml)) watches cargo, pub and
@@ -898,8 +905,12 @@ CI gate for codegen drift (R24).
 ### 9.4 Things a reviewer of the build must know
 
 - **The vendored `cargokit`** (`rust_builder/cargokit/`, the frb 2.13.0 integration template) builds the
-  crate from source on every platform and is byte-identical to upstream apart from the integrator's
-  prelude comment (F1-2 review). Its own `build_tool/pubspec.lock` is not under Dependabot.
+  crate from source on every platform. It is upstream apart from the integrator's prelude comment (F1-2
+  review) and two marked changes (2026-10-26): `builder.dart` takes the toolchain from the crate's
+  `rust-toolchain.toml` (upstream uses the `cargokit.yaml` channel, default "stable", so a store build
+  compiled the core with whatever stable was current) and passes `--locked`; `rustup.dart` recognises a
+  version-numbered toolchain as installed. Each is commented "Fuzzzy Ink change" — re-apply them if
+  cargokit is ever re-vendored. Its own `build_tool/pubspec.lock` is not under Dependabot.
 - **Never build with `--cfg fuzzing`.** Under that cfg vodozemac's `Ed25519PublicKey::verify` is a no-op
   and every pairing signature would silently pass. A standing comment at the top of
   `rust/fuzzy_crypto_core/src/lib.rs` records it; no CI job sets it; a reviewer should grep for it in any

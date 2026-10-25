@@ -2,8 +2,10 @@
 # CycloneDX SBOMs for both halves of the app, committed under documents/security/sbom/ (F5-3).
 #   ./sbom.sh rust|flutter            regenerate documents/security/sbom/<half>.cdx.json
 #   ./sbom.sh rust|flutter --check    regenerate to a temp file and fail if it differs from the committed one (CI drift gate)
-# Pinned tools: cargo-cyclonedx 0.5.9 (`cargo install --locked cargo-cyclonedx@0.5.9`) and
-# cdxgen 12.8.4 (fetched by npx, nothing installed). Bump a version here and in .github/workflows/main.yaml together.
+# Pinned tools: cargo-cyclonedx 0.5.9 (`cargo install --locked cargo-cyclonedx@0.5.9`; bump it here and in
+# .github/workflows/main.yaml together) and cdxgen 12.8.4 with every package under it locked by
+# tools/sbom/package-lock.json (exact versions and integrity hashes, installed by `npm ci` with no install
+# scripts; bump with `npm install --package-lock-only --ignore-scripts @cyclonedx/cdxgen@<version>` there).
 set -euo pipefail
 cd "$(dirname "$0")"
 half=${1:-}
@@ -22,7 +24,8 @@ case $half in
     ;;
   flutter)
     # `**/build/**` keeps cargokit's copies of build_tool/pubspec.lock in local build output out of the BOM
-    npx -y @cyclonedx/cdxgen@12.8.4 -t flutter --spec-version 1.6 --exclude '**/build/**' -o "$tmp/new.json" .
+    npm ci --prefix tools/sbom --ignore-scripts --no-audit --no-fund --loglevel=error
+    tools/sbom/node_modules/.bin/cdxgen -t flutter --spec-version 1.6 --exclude '**/build/**' --exclude 'tools/**' -o "$tmp/new.json" .
     ;;
   *)
     echo "usage: $0 rust|flutter [--check]"
