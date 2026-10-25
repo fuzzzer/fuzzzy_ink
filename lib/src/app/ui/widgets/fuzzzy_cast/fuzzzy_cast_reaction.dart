@@ -40,16 +40,19 @@ class FuzzzyCastReaction extends StatelessWidget {
   final String? qaId;
 
   /// Whether Fuzzz may show at [context]: the setting is on and the screen
-  /// is not private.
-  static bool showsAt(BuildContext context) {
-    final settings = context.watch<FuzzzyCastSettingsCubit?>();
+  /// is not private. [listen] rebuilds the caller when the setting changes
+  /// (inside `build` only).
+  static bool showsAt(BuildContext context, {bool listen = false}) {
+    final settings = listen
+        ? context.watch<FuzzzyCastSettingsCubit?>()
+        : context.read<FuzzzyCastSettingsCubit?>();
     return (settings?.state.isEnabled ?? false) &&
         !SensitiveScreen.isIn(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!showsAt(context)) return fallback;
+    if (!showsAt(context, listen: true)) return fallback;
     return _FuzzzyCastFigure(
       key: ValueKey(moment),
       moment: moment,
