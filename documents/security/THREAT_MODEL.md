@@ -347,6 +347,71 @@ of `6ecd9f1` or later may still hold the older files. History reaches a cloud on
 archive export (F2-10, `PROTOCOL.md` §9.5) is a password-sealed file the user places wherever they like — not
 a return to OS backups.
 
+### 2.9 Locking from other apps — DRAFT, experimental builds only
+
+**Status: draft for review (2026-10-26).** Nothing here ships: the code exists only in a build made with
+`--dart-define=FUZZ_ANYWHERE=true`, and even there the person must turn on Settings → Other apps → Lock from other
+apps (off by default). The native entry points (Android selection menu and tile, Mac Services menu and panel,
+iPhone quick sheet) are not built yet; this section states the rules they are built to. The contract is
+[`documents/fuzz_anywhere/CHANNEL.md`](../fuzz_anywhere/CHANNEL.md); the Dart side is `lib/src/fuzz_anywhere/`
+(tests: `test/src/fuzz_anywhere/`).
+
+**The boundary.** Native code inside the app's own process calls the running app over the method channel
+`com.fuzzzycore.ink/anywhere`. It adds no process, no socket and no second store opener: the exclusive store lock
+(R30, `PROTOCOL.md` §17.10) is untouched, every operation runs in the one Dart isolate that owns the store, and
+the Rust core is unchanged. Native code does no cryptography and holds no key.
+
+**What crosses the channel.**
+- *Into the app:* the master password once per unlock attempt (never kept), the text to lock, the text to
+  recognise or open, a person id and the calling app's id (a package or bundle name the platform gives without a
+  permission).
+- *Out of the app:* sealed output only (a message link, or the `Fuzz/` text when longer than a link's 8 192
+  characters), the connected people's names and checked marks, a peek's kind and person, refusal codes, and a
+  wait in seconds. **Opened text never crosses:** `open` answers a one-time display id, and `show` puts the text
+  on the app's own private history screen (`SensitiveScreen`, no copy, no selection). So no native bug can return
+  plaintext to another app (Android `EXTRA_PROCESS_TEXT`, a Mac service's return pasteboard), copy it or log it.
+  Test: `fuzz_anywhere_channel_test.dart` checks every byte answered or sent for the opened text and the password.
+
+**Controls.**
+1. *Off unless chosen twice.* No handler is registered without the build flag (test:
+   `fuzz_anywhere_host_test.dart`); every call but `status` and the unlocks is refused while the switch is off.
+   The switch is sealed under the store key (`app-setting` ‖ `anywhere`, `PROTOCOL.md` §10.7), so editing a file
+   cannot turn it on; an unreadable blob reads as off. Until the first unlock of a run the switch is unknown and
+   only unlocking is allowed; if it then reads off, the app locks again at once.
+2. *Same unlock, same limits.* Unlocking is the lock screen's own (`FuzzyAuthStore`): the same biometric copy,
+   the same wrong-password count and growing waits kept across restarts (security review 2026-10-22, item 6); a
+   password during a wait is not tried.
+3. *No automatic opening (§7.5 holds).* A message is opened only by `open`, which native code calls only on the
+   person's Open press; nothing opens on a selection, a paste, a clipboard change or a timer, and there is no
+   clipboard watcher. `peek` is the core's read-only peek (`PROTOCOL.md` §7.4): nothing spent, nothing written,
+   and its answer stays inside the app's process. Test: "nothing opens without an explicit open call".
+4. *Single read and history (§7.6 holds).* `lock` and `open` run the app's own Lock and Open flows, which write
+   the sent or opened message into the person's sealed history before answering, exactly as in the app.
+5. *Copy policy holds.* With `copy`, the sealed output goes through the app's copy guard (sealed kinds only,
+   cleared after 2 minutes and at lock). Native code never copies.
+6. *Store lifetime.* Outside use never resets the idle timer (it is not a touch). "Lock again after each use"
+   (on by default) locks the app when the use that unlocked it ends (`relock`, or the shown message's screen
+   closing); an app the person had already unlocked is left as it was. The whole-app auto-lock applies on top.
+7. *Metadata.* Which app was last used with which person is sealed under the store key (`anywhere-apps`), keeps
+   at most 32 apps and is deleted when the switch is turned off.
+
+**Not defended (additions to §4.5 and §7).**
+- *What the other app already has.* "Lock selected text" takes text the person typed in another app; that app
+  may have saved, logged or synced it (Telegram syncs drafts to every device). The app says so once ("Why?" in
+  Settings → Other apps) and offers "Write sealed" in its own field as the main flow (§7.11).
+- *Any code in the app's process* can call the channel; that is the same trust as the app itself (§4.5).
+  Another app cannot call it: the channel is in-process. The Android selection activity is exported by
+  necessity, so any app can *start* it with text; it answers only what the person then does on screen.
+- *A wrong pre-selection.* The person last used per app is a hint; the name and the "Not verified" mark are always
+  shown before Lock.
+- *Screen and keyboard.* Native sheets use the platform's screen protection (`FLAG_SECURE`, overlay hiding,
+  `sharingType = .none`); a keyboard that ignores the no-learning request is §7.1, as in the app.
+
+**Open for the security review before any release:** the native pieces themselves; whether the Android selection
+activity should refuse callers without a calling package; whether the Mac panel's nested run loop (in-place
+replacement through Services) keeps the auto-lock timers running; whether `sourceApp` should be stored hashed
+instead of sealed.
+
 ---
 
 ## 3. Adversaries
