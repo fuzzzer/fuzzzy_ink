@@ -10,11 +10,21 @@ class ChatAuthRepository {
   ChatAuthRepository({
     required MasterKeyLocalDataSource localDataSource,
     required CryptoCoreService cryptoCoreService,
+    Future<bool> Function()? storeExists,
   })  : _localDataSource = localDataSource,
-        _cryptoCoreService = cryptoCoreService;
+        _cryptoCoreService = cryptoCoreService,
+        _storeExists = storeExists;
 
   final MasterKeyLocalDataSource _localDataSource;
   final CryptoCoreService _cryptoCoreService;
+
+  /// Whether the store's folder is on this device. The keychain outlives
+  /// the app on iPhone and Mac: after the app was deleted and installed
+  /// again, its key blobs are still there while everything they guarded is
+  /// gone. Such blobs are leftovers, so the device reads as not set up and
+  /// the first run (which erases before it makes keys) starts again, instead
+  /// of a lock screen for an empty app. Null: not checked (tests).
+  final Future<bool> Function()? _storeExists;
 
   /// `notSetUp` until the first run has written its blobs; an unreadable
   /// secure storage is `io`, never "not set up".
@@ -24,9 +34,23 @@ class ChatAuthRepository {
       return CryptoCoreFailure(readRes.type);
     }
     final blobs = (readRes as CryptoCoreSuccess<MasterKeyBlobs?>).data;
-    return CryptoCoreSuccess(
-      blobs == null ? MasterKeyStatus.notSetUp : MasterKeyStatus.ready,
-    );
+    if (blobs == null) return const CryptoCoreSuccess(MasterKeyStatus.notSetUp);
+    final storeExists = _storeExists;
+    if (storeExists != null && !await _isThere(storeExists)) {
+      logger.w('Master key found without its store: a reinstall; first run.');
+      return const CryptoCoreSuccess(MasterKeyStatus.notSetUp);
+    }
+    return const CryptoCoreSuccess(MasterKeyStatus.ready);
+  }
+
+  /// A folder that cannot be checked counts as there: never a first run
+  /// (which erases) on a doubt.
+  static Future<bool> _isThere(Future<bool> Function() storeExists) async {
+    try {
+      return await storeExists();
+    } catch (_) {
+      return true;
+    }
   }
 
   /// Whether an earlier build left its own key here (the app-lock store key

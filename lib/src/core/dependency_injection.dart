@@ -90,6 +90,10 @@ class DependencyInjection {
       ChatAuthRepository(
         localDataSource: sl.get<MasterKeyLocalDataSource>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
+        storeExists: () => Directory(
+          '${sl.get<AppSupportDirectory>().directory.path}'
+          '${Platform.pathSeparator}${AppResetLocalDataSource.storeFolderName}',
+        ).exists(),
       ),
     );
 
