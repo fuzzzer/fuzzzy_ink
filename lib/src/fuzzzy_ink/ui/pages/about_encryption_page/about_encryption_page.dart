@@ -58,9 +58,7 @@ class AboutEncryptionPage extends StatelessWidget {
                 Text(
                   title,
                   textAlign: TextAlign.start,
-                  style: fuzzzyTextStyles.body.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                  style: fuzzzyTextStyles.titleS.copyWith(
                     color: fuzzzyColors.ink,
                   ),
                 ),
