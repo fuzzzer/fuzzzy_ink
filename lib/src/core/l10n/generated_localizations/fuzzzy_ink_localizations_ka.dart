@@ -1636,6 +1636,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა და არა ფოტოებში ან ღრუბელში შენახვა.';
 
   @override
+  String get accessPrintHintIos =>
+      'აირჩიეთ პრინტერი. გასაღები პირდაპირ მას მიეწოდება და ასლი არსად შეინახება.';
+
+  @override
+  String get accessPrintHintMac =>
+      'გაიხსნება ამობეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.';
+
+  @override
   String get accessPrintFailed =>
       'ბეჭდვის ფურცელი ვერ შეიქმნა. სცადეთ ფაილად შენახვა.';
 

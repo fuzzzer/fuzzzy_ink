@@ -1629,6 +1629,14 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.';
 
   @override
+  String get accessPrintHintIos =>
+      'Choose a printer. The key goes straight to it, with no copy saved.';
+
+  @override
+  String get accessPrintHintMac =>
+      'The print window opens. Choose your printer, not Save as PDF.';
+
+  @override
   String get accessPrintFailed =>
       'The print sheet could not be made. Try Save as file.';
 

@@ -1731,6 +1731,14 @@
   "@accessPrintHint": {
     "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
   },
+  "accessPrintHintIos": "აირჩიეთ პრინტერი. გასაღები პირდაპირ მას მიეწოდება და ასლი არსად შეინახება.",
+  "@accessPrintHintIos": {
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
+  },
+  "accessPrintHintMac": "გაიხსნება ამობეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.",
+  "@accessPrintHintMac": {
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
+  },
   "accessPrintFailed": "ბეჭდვის ფურცელი ვერ შეიქმნა. სცადეთ ფაილად შენახვა.",
   "@accessPrintFailed": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"

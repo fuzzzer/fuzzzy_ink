@@ -3010,6 +3010,18 @@ abstract class FuzzzyInkLocalizations {
   /// **'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.'**
   String get accessPrintHint;
 
+  /// Recovery key print preview, iPhone: the printer list opens and the sheet prints directly (no print options sheet, no share button).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a printer. The key goes straight to it, with no copy saved.'**
+  String get accessPrintHintIos;
+
+  /// Recovery key print preview, Mac: the system print panel opens; its PDF menu could save the key.
+  ///
+  /// In en, this message translates to:
+  /// **'The print window opens. Choose your printer, not Save as PDF.'**
+  String get accessPrintHintMac;
+
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:

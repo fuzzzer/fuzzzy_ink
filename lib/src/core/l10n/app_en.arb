@@ -1839,6 +1839,14 @@
   "@accessPrintHint": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
+  "accessPrintHintIos": "Choose a printer. The key goes straight to it, with no copy saved.",
+  "@accessPrintHintIos": {
+    "description": "Recovery key print preview, iPhone: the printer list opens and the sheet prints directly (no print options sheet, no share button)."
+  },
+  "accessPrintHintMac": "The print window opens. Choose your printer, not Save as PDF.",
+  "@accessPrintHintMac": {
+    "description": "Recovery key print preview, Mac: the system print panel opens; its PDF menu could save the key."
+  },
   "accessPrintFailed": "The print sheet could not be made. Try Save as file.",
   "@accessPrintFailed": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."

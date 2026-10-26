@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -259,6 +258,23 @@ void main() {
       expect(find.text(l10n.confirmHandedOver), findsOneWidget);
       expect(button(tester, 'recoveryKey.kept').onPressed, isNotNull);
     });
+
+    for (final (platform, hint) in [
+      (TargetPlatform.iOS, l10n.accessPrintHintIos),
+      (TargetPlatform.macOS, l10n.accessPrintHintMac),
+      (TargetPlatform.android, l10n.accessPrintHint),
+    ]) {
+      testWidgets(
+          "the print tip says what this system's print shows: $platform "
+          '(final regression 2026-10-26)', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        await pumpStep(tester, keyStep);
+        await tester.tap(find.byKey(const Key('btn.recoveryKey.print')));
+        await tester.pumpAndSettle();
+        expect(find.text(hint), findsOneWidget);
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
 
     testWidgets('no Print where the system cannot share files', (tester) async {
       export = FakeRecoveryKeyExport(printable: false);

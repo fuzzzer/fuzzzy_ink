@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -273,7 +274,11 @@ class _RecoveryKeyPrintPageState extends State<RecoveryKeyPrintPage> {
         SizedBox(height: context.fuzzzySpace.m),
         TipLine(
           icon: Icons.print_outlined,
-          text: localizations.accessPrintHint,
+          text: switch (defaultTargetPlatform) {
+            TargetPlatform.iOS => localizations.accessPrintHintIos,
+            TargetPlatform.macOS => localizations.accessPrintHintMac,
+            _ => localizations.accessPrintHint,
+          },
         ),
       ],
     );
