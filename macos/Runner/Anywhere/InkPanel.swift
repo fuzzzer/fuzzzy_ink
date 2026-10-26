@@ -71,8 +71,9 @@ final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
       .fixedSize(horizontal: false, vertical: true)
     let hosting = NSHostingView(rootView: content)
     if #available(macOS 13.0, *) {
-      // The panel follows the content itself ([fitContent]).
-      hosting.sizingOptions = []
+      // The content reports its height; the panel follows it from its top
+      // edge ([fitContent]), not by constraints that would grow it upwards.
+      hosting.sizingOptions = [.intrinsicContentSize]
     }
     hosting.autoresizingMask = [.width, .height]
     panel.contentView = hosting
