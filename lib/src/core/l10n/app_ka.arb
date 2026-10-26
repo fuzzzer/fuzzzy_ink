@@ -10,11 +10,11 @@
   "@back": {},
   "create": "შექმნა",
   "@create": {},
-  "failedToCreateChat": "ჩატის შექმნა ვერ მოხერხდა.",
+  "failedToCreateChat": "ჩატი ვერ შეიქმნა.",
   "@failedToCreateChat": {},
   "accept": "მიღება",
   "@accept": {},
-  "failedToReadAcceptance": "მიღების ტექსტის წაკითხვა ვერ მოხერხდა.",
+  "failedToReadAcceptance": "პასუხის წაკითხვა ვერ მოხერხდა.",
   "@failedToReadAcceptance": {},
   "deleteChat": "ჩატის წაშლა",
   "@deleteChat": {},
@@ -22,27 +22,27 @@
   "@cancel": {},
   "delete": "წაშლა",
   "@delete": {},
-  "copiedToTheClipboard": "კოპირებულია ბუფერში.",
+  "copiedToTheClipboard": "დაკოპირდა.",
   "@copiedToTheClipboard": {},
   "copy": "კოპირება",
   "@copy": {},
   "share": "გაზიარება",
   "@share": {},
-  "areYouSureYouWantToDeleteChatWith": "დარწმუნებული ხართ, რომ გსურთ ჩატის წაშლა: {personName}?",
+  "areYouSureYouWantToDeleteChatWith": "წავშალოთ ჩატი: {personName}?",
   "@areYouSureYouWantToDeleteChatWith": {
     "placeholders": {
       "personName": {}
     }
   },
-  "failedToGetAcceptance": "მიღების ტექსტის აღება ვერ მოხერხდა",
+  "failedToGetAcceptance": "პასუხის მიღება ვერ მოხერხდა.",
   "@failedToGetAcceptance": {},
-  "errorPickingFiles": "ფაილების არჩევისას მოხდა შეცდომა.",
+  "errorPickingFiles": "ფაილის არჩევა ვერ მოხერხდა.",
   "@errorPickingFiles": {},
   "loading": "იტვირთება",
   "@loading": {},
   "fuzz": "Fuzz",
   "@fuzz": {},
-  "failedToProcessFiles": "ფაილების დამუშავება ვერ მოხერხდა",
+  "failedToProcessFiles": "ფაილები ვერ დამუშავდა.",
   "@failedToProcessFiles": {},
   "chatWithIndicatedNameAlreadyExists": "ამ სახელით ჩატი უკვე არსებობს",
   "@chatWithIndicatedNameAlreadyExists": {},
@@ -50,37 +50,43 @@
   "@show": {},
   "open": "გახსნა",
   "@open": {},
-  "dropFilesHere": "გადმოიტანეთ ფაილები აქ",
+  "dropFilesHere": "ფაილები აქ გადმოიტანეთ",
   "@dropFilesHere": {},
-  "basicEncryption": "მარტივი დაშიფრვა",
-  "@basicEncryption": {},
-  "customKey": "სპეციალური გასაღები",
+  "basicEncryption": "მარტივი დაშიფვრა",
+  "@basicEncryption": {
+    "description": "Needs the owner's native read: encrypt spelling: დაშიფვრა (normative, like დანომვრა) vs დაშიფრვა is pending with the owner."
+  },
+  "customKey": "საკუთარი გასაღები",
   "@customKey": {},
   "enterYourSecretKey": "შეიყვანეთ საიდუმლო გასაღები",
   "@enterYourSecretKey": {},
   "textToEncryptDecrypt": "ტექსტი დასაშიფრად ან გასაშიფრად",
   "@textToEncryptDecrypt": {},
-  "encryptText": "ტექსტის დაშიფრვა",
-  "@encryptText": {},
-  "decryptText": "ტექსტის გაშიფრვა",
-  "@decryptText": {},
+  "encryptText": "ტექსტის დაშიფვრა",
+  "@encryptText": {
+    "description": "Needs the owner's native read: encrypt spelling დაშიფვრა/გაშიფვრა pending."
+  },
+  "decryptText": "ტექსტის გაშიფვრა",
+  "@decryptText": {
+    "description": "Needs the owner's native read: encrypt spelling დაშიფვრა/გაშიფვრა pending."
+  },
   "result": "შედეგი",
   "@result": {},
-  "processSelectedFiles": "მონიშნული ფაილების დამუშავება",
+  "processSelectedFiles": "არჩეული ფაილების დამუშავება",
   "@processSelectedFiles": {},
-  "pleaseEnterAKey": "გთხოვთ შეიყვანოთ გასაღები",
+  "pleaseEnterAKey": "შეიყვანეთ გასაღები.",
   "@pleaseEnterAKey": {},
-  "pleaseSelectFilesToProcess": "გთხოვთ მონიშნოთ ფაილები",
+  "pleaseSelectFilesToProcess": "აირჩიეთ ფაილები.",
   "@pleaseSelectFilesToProcess": {},
-  "anUnknownErrorOccurred": "დაფიქსირდა უცნობი შეცდომა",
+  "anUnknownErrorOccurred": "მოხდა უცნობი შეცდომა.",
   "@anUnknownErrorOccurred": {},
-  "textAndKeyCannotBeEmpty": "ტექსტი და გასაღები ცარიელი არ უნდა იყოს",
+  "textAndKeyCannotBeEmpty": "შეიყვანეთ ტექსტიც და გასაღებიც.",
   "@textAndKeyCannotBeEmpty": {},
-  "encryptionFailed": "დაშიფრვა ვერ მოხერხდა",
+  "encryptionFailed": "დაშიფვრა ვერ მოხერხდა.",
   "@encryptionFailed": {},
-  "encryptedTextAndKeyCannotBeEmpty": "დაშიფრული ტექსტი და გასაღები ცარიელი არ უნდა იყოს",
+  "encryptedTextAndKeyCannotBeEmpty": "შეიყვანეთ დაშიფრული ტექსტიც და გასაღებიც.",
   "@encryptedTextAndKeyCannotBeEmpty": {},
-  "decryptionFailedCheckYourKeyOrEncryptedText": "გაშიფრვა ვერ მოხერხდა შეამოწმეთ გასაღები ან დაშიფრული ტექსტი",
+  "decryptionFailedCheckYourKeyOrEncryptedText": "გაშიფვრა ვერ მოხერხდა. შეამოწმეთ გასაღები ან დაშიფრული ტექსტი.",
   "@decryptionFailedCheckYourKeyOrEncryptedText": {},
   "next": "შემდეგი",
   "@next": {},
@@ -88,13 +94,13 @@
   "@settings": {},
   "invalidLink": "ეს ბმული არასწორია ან დაზიანებულია.",
   "@invalidLink": {},
-  "alreadyConnected": "უკვე დაკავშირებულია!",
+  "alreadyConnected": "უკვე დაკავშირებული ხართ!",
   "@alreadyConnected": {},
-  "cantAcceptOwnInvitation": "თქვენი საკუთარი მოწვევის მიღება შეუძლებელია.",
+  "cantAcceptOwnInvitation": "საკუთარ მოწვევას ვერ მიიღებთ.",
   "@cantAcceptOwnInvitation": {},
-  "chatNotFoundForAcceptance": "ამ მიღების ბმულისთვის ჩატი ვერ მოიძებნა.",
+  "chatNotFoundForAcceptance": "ამ პასუხის ბმულისთვის ჩატი ვერ მოიძებნა.",
   "@chatNotFoundForAcceptance": {},
-  "failedToProcessAcceptance": "მიღების ბმულის დამუშავება ვერ მოხერხდა.",
+  "failedToProcessAcceptance": "პასუხის ბმული ვერ დამუშავდა.",
   "@failedToProcessAcceptance": {},
   "shareFile": "ფაილის გაზიარება",
   "@shareFile": {},
@@ -114,21 +120,21 @@
   "@vaultPasswordLabel": {},
   "vaultNoteLabel": "ჩანაწერი",
   "@vaultNoteLabel": {},
-  "vaultPassword": "ვოლტის პაროლი",
+  "vaultPassword": "სეიფის პაროლი",
   "@vaultPassword": {},
   "vaultIncorrectPassword": "არასწორი პაროლი",
   "@vaultIncorrectPassword": {},
-  "vaultUnlock": "განბლოკვა",
+  "vaultUnlock": "გახსნა",
   "@vaultUnlock": {},
-  "vaultForgotPassword": "დაგავიწყდათ პაროლი? თქვენი მონაცემები დაშიფრულია და აღდგენა შეუძლებელია.",
+  "vaultForgotPassword": "დაგავიწყდათ პაროლი? მონაცემები დაშიფრულია და მათი აღდგენა შეუძლებელია.",
   "@vaultForgotPassword": {},
   "menu": "მენიუ",
   "@menu": {},
   "unknownError": "უცნობი შეცდომა",
   "@unknownError": {},
-  "keyStrengthWeak": "სუსტი (ძალიან მოკლე)",
+  "keyStrengthWeak": "სუსტი (ძალიან მოკლეა)",
   "@keyStrengthWeak": {},
-  "keyStrengthModerate": "საშუალო (გაითვალისწინეთ ციფრების ან ასოების დამატება)",
+  "keyStrengthModerate": "საშუალო (დაამატეთ ციფრები ან ასოები)",
   "@keyStrengthModerate": {},
   "keyStrengthStrong": "ძლიერი",
   "@keyStrengthStrong": {},
@@ -151,11 +157,11 @@
   "@chatAuthUnlock": {},
   "chatAuthResecuringKeys": "გასაღებების ხელახლა დაცვა…",
   "@chatAuthResecuringKeys": {},
-  "benchmarkFileEncryption": "ფაილების ჩაკეტვის ბენჩმარკი (dev)",
+  "benchmarkFileEncryption": "ფაილების ჩაკეტვის სიჩქარის ტესტი (dev)",
   "@benchmarkFileEncryption": {},
-  "benchmarkFileEncryptionDescription": "კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს MB/s-ს",
+  "benchmarkFileEncryptionDescription": "კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს სიჩქარეს MB/s-ში",
   "@benchmarkFileEncryptionDescription": {},
-  "benchmarkResult": "ბენჩმარკის შედეგი",
+  "benchmarkResult": "ტესტის შედეგი",
   "@benchmarkResult": {},
   "benchmarkResultSummary": "დაშიფვრა: {encrypt} MB/s · გაშიფვრა: {decrypt} MB/s ({sizeMiB} MiB)\nArgon2id: {encryptKdf} წმ / {decryptKdf} წმ (MB/s-ში არ შედის)\n{device} · {buildMode} ბილდი",
   "@benchmarkResultSummary": {
@@ -171,29 +177,29 @@
   },
   "close": "დახურვა",
   "@close": {},
-  "chatAuthPasswordTooWeak": "პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.",
+  "chatAuthPasswordTooWeak": "პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი, ასოებით, ციფრებით და სიმბოლოებით.",
   "@chatAuthPasswordTooWeak": {},
-  "biometricNotStrongEnough": "ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.",
+  "biometricNotStrongEnough": "ამ მოწყობილობის ბიომეტრია თქვენი პაროლის დასაცავად საკმარისად საიმედო არ არის. განბლოკეთ პაროლით.",
   "@biometricNotStrongEnough": {},
-  "biometricNotTurnedOn": "ბიომეტრიული განბლოკვა არ ჩაირთო.",
+  "biometricNotTurnedOn": "სწრაფი განბლოკვა არ ჩაირთო.",
   "@biometricNotTurnedOn": {},
-  "vaultBiometricInvalidated": "თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.",
+  "vaultBiometricInvalidated": "ბიომეტრიული მონაცემები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.",
   "@vaultBiometricInvalidated": {},
   "invitationAlreadyUsed": "ეს მოწვევა უკვე გამოყენებულია.",
   "@invitationAlreadyUsed": {},
   "invalidInvitation": "ეს მოწვევა არასწორია ან დაზიანებულია.",
   "@invalidInvitation": {},
-  "invalidAcceptance": "ეს მიღება არასწორია ან დაზიანებულია.",
+  "invalidAcceptance": "ეს პასუხი არასწორია ან დაზიანებულია.",
   "@invalidAcceptance": {},
   "wrongChatBlob": "ეს კოდი სხვა ჩატს ეკუთვნის.",
   "@wrongChatBlob": {},
-  "alreadyUnfuzzed": "ეს შეტყობინება ამ მოწყობილობაზე უკვე გაშიფრულია, ან მისი ერთჯერადი გასაღები აღარ ინახება.",
+  "alreadyUnfuzzed": "ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ ინახება.",
   "@alreadyUnfuzzed": {},
-  "corruptBlob": "ეს არ არის სწორი დაშიფრული შეტყობინება.",
+  "corruptBlob": "ეს სწორი ჩაკეტილი შეტყობინება არ არის.",
   "@corruptBlob": {},
-  "safetyNumberTitle": "უსაფრთხოების ნომერი",
+  "safetyNumberTitle": "უსაფრთხოების ციფრები",
   "@safetyNumberTitle": {},
-  "safetyNumberVersion": "ვერსია {version}. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.",
+  "safetyNumberVersion": "ვერსია {version}. თუ მეორე ადამიანს სხვა ვერსია უჩანს ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.",
   "@safetyNumberVersion": {
     "placeholders": {
       "version": {
@@ -201,63 +207,61 @@
       }
     }
   },
-  "wrongPasswordFile": "არასწორი პაროლი — ამ პაროლით ამ ფაილის გაშიფვრა ვერ მოხერხდება.",
+  "wrongPasswordFile": "არასწორი პაროლი — ეს ფაილი მისით არ იხსნება.",
   "@wrongPasswordFile": {},
-  "fileStillArriving": "ეს ფაილი ჯერ კიდევ იწერება — დაელოდეთ სრულად ჩამოტვირთვას და სცადეთ ხელახლა.",
+  "fileStillArriving": "ეს ფაილი ჯერ კიდევ იწერება. მოიცადეთ, სანამ ბოლომდე მოვა, და სცადეთ ხელახლა.",
   "@fileStillArriving": {},
-  "fileCannotBeOpenedAskToResend": "ამ ფაილის გახსნა ვერ მოხერხდა; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.",
+  "fileCannotBeOpenedAskToResend": "ეს ფაილი ვერ გაიხსნა. სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.",
   "@fileCannotBeOpenedAskToResend": {},
-  "basicsWrongPassword": "არასწორი გასაღები — ამ გასაღებით ამ ტექსტის გაშიფვრა ვერ მოხერხდება.",
+  "basicsWrongPassword": "არასწორი გასაღები — ეს ტექსტი მისით არ იხსნება.",
   "@basicsWrongPassword": {},
-  "forwardSecrecyTitle": "იშიფრება ერთხელ, ამ მოწყობილობაზე",
+  "forwardSecrecyTitle": "იხსნება ერთხელ, ამ მოწყობილობაზე",
   "@forwardSecrecyTitle": {},
-  "forwardSecrecyNotice": "თითოეული დაშიფრული შეტყობინების გაშიფვრა მხოლოდ ერთხელ და მხოლოდ ამ მოწყობილობაზე შეიძლება. თქვენი ისტორია აპლიკაციაში რჩება — სარეზერვო ასლისთვის არქივის ექსპორტი გააკეთეთ. ახალ მოწყობილობას ძველი შეტყობინებების ხელახლა წაკითხვა არ შეუძლია.",
+  "forwardSecrecyNotice": "ყოველი ჩაკეტილი შეტყობინება ერთხელ იხსნება და მხოლოდ ამ მოწყობილობაზე. ისტორია აპში რჩება — სარეზერვო ასლისთვის გააკეთეთ არქივის ექსპორტი. ახალი მოწყობილობა ძველ შეტყობინებებს ვეღარ წაიკითხავს.",
   "@forwardSecrecyNotice": {},
   "aboutEncryptionTitle": "დაშიფვრის შესახებ",
-  "@aboutEncryptionTitle": {},
+  "@aboutEncryptionTitle": {
+    "description": "Needs the owner's native read: encrypt spelling დაშიფვრა pending."
+  },
   "aboutEncryptionHistoryTitle": "თქვენი ისტორია ამ მოწყობილობაზე",
   "@aboutEncryptionHistoryTitle": {},
-  "aboutEncryptionBodyHistory": "ყველა ტექსტი, რომელსაც ჩაკეტავთ ან გახსნით, აპლიკაციაში ინახება — თითოეული ადამიანისთვის ცალკე გასაღებით დალუქული, რომელიც მხოლოდ ამ მოწყობილობას აქვს. ყველა გასაღებს თქვენი მთავარი პაროლი იცავს: მის ან აღდგენის გასაღების გარეშე აქ შენახულს ვერავინ გახსნის. „ჩემი სეიფი“ მთავარი პაროლით ან საკუთარი პაროლით იხსნება; როცა საკუთარ პაროლს მისცემთ, სეიფი ახალ გასაღებსაც და ახალ აღდგენის გასაღებსაც იღებს. ფაილებიც ასევე ინახება: აპლიკაცია მხოლოდ დალუქულ ფაილს ინახავს და მას მხოლოდ იმ წამისთვის ხსნის, როცა გახსნით, შეინახავთ ან გააზიარებთ. შენახული ან გაზიარებული ფაილი თქვენია — ის აპლიკაციას ჩვეულებრივი ფაილის სახით ტოვებს, ამიტომ დაიცავით, როგორც ნებისმიერი სხვა ფაილი. აპლიკაცია თავისით იკეტება თქვენ მიერ არჩეული უმოქმედობის დროის შემდეგ და მაშინაც, როცა ცოტა ხანს ფონზეა. თუ თითის ანაბეჭდით ან სახით განბლოკვას ჩართავთ, თქვენი პაროლი ამ მოწყობილობაზე ინახება, რათა თითმა ან სახემ გახსნას.",
-  "@aboutEncryptionBodyHistory": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
-  "aboutEncryptionWindowTitle": "გაშიფრეთ თანმიმდევრობით",
+  "aboutEncryptionBodyHistory": "ყველა ტექსტი, რომელსაც ჩაკეტავთ ან გახსნით, აპში ინახება — ყოველი ადამიანისთვის ცალკე, ისეთი გასაღებით ჩაკეტილი, რომელიც მხოლოდ ამ მოწყობილობას აქვს. ყველა გასაღებს მთავარი პაროლი იცავს: მის ან აღდგენის გასაღების გარეშე აქ შენახულს ვერავინ გახსნის. ჩემი სეიფი მთავარი პაროლით ან საკუთარი პაროლით იხსნება; საკუთარ პაროლთან ერთად სეიფი ახალ გასაღებს და ახალ აღდგენის გასაღებს იღებს. ფაილებიც ასე ინახება: აპი მხოლოდ ჩაკეტილ ფაილს ინახავს და მხოლოდ იმ წამს ხსნის, როცა მას გახსნით, შეინახავთ ან გააზიარებთ. შენახული ან გაზიარებული ფაილი თქვენია — ის აპს ჩვეულებრივ ფაილად ტოვებს, ამიტომ დაიცავით, როგორც ნებისმიერი სხვა ფაილი. აპი თავისით იკეტება თქვენ მიერ არჩეული უმოქმედობის დროის შემდეგ და მაშინაც, როცა ცოტა ხანს ფონზეა. თუ თითის ანაბეჭდით ან სახით განბლოკვას ჩართავთ, პაროლი ამ მოწყობილობაზე ინახება, რომ თითმა ან სახემ შეძლოს მისი გახსნა.",
+  "@aboutEncryptionBodyHistory": {},
+  "aboutEncryptionWindowTitle": "გახსენით თანმიმდევრობით",
   "@aboutEncryptionWindowTitle": {},
-  "aboutEncryptionBodyWindow": "აპლიკაცია გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ჩატში თქვენ მიერ ბოლოს წაკითხულს 63-ზე მეტით ჩამორჩება, ვეღარ გაიშიფრება — აპლიკაცია იტყვის, რომ ის ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. თქვენ მიერ გაგზავნილ დაშიფრულ შეტყობინებებს თავადაც ვერ გაშიფრავთ; სწორედ ამიტომ ინახავს აპლიკაცია გაგზავნილ ტექსტს.",
+  "aboutEncryptionBodyWindow": "აპი გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ჩატში ბოლოს წაკითხულს 63-ზე მეტით ჩამორჩება, ვეღარ გაიხსნება — აპი გეტყვით, რომ ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. საკუთარ გაგზავნილ შეტყობინებებს ვერც თქვენ გახსნით; სწორედ ამიტომ ინახავს აპი იმას, რაც გაგზავნეთ.",
   "@aboutEncryptionBodyWindow": {},
   "aboutEncryptionLinksTitle": "შეტყობინების ბმულები",
   "@aboutEncryptionLinksTitle": {},
-  "aboutEncryptionBodyLinks": "ბმული მხოლოდ ჩაკეტილ შეტყობინებას შეიცავს, # ნიშნის შემდეგ — იმ ნაწილში, რომელსაც ბრაუზერი არცერთ სერვერს არ უგზავნის. ბმული თავისით არაფერს ხსნის: აპლიკაცია გაჩვენებთ, ვისგანაა, და გახსნის მხოლოდ მაშინ, როცა „გახსნას“ დააჭერთ. პასუხის ბმული მხოლოდ „დაკავშირებაზე“ დაჭერის შემდეგ დაგაკავშირებთ.",
-  "@aboutEncryptionBodyLinks": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "aboutEncryptionBodyLinks": "ბმული მხოლოდ ჩაკეტილ შეტყობინებას შეიცავს, # ნიშნის შემდეგ — იმ ნაწილში, რომელსაც ბრაუზერი არცერთ სერვერს არ უგზავნის. ბმული თავისით არაფერს ხსნის: აპი გაჩვენებთ, ვისგანაა, და გახსნის მხოლოდ მაშინ, როცა „გახსნას“ დააჭერთ. პასუხის ბმული მხოლოდ მაშინ დაგაკავშირებთ, როცა „დაკავშირებას“ დააჭერთ.",
+  "@aboutEncryptionBodyLinks": {},
   "aboutEncryptionErrorsTitle": "რას ნიშნავს შეცდომები",
   "@aboutEncryptionErrorsTitle": {},
-  "aboutEncryptionBodyErrors": "„უკვე გაშიფრულია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიშიფრა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოიტოვა, ან ჩატმა მას შემდეგ რამდენიმე წრე გაიარა — ამიტომ აქ ვეღარასოდეს წაიკითხება. „ეს არ არის სწორი დაშიფრული შეტყობინება“: ტექსტი დაზიანებულია, არასრულია ან სხვა ჩატს ეკუთვნის — აპლიკაცია ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გაშიფრულ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფრვა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპლიკაცია ამასაც ვერ არჩევს. ფაილების შემთხვევაში, თუ მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე გამოყენებულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.",
+  "aboutEncryptionBodyErrors": "„უკვე გახსნილია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოტოვდა, ან ჩატი მას შემდეგ რამდენიმე წრით წავიდა წინ — ამიტომ აქ ვეღარასოდეს წაიკითხება. „სწორი ჩაკეტილი შეტყობინება არ არის“: ტექსტი დაზიანებულია, არასრულია ან სხვა ჩატს ეკუთვნის — აპი ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გახსნილ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფვრა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპი ამასაც ვერ არჩევს. თუ ფაილის მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე დახარჯულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.",
   "@aboutEncryptionBodyErrors": {},
-  "aboutEncryptionBodySafetyNumber": "ყველა ჩატს აქვს 60-ნიშნა უსაფრთხოების ნომერი, რომელიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ის თქვენს პარტნიორს ხმით ან პირადად: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ იდგა. „დადასტურებული“ თქვენი საკუთარი ნიშანია, რომ ეს გააკეთეთ — აპლიკაცია ამას თქვენ მაგივრად ვერ შეამოწმებს.",
+  "aboutEncryptionBodySafetyNumber": "ყოველ ჩატს 60 უსაფრთხოების ციფრი აქვს, რომლებიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ისინი მეორე ადამიანთან ზარით ან პირისპირ: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა, რომ ეს გააკეთეთ — აპი ამას თქვენ მაგივრად ვერ შეამოწმებს.",
   "@aboutEncryptionBodySafetyNumber": {},
-  "aboutEncryptionUnderTheHoodTitle": "როგორ მუშაობს",
+  "aboutEncryptionUnderTheHoodTitle": "ტექნიკური დეტალები",
   "@aboutEncryptionUnderTheHoodTitle": {},
-  "aboutEncryptionBodyUnderTheHood": "შეტყობინებები Olm-ის ორმაგ რაჩეტს (double ratchet) იყენებს (vodozemac, დამოუკიდებლად აუდიტირებული) — ყოველ შეტყობინებას ახალი გასაღები აქვს, სწორედ ამიტომ არის დაშიფრული ტექსტი ერთჯერადი. ფაილები XChaCha20-Poly1305-ით ნაწილ-ნაწილ ილუქება; დაზიანებული ფაილი უარყოფილი იქნება და დისკზე არაფერი რჩება. პაროლები Argon2id-ით მუშავდება. თქვენი საიდუმლო გასაღებები აპლიკაციის ნატიურ ბირთვშია და არსად არ იგზავნება. ვებ-ვერსია არ არსებობს: ბირთვი ნატიური კოდია.",
+  "aboutEncryptionBodyUnderTheHood": "შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებელი აუდიტით შემოწმებული) — ყოველ შეტყობინებას ახალი გასაღები აქვს, ამიტომაა ჩაკეტილი ტექსტი ერთჯერადი. ფაილები ნაწილ-ნაწილ იკეტება XChaCha20-Poly1305-ით; დაზიანებულ ფაილს აპი უარყოფს და დისკზე არაფერი რჩება. პაროლები Argon2id-ით მუშავდება. საიდუმლო გასაღებები აპის ნატიურ ბირთვშია და არსად იგზავნება. ვებ-ვერსია არ არსებობს: ბირთვი ნატიური კოდია.",
   "@aboutEncryptionBodyUnderTheHood": {},
-  "alreadyReceived": "ეს ფაილი ამ მოწყობილობაზე უკვე მიღებულია — მეორედ ვეღარ გაიშიფრება.",
+  "alreadyReceived": "ეს ფაილი ამ მოწყობილობაზე უკვე მიღებულია — მეორედ ვეღარ გაიხსნება.",
   "@alreadyReceived": {},
-  "fileTooOld": "ეს ფაილი გასაშიფრად ძალიან ძველია — მასზე ბევრად ახალი შეტყობინებები უკვე გაშიფრულია.",
+  "fileTooOld": "ეს ფაილი გასახსნელად ძალიან ძველია — მის შემდეგ ბევრი ახალი შეტყობინება უკვე გაიხსნა.",
   "@fileTooOld": {},
-  "fileCorrupt": "ეს არ არის სწორი დაშიფრული ფაილი — ის დაზიანებულია, არასრულია ან სხვა ჩატიდანაა.",
+  "fileCorrupt": "ეს სწორი ჩაკეტილი ფაილი არ არის — დაზიანებულია, არასრულია ან სხვა ჩატიდანაა.",
   "@fileCorrupt": {},
-  "fileCancelled": "მიღება გაუქმდა — ამ ფაილის გაშიფვრა ამ მოწყობილობაზე აღარ შეიძლება; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.",
+  "fileCancelled": "მიღება გაუქმდა — ეს ფაილი ამ მოწყობილობაზე ვეღარ გაიხსნება. სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.",
   "@fileCancelled": {},
   "exportChatArchiveFailed": "ჩატის არქივის ექსპორტი ვერ მოხერხდა.",
   "@exportChatArchiveFailed": {},
   "exportChatArchiveNothingToExport": "ამ ჩატში ექსპორტისთვის შეტყობინებები არ არის.",
   "@exportChatArchiveNothingToExport": {},
-  "exportChatArchiveStoreLocked": "ჯერ განბლოკეთ Fuzzzy Ink — დაბლოკილი ისტორიის წაკითხვა შეუძლებელია.",
+  "exportChatArchiveStoreLocked": "ჯერ განბლოკეთ Fuzzzy Ink — სანამ ჩაკეტილია, ისტორია ვერ წაიკითხება.",
   "@exportChatArchiveStoreLocked": {},
   "export": "ექსპორტი",
   "@export": {},
-  "couldNotOpenFile": "ფაილის გახსნა ვერ მოხერხდა.",
+  "couldNotOpenFile": "ფაილი ვერ გაიხსნა.",
   "@couldNotOpenFile": {},
   "privacyPolicy": "კონფიდენციალურობის პოლიტიკა",
   "@privacyPolicy": {},
@@ -267,67 +271,50 @@
   "@support": {},
   "dataDeletion": "მონაცემების წაშლა",
   "@dataDeletion": {},
-  "couldNotOpenLink": "ბმულის გახსნა ვერ მოხერხდა.",
+  "couldNotOpenLink": "ბმული ვერ გაიხსნა.",
   "@couldNotOpenLink": {},
   "biometricUnlockChats": "ჩატების განსაბლოკად დაადასტურეთ ვინაობა",
   "@biometricUnlockChats": {},
-  "biometricUnlockVault": "საცავის განსაბლოკად დაადასტურეთ ვინაობა",
+  "biometricUnlockVault": "ჩემი სეიფის გასახსნელად დაადასტურეთ ვინაობა",
   "@biometricUnlockVault": {},
-  "biometricUnlockVaultTitle": "Fuzzy Vault-ის განბლოკვა",
+  "biometricUnlockVaultTitle": "ჩემი სეიფის გახსნა",
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "პაროლის შესანახად დაადასტურეთ ვინაობა",
   "@biometricSavePassword": {},
-  "vaultMoveUnfinishedTitle": "საცავის გადატანა ვერ მოხერხდა",
+  "vaultMoveUnfinishedTitle": "სეიფის გადატანა ვერ მოხერხდა",
   "@vaultMoveUnfinishedTitle": {},
-  "vaultMoveUnfinishedMessage": "საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.",
+  "vaultMoveUnfinishedMessage": "სეიფი აპის დაცულ ადგილას ვერ გადავიდა. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ და თავიდან გახსენით აპი.",
   "@vaultMoveUnfinishedMessage": {},
-  "copyRefused": "კოპირება მხოლოდ დაშიფრული ტექსტის შეიძლება.",
-  "@copyRefused": {
-    "description": "Draft Georgian, needs a native read."
-  },
+  "copyRefused": "მხოლოდ ჩაკეტილი ტექსტი კოპირდება.",
+  "@copyRefused": {},
   "vaultCopyPassword": "პაროლის კოპირება",
-  "@vaultCopyPassword": {
-    "description": "Draft Georgian, needs a native read."
-  },
+  "@vaultCopyPassword": {},
   "saveFile": "შენახვა",
   "@saveFile": {},
   "fileSaved": "შენახულია.",
   "@fileSaved": {},
-  "couldNotSaveFile": "ფაილის შენახვა ვერ მოხერხდა.",
+  "couldNotSaveFile": "ფაილი ვერ შეინახა.",
   "@couldNotSaveFile": {},
-  "unfuzzingFile": "იშიფრება…",
+  "unfuzzingFile": "იხსნება…",
   "@unfuzzingFile": {},
-  "fileNoPreview": "ამ ფაილს აპლიკაცია ვერ აჩვენებს. შეინახეთ და სხვა აპლიკაციით გახსენით.",
+  "fileNoPreview": "ამ ფაილს აპი ვერ აჩვენებს. შეინახეთ და სხვა აპით გახსენით.",
   "@fileNoPreview": {},
-  "basicsFuzzedFilesTitle": "აპლიკაციაში შენახული დაფაზული ფაილები",
+  "basicsFuzzedFilesTitle": "აპში შენახული ჩაკეტილი ფაილები",
   "@basicsFuzzedFilesTitle": {},
   "masterPassword": "მთავარი პაროლი",
-  "@masterPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანებს, ისტორიასა და ჩემს სეიფს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. შენახული ფაილები ადგილზე რჩება.",
-  "@masterPasswordPreviousData": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "accessSetupInterrupted": "წინა ჯერზე დაყენება ბოლომდე არ მივიდა. მაშინ ნანახი აღდგენის გასაღები არ იმუშავებს. ახალს მიიღებთ.",
-  "@accessSetupInterrupted": {
-    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
-  },
-  "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.",
-  "@masterPasswordFailed": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@masterPassword": {},
+  "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანები, ისტორია და ჩემი სეიფი მისით ვერ გაიხსნება, ამიტომ წაიშლება. შენახული ფაილები ადგილზე რჩება.",
+  "@masterPasswordPreviousData": {},
+  "accessSetupInterrupted": "წინა ჯერზე დაყენება არ დასრულდა. მაშინ ნანახი აღდგენის გასაღები აღარ იმუშავებს. ახალს მიიღებთ.",
+  "@accessSetupInterrupted": {},
+  "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ ხელახლა.",
+  "@masterPasswordFailed": {},
   "recoveryKeyTitle": "აღდგენის გასაღები",
-  "@recoveryKeyTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@recoveryKeyTitle": {},
   "recoveryKeySaveFailed": "აღდგენის გასაღები ვერ შეინახა.",
-  "@recoveryKeySaveFailed": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyFileText": "Fuzzzy Ink-ის აღდგენის გასაღები\n\n{key}\n\nთუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან მოშორებით. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n",
+  "@recoveryKeySaveFailed": {},
+  "recoveryKeyFileText": "Fuzzzy Ink-ის აღდგენის გასაღები\n\n{key}\n\nთუ მთავარი პაროლი დაგავიწყდათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან შორს. პაროლის ან ამ გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n",
   "@recoveryKeyFileText": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)",
     "placeholders": {
       "key": {
         "type": "String"
@@ -335,48 +322,27 @@
     }
   },
   "recoveryKeyField": "აღდგენის გასაღები",
-  "@recoveryKeyField": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyTypo": "აღდგენის გასაღებში შეცდომაა. გადაამოწმეთ ოთხ-ოთხი სიმბოლოს ჯგუფები.",
-  "@recoveryKeyTypo": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@recoveryKeyField": {},
+  "recoveryKeyTypo": "აღდგენის გასაღებში შეცდომაა. შეამოწმეთ ყოველი ოთხნიშნა ჯგუფი.",
+  "@recoveryKeyTypo": {},
   "recoveryKeyWrong": "ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.",
-  "@recoveryKeyWrong": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@recoveryKeyWrong": {},
   "chatUnlockErase": "ყველაფრის წაშლა და თავიდან დაწყება",
-  "@chatUnlockErase": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@chatUnlockErase": {},
   "eraseTitle": "წავშალოთ ყველაფერი?",
-  "@eraseTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@eraseTitle": {},
   "eraseMessage": "თქვენი ადამიანები, ისტორია, ჩემი სეიფი და პარამეტრები ამ მოწყობილობიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია. შენახული ფაილები ადგილზე რჩება.",
-  "@eraseMessage": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@eraseMessage": {},
   "eraseConfirm": "ყველაფრის წაშლა",
-  "@eraseConfirm": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "storageUnavailable": "Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ დაბლოკილი რჩება. სცადეთ თავიდან; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.",
-  "@storageUnavailable": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "tryAgain": "თავიდან ცდა",
-  "@tryAgain": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "appLockNow": "Fuzzzy Ink-ის დაბლოკვა",
-  "@appLockNow": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
+  "@eraseConfirm": {},
+  "storageUnavailable": "Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ ჩაკეტილი რჩება. სცადეთ ხელახლა; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.",
+  "@storageUnavailable": {},
+  "tryAgain": "ხელახლა ცდა",
+  "@tryAgain": {},
+  "appLockNow": "Fuzzzy Ink-ის ჩაკეტვა",
+  "@appLockNow": {},
   "autoLockMinutes": "{count} წთ",
   "@autoLockMinutes": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)",
     "placeholders": {
       "count": {
         "type": "int"
@@ -384,543 +350,296 @@
     }
   },
   "autoLockSaveFailed": "პარამეტრი ვერ შეინახა.",
-  "@autoLockSaveFailed": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultUsesOwnPassword": "საცავს საკუთარი პაროლი აქვს.",
-  "@vaultUsesOwnPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultUseOwnPassword": "საცავისთვის სხვა პაროლი",
-  "@vaultUseOwnPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultUseMasterPassword": "საცავის გახსნა მთავარი პაროლით",
-  "@vaultUseMasterPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultOwnPasswordRecoveryNote": "აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.",
-  "@vaultOwnPasswordRecoveryNote": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultRecoveryUseMasterPassword": "„ჩემი სეიფი“ მთავარი პაროლით გაიხსნას",
-  "@vaultRecoveryUseMasterPassword": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultRecoverySubmit": "„ჩემი სეიფის“ გახსნა",
-  "@vaultRecoverySubmit": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
+  "@autoLockSaveFailed": {},
+  "vaultUsesOwnPassword": "სეიფს საკუთარი პაროლი აქვს.",
+  "@vaultUsesOwnPassword": {},
+  "vaultUseOwnPassword": "სეიფისთვის ცალკე პაროლი",
+  "@vaultUseOwnPassword": {},
+  "vaultUseMasterPassword": "სეიფის გახსნა მთავარი პაროლით",
+  "@vaultUseMasterPassword": {},
+  "vaultOwnPasswordRecoveryNote": "აღდგენის გასაღები ჩემს სეიფს მაინც გახსნის.",
+  "@vaultOwnPasswordRecoveryNote": {},
+  "vaultRecoveryUseMasterPassword": "ჩემი სეიფი მთავარი პაროლით გაიხსნას",
+  "@vaultRecoveryUseMasterPassword": {},
+  "vaultRecoverySubmit": "ჩემი სეიფის გახსნა",
+  "@vaultRecoverySubmit": {},
   "tabHome": "მთავარი",
-  "@tabHome": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@tabHome": {},
   "tabMySafe": "ჩემი სეიფი",
   "@tabMySafe": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: My safe = ჩემი სეიფი; the vault word (ვოლტი / საცავი / სეიფი) is still pending with the owner."
   },
   "tabSettings": "პარამეტრები",
-  "@tabSettings": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@tabSettings": {},
   "homeLockTitle": "ჩაკეტვა",
-  "@homeLockTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeLockTitle": {},
   "homeLockSubtitle": "ერთი ადამიანისთვის",
-  "@homeLockSubtitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeLockSubtitle": {},
   "homeOpenTitle": "გახსნა",
-  "@homeOpenTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeOpenTitle": {},
   "homeOpenSubtitle": "რაც მიიღეთ",
-  "@homeOpenSubtitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeOpenSubtitle": {},
   "homePeople": "ადამიანები",
-  "@homePeople": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homePeople": {},
   "homePeopleCount": "ადამიანები · {count}",
-  "@homePeopleCount": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homePeopleCount": {},
   "homeAdd": "დამატება",
-  "@homeAdd": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeAdd": {},
   "homeAddPerson": "ადამიანის დამატება",
-  "@homeAddPerson": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeAddPerson": {},
   "homeNoOneYet": "ჯერ არავინაა",
-  "@homeNoOneYet": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "homeLoadError": "ადამიანების ჩატვირთვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით აპი.",
-  "@homeLoadError": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "stepYouSendInvite": "აგზავნით მოწვევას",
-  "@stepYouSendInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "stepTheyReply": "პასუხი მოდის",
-  "@stepTheyReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@homeNoOneYet": {},
+  "homeLoadError": "ადამიანები ვერ ჩაიტვირთა. დახურეთ და ხელახლა გახსენით აპი.",
+  "@homeLoadError": {},
+  "stepYouSendInvite": "თქვენ აგზავნით მოწვევას",
+  "@stepYouSendInvite": {},
+  "stepTheyReply": "ის პასუხობს",
+  "@stepTheyReply": {},
   "stepInviteSent": "მოწვევა გაიგზავნა",
-  "@stepInviteSent": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "stepNameReplies": "პასუხი: {name}",
-  "@stepNameReplies": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepInviteSent": {},
+  "stepNameReplies": "{name} პასუხობს",
+  "@stepNameReplies": {},
   "stepLockForEachOther": "ერთმანეთისთვის ჩაკეტვა",
-  "@stepLockForEachOther": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepLockForEachOther": {},
   "stepsProgress": "ნაბიჯი {step} / {total}",
-  "@stepsProgress": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepsProgress": {},
   "stepsProgressWithLabel": "ნაბიჯი {step} / {total} · {label}",
-  "@stepsProgressWithLabel": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepsProgressWithLabel": {},
   "stepDone": "შესრულდა: {step}",
-  "@stepDone": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepDone": {},
   "stepNext": "შემდეგი: {step}",
-  "@stepNext": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@stepNext": {},
   "addSendInvite": "მოწვევის გაგზავნა",
-  "@addSendInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@addSendInvite": {},
   "addYouStart": "თქვენ იწყებთ",
-  "@addYouStart": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@addYouStart": {},
   "addGotInvite": "მოწვევა მივიღე",
-  "@addGotInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@addGotInvite": {},
   "addTheyStarted": "მან დაიწყო",
-  "@addTheyStarted": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "chipWaitingForReply": "ველოდებით პასუხს",
-  "@chipWaitingForReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@addTheyStarted": {},
+  "chipWaitingForReply": "პასუხს ველოდებით",
+  "@chipWaitingForReply": {},
   "chipChecked": "შემოწმებულია",
-  "@chipChecked": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "chipNotChecked": "არ არის შემოწმებული",
-  "@chipNotChecked": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@chipChecked": {},
+  "chipNotChecked": "შეუმოწმებელი",
+  "@chipNotChecked": {},
   "personRowWaitingLine": "მერე ერთმანეთისთვის ჩაკეტვას შეძლებთ",
-  "@personRowWaitingLine": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "waitNoteReply": "პასუხის მიღების შემდეგ ერთმანეთისთვის შეტყობინებების ჩაკეტვას შეძლებთ.",
-  "@waitNoteReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "waitNoteAnyWay": "მოწვევა ნებისმიერი გზით გააგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.",
-  "@waitNoteAnyWay": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@personRowWaitingLine": {},
+  "waitNoteReply": "როცა {name} გიპასუხებთ, ერთმანეთისთვის ჩაკეტვას შეძლებთ.",
+  "@waitNoteReply": {},
+  "waitNoteAnyWay": "მოწვევა ნებისმიერი გზით გაგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.",
+  "@waitNoteAnyWay": {},
   "linkWhy": "რატომ?",
-  "@linkWhy": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@linkWhy": {},
   "linkHow": "როგორ?",
-  "@linkHow": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@linkHow": {},
   "linkMore": "მეტი",
-  "@linkMore": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@linkMore": {},
   "linkOpensExplanation": "განმარტებას ხსნის",
-  "@linkOpensExplanation": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@linkOpensExplanation": {},
   "gotIt": "გასაგებია",
-  "@gotIt": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoNoResetTitle": "რატომ არ აღდგება?",
-  "@infoNoResetTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@gotIt": {},
+  "infoNoResetTitle": "რატომ არ აღდგება პაროლი?",
+  "@infoNoResetTitle": {},
   "infoNoResetLine1": "თქვენი პაროლი ამ ტელეფონს არ ტოვებს.",
-  "@infoNoResetLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoResetLine1": {},
   "infoNoResetLine2": "ჩვენ მას ვერ ვხედავთ, ამიტომ ვერავინ აღადგენს.",
-  "@infoNoResetLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoResetLine2": {},
   "infoNoResetLine3": "ერთადერთი სათადარიგო გზა აღდგენის გასაღებია.",
-  "@infoNoResetLine3": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoRecoveryKeyTitle": "აღდგენის გასაღები",
-  "@infoRecoveryKeyTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoRecoveryKeyLine1": "სათადარიგო, თუ პაროლი დაგავიწყდათ.",
-  "@infoRecoveryKeyLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoRecoveryKeyLine2": "ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.",
-  "@infoRecoveryKeyLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoRecoveryKeyLine3": "ამობეჭდეთ ან ამ ტელეფონის გარეთ შეინახეთ. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.",
-  "@infoRecoveryKeyLine3": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoResetLine3": {},
+  "infoRecoveryKeyTitle": "თქვენი აღდგენის გასაღები",
+  "@infoRecoveryKeyTitle": {},
+  "infoRecoveryKeyLine1": "სათადარიგო გასაღები, თუ პაროლი დაგავიწყდათ.",
+  "@infoRecoveryKeyLine1": {},
+  "infoRecoveryKeyLine2": "ის ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.",
+  "@infoRecoveryKeyLine2": {},
+  "infoRecoveryKeyLine3": "ამობეჭდეთ ან შეინახეთ სადმე, ამ ტელეფონის გარდა. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.",
+  "@infoRecoveryKeyLine3": {},
   "infoOpensOnceTitle": "რატომ მხოლოდ ერთხელ?",
-  "@infoOpensOnceTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoOpensOnceTitle": {},
   "infoOpensOnceLine1": "ყოველ ჩაკეტილს თავისი გასაღები აქვს.",
-  "@infoOpensOnceLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoOpensOnceLine1": {},
   "infoOpensOnceLine2": "გახსნისას გასაღები იხარჯება, ნებისმიერ ტელეფონზე.",
-  "@infoOpensOnceLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoOpensOnceLine2": {},
   "infoOpensOnceLine3": "ასლი ისტორიაში რჩება, ჩაკეტილი.",
-  "@infoOpensOnceLine3": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoOpensOnceLine3": {},
   "infoSafeAnywhereTitle": "ყველგან უსაფრთხოა",
-  "@infoSafeAnywhereTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoSafeAnywhereLine1": "მოწვევა თავისით ვერაფერს ხსნის.",
-  "@infoSafeAnywhereLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoSafeAnywhereTitle": {},
+  "infoSafeAnywhereLine1": "მოწვევა ვერაფერს ხსნის.",
+  "@infoSafeAnywhereLine1": {},
   "infoSafeAnywhereLine2": "დაგაკავშირებთ მხოლოდ მისი პასუხი.",
-  "@infoSafeAnywhereLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoSafeAnywhereLine2": {},
   "infoSafeAnywhereLine3": "მერე ციფრებს ერთად შეამოწმებთ, რომ დარწმუნდეთ, ნამდვილად ის არის.",
-  "@infoSafeAnywhereLine3": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoCheckNumbersTitle": "რატომ ციფრები?",
-  "@infoCheckNumbersTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoSafeAnywhereLine3": {},
+  "infoCheckNumbersTitle": "რატომ ვამოწმებთ ციფრებს?",
+  "@infoCheckNumbersTitle": {},
   "infoCheckNumbersLine1": "თქვენს მოწვევას ნებისმიერი უპასუხებდა, ვინც ის ნახა.",
-  "@infoCheckNumbersLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoCheckNumbersLine2": "ორივე ტელეფონზე ერთნაირი ციფრები ნიშნავს, რომ შუაში არავინ ჩამდგარა.",
-  "@infoCheckNumbersLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoCheckNumbersLine1": {},
+  "infoCheckNumbersLine2": "ორივე ტელეფონზე ციფრები ერთნაირია — შუაში არავინ ჩამდგარა.",
+  "@infoCheckNumbersLine2": {},
   "infoFilesTitle": "სად მიდის ფაილები?",
-  "@infoFilesTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoFilesTitle": {},
   "infoFilesLine1": "Fuzzzy Ink მხოლოდ ჩაკეტილ ასლს ინახავს.",
-  "@infoFilesLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoFilesLine2": "„გახსნა“ აქვე გაჩვენებთ. არაფერი ინახება.",
-  "@infoFilesLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoFilesLine1": {},
+  "infoFilesLine2": "„გახსნა“ ფაილს აქვე გაჩვენებთ. არაფერი ინახება.",
+  "@infoFilesLine2": {},
   "infoFilesLine3": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. იქიდან მისი დაცვა თქვენზეა.",
-  "@infoFilesLine3": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoFilesLine3": {},
   "infoNoCopyingTitle": "რატომ არ კოპირდება?",
-  "@infoNoCopyingTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoCopyingTitle": {},
   "infoNoCopyingLine1": "რასაც ხსნით, Fuzzzy Ink-ში რჩება.",
-  "@infoNoCopyingLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoCopyingLine1": {},
   "infoNoCopyingLine2": "მხოლოდ ჩაკეტილი ტექსტი კოპირდება. ის ყველგან უსაფრთხოა.",
-  "@infoNoCopyingLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoNoCopyingLine2": {},
   "infoPasswordLockingTitle": "პაროლით ჩაკეტვა",
-  "@infoPasswordLockingTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoPasswordLockingTitle": {},
   "infoPasswordLockingLine1": "ვინც პაროლი იცის, გახსნის.",
-  "@infoPasswordLockingLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoPasswordLockingLine2": "პაროლი სიტყვით უთხარით. ჩაკეტილთან ერთად არასდროს გაგზავნოთ.",
-  "@infoPasswordLockingLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "infoSafePasswordTitle": "სეიფის საკუთარი პაროლი",
-  "@infoSafePasswordTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoPasswordLockingLine1": {},
+  "infoPasswordLockingLine2": "პაროლი ზეპირად უთხარით. ჩაკეტილთან ერთად არასდროს გაუგზავნოთ.",
+  "@infoPasswordLockingLine2": {},
+  "infoSafePasswordTitle": "ჩემი სეიფის საკუთარი პაროლი",
+  "@infoSafePasswordTitle": {},
   "infoSafePasswordLine1": "კიდევ ერთი დასამახსოვრებელი პაროლი.",
-  "@infoSafePasswordLine1": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoSafePasswordLine1": {},
   "infoSafePasswordLine2": "დაგავიწყდათ? აღდგენის გასაღები ჩემს სეიფსაც ხსნის.",
-  "@infoSafePasswordLine2": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@infoSafePasswordLine2": {},
   "tagNoCopyNoScreenshots": "კოპირება და ეკრანის ანაბეჭდი გამორთულია",
   "@tagNoCopyNoScreenshots": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: ეკრანის ანაბეჭდი for screenshot (vs სქრინშოტი)."
   },
   "tagNoCopy": "კოპირება გამორთულია",
-  "@tagNoCopy": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@tagNoCopy": {},
   "lockWhoTitle": "ვისთვისაა?",
-  "@lockWhoTitle": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lockWhoTitle": {},
   "lockWithPassword": "პაროლით ჩაკეტვა",
-  "@lockWithPassword": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "lockNoInviteNeeded": "მოწვევა საჭირო არაა",
-  "@lockNoInviteNeeded": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lockWithPassword": {},
+  "lockNoInviteNeeded": "მოწვევა არ სჭირდება",
+  "@lockNoInviteNeeded": {},
   "lockAddPersonFirst": "ჯერ ადამიანი დაამატეთ",
-  "@lockAddPersonFirst": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lockAddPersonFirst": {},
   "orDivider": "ან",
-  "@orDivider": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@orDivider": {},
   "openWhatYouGot": "გახსენით, რაც მიიღეთ",
-  "@openWhatYouGot": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@openWhatYouGot": {},
   "openPasteIt": "ჩასმა",
-  "@openPasteIt": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@openPasteIt": {},
   "openPasteItHint": "ჩაკეტილი ტექსტი, მოწვევა ან პასუხი",
-  "@openPasteItHint": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@openPasteItHint": {},
   "openLinksTip": "ბმულები და QR კოდები აქ მოდის. არაფერი გაიხსნება, სანამ „გახსნას“ არ დააჭერთ.",
-  "@openLinksTip": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "@openLinksTip": {},
   "openNothingToPaste": "ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.",
-  "@openNothingToPaste": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@openNothingToPaste": {},
   "openLockedWithPassword": "პაროლით ჩაკეტილი",
-  "@openLockedWithPassword": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "lockStepWho": "ვინ",
-  "@lockStepWho": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openLockedWithPassword": {},
+  "lockStepWho": "ვისთვის",
+  "@lockStepWho": {},
   "lockStepWhat": "რა",
-  "@lockStepWhat": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockStepWhat": {},
   "lockForName": "ჩაკეტვა: {name}",
   "@lockForName": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+    "description": "Needs the owner's native read: name after a colon so Georgian names are never declined (ჩაკეტვა: {name}); confirm the pattern."
   },
   "lockKindMessage": "შეტყობინება",
-  "@lockKindMessage": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockKindMessage": {},
   "lockKindFile": "ფაილი",
-  "@lockKindFile": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockKindFile": {},
   "lockWriteMessageHint": "დაწერეთ შეტყობინება…",
-  "@lockWriteMessageHint": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockOnlyNameOnce": "{name} — გახსნა მხოლოდ მას შეუძლია, ერთხელ.",
-  "@lockOnlyNameOnce": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockWriteMessageHint": {},
+  "lockOnlyNameOnce": "მხოლოდ {name} გახსნის, ერთხელ.",
+  "@lockOnlyNameOnce": {},
   "lockChooseFile": "ფაილის არჩევა",
-  "@lockChooseFile": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockDropHint": "ან კომპიუტერზე აქ ჩააგდეთ",
-  "@lockDropHint": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockChooseFile": {},
+  "lockDropHint": "ან კომპიუტერზე აქ გადმოიტანეთ",
+  "@lockDropHint": {},
   "lockChangeFile": "შეცვლა",
-  "@lockChangeFile": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockPasswordLabel": "პაროლი ამისთვის",
-  "@lockPasswordLabel": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockSayPassword": "პაროლი სიტყვით უთხარით. ნუ გაუგზავნით.",
+  "@lockChangeFile": {},
+  "lockPasswordLabel": "ამის პაროლი",
+  "@lockPasswordLabel": {},
+  "lockSayPassword": "პაროლი ზეპირად უთხარით. ნუ გაუგზავნით.",
   "@lockSayPassword": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+    "description": "Needs the owner's native read: ზეპირად უთხარით for 'Say the password'."
   },
   "lockAction": "ჩაკეტვა",
-  "@lockAction": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockAction": {},
   "lockWriteSomethingFirst": "ჯერ რამე დაწერეთ.",
-  "@lockWriteSomethingFirst": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockWriteSomethingFirst": {},
   "lockChooseFileFirst": "ჯერ ფაილი აირჩიეთ.",
-  "@lockChooseFileFirst": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockPasswordNotGood": "საჭიროა დონე „კარგი“.",
-  "@lockPasswordNotGood": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockFailed": "ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.",
-  "@lockFailed": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockChooseFileFirst": {},
+  "lockPasswordNotGood": "პაროლი მინიმუმ „კარგი“ უნდა იყოს.",
+  "@lockPasswordNotGood": {},
+  "lockFailed": "ჩაკეტვა ვერ მოხერხდა. სცადეთ ხელახლა.",
+  "@lockFailed": {},
   "lockStoppedNothingKept": "შეჩერდა. არაფერი შენახულა.",
-  "@lockStoppedNothingKept": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockStoppedNothingKept": {},
   "workingLocking": "იკეტება",
-  "@workingLocking": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@workingLocking": {},
   "workingOpening": "იხსნება",
-  "@workingOpening": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@workingOpening": {},
   "workingStarting": "იწყება…",
-  "@workingStarting": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@workingStarting": {},
   "workingPause": "პაუზა",
-  "@workingPause": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@workingPause": {},
   "workingGoOn": "გაგრძელება",
-  "@workingGoOn": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@workingGoOn": {},
   "workingPaused": "შეჩერებულია",
-  "@workingPaused": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockedForName": "ჩაიკეტა: {name}",
+  "@workingPaused": {},
+  "lockedForName": "ჩაიკეტა. გახსნის მხოლოდ {name}",
   "@lockedForName": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+    "description": "Needs the owner's native read: rewritten to keep the name in the nominative (ჩაიკეტა. გახსნის მხოლოდ {name})."
   },
   "lockedWithPassword": "ჩაიკეტა პაროლით",
-  "@lockedWithPassword": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockedWithPassword": {},
   "lockedNowSendIt": "ახლა გაუგზავნეთ.",
-  "@lockedNowSendIt": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockedSentToShareMenu": "გაზიარების მენიუში გაიგზავნა.",
-  "@lockedSentToShareMenu": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockedNowSendIt": {},
+  "lockedSentToShareMenu": "გადაეცა გაზიარების მენიუს.",
+  "@lockedSentToShareMenu": {},
   "lockedShareAgain": "ხელახლა გაზიარება",
-  "@lockedShareAgain": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockedShareAgain": {},
   "lockedCopyText": "ჩაკეტილი ტექსტის კოპირება",
-  "@lockedCopyText": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockedCopyText": {},
   "lockedSaveFile": "ჩაკეტილი ფაილის შენახვა",
-  "@lockedSaveFile": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@lockedSaveFile": {},
   "flowDone": "მზადაა",
-  "@flowDone": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@flowDone": {},
   "openChooseFile": "ფაილის არჩევა",
-  "@openChooseFile": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openChooseFile": {},
   "openChooseFileHint": ".fuzz ფაილი",
-  "@openChooseFileHint": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openChooseFileHint": {},
   "openReading": "იკითხება…",
-  "@openReading": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openLinkTitle": "გავხსნათ {name}-ის შეტყობინება?",
+  "@openReading": {},
+  "openLinkTitle": "{name} გიგზავნით შეტყობინებას. გავხსნათ?",
   "@openLinkTitle": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
+    "description": "Needs the owner's native read: {name} გიგზავნით შეტყობინებას. გავხსნათ? — nominative name, present tense.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "openArrivedFileTitle": "გავხსნათ {name}-ის ფაილი?",
+  "openArrivedFileTitle": "{name} გიგზავნით ფაილს. გავხსნათ?",
   "@openArrivedFileTitle": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "openLinkLine": "ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.",
-  "@openLinkLine": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "openLinkLine": "ერთხელ გაიხსნება და მერე თქვენს საერთო ისტორიაში დარჩება.",
+  "@openLinkLine": {},
   "openLinkOpen": "გახსნა",
-  "@openLinkOpen": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "@openLinkOpen": {},
   "openLinkNotNow": "ახლა არა",
-  "@openLinkNotNow": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
-  "replyLinkTitle": "დავუკავშირდეთ {name}-ს?",
+  "@openLinkNotNow": {},
+  "replyLinkTitle": "დავუკავშირდეთ: {name}?",
   "@replyLinkTitle": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "replyLinkLine": "დაუკავშირდით მხოლოდ მაშინ, თუ ეს პასუხი {name}-მ გამოგიგზავნათ.",
+  "replyLinkLine": "დაუკავშირდით მხოლოდ მაშინ, თუ ამ პასუხის გამომგზავნი ნამდვილად {name} არის.",
   "@replyLinkLine": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -928,1228 +647,639 @@
     }
   },
   "replyLinkConnect": "დაკავშირება",
-  "@replyLinkConnect": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
-  "linkWaitsForSafe": "ბმული ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.",
-  "@linkWaitsForSafe": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
-  "fileWaitsForSafe": "ფაილი ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.",
-  "@fileWaitsForSafe": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@replyLinkConnect": {},
+  "linkWaitsForSafe": "ბმული გელოდებათ. გაიხსნება, როცა ამ ჩანაწერს დახურავთ.",
+  "@linkWaitsForSafe": {},
+  "fileWaitsForSafe": "ფაილი გელოდებათ. გაიხსნება, როცა ამ ჩანაწერს დახურავთ.",
+  "@fileWaitsForSafe": {},
   "openedFromName": "გამომგზავნი: {name}",
-  "@openedFromName": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openedKeptInHistory": "ახლახან · ისტორიაში შეინახა ({name})",
-  "@openedKeptInHistory": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openedFromName": {},
+  "openedKeptInHistory": "ახლახან · შენახულია ისტორიაში: {name}",
+  "@openedKeptInHistory": {},
   "openedWithPassword": "გაიხსნა პაროლით",
-  "@openedWithPassword": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openedWithPassword": {},
   "openedNotKept": "ახლახან · არ ინახება",
-  "@openedNotKept": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openedInHistoryNow": "ახლა ისტორიაშია ({name}).",
-  "@openedInHistoryNow": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openedNotKept": {},
+  "openedInHistoryNow": "შეინახა ისტორიაში: {name}.",
+  "@openedInHistoryNow": {},
   "openedSaveTip": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
-  "@openedSaveTip": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openedSaveTip": {},
   "openPasswordTitle": "რა პაროლია?",
-  "@openPasswordTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openPasswordTitle": {},
   "openPasswordLabel": "პაროლი",
-  "@openPasswordLabel": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openPasswordWrong": "ამით არ იხსნება. შეამოწმეთ და ხელახლა სცადეთ.",
-  "@openPasswordWrong": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openPasswordLabel": {},
+  "openPasswordWrong": "ამით არ იხსნება. შეამოწმეთ და სცადეთ ხელახლა.",
+  "@openPasswordWrong": {},
   "openErrorAlreadyTitle": "უკვე გახსნილია",
-  "@openErrorAlreadyTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorAlreadyLine": "ყოველი ჩაკეტილი რამ ერთხელ იხსნება. ის ისტორიაშია ({name}).",
-  "@openErrorAlreadyLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorNotYoursTitle": "თქვენი სიიდან არ არის",
-  "@openErrorNotYoursTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorAlreadyTitle": {},
+  "openErrorAlreadyLine": "ჩაკეტილი ყველაფერი ერთხელ იხსნება. ის უკვე ისტორიაშია: {name}.",
+  "@openErrorAlreadyLine": {},
+  "openErrorNotYoursTitle": "უცნობი ადამიანისგანაა",
+  "@openErrorNotYoursTitle": {},
   "openErrorNotYoursLine": "ჯერ მოწვევა სთხოვეთ.",
-  "@openErrorNotYoursLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorDamagedTitle": "ამის გახსნა ვერ ხერხდება",
-  "@openErrorDamagedTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorDamagedLine": "შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
-  "@openErrorDamagedLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorNotYoursLine": {},
+  "openErrorDamagedTitle": "ეს ვერ იხსნება",
+  "@openErrorDamagedTitle": {},
+  "openErrorDamagedLine": "შეიძლება, ბოლომდე არ მოსულა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნოთ.",
+  "@openErrorDamagedLine": {},
   "openErrorOldTitle": "გასახსნელად ძალიან ძველია",
-  "@openErrorOldTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorOldLine": "სთხოვეთ, თავიდან ჩაკეტოს ({name}).",
-  "@openErrorOldLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorNewerTitle": "Fuzzzy Ink-ის ახალი ვერსიაა საჭირო",
-  "@openErrorNewerTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorNewerLine": "განაახლეთ აპი და ხელახლა სცადეთ.",
-  "@openErrorNewerLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorOldTitle": {},
+  "openErrorOldLine": "სთხოვეთ, ხელახლა ჩაკეტოს ({name}).",
+  "@openErrorOldLine": {},
+  "openErrorNewerTitle": "საჭიროა Fuzzzy Ink-ის ახალი ვერსია",
+  "@openErrorNewerTitle": {},
+  "openErrorNewerLine": "განაახლეთ აპი და სცადეთ ხელახლა.",
+  "@openErrorNewerLine": {},
   "openErrorOwnTitle": "ეს თქვენი მოწვევაა",
-  "@openErrorOwnTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorOwnTitle": {},
   "openErrorOwnLine": "გაუგზავნეთ მეორე ადამიანს.",
-  "@openErrorOwnLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorOwnLine": {},
   "openErrorConnectedTitle": "უკვე დაკავშირებულია",
-  "@openErrorConnectedTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorConnectedLine": "უკვე დაკავშირებული ხართ: {name}",
-  "@openErrorConnectedLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorNotFuzzzyTitle": "ეს Fuzzzy Ink-ისგან არ არის",
-  "@openErrorNotFuzzzyTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorConnectedTitle": {},
+  "openErrorConnectedLine": "თქვენ და {name} უკვე დაკავშირებული ხართ.",
+  "@openErrorConnectedLine": {},
+  "openErrorNotFuzzzyTitle": "ეს Fuzzzy Ink-ით არ არის ჩაკეტილი",
+  "@openErrorNotFuzzzyTitle": {},
   "openErrorNotFuzzzyLine": "გახსენით ჩაკეტილი ტექსტი, მოწვევა ან პასუხი.",
-  "@openErrorNotFuzzzyLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorNotFuzzzyLine": {},
   "openErrorArrivingTitle": "ჯერ კიდევ მოდის",
-  "@openErrorArrivingTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorArrivingLine": "მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და ხელახლა სცადეთ.",
-  "@openErrorArrivingLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorResendTitle": "ეს ფაილი არ გაიხსნა",
-  "@openErrorResendTitle": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openErrorResendLine": "ახლა ამ ტელეფონზე ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
-  "@openErrorResendLine": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorArrivingTitle": {},
+  "openErrorArrivingLine": "მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და სცადეთ ხელახლა.",
+  "@openErrorArrivingLine": {},
+  "openErrorResendTitle": "ფაილი ვერ გაიხსნა",
+  "@openErrorResendTitle": {},
+  "openErrorResendLine": "ამ ტელეფონზე ის ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნოთ.",
+  "@openErrorResendLine": {},
   "openErrorGoToName": "გადასვლა: {name}",
-  "@openErrorGoToName": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorGoToName": {},
   "openErrorOk": "კარგი",
-  "@openErrorOk": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "openFailed": "გახსნა ვერ მოხერხდა. ხელახლა სცადეთ.",
-  "@openFailed": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
+  "@openErrorOk": {},
+  "openFailed": "გახსნა ვერ მოხერხდა. სცადეთ ხელახლა.",
+  "@openFailed": {},
   "shareTitleInvite": "მოწვევის გაზიარება",
-  "@shareTitleInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareTitleInvite": {},
   "shareTitleReply": "პასუხის გაზიარება",
-  "@shareTitleReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareTitleReply": {},
   "shareTitleMessage": "ჩაკეტილი შეტყობინების გაზიარება",
-  "@shareTitleMessage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareTitleMessage": {},
   "shareTitleFile": "ჩაკეტილი ფაილის გაზიარება",
-  "@shareTitleFile": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareTitleFile": {},
   "shareLineInvite": "ნებისმიერი გზით, თუნდაც საჯაროდ.",
-  "@shareLineInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareLineInvite": {},
   "shareLineReply": "როგორც გინდათ.",
-  "@shareLineReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "shareLineForName": "გახსნა მხოლოდ მას შეუძლია.",
-  "@shareLineForName": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareLineReply": {},
+  "shareLineForName": "გახსნის მხოლოდ {name}.",
+  "@shareLineForName": {},
   "shareLinePassword": "პაროლი დასჭირდება.",
-  "@shareLinePassword": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareLinePassword": {},
   "shareSendLink": "ბმულის გაგზავნა",
-  "@shareSendLink": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareSendLink": {},
   "shareSendLinkHint": "აპში იხსნება",
-  "@shareSendLinkHint": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareSendLinkHint": {},
   "shareShowQr": "QR კოდის ჩვენება",
-  "@shareShowQr": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "shareShowQrHint": "კამერით დაასკანერებს",
-  "@shareShowQrHint": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareShowQr": {},
+  "shareShowQrHint": "კამერით წაიკითხავს",
+  "@shareShowQrHint": {},
   "shareSendFile": "ფაილად გაგზავნა",
-  "@shareSendFile": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareSendFile": {},
   "shareSendFileHint": "პატარა ფაილი",
-  "@shareSendFileHint": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareSendFileHint": {},
   "shareCopyText": "ტექსტად კოპირება",
-  "@shareCopyText": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareCopyText": {},
   "shareCopyTextHint": "ყველგან ჩაკეტილი რჩება",
-  "@shareCopyTextHint": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareCopyTextHint": {},
   "shareTooBig": "ძალიან დიდია. ფაილად გაგზავნეთ.",
-  "@shareTooBig": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareTooBig": {},
   "shareCopiedStaysLocked": "დაკოპირდა. ჩაკეტილი რჩება.",
-  "@shareCopiedStaysLocked": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@shareCopiedStaysLocked": {},
   "qrLabelInvite": "თქვენი მოწვევა",
-  "@qrLabelInvite": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@qrLabelInvite": {},
   "qrLabelReply": "თქვენი პასუხი",
-  "@qrLabelReply": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@qrLabelReply": {},
   "qrLabelMessage": "ჩაკეტილი შეტყობინება",
-  "@qrLabelMessage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "qrLetNameScan": "დაასკანერებინეთ: {name}",
-  "@qrLetNameScan": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "qrLetThemScan": "დაასკანერებინეთ.",
-  "@qrLetThemScan": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@qrLabelMessage": {},
+  "qrLetNameScan": "აჩვენეთ ეს კოდი — {name} კამერით წაიკითხავს.",
+  "@qrLetNameScan": {},
+  "qrLetThemScan": "აჩვენეთ ეს კოდი — კამერით წაიკითხავს.",
+  "@qrLetThemScan": {},
   "qrSafeToShowAnyone": "ნებისმიერს შეგიძლიათ აჩვენოთ. დაგაკავშირებთ მხოლოდ მისი პასუხი.",
-  "@qrSafeToShowAnyone": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@qrSafeToShowAnyone": {},
   "qrOnlyRightPerson": "აჩვენეთ მხოლოდ სწორ ადამიანს.",
-  "@qrOnlyRightPerson": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "historyYouLockedMessage": "ჩაკეტეთ შეტყობინება",
-  "@historyYouLockedMessage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "historyYouOpenedMessage": "გახსენით შეტყობინება",
-  "@historyYouOpenedMessage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "historyYouLockedFile": "ჩაკეტეთ: {file}",
-  "@historyYouLockedFile": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "historyYouOpenedFile": "გახსენით: {file}",
-  "@historyYouOpenedFile": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@qrOnlyRightPerson": {},
+  "historyYouLockedMessage": "შეტყობინება ჩაიკეტა",
+  "@historyYouLockedMessage": {},
+  "historyYouOpenedMessage": "შეტყობინება გაიხსნა",
+  "@historyYouOpenedMessage": {},
+  "historyYouLockedFile": "ჩაიკეტა: {file}",
+  "@historyYouLockedFile": {},
+  "historyYouOpenedFile": "გაიხსნა: {file}",
+  "@historyYouOpenedFile": {},
   "historyTapToRead": "შეეხეთ წასაკითხად",
-  "@historyTapToRead": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@historyTapToRead": {},
   "historyTapToSee": "შეეხეთ სანახავად",
-  "@historyTapToSee": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@historyTapToSee": {},
   "fileCardLocked": "ჩაკეტილია",
-  "@fileCardLocked": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@fileCardLocked": {},
   "fileCardKeptInSafe": "ჩაკეტილი ინახება ჩემს სეიფში",
-  "@fileCardKeptInSafe": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@fileCardKeptInSafe": {},
   "lockedPreviewLabel": "ჩაკეტილი ვერსია · უსაფრთხოა გასაგზავნად",
-  "@lockedPreviewLabel": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lockedPreviewLabel": {},
   "confirmCopied": "დაკოპირდა",
-  "@confirmCopied": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "confirmHandedOver": "გადმოგეცათ",
+  "@confirmCopied": {},
+  "confirmHandedOver": "გადაეცა",
   "@confirmHandedOver": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: 'Handed over' = გადაეცა (the file went to the system share/save)."
   },
   "safetyGridLabel": "უსაფრთხოების ციფრები",
   "@safetyGridLabel": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: safety numbers = უსაფრთხოების ციფრები everywhere."
   },
   "lockoutWaitLeft": "მოიცადეთ {time}",
-  "@lockoutWaitLeft": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lockoutWaitLeft": {},
   "settingsLookAndLanguage": "იერსახე და ენა",
-  "@settingsLookAndLanguage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@settingsLookAndLanguage": {},
   "settingsLook": "იერსახე",
   "@settingsLook": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: იერსახე for 'Look'."
   },
   "settingsLanguage": "ენა",
-  "@settingsLanguage": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@settingsLanguage": {},
   "lookLikeMyPhone": "როგორც ტელეფონში",
-  "@lookLikeMyPhone": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lookLikeMyPhone": {},
   "lookLight": "ღია",
-  "@lookLight": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lookLight": {},
   "lookDark": "მუქი",
-  "@lookDark": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@lookDark": {},
   "languageEnglish": "English",
-  "@languageEnglish": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@languageEnglish": {},
   "languageGeorgian": "ქართული",
-  "@languageGeorgian": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@languageGeorgian": {},
   "fuzzzyCast": "Fuzzzy Cast",
-  "@fuzzzyCast": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@fuzzzyCast": {},
   "fuzzzyCastLine": "Fuzzz რეაგირებს, როცა კეტავთ ან ხსნით.",
   "@fuzzzyCastLine": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Needs the owner's native read: Fuzzz stays in Latin letters; რეაგირებს for 'reacts'."
   },
   "fuzzzyCastOn": "Fuzzzy Cast ჩართულია.",
-  "@fuzzzyCastOn": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@fuzzzyCastOn": {},
   "softSounds": "რბილი ხმები",
-  "@softSounds": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
+  "@softSounds": {},
   "safeLockedTitle": "ჩემი სეიფი ჩაკეტილია",
-  "@safeLockedTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeLockedTitle": {},
   "safeLockButton": "ჩემი სეიფის ჩაკეტვა",
-  "@safeLockButton": {
-    "description": "Georgian draft, needs a native read (integration, 2026-10-26)"
-  },
+  "@safeLockButton": {},
   "safeOpensWithMaster": "იხსნება მთავარი პაროლით.",
-  "@safeOpensWithMaster": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeOpensWithMaster": {},
   "safeOpensWithOwn": "იხსნება სეიფის პაროლით.",
-  "@safeOpensWithOwn": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeOpensWithOwn": {},
   "safeOpenWithFingerprint": "{kind, select, faceId{Face ID-ით გახსნა} touchId{Touch ID-ით გახსნა} fingerprint{თითის ანაბეჭდით გახსნა} face{სახით გახსნა} other{თითის ანაბეჭდით ან სახით გახსნა}}",
-  "@safeOpenWithFingerprint": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@safeOpenWithFingerprint": {},
   "safeUseMasterPassword": "მთავარი პაროლის გამოყენება",
-  "@safeUseMasterPassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeUseMasterPassword": {},
   "safeUseSafePassword": "სეიფის პაროლის გამოყენება",
-  "@safeUseSafePassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeUseSafePassword": {},
   "safePasswordField": "სეიფის პაროლი",
-  "@safePasswordField": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safePasswordField": {},
   "safeOpenButton": "ჩემი სეიფის გახსნა",
-  "@safeOpenButton": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeOpenButton": {},
   "safeUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
-  "@safeUseRecoveryKey": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeUseRecoveryKey": {},
   "safeWrongPassword": "არასწორია. სცადეთ ხელახლა.",
-  "@safeWrongPassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeWrongPassword": {},
   "safeTooManyTries": "ძალიან ბევრი ცდა.",
-  "@safeTooManyTries": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTooManyTries": {},
   "safeCouldNotOpen": "ჩემი სეიფი ვერ გაიხსნა. სცადეთ ხელახლა.",
-  "@safeCouldNotOpen": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeCouldNotOpen": {},
   "safeRecoveryTitle": "შეიყვანეთ აღდგენის გასაღები",
-  "@safeRecoveryTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeRecoveryTitle": {},
   "safeRecoveryLine": "ჰარებსა და დიდ ასოებს მნიშვნელობა არ აქვს.",
   "@safeRecoveryLine": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+    "description": "Needs the owner's native read: ჰარი for 'space'; maybe too formal for everyday readers."
   },
   "safeRecoveryNoKey": "გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.",
-  "@safeRecoveryNoKey": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeRecoveryNoKey": {},
   "safeRecoveryNewPassword": "სეიფის ახალი პაროლი",
-  "@safeRecoveryNewPassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeRecoveryNewPassword": {},
   "safeSearch": "ძებნა",
-  "@safeSearch": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeSearch": {},
   "safeAllGroups": "ყველა ჯგუფი",
-  "@safeAllGroups": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeAllGroups": {},
   "safeNewGroup": "ახალი ჯგუფი",
-  "@safeNewGroup": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNewGroup": {},
   "safeEmptyTitle": "აქ ჯერ არაფერია",
-  "@safeEmptyTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeEmptyTitle": {},
   "safeEmptyLine": "დააჭირეთ „დამატებას“.",
-  "@safeEmptyLine": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeEmptyLine": {},
   "safeNothingFound": "ვერაფერი მოიძებნა",
-  "@safeNothingFound": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNothingFound": {},
   "safeTryAnotherWord": "სცადეთ სხვა სიტყვა.",
-  "@safeTryAnotherWord": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTryAnotherWord": {},
   "safeLoadError": "ჩემი სეიფი ვერ ჩაიტვირთა. ჩაკეტეთ და ხელახლა გახსენით.",
-  "@safeLoadError": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeLoadError": {},
   "safeAutoLockTip": "{minutes} წუთის უმოქმედობის შემდეგ თავისით იკეტება",
-  "@safeAutoLockTip": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeAutoLockTip": {},
   "safeAdd": "დამატება",
-  "@safeAdd": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeAdd": {},
   "safeAddTitle": "ჩემს სეიფში დამატება",
-  "@safeAddTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeAddTitle": {},
   "safeUsername": "მომხმარებლის სახელი ან ელფოსტა",
-  "@safeUsername": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeUsername": {},
   "safeWebsite": "ვებსაიტი",
-  "@safeWebsite": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeWebsite": {},
   "safeNotes": "შენიშვნები",
-  "@safeNotes": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNotes": {},
   "safeShowPassword": "პაროლის ჩვენება",
-  "@safeShowPassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeShowPassword": {},
   "safeHidePassword": "პაროლის დამალვა",
-  "@safeHidePassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeHidePassword": {},
   "safeCopiedClearsIn": "დაკოპირდა · წაიშლება {seconds} წამში",
-  "@safeCopiedClearsIn": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeCopiedClearsIn": {},
   "safeCopyRule": "დაკოპირებული პაროლი {seconds} წამში იშლება.",
-  "@safeCopyRule": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeCopyRule": {},
   "safeCleared": "წაიშალა.",
-  "@safeCleared": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeCleared": {},
   "safeCopyOff": "კოპირება პარამეტრებში გამორთულია.",
-  "@safeCopyOff": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeCopyOff": {},
   "safeGroup": "ჯგუფი",
-  "@safeGroup": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeGroup": {},
   "safeNoGroup": "ჯგუფის გარეშე",
-  "@safeNoGroup": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNoGroup": {},
   "safeMove": "გადატანა",
-  "@safeMove": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeMove": {},
   "safeEdit": "რედაქტირება",
-  "@safeEdit": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeEdit": {},
   "safeMoreFor": "მეტი: {title}",
-  "@safeMoreFor": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeMoreFor": {},
   "safeSaveTip": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
-  "@safeSaveTip": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeSaveTip": {},
   "safeMoveToGroup": "ჯგუფში გადატანა",
-  "@safeMoveToGroup": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
-  "safeDeleteTitle": "წავშალოთ: {title}?",
-  "@safeDeleteTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeMoveToGroup": {},
+  "safeDeleteTitle": "წავშალოთ „{title}“?",
+  "@safeDeleteTitle": {},
   "safeDeleteLine": "ის ჩემი სეიფიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია.",
-  "@safeDeleteLine": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeDeleteLine": {},
   "safeDeleted": "წაიშალა ჩემი სეიფიდან.",
-  "@safeDeleted": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeDeleted": {},
   "safeMovedTo": "გადავიდა ჯგუფში: {group}.",
-  "@safeMovedTo": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeMovedTo": {},
   "safeMovedOut": "ჯგუფიდან ამოღებულია.",
-  "@safeMovedOut": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeMovedOut": {},
   "safeSaved": "შეინახა ჩემს სეიფში.",
-  "@safeSaved": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeSaved": {},
   "safeItemLoadFailed": "ვერ გაიხსნა. სცადეთ ხელახლა.",
-  "@safeItemLoadFailed": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeItemLoadFailed": {},
   "safeSaveFailed": "ვერ შეინახა. სცადეთ ხელახლა.",
-  "@safeSaveFailed": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeSaveFailed": {},
   "safeGroupName": "ჯგუფის სახელი",
-  "@safeGroupName": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeGroupName": {},
   "safeGroupHint": "მაგ. ოჯახი",
-  "@safeGroupHint": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeGroupHint": {},
   "safeAddGroup": "ჯგუფის დამატება",
-  "@safeAddGroup": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeAddGroup": {},
   "safeNewPasswordTitle": "ახალი პაროლი",
-  "@safeNewPasswordTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNewPasswordTitle": {},
   "safeNewNoteTitle": "ახალი ჩანაწერი",
-  "@safeNewNoteTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNewNoteTitle": {},
   "safeNewFileTitle": "ახალი ფაილი",
-  "@safeNewFileTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNewFileTitle": {},
   "safeTitle": "სათაური",
-  "@safeTitle": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTitle": {},
   "safeTitleHintPassword": "მაგ. ბანკის აპი",
-  "@safeTitleHintPassword": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTitleHintPassword": {},
   "safeTitleHintNote": "მაგ. პასპორტის ნომერი",
-  "@safeTitleHintNote": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTitleHintNote": {},
   "safeTitleHintFile": "მაგ. სახლის დაზღვევა",
-  "@safeTitleHintFile": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeTitleHintFile": {},
   "safeOptional": "არასავალდებულო",
-  "@safeOptional": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeOptional": {},
   "safeNoteHint": "ყველაფერი, რაც დაცული უნდა იყოს",
-  "@safeNoteHint": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeNoteHint": {},
   "safeChooseFile": "ფაილის არჩევა",
-  "@safeChooseFile": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeChooseFile": {},
   "safeOriginalStays": "ორიგინალი თავის ადგილზე რჩება.",
-  "@safeOriginalStays": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeOriginalStays": {},
   "safeChangeFile": "შეცვლა",
-  "@safeChangeFile": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
+  "@safeChangeFile": {},
   "safeChooseFileFirst": "ჯერ ფაილი აირჩიეთ.",
-  "@safeChooseFileFirst": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
-  },
-  "accessWelcomeLine": "ჩაკეტეთ. გახსნა მხოლოდ მას შეეძლება.",
+  "@safeChooseFileFirst": {},
+  "accessWelcomeLine": "ჩაკეტეთ. გახსნის მხოლოდ ის.",
   "@accessWelcomeLine": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: welcome slogan: ჩაკეტეთ. გახსნის მხოლოდ ის.."
   },
   "accessWelcomeTag": "ანგარიში არ სჭირდება · ინტერნეტში არაფერი გადის",
-  "@accessWelcomeTag": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessWelcomeTag": {},
   "accessStart": "დაწყება",
-  "@accessStart": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStart": {},
   "accessHowItWorks": "როგორ მუშაობს",
-  "@accessHowItWorks": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowItWorks": {},
   "accessHowAddPerson": "ადამიანის დამატება",
-  "@accessHowAddPerson": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowAddPerson": {},
   "accessHowLockForThem": "ჩაკეტეთ მისთვის",
-  "@accessHowLockForThem": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowLockForThem": {},
   "accessHowTheyOpenOnce": "ის ერთხელ ხსნის",
-  "@accessHowTheyOpenOnce": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowTheyOpenOnce": {},
   "accessWhyOnce": "რატომ ერთხელ?",
-  "@accessWhyOnce": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessWhyOnce": {},
   "accessHowTip": "ყველაფერს ერთი მთავარი პაროლი იცავს. ახლა მას შექმნით.",
-  "@accessHowTip": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowTip": {},
   "accessContinue": "გაგრძელება",
-  "@accessContinue": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessContinue": {},
   "accessStepPassword": "პაროლი",
-  "@accessStepPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStepPassword": {},
   "accessMakeMasterPassword": "შექმენით მთავარი პაროლი",
-  "@accessMakeMasterPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessMakeMasterPassword": {},
   "accessTypeItAgain": "კიდევ ერთხელ აკრიფეთ",
-  "@accessTypeItAgain": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTypeItAgain": {},
   "accessNoResetBold": "აღდგენა შეუძლებელია.",
-  "@accessNoResetBold": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNoResetBold": {},
   "accessNoResetLine": "თუ მასაც დაკარგავთ და აღდგენის გასაღებსაც, ყველაფერი დაიკარგება.",
-  "@accessNoResetLine": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNoResetLine": {},
   "accessUnderstandNoAccess": "გასაგებია: პაროლისა და გასაღების გარეშე წვდომა აღარ მექნება.",
-  "@accessUnderstandNoAccess": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessUnderstandNoAccess": {},
   "accessPasswordsDontMatch": "ჯერ არ ემთხვევა.",
-  "@accessPasswordsDontMatch": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPasswordsDontMatch": {},
   "accessStrengthWeak": "სუსტი",
-  "@accessStrengthWeak": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthWeak": {},
   "accessStrengthFair": "საშუალო",
-  "@accessStrengthFair": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthFair": {},
   "accessStrengthGood": "კარგი",
-  "@accessStrengthGood": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthGood": {},
   "accessStrengthStrong": "ძლიერი",
-  "@accessStrengthStrong": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthStrong": {},
   "accessStrengthHintEmpty": "რჩევა: რამდენიმე შემთხვევითი სიტყვა.",
-  "@accessStrengthHintEmpty": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessStrengthHintWeak": "გააგრძელეთ.",
-  "@accessStrengthHintWeak": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthHintEmpty": {},
+  "accessStrengthHintWeak": "უფრო გრძელი უნდა იყოს.",
+  "@accessStrengthHintWeak": {},
   "accessStrengthHintFair": "დაამატეთ კიდევ რამდენიმე სიტყვა.",
-  "@accessStrengthHintFair": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthHintFair": {},
   "accessStrengthHintGood": "ძნელად გამოსაცნობია.",
-  "@accessStrengthHintGood": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthHintGood": {},
   "accessStrengthHintStrong": "ძალიან ძნელად გამოსაცნობია.",
-  "@accessStrengthHintStrong": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthHintStrong": {},
   "accessStrengthLabel": "პაროლის სიძლიერე: {level}",
-  "@accessStrengthLabel": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessStrengthLabel": {},
   "accessShowPassword": "პაროლის ჩვენება",
-  "@accessShowPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessShowPassword": {},
   "accessHidePassword": "პაროლის დამალვა",
-  "@accessHidePassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHidePassword": {},
   "accessYourRecoveryKey": "თქვენი აღდგენის გასაღები",
-  "@accessYourRecoveryKey": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessRecoverySpare": "სათადარიგო, თუ პაროლი დაგავიწყდათ.",
-  "@accessRecoverySpare": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessYourRecoveryKey": {},
+  "accessRecoverySpare": "სათადარიგო გასაღები, თუ პაროლი დაგავიწყდათ.",
+  "@accessRecoverySpare": {},
   "accessPrint": "ამობეჭდვა",
-  "@accessPrint": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPrint": {},
   "accessSaveAsFile": "ფაილად შენახვა",
-  "@accessSaveAsFile": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSaveAsFile": {},
   "accessSaved": "შენახულია",
-  "@accessSaved": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSaved": {},
   "accessKeepOffPhone": "ამ ტელეფონზე ნუ შეინახავთ. ვისაც ის ექნება, ყველაფერს გახსნის.",
-  "@accessKeepOffPhone": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessKeepOffPhone": {},
   "accessKeptItSafe": "უსაფრთხოდ შევინახე",
-  "@accessKeptItSafe": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessKeptItSafe": {},
   "accessSkipForNow": "ახლა გამოტოვება",
-  "@accessSkipForNow": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSkipForNow": {},
   "accessSkipKeyTitle": "გამოვტოვოთ აღდგენის გასაღები?",
-  "@accessSkipKeyTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSkipKeyMessage": "თუ მის გარეშე პაროლი დაგავიწყდებათ, ყველაფერი დაიკარგება. მოგვიანებით პარამეტრებში შექმნით.",
-  "@accessSkipKeyMessage": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSkipKeyKeep": "ახლავე შენახვა",
-  "@accessSkipKeyKeep": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSkipKeyAnyway": "მაინც გამოტოვება",
-  "@accessSkipKeyAnyway": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessPrintPreview": "ბეჭდვის გადახედვა",
-  "@accessPrintPreview": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSkipKeyTitle": {},
+  "accessSkipKeyMessage": "თუ მის გარეშე პაროლი დაგავიწყდებათ, ყველაფერი დაიკარგება. მოგვიანებით შეგიძლიათ პარამეტრებში შექმნათ.",
+  "@accessSkipKeyMessage": {},
+  "accessSkipKeyKeep": "ახლავე შევინახავ",
+  "@accessSkipKeyKeep": {},
+  "accessSkipKeyAnyway": "მაინც გამოვტოვებ",
+  "@accessSkipKeyAnyway": {},
+  "accessPrintPreview": "ბეჭდვის წინასწარი ხედი",
+  "@accessPrintPreview": {},
   "accessPrintSheetTitle": "Fuzzzy Ink · აღდგენის გასაღები",
-  "@accessPrintSheetTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPrintSheetTitle": {},
   "accessPrintLine1": "თუ პაროლი დაგავიწყდათ, ხსნის Fuzzzy Ink-ს და ჩემს სეიფს.",
-  "@accessPrintLine1": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPrintLine1": {},
   "accessPrintLine2": "ვისაც ეს გასაღები და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის. ტელეფონისგან შორს შეინახეთ.",
-  "@accessPrintLine2": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPrintLine2": {},
   "accessPrintLine3": "თუ პაროლსაც დაკარგავთ და ამ გასაღებსაც, ვერაფერს აღადგენთ.",
-  "@accessPrintLine3": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessPrintMade": "შექმნილია: {date}. პარამეტრებიდან ახალი გასაღები ამას გააუქმებს.",
-  "@accessPrintMade": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessPrintHint": "გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა და არა ფოტოებში ან ღრუბელში შენახვა.",
-  "@accessPrintHint": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "@accessPrintLine3": {},
+  "accessPrintMade": "შექმნილია: {date}. ახალი გასაღები (პარამეტრებიდან) ამას გააუქმებს.",
+  "@accessPrintMade": {},
+  "accessPrintHint": "გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ბეჭდვა — არა ფოტოებში შენახვა ან ღრუბლოვანი აპი.",
+  "@accessPrintHint": {},
   "accessPrintHintIos": "აირჩიეთ პრინტერი. გასაღები პირდაპირ მას მიეწოდება და ასლი არსად შეინახება.",
-  "@accessPrintHintIos": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
-  "accessPrintHintMac": "გაიხსნება ამობეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.",
-  "@accessPrintHintMac": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessPrintHintIos": {},
+  "accessPrintHintMac": "გაიხსნება ბეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.",
+  "@accessPrintHintMac": {},
   "accessPrintFailed": "ბეჭდვის ფურცელი ვერ შეიქმნა. სცადეთ ფაილად შენახვა.",
-  "@accessPrintFailed": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessPrintFailed": {},
   "accessStepQuickUnlock": "სწრაფი განბლოკვა",
-  "@accessStepQuickUnlock": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessBioTitle": "{kind, select, faceId{გავხსნათ Face ID-ით?} touchId{გავხსნათ Touch ID-ით?} fingerprint{გავხსნათ თითის ანაბეჭდით?} face{გავხსნათ სახით?} other{გავხსნათ თითის ანაბეჭდით ან სახით?}}",
-  "@accessBioTitle": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessStepQuickUnlock": {},
+  "accessBioTitle": "{kind, select, faceId{განბლოკვა Face ID-ით?} touchId{განბლოკვა Touch ID-ით?} fingerprint{განბლოკვა თითის ანაბეჭდით?} face{განბლოკვა სახით?} other{განბლოკვა თითის ანაბეჭდით ან სახით?}}",
+  "@accessBioTitle": {},
   "accessBioLine": "პაროლიც ყოველთვის იმუშავებს.",
-  "@accessBioLine": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessBioLine": {},
   "accessBioTip": "5 წუთის უმოქმედობის შემდეგ თავისით იკეტება",
-  "@accessBioTip": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessUseBio": "{kind, select, faceId{Face ID-ის გამოყენება} touchId{Touch ID-ის გამოყენება} fingerprint{თითის ანაბეჭდის გამოყენება} face{სახის გამოყენება} other{თითის ანაბეჭდი ან სახე}}",
-  "@accessUseBio": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessBioTip": {},
+  "accessUseBio": "{kind, select, faceId{Face ID-ის გამოყენება} touchId{Touch ID-ის გამოყენება} fingerprint{თითის ანაბეჭდის გამოყენება} face{სახის გამოყენება} other{თითის ანაბეჭდის ან სახის გამოყენება}}",
+  "@accessUseBio": {},
   "accessNotNow": "ახლა არა",
-  "@accessNotNow": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNotNow": {},
   "accessReadyTitle": "მზად ხართ",
-  "@accessReadyTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessReadyTitle": {},
   "accessAddFirstPerson": "პირველი ადამიანის დამატება",
-  "@accessAddFirstPerson": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessAddFirstPerson": {},
   "accessLookAround": "ჯერ მიმოვიხედავ",
-  "@accessLookAround": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessLookAround": {},
   "accessLockedTitle": "Fuzzzy Ink ჩაკეტილია",
   "@accessLockedTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: app lock pairs ჩაკეტილია with განბლოკვა (iPhone's own Georgian pairing); confirm instead of დაბლოკვა/განბლოკვა."
   },
   "accessWrongPassword": "არასწორია. სცადეთ ხელახლა.",
-  "@accessWrongPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessWrongPassword": {},
   "accessTooManyTries": "ძალიან ბევრი ცდა.",
-  "@accessTooManyTries": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTooManyTries": {},
   "accessForgotPassword": "დაგავიწყდათ პაროლი?",
-  "@accessForgotPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessForgotPassword": {},
   "accessLinkWaiting": "ბმული გელოდებათ. გასახსნელად განბლოკეთ.",
-  "@accessLinkWaiting": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessLinkWaiting": {},
   "accessFileWaiting": "ფაილი გელოდებათ. გასახსნელად განბლოკეთ.",
-  "@accessFileWaiting": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
-  "accessBioChanged": "{kind, select, faceId{Face ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} touchId{Touch ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} fingerprint{თითის ანაბეჭდები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} face{სახით განბლოკვა შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} other{თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.}}",
-  "@accessBioChanged": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessFileWaiting": {},
+  "accessBioChanged": "{kind, select, faceId{Face ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} touchId{Touch ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} fingerprint{თითის ანაბეჭდები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} face{სახის მონაცემები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} other{თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.}}",
+  "@accessBioChanged": {},
   "accessBioReset": "განახლებამ სწრაფი განბლოკვა უსაფრთხოებისთვის გამორთო. ხელახლა ჩართეთ პარამეტრებში.",
-  "@accessBioReset": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessBioReset": {},
   "accessRecoveryKeyHeader": "აღდგენის გასაღები",
-  "@accessRecoveryKeyHeader": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessRecoveryKeyHeader": {},
   "accessTypeRecoveryKey": "შეიყვანეთ აღდგენის გასაღები",
-  "@accessTypeRecoveryKey": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTypeRecoveryKey": {},
   "accessSpacesDontMatter": "ჰარებსა და დიდ ასოებს მნიშვნელობა არ აქვს.",
   "@accessSpacesDontMatter": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: ჰარი for 'space'; maybe too formal for everyday readers."
   },
   "accessNoKeyNothing": "გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.",
-  "@accessNoKeyNothing": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessKeyTooShort": "აღდგენის გასაღებს 4-ნიშნიანი 8 ჯგუფი აქვს.",
-  "@accessKeyTooShort": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessKeyDoesntMatch": "ეს გასაღები არ ემთხვევა. თითო ჯგუფი შეამოწმეთ.",
-  "@accessKeyDoesntMatch": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNoKeyNothing": {},
+  "accessKeyTooShort": "აღდგენის გასაღებში 8 ჯგუფია, თითოში 4 სიმბოლო.",
+  "@accessKeyTooShort": {},
+  "accessKeyDoesntMatch": "ეს გასაღები არ ემთხვევა. შეამოწმეთ ყოველი ჯგუფი.",
+  "@accessKeyDoesntMatch": {},
   "accessNewMasterPassword": "ახალი მთავარი პაროლი",
-  "@accessNewMasterPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNewMasterPassword": {},
   "accessKeyAccepted": "გასაღები მიღებულია.",
-  "@accessKeyAccepted": {
-    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
-  },
+  "@accessKeyAccepted": {},
   "accessSaveNewPassword": "ახალი პაროლის შენახვა",
-  "@accessSaveNewPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSaveNewPassword": {},
   "accessNewPasswordSaved": "ახალი მთავარი პაროლი შენახულია.",
-  "@accessNewPasswordSaved": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNewPasswordSaved": {},
   "accessSettingsKeepingSafe": "უსაფრთხოება",
-  "@accessSettingsKeepingSafe": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSettingsKeepingSafe": {},
   "accessChangeIt": "შეცვლა",
-  "@accessChangeIt": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessChangeIt": {},
   "accessMakeNewOne": "ახლის შექმნა",
-  "@accessMakeNewOne": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessMakeNewOne": {},
   "accessNoKeyYet": "ჯერ არ არის",
-  "@accessNoKeyYet": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNoKeyYet": {},
   "accessFingerprintOrFace": "{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{თითის ანაბეჭდი} face{სახით განბლოკვა} other{თითის ანაბეჭდი ან სახე}}",
-  "@accessFingerprintOrFace": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessFingerprintOrFace": {},
   "accessNotOnThisDevice": "ამ მოწყობილობაზე არ არის",
-  "@accessNotOnThisDevice": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNotOnThisDevice": {},
   "accessLockTheApp": "აპის ჩაკეტვა",
-  "@accessLockTheApp": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessLockAfter": "ავტომატურად: {time}",
+  "@accessLockTheApp": {},
+  "accessLockAfter": "ავტომატურად {time}",
   "@accessLockAfter": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: auto-lock reads 'ავტომატურად 5 წუთში'; options are now 'in N minutes'."
   },
   "accessLockNow": "ახლავე ჩაკეტვა",
-  "@accessLockNow": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessLockNow": {},
   "accessLockAfterTitle": "აპი ჩაიკეტოს",
-  "@accessLockAfterTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessLockAfterTitle": {},
   "accessRightAway": "მაშინვე",
-  "@accessRightAway": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessOneMinute": "1 წუთი",
-  "@accessOneMinute": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessFiveMinutes": "5 წუთი",
-  "@accessFiveMinutes": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessFifteenMinutes": "15 წუთი",
-  "@accessFifteenMinutes": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessOneHour": "1 საათი",
-  "@accessOneHour": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessRightAway": {},
+  "accessOneMinute": "1 წუთში",
+  "@accessOneMinute": {},
+  "accessFiveMinutes": "5 წუთში",
+  "@accessFiveMinutes": {},
+  "accessFifteenMinutes": "15 წუთში",
+  "@accessFifteenMinutes": {},
+  "accessOneHour": "1 საათში",
+  "@accessOneHour": {},
   "accessRecommended": "რეკომენდებული",
-  "@accessRecommended": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessOpensWith": "იხსნება",
-  "@accessOpensWith": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessRecommended": {},
+  "accessOpensWith": "რით იხსნება",
+  "@accessOpensWith": {},
   "accessItsOwnPassword": "საკუთარი პაროლი",
-  "@accessItsOwnPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessItsOwnPassword": {},
   "accessCopyPasswords": "პაროლების კოპირება",
-  "@accessCopyPasswords": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessCopyPasswords": {},
   "accessClearsAfter30": "30 წამში იშლება",
-  "@accessClearsAfter30": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessClearsAfter30": {},
   "accessOff": "გამორთულია",
-  "@accessOff": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessOff": {},
   "accessSoftSoundsSoon": "მომავალ განახლებაში",
-  "@accessSoftSoundsSoon": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSoftSoundsSoon": {},
   "accessHelp": "დახმარება",
-  "@accessHelp": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHelp": {},
   "accessHowFuzzzyInkWorks": "როგორ მუშაობს Fuzzzy Ink",
-  "@accessHowFuzzzyInkWorks": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessPrivacyTermsSupport": "კონფიდენციალურობა, პირობები და დახმარება",
-  "@accessPrivacyTermsSupport": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowFuzzzyInkWorks": {},
+  "accessPrivacyTermsSupport": "კონფიდენციალურობა, პირობები და მხარდაჭერა",
+  "@accessPrivacyTermsSupport": {},
   "accessOpensYourBrowser": "ბრაუზერში იხსნება",
-  "@accessOpensYourBrowser": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessOpensYourBrowser": {},
   "accessBrowserTip": "ბრაუზერში იხსნება. თავად აპი ინტერნეტში არასდროს გადის.",
-  "@accessBrowserTip": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessDeveloper": "დეველოპერი",
-  "@accessDeveloper": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessBrowserTip": {},
+  "accessDeveloper": "დეველოპერისთვის",
+  "@accessDeveloper": {},
   "accessVersionFooter": "Fuzzzy Ink · ვერსია {version} (build {build})",
-  "@accessVersionFooter": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessVersionFooter": {},
   "accessTurnOnBioTitle": "{kind, select, faceId{Face ID-ის ჩართვა} touchId{Touch ID-ის ჩართვა} fingerprint{თითის ანაბეჭდის ჩართვა} face{სახით განბლოკვის ჩართვა} other{თითის ანაბეჭდის ან სახის ჩართვა}}",
-  "@accessTurnOnBioTitle": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessTurnOnBioTitle": {},
   "accessTurnOnBioLine": "ერთხელ აკრიფეთ მთავარი პაროლი.",
-  "@accessTurnOnBioLine": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTurnOnBioLine": {},
   "accessTurnOnSafeBioTitle": "{kind, select, faceId{Face ID ჩემი სეიფისთვის} touchId{Touch ID ჩემი სეიფისთვის} fingerprint{თითის ანაბეჭდი ჩემი სეიფისთვის} face{სახით განბლოკვა ჩემი სეიფისთვის} other{თითის ანაბეჭდი ან სახე ჩემი სეიფისთვის}}",
-  "@accessTurnOnSafeBioTitle": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessTurnOnSafeBioTitle": {},
   "accessTurnOnSafeBioLine": "ერთხელ აკრიფეთ ჩემი სეიფის პაროლი.",
-  "@accessTurnOnSafeBioLine": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTurnOnSafeBioLine": {},
   "accessTurnOn": "ჩართვა",
-  "@accessTurnOn": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessTurnOn": {},
   "accessBioOn": "{kind, select, faceId{Face ID ჩართულია.} touchId{Touch ID ჩართულია.} fingerprint{თითის ანაბეჭდი ჩართულია.} face{სახით განბლოკვა ჩართულია.} other{თითის ანაბეჭდი ან სახე ჩართულია.}}",
-  "@accessBioOn": {
-    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
-  },
+  "@accessBioOn": {},
   "accessMySafePassword": "ჩემი სეიფის პაროლი",
-  "@accessMySafePassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessMySafePassword": {},
   "accessChangeMasterPassword": "მთავარი პაროლის შეცვლა",
-  "@accessChangeMasterPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessChangeMasterPassword": {},
   "accessCurrentPassword": "ამჟამინდელი პაროლი",
-  "@accessCurrentPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessCurrentPassword": {},
   "accessNewPassword": "ახალი პაროლი",
-  "@accessNewPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNewPassword": {},
   "accessRecoveryKeepsWorking": "აღდგენის გასაღები ისევ იმუშავებს.",
-  "@accessRecoveryKeepsWorking": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessRecoveryKeepsWorking": {},
   "accessChangePassword": "პაროლის შეცვლა",
-  "@accessChangePassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessChangePassword": {},
   "accessMasterPasswordChanged": "მთავარი პაროლი შეიცვალა.",
-  "@accessMasterPasswordChanged": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessMasterPasswordChanged": {},
   "accessMakeNewKey": "ახალი გასაღების შექმნა",
-  "@accessMakeNewKey": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessMakeNewKey": {},
   "accessOldKeyStops": "ძველი გასაღები აღარ იმუშავებს.",
-  "@accessOldKeyStops": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSafePasswordToo": "ჩემს სეიფს საკუთარი პაროლი აქვს. ისიც აკრიფეთ, რომ ახალმა გასაღებმა სეიფიც გახსნას.",
-  "@accessSafePasswordToo": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessOldKeyStops": {},
+  "accessSafePasswordToo": "ჩემს სეიფს საკუთარი პაროლი აქვს. ისიც აკრიფეთ, რომ ახალმა გასაღებმა ჩემი სეიფიც გახსნას.",
+  "@accessSafePasswordToo": {},
   "accessYourNewKey": "თქვენი ახალი გასაღები",
-  "@accessYourNewKey": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessYourNewKey": {},
   "accessNoPasswordNoKey": "პაროლისა და გასაღების გარეშე წვდომა არ იქნება.",
-  "@accessNoPasswordNoKey": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessNewKeyKept": "ახალი აღდგენის გასაღები დაყენებულია.",
-  "@accessNewKeyKept": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSafeOpensWith": "ჩემი სეიფი იხსნება",
-  "@accessSafeOpensWith": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSimplestRecommended": "ყველაზე მარტივი. რეკომენდებული.",
-  "@accessSimplestRecommended": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessNoPasswordNoKey": {},
+  "accessNewKeyKept": "ახალი აღდგენის გასაღები მზადაა.",
+  "@accessNewKeyKept": {},
+  "accessSafeOpensWith": "რით იხსნება ჩემი სეიფი",
+  "@accessSafeOpensWith": {},
+  "accessSimplestRecommended": "ყველაზე მარტივი. რეკომენდებულია.",
+  "@accessSimplestRecommended": {},
   "accessOneMoreToRemember": "კიდევ ერთი დასამახსოვრებელი",
-  "@accessOneMoreToRemember": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessOneMoreToRemember": {},
   "accessSafePassword": "სეიფის პაროლი",
-  "@accessSafePassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSafePassword": {},
   "accessSaveSafePassword": "სეიფის პაროლის შენახვა",
-  "@accessSaveSafePassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSaveSafePassword": {},
   "accessSafeHasOwnPassword": "ახლა ჩემს სეიფს საკუთარი პაროლი აქვს.",
-  "@accessSafeHasOwnPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessSafeGetsNewKey": "შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის „ჩემს სეიფს“ გახსნის, ძველი გასაღები კი აღარ იმუშავებს.",
-  "@accessSafeGetsNewKey": {
-    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
-  },
+  "@accessSafeHasOwnPassword": {},
+  "accessSafeGetsNewKey": "შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის ჩემს სეიფსაც გახსნის, ძველი კი აღარ იმუშავებს.",
+  "@accessSafeGetsNewKey": {},
   "accessUseMasterPassword": "მთავარი პაროლის გამოყენება",
-  "@accessUseMasterPassword": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessUseMasterPassword": {},
   "accessSafeUsesMaster": "ჩემი სეიფი ისევ მთავარი პაროლით იხსნება.",
-  "@accessSafeUsesMaster": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSafeUsesMaster": {},
   "accessSafeNotMadeYet": "ჩემი სეიფი ჯერ არ შექმნილა. ერთხელ გახსენით მისი ჩანართიდან.",
-  "@accessSafeNotMadeYet": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessMasterPasswordToConfirm": "დასადასტურებლად მთავარი პაროლი",
-  "@accessMasterPasswordToConfirm": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowOnceTitle": "ყოველი რამ ერთხელ იხსნება",
-  "@accessHowOnceTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessSafeNotMadeYet": {},
+  "accessMasterPasswordToConfirm": "მთავარი პაროლი, დასადასტურებლად",
+  "@accessMasterPasswordToConfirm": {},
+  "accessHowOnceTitle": "ყველაფერი ერთხელ იხსნება",
+  "@accessHowOnceTitle": {},
   "accessHowOnceBody": "გახსნისას გასაღები იხარჯება. ასლი ისტორიაში რჩება.",
-  "@accessHowOnceBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowOnceBody": {},
   "accessHowHistoryTitle": "ისტორია ამ ტელეფონზე რჩება",
-  "@accessHowHistoryTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowHistoryBody": "მთავარი პაროლით არის ჩაკეტილი. ახალი ტელეფონი მას ვერ წაიკითხავს. ასლისთვის ადამიანის ისტორია ფაილად შეინახეთ.",
-  "@accessHowHistoryBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowHistoryTitle": {},
+  "accessHowHistoryBody": "ჩაკეტილია მთავარი პაროლით. ახალი ტელეფონი მას ვერ წაიკითხავს. ასლისთვის ადამიანის ისტორია ფაილად შეინახეთ.",
+  "@accessHowHistoryBody": {},
   "accessHowOrderTitle": "გახსენით თანმიმდევრობით",
-  "@accessHowOrderTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowOrderBody": "ძალიან ძველი შეტყობინება შეიძლება ვეღარ გაიხსნას. მაშინ სთხოვეთ, თავიდან ჩაკეტოს.",
-  "@accessHowOrderBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowOrderTitle": {},
+  "accessHowOrderBody": "ძალიან ძველი შეტყობინება შეიძლება ვეღარ გაიხსნას. მაშინ სთხოვეთ, ხელახლა ჩაკეტოს.",
+  "@accessHowOrderBody": {},
   "accessHowCheckTitle": "ადამიანის შემოწმება",
-  "@accessHowCheckTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowCheckBody": "ორივე ტელეფონზე ერთნაირი ციფრები: შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენი საკუთარი ჩანიშვნაა.",
-  "@accessHowCheckBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowCheckTitle": {},
+  "accessHowCheckBody": "ორივე ტელეფონზე ციფრები ერთნაირია — შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა.",
+  "@accessHowCheckBody": {},
   "accessHowLinksTitle": "ბმულები",
-  "@accessHowLinksTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowLinksTitle": {},
   "accessHowLinksBody": "რაც # ნიშნის შემდეგ წერია, ჩვენს საიტამდე არასდროს მიდის.",
-  "@accessHowLinksBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowFilesTitle": "ფაილები, რომლებსაც ინახავთ",
-  "@accessHowFilesTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
+  "@accessHowLinksBody": {},
+  "accessHowFilesTitle": "შენახული ფაილები",
+  "@accessHowFilesTitle": {},
   "accessHowFilesBody": "აპი მხოლოდ ჩაკეტილ ფაილებს ინახავს. შენახული ასლის დაცვა თქვენზეა.",
-  "@accessHowFilesBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessHowHoodTitle": "როგორ არის აწყობილი",
+  "@accessHowFilesBody": {},
+  "accessHowHoodTitle": "ტექნიკური დეტალები",
   "@accessHowHoodTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: 'Under the hood' = ტექნიკური დეტალები."
   },
-  "accessHowHoodBody": "შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებლად შემოწმებული): ყოველ შეტყობინებას ახალი გასაღები აქვს. ფაილები ნაწილებად იკეტება XChaCha20-Poly1305-ით. პაროლები Argon2id-ით მუშავდება. გასაღებები აპის შიდა ბირთვშია და არსად იგზავნება.",
-  "@accessHowHoodBody": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
-  },
-  "accessMoreAboutEncryption": "მეტი ტექნიკური დეტალი",
+  "accessHowHoodBody": "შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებელი აუდიტით შემოწმებული): ყოველ შეტყობინებას ახალი გასაღები აქვს. ფაილები ნაწილ-ნაწილ იკეტება XChaCha20-Poly1305-ით. პაროლები Argon2id-ით მუშავდება. გასაღებები აპის ნატიურ ბირთვშია და არსად იგზავნება.",
+  "@accessHowHoodBody": {},
+  "accessMoreAboutEncryption": "მეტი დაშიფვრის შესახებ",
   "@accessMoreAboutEncryption": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Needs the owner's native read: encrypt spelling დაშიფვრა pending."
   },
   "personMoreFor": "მეტი: {name}",
   "@personMoreFor": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2157,56 +1287,31 @@
     }
   },
   "personNotCheckedLead": "ჯერ არ შეგიმოწმებიათ.",
-  "@personNotCheckedLead": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personNotCheckedLead": {},
   "personNotCheckedAction": "შეამოწმეთ ციფრები.",
-  "@personNotCheckedAction": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personNotCheckedAction": {},
   "historyFilterAll": "ყველა",
-  "@historyFilterAll": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyFilterAll": {},
   "historyFilterLocked": "ჩაკეტილი",
-  "@historyFilterLocked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyFilterLocked": {},
   "historyFilterOpened": "გახსნილი",
-  "@historyFilterOpened": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyFilterOpened": {},
   "historyToday": "დღეს",
-  "@historyToday": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyToday": {},
   "historyYesterday": "გუშინ",
-  "@historyYesterday": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyYesterday": {},
   "historyEmpty": "აქ ჯერ არაფერია.",
-  "@historyEmpty": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyEmpty": {},
   "historyEmptyLocked": "ჯერ არაფერი ჩაგიკეტავთ.",
-  "@historyEmptyLocked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyEmptyLocked": {},
   "historyEmptyOpened": "ჯერ არაფერი გაგიხსნიათ.",
-  "@historyEmptyOpened": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyEmptyOpened": {},
   "historyStaysLocked": "ისტორია ამ ტელეფონზე ჩაკეტილი რჩება.",
-  "@historyStaysLocked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyStaysLocked": {},
   "historyLoadError": "ისტორია ვერ ჩაიტვირთა.",
-  "@historyLoadError": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@historyLoadError": {},
   "waitingCardTitle": "პასუხს ველოდებით: {name}",
   "@waitingCardTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2214,36 +1319,21 @@
     }
   },
   "waitingShareInviteAgain": "მოწვევის ხელახლა გაზიარება",
-  "@waitingShareInviteAgain": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@waitingShareInviteAgain": {},
   "waitingGotReply": "პასუხი მივიღე",
-  "@waitingGotReply": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@waitingGotReply": {},
   "personMenuCheckNumbers": "ციფრების შემოწმება",
-  "@personMenuCheckNumbers": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personMenuCheckNumbers": {},
   "personMenuNotCheckedYet": "ჯერ არ შემოწმებულა",
-  "@personMenuNotCheckedYet": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personMenuNotCheckedYet": {},
   "personMenuSendReplyAgain": "ჩემი პასუხის ხელახლა გაგზავნა",
-  "@personMenuSendReplyAgain": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personMenuSendReplyAgain": {},
   "personMenuSaveHistory": "ისტორიის ფაილად შენახვა",
-  "@personMenuSaveHistory": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personMenuSaveHistory": {},
   "personMenuSaveHistoryHint": "პაროლით ჩაკეტილი",
-  "@personMenuSaveHistoryHint": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@personMenuSaveHistoryHint": {},
   "personMenuRemove": "წაშლა: {name}",
   "@personMenuRemove": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2252,7 +1342,6 @@
   },
   "removePersonTitle": "წავშალოთ {name}?",
   "@removePersonTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2260,25 +1349,19 @@
     }
   },
   "removePersonBody": "მისი ისტორია და ფაილები ამ ტელეფონიდან წაიშლება. დაბრუნება შეუძლებელია.",
-  "@removePersonBody": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@removePersonBody": {},
   "removePersonConfirm": "წაშლა",
-  "@removePersonConfirm": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "removePersonDone": "წაიშალა: {name}",
+  "@removePersonConfirm": {},
+  "removePersonDone": "{name} წაიშალა.",
   "@removePersonDone": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "removePersonFailed": "ვერ წაიშალა: {name}. სცადეთ ხელახლა.",
+  "removePersonFailed": "{name} ვერ წაიშალა. სცადეთ ხელახლა.",
   "@removePersonFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2287,7 +1370,6 @@
   },
   "exportHistoryTitle": "ისტორიის შენახვა: {name}",
   "@exportHistoryTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2295,33 +1377,24 @@
     }
   },
   "exportHistoryLine": "ერთი ფაილი, ამ პაროლით ჩაკეტილი.",
-  "@exportHistoryLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@exportHistoryLine": {},
   "exportHistoryPassword": "ფაილის პაროლი",
-  "@exportHistoryPassword": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@exportHistoryPassword": {},
   "exportHistorySave": "ფაილის შენახვა",
-  "@exportHistorySave": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@exportHistorySave": {},
   "exportHistorySaved": "ისტორია ფაილად შეინახა.",
-  "@exportHistorySaved": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "itemForName": "ვისთვის: {name}",
+  "@exportHistorySaved": {},
+  "itemForName": "მიმღები: {name}",
   "@itemForName": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "description": "Needs the owner's native read: მიმღები (recipient) for 'For {name}', paired with გამომგზავნი for 'From {name}'.",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "itemYouLockedWhen": "ჩაკეტეთ · {day} · {time}",
+  "itemYouLockedWhen": "ჩაიკეტა · {day} · {time}",
   "@itemYouLockedWhen": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "day": {
         "type": "String"
@@ -2333,7 +1406,6 @@
   },
   "itemOpenedWhen": "გაიხსნა · {day} · {time}",
   "@itemOpenedWhen": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "day": {
         "type": "String"
@@ -2344,68 +1416,37 @@
     }
   },
   "itemShareAgain": "ხელახლა გაზიარება",
-  "@itemShareAgain": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemShareAgain": {},
   "itemCopyLocked": "ჩაკეტილის კოპირება",
-  "@itemCopyLocked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemCopyLocked": {},
   "itemOnlyLockedKept": "მხოლოდ ჩაკეტილი ასლი ინახება.",
-  "@itemOnlyLockedKept": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemOnlyLockedKept": {},
   "itemSave": "შენახვა",
-  "@itemSave": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemSave": {},
   "itemUnreadable": "ეს შეტყობინება ამ ტელეფონზე ვერ იკითხება.",
-  "@itemUnreadable": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemUnreadable": {},
   "itemDone": "მზადაა",
-  "@itemDone": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@itemDone": {},
   "inviteStepName": "სახელი",
-  "@inviteStepName": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteStepName": {},
   "inviteStepSend": "გაგზავნა",
-  "@inviteStepSend": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteStepSend": {},
   "inviteWhoFor": "ვისთვისაა?",
-  "@inviteWhoFor": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteWhoFor": {},
   "inviteTheirName": "მისი სახელი",
-  "@inviteTheirName": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteTheirName": {},
   "inviteNameHint": "მაგ. თამარი",
-  "@inviteNameHint": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteNameHint": {},
   "inviteOnlyYouSee": "ამას მხოლოდ თქვენ ხედავთ.",
-  "@inviteOnlyYouSee": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteOnlyYouSee": {},
   "inviteMake": "მოწვევის შექმნა",
-  "@inviteMake": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteMake": {},
   "inviteNameTaken": "ამ სახელით უკვე გყავთ ადამიანი.",
-  "@inviteNameTaken": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteNameTaken": {},
   "inviteMakeFailed": "მოწვევა ვერ შეიქმნა. სცადეთ ხელახლა.",
-  "@inviteMakeFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteMakeFailed": {},
   "inviteSendTo": "გაუგზავნეთ: {name}",
   "@inviteSendTo": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2414,120 +1455,68 @@
   },
   "inviteDoneForNow": "დანარჩენი მოგვიანებით",
   "@inviteDoneForNow": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+    "description": "Needs the owner's native read: 'Done for now' = დანარჩენი მოგვიანებით."
   },
   "inviteGotNameReply": "პასუხი მივიღე: {name}",
   "@inviteGotNameReply": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "inviteSharedLine": "გაზიარების მენიუში გაიგზავნა.",
-  "@inviteSharedLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "inviteConnecting": "უკავშირდება…",
-  "@inviteConnecting": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "inviteLoadFailed": "მოწვევა ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.",
-  "@inviteLoadFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "inviteSharedLine": "გადაეცა გაზიარების მენიუს.",
+  "@inviteSharedLine": {},
+  "inviteConnecting": "კავშირი მყარდება…",
+  "@inviteConnecting": {},
+  "inviteLoadFailed": "მოწვევის წაკითხვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით.",
+  "@inviteLoadFailed": {},
   "replyOpenTitle": "პასუხის გახსნა",
-  "@replyOpenTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@replyOpenTitle": {},
   "pasteItHint": "დაკოპირებული ტექსტი ან ბმული",
-  "@pasteItHint": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@pasteItHint": {},
   "chooseFile": "ფაილის არჩევა",
-  "@chooseFile": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "chooseFileHint": "მის მიერ გამოგზავნილი ფაილი",
-  "@chooseFileHint": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@chooseFile": {},
+  "chooseFileHint": "ფაილი, რომელიც გამოგიგზავნათ",
+  "@chooseFileHint": {},
   "replyNothingToPaste": "ჩასასმელი არაფერია. ჯერ პასუხი დააკოპირეთ.",
-  "@replyNothingToPaste": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@replyNothingToPaste": {},
   "inviteNothingToPaste": "ჩასასმელი არაფერია. ჯერ მოწვევა დააკოპირეთ.",
-  "@inviteNothingToPaste": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@inviteNothingToPaste": {},
   "notAReply": "ეს პასუხი არ არის. შეამოწმეთ, რა ჩასვით.",
-  "@notAReply": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "couldNotReadFile": "ფაილი ვერ წავიკითხე.",
-  "@couldNotReadFile": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "replyNotConnected": "ამ პასუხმა ვერ დაგაკავშირათ. ხელახლა სთხოვეთ.",
-  "@replyNotConnected": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@notAReply": {},
+  "couldNotReadFile": "ფაილის წაკითხვა ვერ მოხერხდა.",
+  "@couldNotReadFile": {},
+  "replyNotConnected": "ამ პასუხმა ვერ დაგაკავშირათ. სთხოვეთ ხელახლა.",
+  "@replyNotConnected": {},
   "gotStepOpen": "გახსნა",
-  "@gotStepOpen": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotStepOpen": {},
   "gotStepReply": "პასუხი",
-  "@gotStepReply": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotStepReply": {},
   "gotOpenTitle": "მოწვევის გახსნა",
-  "@gotOpenTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotOpenTitle": {},
   "gotInviteGood": "მოწვევა სწორია.",
-  "@gotInviteGood": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotInviteGood": {},
   "gotWhoSent": "ვინ გამოგიგზავნათ?",
-  "@gotWhoSent": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotWhoSent": {},
   "gotAccept": "მიღება",
-  "@gotAccept": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotAccept": {},
   "gotOwnInviteTitle": "ეს თქვენი მოწვევაა",
-  "@gotOwnInviteTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotOwnInviteTitle": {},
   "gotOwnInviteLine": "გაუგზავნეთ მეორე ადამიანს.",
-  "@gotOwnInviteLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotOwnInviteLine": {},
   "gotAlreadyTitle": "უკვე დაკავშირებული ხართ",
-  "@gotAlreadyTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotAlreadyTitle": {},
   "gotAlreadyLine": "ეს მოწვევა ამ ტელეფონზე უკვე გახსნილია.",
-  "@gotAlreadyLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "gotDamagedTitle": "ამის გახსნა ვერ ხერხდება",
-  "@gotDamagedTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "gotDamagedLine": "შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
-  "@gotDamagedLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "gotAcceptFailed": "მოწვევა ვერ მივიღე. სცადეთ ხელახლა.",
-  "@gotAcceptFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@gotAlreadyLine": {},
+  "gotDamagedTitle": "ეს ვერ იხსნება",
+  "@gotDamagedTitle": {},
+  "gotDamagedLine": "შეიძლება, ბოლომდე არ მოსულა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნოთ.",
+  "@gotDamagedLine": {},
+  "gotAcceptFailed": "მოწვევის მიღება ვერ მოხერხდა. სცადეთ ხელახლა.",
+  "@gotAcceptFailed": {},
   "replySendTo": "პასუხი გაუგზავნეთ: {name}",
   "@replySendTo": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2535,24 +1524,15 @@
     }
   },
   "replySameWay": "იმავე გზით, რითაც მოწვევა მოვიდა.",
-  "@replySameWay": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "replyCheckTip": "მერე ციფრები ერთად შეამოწმეთ.",
-  "@replyCheckTip": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@replySameWay": {},
+  "replyCheckTip": "მერე ერთად შეამოწმეთ ციფრები.",
+  "@replyCheckTip": {},
   "stepInviteOpened": "მოწვევა გაიხსნა",
-  "@stepInviteOpened": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@stepInviteOpened": {},
   "stepYouReply": "თქვენ პასუხობთ",
-  "@stepYouReply": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "connectedWith": "დაკავშირებულია: {name}",
+  "@stepYouReply": {},
+  "connectedWith": "თქვენ და {name} დაკავშირებული ხართ",
   "@connectedWith": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2561,7 +1541,6 @@
   },
   "isItReally": "ნამდვილად {name} არის?",
   "@isItReally": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2569,24 +1548,15 @@
     }
   },
   "checkTogether": "ციფრები ერთად შეამოწმეთ.",
-  "@checkTogether": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@checkTogether": {},
   "checkNow": "ახლავე შემოწმება",
-  "@checkNow": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@checkNow": {},
   "checkLater": "მოგვიანებით",
-  "@checkLater": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@checkLater": {},
   "twiceTitle": "შესაძლოა, სხვამ უპასუხა",
-  "@twiceTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "twiceLine": "მოწვევას ({name}) ორი პასუხი მოუვიდა.",
+  "@twiceTitle": {},
+  "twiceLine": "მოწვევაზე ({name}) ორი პასუხი მოვიდა.",
   "@twiceLine": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2595,7 +1565,6 @@
   },
   "twiceNoteLead": "ჯერ არაფერი ჩაკეტოთ ამ ადამიანისთვის.",
   "@twiceNoteLead": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2603,63 +1572,45 @@
     }
   },
   "twiceNoteRest": "ჯერ ციფრები შეამოწმეთ.",
-  "@twiceNoteRest": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@twiceNoteRest": {},
   "twiceRemove": "წაშლა და ხელახლა მოწვევა",
   "@twiceRemove": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "safetyCompare": "შეადარეთ ზარით, ან ტელეფონები გვერდიგვერდ დადეთ.",
-  "@safetyCompare": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "safetyCompare": "შეადარეთ ზარით ან ტელეფონები გვერდიგვერდ დადეთ.",
+  "@safetyCompare": {},
   "safetySame": "ციფრები ერთნაირია",
-  "@safetySame": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@safetySame": {},
   "safetyDifferent": "ციფრები განსხვავდება",
-  "@safetyDifferent": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "@safetyDifferent": {},
   "safetyMarkNotChecked": "შეუმოწმებლად მონიშვნა",
-  "@safetyMarkNotChecked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "safetyCheckedBefore": "უკვე შეამოწმეთ: {name}.",
+  "@safetyMarkNotChecked": {},
+  "safetyCheckedBefore": "{name} უკვე შემოწმებული გყავთ.",
   "@safetyCheckedBefore": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "safetyNowNotChecked": "ახლა შეუმოწმებელია: {name}.",
+  "safetyNowNotChecked": "{name} ახლა შეუმოწმებელია.",
   "@safetyNowNotChecked": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "safetyLoadFailed": "ციფრები ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.",
-  "@safetyLoadFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
+  "safetyLoadFailed": "ციფრების წაკითხვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით.",
+  "@safetyLoadFailed": {},
   "safetySaveFailed": "ვერ შეინახა. სცადეთ ხელახლა.",
-  "@safetySaveFailed": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "mismatchLead": "ჯერ არაფერი გაუგზავნოთ.",
+  "@safetySaveFailed": {},
+  "mismatchLead": "არაფერი გაუგზავნოთ ამ ადამიანს.",
   "@mismatchLead": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
@@ -2667,20 +1618,15 @@
     }
   },
   "mismatchRest": "შესაძლოა, შუაში ვიღაც დგას. წაშალეთ და თავიდან დაამატეთ, სჯობს პირისპირ.",
-  "@mismatchRest": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "checkedTitle": "ნამდვილად ის არის: {name}",
+  "@mismatchRest": {},
+  "checkedTitle": "ეს ნამდვილად {name} არის",
   "@checkedTitle": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "incomingFileUnreadable": "ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.",
-  "@incomingFileUnreadable": {
-    "description": "Georgian draft, needs a native read (opening .fuzz files from other apps, 2026-10-26)"
-  }
+  "incomingFileUnreadable": "ფაილის წაკითხვა ვერ მოხერხდა. ხელახლა გახსენით იქიდან, სადაც არის.",
+  "@incomingFileUnreadable": {}
 }

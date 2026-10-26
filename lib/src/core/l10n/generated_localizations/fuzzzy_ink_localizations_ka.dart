@@ -24,13 +24,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get create => 'შექმნა';
 
   @override
-  String get failedToCreateChat => 'ჩატის შექმნა ვერ მოხერხდა.';
+  String get failedToCreateChat => 'ჩატი ვერ შეიქმნა.';
 
   @override
   String get accept => 'მიღება';
 
   @override
-  String get failedToReadAcceptance => 'მიღების ტექსტის წაკითხვა ვერ მოხერხდა.';
+  String get failedToReadAcceptance => 'პასუხის წაკითხვა ვერ მოხერხდა.';
 
   @override
   String get deleteChat => 'ჩატის წაშლა';
@@ -42,7 +42,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get delete => 'წაშლა';
 
   @override
-  String get copiedToTheClipboard => 'კოპირებულია ბუფერში.';
+  String get copiedToTheClipboard => 'დაკოპირდა.';
 
   @override
   String get copy => 'კოპირება';
@@ -52,14 +52,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String areYouSureYouWantToDeleteChatWith(Object personName) {
-    return 'დარწმუნებული ხართ, რომ გსურთ ჩატის წაშლა: $personName?';
+    return 'წავშალოთ ჩატი: $personName?';
   }
 
   @override
-  String get failedToGetAcceptance => 'მიღების ტექსტის აღება ვერ მოხერხდა';
+  String get failedToGetAcceptance => 'პასუხის მიღება ვერ მოხერხდა.';
 
   @override
-  String get errorPickingFiles => 'ფაილების არჩევისას მოხდა შეცდომა.';
+  String get errorPickingFiles => 'ფაილის არჩევა ვერ მოხერხდა.';
 
   @override
   String get loading => 'იტვირთება';
@@ -68,7 +68,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get fuzz => 'Fuzz';
 
   @override
-  String get failedToProcessFiles => 'ფაილების დამუშავება ვერ მოხერხდა';
+  String get failedToProcessFiles => 'ფაილები ვერ დამუშავდა.';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
@@ -81,13 +81,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get open => 'გახსნა';
 
   @override
-  String get dropFilesHere => 'გადმოიტანეთ ფაილები აქ';
+  String get dropFilesHere => 'ფაილები აქ გადმოიტანეთ';
 
   @override
-  String get basicEncryption => 'მარტივი დაშიფრვა';
+  String get basicEncryption => 'მარტივი დაშიფვრა';
 
   @override
-  String get customKey => 'სპეციალური გასაღები';
+  String get customKey => 'საკუთარი გასაღები';
 
   @override
   String get enterYourSecretKey => 'შეიყვანეთ საიდუმლო გასაღები';
@@ -96,40 +96,39 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get textToEncryptDecrypt => 'ტექსტი დასაშიფრად ან გასაშიფრად';
 
   @override
-  String get encryptText => 'ტექსტის დაშიფრვა';
+  String get encryptText => 'ტექსტის დაშიფვრა';
 
   @override
-  String get decryptText => 'ტექსტის გაშიფრვა';
+  String get decryptText => 'ტექსტის გაშიფვრა';
 
   @override
   String get result => 'შედეგი';
 
   @override
-  String get processSelectedFiles => 'მონიშნული ფაილების დამუშავება';
+  String get processSelectedFiles => 'არჩეული ფაილების დამუშავება';
 
   @override
-  String get pleaseEnterAKey => 'გთხოვთ შეიყვანოთ გასაღები';
+  String get pleaseEnterAKey => 'შეიყვანეთ გასაღები.';
 
   @override
-  String get pleaseSelectFilesToProcess => 'გთხოვთ მონიშნოთ ფაილები';
+  String get pleaseSelectFilesToProcess => 'აირჩიეთ ფაილები.';
 
   @override
-  String get anUnknownErrorOccurred => 'დაფიქსირდა უცნობი შეცდომა';
+  String get anUnknownErrorOccurred => 'მოხდა უცნობი შეცდომა.';
 
   @override
-  String get textAndKeyCannotBeEmpty =>
-      'ტექსტი და გასაღები ცარიელი არ უნდა იყოს';
+  String get textAndKeyCannotBeEmpty => 'შეიყვანეთ ტექსტიც და გასაღებიც.';
 
   @override
-  String get encryptionFailed => 'დაშიფრვა ვერ მოხერხდა';
+  String get encryptionFailed => 'დაშიფვრა ვერ მოხერხდა.';
 
   @override
   String get encryptedTextAndKeyCannotBeEmpty =>
-      'დაშიფრული ტექსტი და გასაღები ცარიელი არ უნდა იყოს';
+      'შეიყვანეთ დაშიფრული ტექსტიც და გასაღებიც.';
 
   @override
   String get decryptionFailedCheckYourKeyOrEncryptedText =>
-      'გაშიფრვა ვერ მოხერხდა შეამოწმეთ გასაღები ან დაშიფრული ტექსტი';
+      'გაშიფვრა ვერ მოხერხდა. შეამოწმეთ გასაღები ან დაშიფრული ტექსტი.';
 
   @override
   String get next => 'შემდეგი';
@@ -141,19 +140,17 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get invalidLink => 'ეს ბმული არასწორია ან დაზიანებულია.';
 
   @override
-  String get alreadyConnected => 'უკვე დაკავშირებულია!';
+  String get alreadyConnected => 'უკვე დაკავშირებული ხართ!';
 
   @override
-  String get cantAcceptOwnInvitation =>
-      'თქვენი საკუთარი მოწვევის მიღება შეუძლებელია.';
+  String get cantAcceptOwnInvitation => 'საკუთარ მოწვევას ვერ მიიღებთ.';
 
   @override
   String get chatNotFoundForAcceptance =>
-      'ამ მიღების ბმულისთვის ჩატი ვერ მოიძებნა.';
+      'ამ პასუხის ბმულისთვის ჩატი ვერ მოიძებნა.';
 
   @override
-  String get failedToProcessAcceptance =>
-      'მიღების ბმულის დამუშავება ვერ მოხერხდა.';
+  String get failedToProcessAcceptance => 'პასუხის ბმული ვერ დამუშავდა.';
 
   @override
   String get shareFile => 'ფაილის გაზიარება';
@@ -186,17 +183,17 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultNoteLabel => 'ჩანაწერი';
 
   @override
-  String get vaultPassword => 'ვოლტის პაროლი';
+  String get vaultPassword => 'სეიფის პაროლი';
 
   @override
   String get vaultIncorrectPassword => 'არასწორი პაროლი';
 
   @override
-  String get vaultUnlock => 'განბლოკვა';
+  String get vaultUnlock => 'გახსნა';
 
   @override
   String get vaultForgotPassword =>
-      'დაგავიწყდათ პაროლი? თქვენი მონაცემები დაშიფრულია და აღდგენა შეუძლებელია.';
+      'დაგავიწყდათ პაროლი? მონაცემები დაშიფრულია და მათი აღდგენა შეუძლებელია.';
 
   @override
   String get menu => 'მენიუ';
@@ -205,11 +202,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get unknownError => 'უცნობი შეცდომა';
 
   @override
-  String get keyStrengthWeak => 'სუსტი (ძალიან მოკლე)';
+  String get keyStrengthWeak => 'სუსტი (ძალიან მოკლეა)';
 
   @override
-  String get keyStrengthModerate =>
-      'საშუალო (გაითვალისწინეთ ციფრების ან ასოების დამატება)';
+  String get keyStrengthModerate => 'საშუალო (დაამატეთ ციფრები ან ასოები)';
 
   @override
   String get keyStrengthStrong => 'ძლიერი';
@@ -238,14 +234,15 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatAuthResecuringKeys => 'გასაღებების ხელახლა დაცვა…';
 
   @override
-  String get benchmarkFileEncryption => 'ფაილების ჩაკეტვის ბენჩმარკი (dev)';
+  String get benchmarkFileEncryption =>
+      'ფაილების ჩაკეტვის სიჩქარის ტესტი (dev)';
 
   @override
   String get benchmarkFileEncryptionDescription =>
-      'კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს MB/s-ს';
+      'კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს სიჩქარეს MB/s-ში';
 
   @override
-  String get benchmarkResult => 'ბენჩმარკის შედეგი';
+  String get benchmarkResult => 'ტესტის შედეგი';
 
   @override
   String benchmarkResultSummary(Object encrypt, Object decrypt, Object sizeMiB,
@@ -258,18 +255,18 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get chatAuthPasswordTooWeak =>
-      'პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.';
+      'პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი, ასოებით, ციფრებით და სიმბოლოებით.';
 
   @override
   String get biometricNotStrongEnough =>
-      'ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.';
+      'ამ მოწყობილობის ბიომეტრია თქვენი პაროლის დასაცავად საკმარისად საიმედო არ არის. განბლოკეთ პაროლით.';
 
   @override
-  String get biometricNotTurnedOn => 'ბიომეტრიული განბლოკვა არ ჩაირთო.';
+  String get biometricNotTurnedOn => 'სწრაფი განბლოკვა არ ჩაირთო.';
 
   @override
   String get vaultBiometricInvalidated =>
-      'თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.';
+      'ბიომეტრიული მონაცემები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.';
 
   @override
   String get invitationAlreadyUsed => 'ეს მოწვევა უკვე გამოყენებულია.';
@@ -278,48 +275,48 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get invalidInvitation => 'ეს მოწვევა არასწორია ან დაზიანებულია.';
 
   @override
-  String get invalidAcceptance => 'ეს მიღება არასწორია ან დაზიანებულია.';
+  String get invalidAcceptance => 'ეს პასუხი არასწორია ან დაზიანებულია.';
 
   @override
   String get wrongChatBlob => 'ეს კოდი სხვა ჩატს ეკუთვნის.';
 
   @override
   String get alreadyUnfuzzed =>
-      'ეს შეტყობინება ამ მოწყობილობაზე უკვე გაშიფრულია, ან მისი ერთჯერადი გასაღები აღარ ინახება.';
+      'ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ ინახება.';
 
   @override
-  String get corruptBlob => 'ეს არ არის სწორი დაშიფრული შეტყობინება.';
+  String get corruptBlob => 'ეს სწორი ჩაკეტილი შეტყობინება არ არის.';
 
   @override
-  String get safetyNumberTitle => 'უსაფრთხოების ნომერი';
+  String get safetyNumberTitle => 'უსაფრთხოების ციფრები';
 
   @override
   String safetyNumberVersion(int version) {
-    return 'ვერსია $version. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.';
+    return 'ვერსია $version. თუ მეორე ადამიანს სხვა ვერსია უჩანს ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.';
   }
 
   @override
   String get wrongPasswordFile =>
-      'არასწორი პაროლი — ამ პაროლით ამ ფაილის გაშიფვრა ვერ მოხერხდება.';
+      'არასწორი პაროლი — ეს ფაილი მისით არ იხსნება.';
 
   @override
   String get fileStillArriving =>
-      'ეს ფაილი ჯერ კიდევ იწერება — დაელოდეთ სრულად ჩამოტვირთვას და სცადეთ ხელახლა.';
+      'ეს ფაილი ჯერ კიდევ იწერება. მოიცადეთ, სანამ ბოლომდე მოვა, და სცადეთ ხელახლა.';
 
   @override
   String get fileCannotBeOpenedAskToResend =>
-      'ამ ფაილის გახსნა ვერ მოხერხდა; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.';
+      'ეს ფაილი ვერ გაიხსნა. სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String get basicsWrongPassword =>
-      'არასწორი გასაღები — ამ გასაღებით ამ ტექსტის გაშიფვრა ვერ მოხერხდება.';
+      'არასწორი გასაღები — ეს ტექსტი მისით არ იხსნება.';
 
   @override
-  String get forwardSecrecyTitle => 'იშიფრება ერთხელ, ამ მოწყობილობაზე';
+  String get forwardSecrecyTitle => 'იხსნება ერთხელ, ამ მოწყობილობაზე';
 
   @override
   String get forwardSecrecyNotice =>
-      'თითოეული დაშიფრული შეტყობინების გაშიფვრა მხოლოდ ერთხელ და მხოლოდ ამ მოწყობილობაზე შეიძლება. თქვენი ისტორია აპლიკაციაში რჩება — სარეზერვო ასლისთვის არქივის ექსპორტი გააკეთეთ. ახალ მოწყობილობას ძველი შეტყობინებების ხელახლა წაკითხვა არ შეუძლია.';
+      'ყოველი ჩაკეტილი შეტყობინება ერთხელ იხსნება და მხოლოდ ამ მოწყობილობაზე. ისტორია აპში რჩება — სარეზერვო ასლისთვის გააკეთეთ არქივის ექსპორტი. ახალი მოწყობილობა ძველ შეტყობინებებს ვეღარ წაიკითხავს.';
 
   @override
   String get aboutEncryptionTitle => 'დაშიფვრის შესახებ';
@@ -329,55 +326,55 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyHistory =>
-      'ყველა ტექსტი, რომელსაც ჩაკეტავთ ან გახსნით, აპლიკაციაში ინახება — თითოეული ადამიანისთვის ცალკე გასაღებით დალუქული, რომელიც მხოლოდ ამ მოწყობილობას აქვს. ყველა გასაღებს თქვენი მთავარი პაროლი იცავს: მის ან აღდგენის გასაღების გარეშე აქ შენახულს ვერავინ გახსნის. „ჩემი სეიფი“ მთავარი პაროლით ან საკუთარი პაროლით იხსნება; როცა საკუთარ პაროლს მისცემთ, სეიფი ახალ გასაღებსაც და ახალ აღდგენის გასაღებსაც იღებს. ფაილებიც ასევე ინახება: აპლიკაცია მხოლოდ დალუქულ ფაილს ინახავს და მას მხოლოდ იმ წამისთვის ხსნის, როცა გახსნით, შეინახავთ ან გააზიარებთ. შენახული ან გაზიარებული ფაილი თქვენია — ის აპლიკაციას ჩვეულებრივი ფაილის სახით ტოვებს, ამიტომ დაიცავით, როგორც ნებისმიერი სხვა ფაილი. აპლიკაცია თავისით იკეტება თქვენ მიერ არჩეული უმოქმედობის დროის შემდეგ და მაშინაც, როცა ცოტა ხანს ფონზეა. თუ თითის ანაბეჭდით ან სახით განბლოკვას ჩართავთ, თქვენი პაროლი ამ მოწყობილობაზე ინახება, რათა თითმა ან სახემ გახსნას.';
+      'ყველა ტექსტი, რომელსაც ჩაკეტავთ ან გახსნით, აპში ინახება — ყოველი ადამიანისთვის ცალკე, ისეთი გასაღებით ჩაკეტილი, რომელიც მხოლოდ ამ მოწყობილობას აქვს. ყველა გასაღებს მთავარი პაროლი იცავს: მის ან აღდგენის გასაღების გარეშე აქ შენახულს ვერავინ გახსნის. ჩემი სეიფი მთავარი პაროლით ან საკუთარი პაროლით იხსნება; საკუთარ პაროლთან ერთად სეიფი ახალ გასაღებს და ახალ აღდგენის გასაღებს იღებს. ფაილებიც ასე ინახება: აპი მხოლოდ ჩაკეტილ ფაილს ინახავს და მხოლოდ იმ წამს ხსნის, როცა მას გახსნით, შეინახავთ ან გააზიარებთ. შენახული ან გაზიარებული ფაილი თქვენია — ის აპს ჩვეულებრივ ფაილად ტოვებს, ამიტომ დაიცავით, როგორც ნებისმიერი სხვა ფაილი. აპი თავისით იკეტება თქვენ მიერ არჩეული უმოქმედობის დროის შემდეგ და მაშინაც, როცა ცოტა ხანს ფონზეა. თუ თითის ანაბეჭდით ან სახით განბლოკვას ჩართავთ, პაროლი ამ მოწყობილობაზე ინახება, რომ თითმა ან სახემ შეძლოს მისი გახსნა.';
 
   @override
-  String get aboutEncryptionWindowTitle => 'გაშიფრეთ თანმიმდევრობით';
+  String get aboutEncryptionWindowTitle => 'გახსენით თანმიმდევრობით';
 
   @override
   String get aboutEncryptionBodyWindow =>
-      'აპლიკაცია გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ჩატში თქვენ მიერ ბოლოს წაკითხულს 63-ზე მეტით ჩამორჩება, ვეღარ გაიშიფრება — აპლიკაცია იტყვის, რომ ის ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. თქვენ მიერ გაგზავნილ დაშიფრულ შეტყობინებებს თავადაც ვერ გაშიფრავთ; სწორედ ამიტომ ინახავს აპლიკაცია გაგზავნილ ტექსტს.';
+      'აპი გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ჩატში ბოლოს წაკითხულს 63-ზე მეტით ჩამორჩება, ვეღარ გაიხსნება — აპი გეტყვით, რომ ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. საკუთარ გაგზავნილ შეტყობინებებს ვერც თქვენ გახსნით; სწორედ ამიტომ ინახავს აპი იმას, რაც გაგზავნეთ.';
 
   @override
   String get aboutEncryptionLinksTitle => 'შეტყობინების ბმულები';
 
   @override
   String get aboutEncryptionBodyLinks =>
-      'ბმული მხოლოდ ჩაკეტილ შეტყობინებას შეიცავს, # ნიშნის შემდეგ — იმ ნაწილში, რომელსაც ბრაუზერი არცერთ სერვერს არ უგზავნის. ბმული თავისით არაფერს ხსნის: აპლიკაცია გაჩვენებთ, ვისგანაა, და გახსნის მხოლოდ მაშინ, როცა „გახსნას“ დააჭერთ. პასუხის ბმული მხოლოდ „დაკავშირებაზე“ დაჭერის შემდეგ დაგაკავშირებთ.';
+      'ბმული მხოლოდ ჩაკეტილ შეტყობინებას შეიცავს, # ნიშნის შემდეგ — იმ ნაწილში, რომელსაც ბრაუზერი არცერთ სერვერს არ უგზავნის. ბმული თავისით არაფერს ხსნის: აპი გაჩვენებთ, ვისგანაა, და გახსნის მხოლოდ მაშინ, როცა „გახსნას“ დააჭერთ. პასუხის ბმული მხოლოდ მაშინ დაგაკავშირებთ, როცა „დაკავშირებას“ დააჭერთ.';
 
   @override
   String get aboutEncryptionErrorsTitle => 'რას ნიშნავს შეცდომები';
 
   @override
   String get aboutEncryptionBodyErrors =>
-      '„უკვე გაშიფრულია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიშიფრა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოიტოვა, ან ჩატმა მას შემდეგ რამდენიმე წრე გაიარა — ამიტომ აქ ვეღარასოდეს წაიკითხება. „ეს არ არის სწორი დაშიფრული შეტყობინება“: ტექსტი დაზიანებულია, არასრულია ან სხვა ჩატს ეკუთვნის — აპლიკაცია ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გაშიფრულ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფრვა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპლიკაცია ამასაც ვერ არჩევს. ფაილების შემთხვევაში, თუ მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე გამოყენებულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.';
+      '„უკვე გახსნილია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოტოვდა, ან ჩატი მას შემდეგ რამდენიმე წრით წავიდა წინ — ამიტომ აქ ვეღარასოდეს წაიკითხება. „სწორი ჩაკეტილი შეტყობინება არ არის“: ტექსტი დაზიანებულია, არასრულია ან სხვა ჩატს ეკუთვნის — აპი ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გახსნილ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფვრა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპი ამასაც ვერ არჩევს. თუ ფაილის მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე დახარჯულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String get aboutEncryptionBodySafetyNumber =>
-      'ყველა ჩატს აქვს 60-ნიშნა უსაფრთხოების ნომერი, რომელიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ის თქვენს პარტნიორს ხმით ან პირადად: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ იდგა. „დადასტურებული“ თქვენი საკუთარი ნიშანია, რომ ეს გააკეთეთ — აპლიკაცია ამას თქვენ მაგივრად ვერ შეამოწმებს.';
+      'ყოველ ჩატს 60 უსაფრთხოების ციფრი აქვს, რომლებიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ისინი მეორე ადამიანთან ზარით ან პირისპირ: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა, რომ ეს გააკეთეთ — აპი ამას თქვენ მაგივრად ვერ შეამოწმებს.';
 
   @override
-  String get aboutEncryptionUnderTheHoodTitle => 'როგორ მუშაობს';
+  String get aboutEncryptionUnderTheHoodTitle => 'ტექნიკური დეტალები';
 
   @override
   String get aboutEncryptionBodyUnderTheHood =>
-      'შეტყობინებები Olm-ის ორმაგ რაჩეტს (double ratchet) იყენებს (vodozemac, დამოუკიდებლად აუდიტირებული) — ყოველ შეტყობინებას ახალი გასაღები აქვს, სწორედ ამიტომ არის დაშიფრული ტექსტი ერთჯერადი. ფაილები XChaCha20-Poly1305-ით ნაწილ-ნაწილ ილუქება; დაზიანებული ფაილი უარყოფილი იქნება და დისკზე არაფერი რჩება. პაროლები Argon2id-ით მუშავდება. თქვენი საიდუმლო გასაღებები აპლიკაციის ნატიურ ბირთვშია და არსად არ იგზავნება. ვებ-ვერსია არ არსებობს: ბირთვი ნატიური კოდია.';
+      'შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებელი აუდიტით შემოწმებული) — ყოველ შეტყობინებას ახალი გასაღები აქვს, ამიტომაა ჩაკეტილი ტექსტი ერთჯერადი. ფაილები ნაწილ-ნაწილ იკეტება XChaCha20-Poly1305-ით; დაზიანებულ ფაილს აპი უარყოფს და დისკზე არაფერი რჩება. პაროლები Argon2id-ით მუშავდება. საიდუმლო გასაღებები აპის ნატიურ ბირთვშია და არსად იგზავნება. ვებ-ვერსია არ არსებობს: ბირთვი ნატიური კოდია.';
 
   @override
   String get alreadyReceived =>
-      'ეს ფაილი ამ მოწყობილობაზე უკვე მიღებულია — მეორედ ვეღარ გაიშიფრება.';
+      'ეს ფაილი ამ მოწყობილობაზე უკვე მიღებულია — მეორედ ვეღარ გაიხსნება.';
 
   @override
   String get fileTooOld =>
-      'ეს ფაილი გასაშიფრად ძალიან ძველია — მასზე ბევრად ახალი შეტყობინებები უკვე გაშიფრულია.';
+      'ეს ფაილი გასახსნელად ძალიან ძველია — მის შემდეგ ბევრი ახალი შეტყობინება უკვე გაიხსნა.';
 
   @override
   String get fileCorrupt =>
-      'ეს არ არის სწორი დაშიფრული ფაილი — ის დაზიანებულია, არასრულია ან სხვა ჩატიდანაა.';
+      'ეს სწორი ჩაკეტილი ფაილი არ არის — დაზიანებულია, არასრულია ან სხვა ჩატიდანაა.';
 
   @override
   String get fileCancelled =>
-      'მიღება გაუქმდა — ამ ფაილის გაშიფვრა ამ მოწყობილობაზე აღარ შეიძლება; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.';
+      'მიღება გაუქმდა — ეს ფაილი ამ მოწყობილობაზე ვეღარ გაიხსნება. სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String get exportChatArchiveFailed => 'ჩატის არქივის ექსპორტი ვერ მოხერხდა.';
@@ -388,13 +385,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get exportChatArchiveStoreLocked =>
-      'ჯერ განბლოკეთ Fuzzzy Ink — დაბლოკილი ისტორიის წაკითხვა შეუძლებელია.';
+      'ჯერ განბლოკეთ Fuzzzy Ink — სანამ ჩაკეტილია, ისტორია ვერ წაიკითხება.';
 
   @override
   String get export => 'ექსპორტი';
 
   @override
-  String get couldNotOpenFile => 'ფაილის გახსნა ვერ მოხერხდა.';
+  String get couldNotOpenFile => 'ფაილი ვერ გაიხსნა.';
 
   @override
   String get privacyPolicy => 'კონფიდენციალურობის პოლიტიკა';
@@ -409,29 +406,30 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get dataDeletion => 'მონაცემების წაშლა';
 
   @override
-  String get couldNotOpenLink => 'ბმულის გახსნა ვერ მოხერხდა.';
+  String get couldNotOpenLink => 'ბმული ვერ გაიხსნა.';
 
   @override
   String get biometricUnlockChats => 'ჩატების განსაბლოკად დაადასტურეთ ვინაობა';
 
   @override
-  String get biometricUnlockVault => 'საცავის განსაბლოკად დაადასტურეთ ვინაობა';
+  String get biometricUnlockVault =>
+      'ჩემი სეიფის გასახსნელად დაადასტურეთ ვინაობა';
 
   @override
-  String get biometricUnlockVaultTitle => 'Fuzzy Vault-ის განბლოკვა';
+  String get biometricUnlockVaultTitle => 'ჩემი სეიფის გახსნა';
 
   @override
   String get biometricSavePassword => 'პაროლის შესანახად დაადასტურეთ ვინაობა';
 
   @override
-  String get vaultMoveUnfinishedTitle => 'საცავის გადატანა ვერ მოხერხდა';
+  String get vaultMoveUnfinishedTitle => 'სეიფის გადატანა ვერ მოხერხდა';
 
   @override
   String get vaultMoveUnfinishedMessage =>
-      'საცავი აპლიკაციის დაცულ საქაღალდეში ვერ გადავიტანეთ. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ აპლიკაცია და თავიდან გახსენით.';
+      'სეიფი აპის დაცულ ადგილას ვერ გადავიდა. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ და თავიდან გახსენით აპი.';
 
   @override
-  String get copyRefused => 'კოპირება მხოლოდ დაშიფრული ტექსტის შეიძლება.';
+  String get copyRefused => 'მხოლოდ ჩაკეტილი ტექსტი კოპირდება.';
 
   @override
   String get vaultCopyPassword => 'პაროლის კოპირება';
@@ -443,31 +441,31 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get fileSaved => 'შენახულია.';
 
   @override
-  String get couldNotSaveFile => 'ფაილის შენახვა ვერ მოხერხდა.';
+  String get couldNotSaveFile => 'ფაილი ვერ შეინახა.';
 
   @override
-  String get unfuzzingFile => 'იშიფრება…';
+  String get unfuzzingFile => 'იხსნება…';
 
   @override
   String get fileNoPreview =>
-      'ამ ფაილს აპლიკაცია ვერ აჩვენებს. შეინახეთ და სხვა აპლიკაციით გახსენით.';
+      'ამ ფაილს აპი ვერ აჩვენებს. შეინახეთ და სხვა აპით გახსენით.';
 
   @override
-  String get basicsFuzzedFilesTitle => 'აპლიკაციაში შენახული დაფაზული ფაილები';
+  String get basicsFuzzedFilesTitle => 'აპში შენახული ჩაკეტილი ფაილები';
 
   @override
   String get masterPassword => 'მთავარი პაროლი';
 
   @override
   String get masterPasswordPreviousData =>
-      'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანებს, ისტორიასა და ჩემს სეიფს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. შენახული ფაილები ადგილზე რჩება.';
+      'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანები, ისტორია და ჩემი სეიფი მისით ვერ გაიხსნება, ამიტომ წაიშლება. შენახული ფაილები ადგილზე რჩება.';
 
   @override
   String get accessSetupInterrupted =>
-      'წინა ჯერზე დაყენება ბოლომდე არ მივიდა. მაშინ ნანახი აღდგენის გასაღები არ იმუშავებს. ახალს მიიღებთ.';
+      'წინა ჯერზე დაყენება არ დასრულდა. მაშინ ნანახი აღდგენის გასაღები აღარ იმუშავებს. ახალს მიიღებთ.';
 
   @override
-  String get masterPasswordFailed => 'გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.';
+  String get masterPasswordFailed => 'გასაღებები ვერ შეიქმნა. სცადეთ ხელახლა.';
 
   @override
   String get recoveryKeyTitle => 'აღდგენის გასაღები';
@@ -477,7 +475,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String recoveryKeyFileText(String key) {
-    return 'Fuzzzy Ink-ის აღდგენის გასაღები\n\n$key\n\nთუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან მოშორებით. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n';
+    return 'Fuzzzy Ink-ის აღდგენის გასაღები\n\n$key\n\nთუ მთავარი პაროლი დაგავიწყდათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან შორს. პაროლის ან ამ გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n';
   }
 
   @override
@@ -485,7 +483,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get recoveryKeyTypo =>
-      'აღდგენის გასაღებში შეცდომაა. გადაამოწმეთ ოთხ-ოთხი სიმბოლოს ჯგუფები.';
+      'აღდგენის გასაღებში შეცდომაა. შეამოწმეთ ყოველი ოთხნიშნა ჯგუფი.';
 
   @override
   String get recoveryKeyWrong => 'ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.';
@@ -505,13 +503,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get storageUnavailable =>
-      'Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ დაბლოკილი რჩება. სცადეთ თავიდან; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.';
+      'Fuzzzy Ink ვერ კითხულობს მოწყობილობის გასაღებების დაცულ მეხსიერებას, ამიტომ ჩაკეტილი რჩება. სცადეთ ხელახლა; თუ ისევ მოხდა, გადატვირთეთ მოწყობილობა.';
 
   @override
-  String get tryAgain => 'თავიდან ცდა';
+  String get tryAgain => 'ხელახლა ცდა';
 
   @override
-  String get appLockNow => 'Fuzzzy Ink-ის დაბლოკვა';
+  String get appLockNow => 'Fuzzzy Ink-ის ჩაკეტვა';
 
   @override
   String autoLockMinutes(int count) {
@@ -522,24 +520,24 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get autoLockSaveFailed => 'პარამეტრი ვერ შეინახა.';
 
   @override
-  String get vaultUsesOwnPassword => 'საცავს საკუთარი პაროლი აქვს.';
+  String get vaultUsesOwnPassword => 'სეიფს საკუთარი პაროლი აქვს.';
 
   @override
-  String get vaultUseOwnPassword => 'საცავისთვის სხვა პაროლი';
+  String get vaultUseOwnPassword => 'სეიფისთვის ცალკე პაროლი';
 
   @override
-  String get vaultUseMasterPassword => 'საცავის გახსნა მთავარი პაროლით';
+  String get vaultUseMasterPassword => 'სეიფის გახსნა მთავარი პაროლით';
 
   @override
   String get vaultOwnPasswordRecoveryNote =>
-      'აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.';
+      'აღდგენის გასაღები ჩემს სეიფს მაინც გახსნის.';
 
   @override
   String get vaultRecoveryUseMasterPassword =>
-      '„ჩემი სეიფი“ მთავარი პაროლით გაიხსნას';
+      'ჩემი სეიფი მთავარი პაროლით გაიხსნას';
 
   @override
-  String get vaultRecoverySubmit => '„ჩემი სეიფის“ გახსნა';
+  String get vaultRecoverySubmit => 'ჩემი სეიფის გახსნა';
 
   @override
   String get tabHome => 'მთავარი';
@@ -581,20 +579,20 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get homeLoadError =>
-      'ადამიანების ჩატვირთვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით აპი.';
+      'ადამიანები ვერ ჩაიტვირთა. დახურეთ და ხელახლა გახსენით აპი.';
 
   @override
-  String get stepYouSendInvite => 'აგზავნით მოწვევას';
+  String get stepYouSendInvite => 'თქვენ აგზავნით მოწვევას';
 
   @override
-  String get stepTheyReply => 'პასუხი მოდის';
+  String get stepTheyReply => 'ის პასუხობს';
 
   @override
   String get stepInviteSent => 'მოწვევა გაიგზავნა';
 
   @override
   String stepNameReplies(String name) {
-    return 'პასუხი: $name';
+    return '$name პასუხობს';
   }
 
   @override
@@ -633,25 +631,25 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get addTheyStarted => 'მან დაიწყო';
 
   @override
-  String get chipWaitingForReply => 'ველოდებით პასუხს';
+  String get chipWaitingForReply => 'პასუხს ველოდებით';
 
   @override
   String get chipChecked => 'შემოწმებულია';
 
   @override
-  String get chipNotChecked => 'არ არის შემოწმებული';
+  String get chipNotChecked => 'შეუმოწმებელი';
 
   @override
   String get personRowWaitingLine => 'მერე ერთმანეთისთვის ჩაკეტვას შეძლებთ';
 
   @override
   String waitNoteReply(String name) {
-    return 'პასუხის მიღების შემდეგ ერთმანეთისთვის შეტყობინებების ჩაკეტვას შეძლებთ.';
+    return 'როცა $name გიპასუხებთ, ერთმანეთისთვის ჩაკეტვას შეძლებთ.';
   }
 
   @override
   String get waitNoteAnyWay =>
-      'მოწვევა ნებისმიერი გზით გააგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.';
+      'მოწვევა ნებისმიერი გზით გაგზავნეთ, თუნდაც საჯაროდ. ის მაინც უსაფრთხოა.';
 
   @override
   String get linkWhy => 'რატომ?';
@@ -669,7 +667,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get gotIt => 'გასაგებია';
 
   @override
-  String get infoNoResetTitle => 'რატომ არ აღდგება?';
+  String get infoNoResetTitle => 'რატომ არ აღდგება პაროლი?';
 
   @override
   String get infoNoResetLine1 => 'თქვენი პაროლი ამ ტელეფონს არ ტოვებს.';
@@ -682,17 +680,18 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get infoNoResetLine3 => 'ერთადერთი სათადარიგო გზა აღდგენის გასაღებია.';
 
   @override
-  String get infoRecoveryKeyTitle => 'აღდგენის გასაღები';
+  String get infoRecoveryKeyTitle => 'თქვენი აღდგენის გასაღები';
 
   @override
-  String get infoRecoveryKeyLine1 => 'სათადარიგო, თუ პაროლი დაგავიწყდათ.';
+  String get infoRecoveryKeyLine1 =>
+      'სათადარიგო გასაღები, თუ პაროლი დაგავიწყდათ.';
 
   @override
-  String get infoRecoveryKeyLine2 => 'ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.';
+  String get infoRecoveryKeyLine2 => 'ის ხსნის Fuzzzy Ink-ს და ჩემს სეიფსაც.';
 
   @override
   String get infoRecoveryKeyLine3 =>
-      'ამობეჭდეთ ან ამ ტელეფონის გარეთ შეინახეთ. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.';
+      'ამობეჭდეთ ან შეინახეთ სადმე, ამ ტელეფონის გარდა. ვისაც ის და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის.';
 
   @override
   String get infoOpensOnceTitle => 'რატომ მხოლოდ ერთხელ?';
@@ -711,7 +710,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get infoSafeAnywhereTitle => 'ყველგან უსაფრთხოა';
 
   @override
-  String get infoSafeAnywhereLine1 => 'მოწვევა თავისით ვერაფერს ხსნის.';
+  String get infoSafeAnywhereLine1 => 'მოწვევა ვერაფერს ხსნის.';
 
   @override
   String get infoSafeAnywhereLine2 => 'დაგაკავშირებთ მხოლოდ მისი პასუხი.';
@@ -721,7 +720,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'მერე ციფრებს ერთად შეამოწმებთ, რომ დარწმუნდეთ, ნამდვილად ის არის.';
 
   @override
-  String get infoCheckNumbersTitle => 'რატომ ციფრები?';
+  String get infoCheckNumbersTitle => 'რატომ ვამოწმებთ ციფრებს?';
 
   @override
   String get infoCheckNumbersLine1 =>
@@ -729,7 +728,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get infoCheckNumbersLine2 =>
-      'ორივე ტელეფონზე ერთნაირი ციფრები ნიშნავს, რომ შუაში არავინ ჩამდგარა.';
+      'ორივე ტელეფონზე ციფრები ერთნაირია — შუაში არავინ ჩამდგარა.';
 
   @override
   String get infoFilesTitle => 'სად მიდის ფაილები?';
@@ -738,7 +737,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get infoFilesLine1 => 'Fuzzzy Ink მხოლოდ ჩაკეტილ ასლს ინახავს.';
 
   @override
-  String get infoFilesLine2 => '„გახსნა“ აქვე გაჩვენებთ. არაფერი ინახება.';
+  String get infoFilesLine2 =>
+      '„გახსნა“ ფაილს აქვე გაჩვენებთ. არაფერი ინახება.';
 
   @override
   String get infoFilesLine3 =>
@@ -762,10 +762,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get infoPasswordLockingLine2 =>
-      'პაროლი სიტყვით უთხარით. ჩაკეტილთან ერთად არასდროს გაგზავნოთ.';
+      'პაროლი ზეპირად უთხარით. ჩაკეტილთან ერთად არასდროს გაუგზავნოთ.';
 
   @override
-  String get infoSafePasswordTitle => 'სეიფის საკუთარი პაროლი';
+  String get infoSafePasswordTitle => 'ჩემი სეიფის საკუთარი პაროლი';
 
   @override
   String get infoSafePasswordLine1 => 'კიდევ ერთი დასამახსოვრებელი პაროლი.';
@@ -788,7 +788,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get lockWithPassword => 'პაროლით ჩაკეტვა';
 
   @override
-  String get lockNoInviteNeeded => 'მოწვევა საჭირო არაა';
+  String get lockNoInviteNeeded => 'მოწვევა არ სჭირდება';
 
   @override
   String get lockAddPersonFirst => 'ჯერ ადამიანი დაამატეთ';
@@ -817,7 +817,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get openLockedWithPassword => 'პაროლით ჩაკეტილი';
 
   @override
-  String get lockStepWho => 'ვინ';
+  String get lockStepWho => 'ვისთვის';
 
   @override
   String get lockStepWhat => 'რა';
@@ -838,23 +838,23 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String lockOnlyNameOnce(String name) {
-    return '$name — გახსნა მხოლოდ მას შეუძლია, ერთხელ.';
+    return 'მხოლოდ $name გახსნის, ერთხელ.';
   }
 
   @override
   String get lockChooseFile => 'ფაილის არჩევა';
 
   @override
-  String get lockDropHint => 'ან კომპიუტერზე აქ ჩააგდეთ';
+  String get lockDropHint => 'ან კომპიუტერზე აქ გადმოიტანეთ';
 
   @override
   String get lockChangeFile => 'შეცვლა';
 
   @override
-  String get lockPasswordLabel => 'პაროლი ამისთვის';
+  String get lockPasswordLabel => 'ამის პაროლი';
 
   @override
-  String get lockSayPassword => 'პაროლი სიტყვით უთხარით. ნუ გაუგზავნით.';
+  String get lockSayPassword => 'პაროლი ზეპირად უთხარით. ნუ გაუგზავნით.';
 
   @override
   String get lockAction => 'ჩაკეტვა';
@@ -866,10 +866,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get lockChooseFileFirst => 'ჯერ ფაილი აირჩიეთ.';
 
   @override
-  String get lockPasswordNotGood => 'საჭიროა დონე „კარგი“.';
+  String get lockPasswordNotGood => 'პაროლი მინიმუმ „კარგი“ უნდა იყოს.';
 
   @override
-  String get lockFailed => 'ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.';
+  String get lockFailed => 'ჩაკეტვა ვერ მოხერხდა. სცადეთ ხელახლა.';
 
   @override
   String get lockStoppedNothingKept => 'შეჩერდა. არაფერი შენახულა.';
@@ -894,7 +894,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String lockedForName(String name) {
-    return 'ჩაიკეტა: $name';
+    return 'ჩაიკეტა. გახსნის მხოლოდ $name';
   }
 
   @override
@@ -904,7 +904,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get lockedNowSendIt => 'ახლა გაუგზავნეთ.';
 
   @override
-  String get lockedSentToShareMenu => 'გაზიარების მენიუში გაიგზავნა.';
+  String get lockedSentToShareMenu => 'გადაეცა გაზიარების მენიუს.';
 
   @override
   String get lockedShareAgain => 'ხელახლა გაზიარება';
@@ -929,17 +929,17 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String openLinkTitle(String name) {
-    return 'გავხსნათ $name-ის შეტყობინება?';
+    return '$name გიგზავნით შეტყობინებას. გავხსნათ?';
   }
 
   @override
   String openArrivedFileTitle(String name) {
-    return 'გავხსნათ $name-ის ფაილი?';
+    return '$name გიგზავნით ფაილს. გავხსნათ?';
   }
 
   @override
   String get openLinkLine =>
-      'ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.';
+      'ერთხელ გაიხსნება და მერე თქვენს საერთო ისტორიაში დარჩება.';
 
   @override
   String get openLinkOpen => 'გახსნა';
@@ -949,12 +949,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String replyLinkTitle(String name) {
-    return 'დავუკავშირდეთ $name-ს?';
+    return 'დავუკავშირდეთ: $name?';
   }
 
   @override
   String replyLinkLine(String name) {
-    return 'დაუკავშირდით მხოლოდ მაშინ, თუ ეს პასუხი $name-მ გამოგიგზავნათ.';
+    return 'დაუკავშირდით მხოლოდ მაშინ, თუ ამ პასუხის გამომგზავნი ნამდვილად $name არის.';
   }
 
   @override
@@ -962,11 +962,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get linkWaitsForSafe =>
-      'ბმული ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.';
+      'ბმული გელოდებათ. გაიხსნება, როცა ამ ჩანაწერს დახურავთ.';
 
   @override
   String get fileWaitsForSafe =>
-      'ფაილი ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.';
+      'ფაილი გელოდებათ. გაიხსნება, როცა ამ ჩანაწერს დახურავთ.';
 
   @override
   String openedFromName(String name) {
@@ -975,7 +975,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String openedKeptInHistory(String name) {
-    return 'ახლახან · ისტორიაში შეინახა ($name)';
+    return 'ახლახან · შენახულია ისტორიაში: $name';
   }
 
   @override
@@ -986,7 +986,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String openedInHistoryNow(String name) {
-    return 'ახლა ისტორიაშია ($name).';
+    return 'შეინახა ისტორიაში: $name.';
   }
 
   @override
@@ -1001,42 +1001,42 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get openPasswordWrong =>
-      'ამით არ იხსნება. შეამოწმეთ და ხელახლა სცადეთ.';
+      'ამით არ იხსნება. შეამოწმეთ და სცადეთ ხელახლა.';
 
   @override
   String get openErrorAlreadyTitle => 'უკვე გახსნილია';
 
   @override
   String openErrorAlreadyLine(String name) {
-    return 'ყოველი ჩაკეტილი რამ ერთხელ იხსნება. ის ისტორიაშია ($name).';
+    return 'ჩაკეტილი ყველაფერი ერთხელ იხსნება. ის უკვე ისტორიაშია: $name.';
   }
 
   @override
-  String get openErrorNotYoursTitle => 'თქვენი სიიდან არ არის';
+  String get openErrorNotYoursTitle => 'უცნობი ადამიანისგანაა';
 
   @override
   String get openErrorNotYoursLine => 'ჯერ მოწვევა სთხოვეთ.';
 
   @override
-  String get openErrorDamagedTitle => 'ამის გახსნა ვერ ხერხდება';
+  String get openErrorDamagedTitle => 'ეს ვერ იხსნება';
 
   @override
   String get openErrorDamagedLine =>
-      'შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+      'შეიძლება, ბოლომდე არ მოსულა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String get openErrorOldTitle => 'გასახსნელად ძალიან ძველია';
 
   @override
   String openErrorOldLine(String name) {
-    return 'სთხოვეთ, თავიდან ჩაკეტოს ($name).';
+    return 'სთხოვეთ, ხელახლა ჩაკეტოს ($name).';
   }
 
   @override
-  String get openErrorNewerTitle => 'Fuzzzy Ink-ის ახალი ვერსიაა საჭირო';
+  String get openErrorNewerTitle => 'საჭიროა Fuzzzy Ink-ის ახალი ვერსია';
 
   @override
-  String get openErrorNewerLine => 'განაახლეთ აპი და ხელახლა სცადეთ.';
+  String get openErrorNewerLine => 'განაახლეთ აპი და სცადეთ ხელახლა.';
 
   @override
   String get openErrorOwnTitle => 'ეს თქვენი მოწვევაა';
@@ -1049,11 +1049,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String openErrorConnectedLine(String name) {
-    return 'უკვე დაკავშირებული ხართ: $name';
+    return 'თქვენ და $name უკვე დაკავშირებული ხართ.';
   }
 
   @override
-  String get openErrorNotFuzzzyTitle => 'ეს Fuzzzy Ink-ისგან არ არის';
+  String get openErrorNotFuzzzyTitle => 'ეს Fuzzzy Ink-ით არ არის ჩაკეტილი';
 
   @override
   String get openErrorNotFuzzzyLine =>
@@ -1064,14 +1064,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get openErrorArrivingLine =>
-      'მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და ხელახლა სცადეთ.';
+      'მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და სცადეთ ხელახლა.';
 
   @override
-  String get openErrorResendTitle => 'ეს ფაილი არ გაიხსნა';
+  String get openErrorResendTitle => 'ფაილი ვერ გაიხსნა';
 
   @override
   String get openErrorResendLine =>
-      'ახლა ამ ტელეფონზე ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+      'ამ ტელეფონზე ის ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String openErrorGoToName(String name) {
@@ -1082,7 +1082,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get openErrorOk => 'კარგი';
 
   @override
-  String get openFailed => 'გახსნა ვერ მოხერხდა. ხელახლა სცადეთ.';
+  String get openFailed => 'გახსნა ვერ მოხერხდა. სცადეთ ხელახლა.';
 
   @override
   String get shareTitleInvite => 'მოწვევის გაზიარება';
@@ -1104,7 +1104,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String shareLineForName(String name) {
-    return 'გახსნა მხოლოდ მას შეუძლია.';
+    return 'გახსნის მხოლოდ $name.';
   }
 
   @override
@@ -1120,7 +1120,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get shareShowQr => 'QR კოდის ჩვენება';
 
   @override
-  String get shareShowQrHint => 'კამერით დაასკანერებს';
+  String get shareShowQrHint => 'კამერით წაიკითხავს';
 
   @override
   String get shareSendFile => 'ფაილად გაგზავნა';
@@ -1151,11 +1151,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String qrLetNameScan(String name) {
-    return 'დაასკანერებინეთ: $name';
+    return 'აჩვენეთ ეს კოდი — $name კამერით წაიკითხავს.';
   }
 
   @override
-  String get qrLetThemScan => 'დაასკანერებინეთ.';
+  String get qrLetThemScan => 'აჩვენეთ ეს კოდი — კამერით წაიკითხავს.';
 
   @override
   String get qrSafeToShowAnyone =>
@@ -1165,19 +1165,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get qrOnlyRightPerson => 'აჩვენეთ მხოლოდ სწორ ადამიანს.';
 
   @override
-  String get historyYouLockedMessage => 'ჩაკეტეთ შეტყობინება';
+  String get historyYouLockedMessage => 'შეტყობინება ჩაიკეტა';
 
   @override
-  String get historyYouOpenedMessage => 'გახსენით შეტყობინება';
+  String get historyYouOpenedMessage => 'შეტყობინება გაიხსნა';
 
   @override
   String historyYouLockedFile(String file) {
-    return 'ჩაკეტეთ: $file';
+    return 'ჩაიკეტა: $file';
   }
 
   @override
   String historyYouOpenedFile(String file) {
-    return 'გახსენით: $file';
+    return 'გაიხსნა: $file';
   }
 
   @override
@@ -1199,7 +1199,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get confirmCopied => 'დაკოპირდა';
 
   @override
-  String get confirmHandedOver => 'გადმოგეცათ';
+  String get confirmHandedOver => 'გადაეცა';
 
   @override
   String get safetyGridLabel => 'უსაფრთხოების ციფრები';
@@ -1402,7 +1402,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String safeDeleteTitle(String title) {
-    return 'წავშალოთ: $title?';
+    return 'წავშალოთ „$title“?';
   }
 
   @override
@@ -1478,7 +1478,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get safeChooseFileFirst => 'ჯერ ფაილი აირჩიეთ.';
 
   @override
-  String get accessWelcomeLine => 'ჩაკეტეთ. გახსნა მხოლოდ მას შეეძლება.';
+  String get accessWelcomeLine => 'ჩაკეტეთ. გახსნის მხოლოდ ის.';
 
   @override
   String get accessWelcomeTag =>
@@ -1548,7 +1548,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessStrengthHintEmpty => 'რჩევა: რამდენიმე შემთხვევითი სიტყვა.';
 
   @override
-  String get accessStrengthHintWeak => 'გააგრძელეთ.';
+  String get accessStrengthHintWeak => 'უფრო გრძელი უნდა იყოს.';
 
   @override
   String get accessStrengthHintFair => 'დაამატეთ კიდევ რამდენიმე სიტყვა.';
@@ -1574,7 +1574,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessYourRecoveryKey => 'თქვენი აღდგენის გასაღები';
 
   @override
-  String get accessRecoverySpare => 'სათადარიგო, თუ პაროლი დაგავიწყდათ.';
+  String get accessRecoverySpare =>
+      'სათადარიგო გასაღები, თუ პაროლი დაგავიწყდათ.';
 
   @override
   String get accessPrint => 'ამობეჭდვა';
@@ -1600,16 +1601,16 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessSkipKeyMessage =>
-      'თუ მის გარეშე პაროლი დაგავიწყდებათ, ყველაფერი დაიკარგება. მოგვიანებით პარამეტრებში შექმნით.';
+      'თუ მის გარეშე პაროლი დაგავიწყდებათ, ყველაფერი დაიკარგება. მოგვიანებით შეგიძლიათ პარამეტრებში შექმნათ.';
 
   @override
-  String get accessSkipKeyKeep => 'ახლავე შენახვა';
+  String get accessSkipKeyKeep => 'ახლავე შევინახავ';
 
   @override
-  String get accessSkipKeyAnyway => 'მაინც გამოტოვება';
+  String get accessSkipKeyAnyway => 'მაინც გამოვტოვებ';
 
   @override
-  String get accessPrintPreview => 'ბეჭდვის გადახედვა';
+  String get accessPrintPreview => 'ბეჭდვის წინასწარი ხედი';
 
   @override
   String get accessPrintSheetTitle => 'Fuzzzy Ink · აღდგენის გასაღები';
@@ -1628,12 +1629,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String accessPrintMade(String date) {
-    return 'შექმნილია: $date. პარამეტრებიდან ახალი გასაღები ამას გააუქმებს.';
+    return 'შექმნილია: $date. ახალი გასაღები (პარამეტრებიდან) ამას გააუქმებს.';
   }
 
   @override
   String get accessPrintHint =>
-      'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა და არა ფოტოებში ან ღრუბელში შენახვა.';
+      'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ბეჭდვა — არა ფოტოებში შენახვა ან ღრუბლოვანი აპი.';
 
   @override
   String get accessPrintHintIos =>
@@ -1641,7 +1642,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessPrintHintMac =>
-      'გაიხსნება ამობეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.';
+      'გაიხსნება ბეჭდვის ფანჯარა. აირჩიეთ პრინტერი და არა PDF-ად შენახვა.';
 
   @override
   String get accessPrintFailed =>
@@ -1655,11 +1656,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
     String _temp0 = intl.Intl.selectLogic(
       kind,
       {
-        'faceId': 'გავხსნათ Face ID-ით?',
-        'touchId': 'გავხსნათ Touch ID-ით?',
-        'fingerprint': 'გავხსნათ თითის ანაბეჭდით?',
-        'face': 'გავხსნათ სახით?',
-        'other': 'გავხსნათ თითის ანაბეჭდით ან სახით?',
+        'faceId': 'განბლოკვა Face ID-ით?',
+        'touchId': 'განბლოკვა Touch ID-ით?',
+        'fingerprint': 'განბლოკვა თითის ანაბეჭდით?',
+        'face': 'განბლოკვა სახით?',
+        'other': 'განბლოკვა თითის ანაბეჭდით ან სახით?',
       },
     );
     return '$_temp0';
@@ -1680,7 +1681,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
         'touchId': 'Touch ID-ის გამოყენება',
         'fingerprint': 'თითის ანაბეჭდის გამოყენება',
         'face': 'სახის გამოყენება',
-        'other': 'თითის ანაბეჭდი ან სახე',
+        'other': 'თითის ანაბეჭდის ან სახის გამოყენება',
       },
     );
     return '$_temp0';
@@ -1728,7 +1729,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
         'fingerprint':
             'თითის ანაბეჭდები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
         'face':
-            'სახით განბლოკვა შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+            'სახის მონაცემები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
         'other':
             'თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
       },
@@ -1755,11 +1756,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.';
 
   @override
-  String get accessKeyTooShort => 'აღდგენის გასაღებს 4-ნიშნიანი 8 ჯგუფი აქვს.';
+  String get accessKeyTooShort =>
+      'აღდგენის გასაღებში 8 ჯგუფია, თითოში 4 სიმბოლო.';
 
   @override
   String get accessKeyDoesntMatch =>
-      'ეს გასაღები არ ემთხვევა. თითო ჯგუფი შეამოწმეთ.';
+      'ეს გასაღები არ ემთხვევა. შეამოწმეთ ყოველი ჯგუფი.';
 
   @override
   String get accessNewMasterPassword => 'ახალი მთავარი პაროლი';
@@ -1808,7 +1810,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String accessLockAfter(String time) {
-    return 'ავტომატურად: $time';
+    return 'ავტომატურად $time';
   }
 
   @override
@@ -1821,22 +1823,22 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessRightAway => 'მაშინვე';
 
   @override
-  String get accessOneMinute => '1 წუთი';
+  String get accessOneMinute => '1 წუთში';
 
   @override
-  String get accessFiveMinutes => '5 წუთი';
+  String get accessFiveMinutes => '5 წუთში';
 
   @override
-  String get accessFifteenMinutes => '15 წუთი';
+  String get accessFifteenMinutes => '15 წუთში';
 
   @override
-  String get accessOneHour => '1 საათი';
+  String get accessOneHour => '1 საათში';
 
   @override
   String get accessRecommended => 'რეკომენდებული';
 
   @override
-  String get accessOpensWith => 'იხსნება';
+  String get accessOpensWith => 'რით იხსნება';
 
   @override
   String get accessItsOwnPassword => 'საკუთარი პაროლი';
@@ -1861,7 +1863,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessPrivacyTermsSupport =>
-      'კონფიდენციალურობა, პირობები და დახმარება';
+      'კონფიდენციალურობა, პირობები და მხარდაჭერა';
 
   @override
   String get accessOpensYourBrowser => 'ბრაუზერში იხსნება';
@@ -1871,7 +1873,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ბრაუზერში იხსნება. თავად აპი ინტერნეტში არასდროს გადის.';
 
   @override
-  String get accessDeveloper => 'დეველოპერი';
+  String get accessDeveloper => 'დეველოპერისთვის';
 
   @override
   String accessVersionFooter(String version, String build) {
@@ -1961,7 +1963,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessSafePasswordToo =>
-      'ჩემს სეიფს საკუთარი პაროლი აქვს. ისიც აკრიფეთ, რომ ახალმა გასაღებმა სეიფიც გახსნას.';
+      'ჩემს სეიფს საკუთარი პაროლი აქვს. ისიც აკრიფეთ, რომ ახალმა გასაღებმა ჩემი სეიფიც გახსნას.';
 
   @override
   String get accessYourNewKey => 'თქვენი ახალი გასაღები';
@@ -1971,13 +1973,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'პაროლისა და გასაღების გარეშე წვდომა არ იქნება.';
 
   @override
-  String get accessNewKeyKept => 'ახალი აღდგენის გასაღები დაყენებულია.';
+  String get accessNewKeyKept => 'ახალი აღდგენის გასაღები მზადაა.';
 
   @override
-  String get accessSafeOpensWith => 'ჩემი სეიფი იხსნება';
+  String get accessSafeOpensWith => 'რით იხსნება ჩემი სეიფი';
 
   @override
-  String get accessSimplestRecommended => 'ყველაზე მარტივი. რეკომენდებული.';
+  String get accessSimplestRecommended => 'ყველაზე მარტივი. რეკომენდებულია.';
 
   @override
   String get accessOneMoreToRemember => 'კიდევ ერთი დასამახსოვრებელი';
@@ -1994,7 +1996,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessSafeGetsNewKey =>
-      'შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის „ჩემს სეიფს“ გახსნის, ძველი გასაღები კი აღარ იმუშავებს.';
+      'შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის ჩემს სეიფსაც გახსნის, ძველი კი აღარ იმუშავებს.';
 
   @override
   String get accessUseMasterPassword => 'მთავარი პაროლის გამოყენება';
@@ -2007,10 +2009,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ჩემი სეიფი ჯერ არ შექმნილა. ერთხელ გახსენით მისი ჩანართიდან.';
 
   @override
-  String get accessMasterPasswordToConfirm => 'დასადასტურებლად მთავარი პაროლი';
+  String get accessMasterPasswordToConfirm => 'მთავარი პაროლი, დასადასტურებლად';
 
   @override
-  String get accessHowOnceTitle => 'ყოველი რამ ერთხელ იხსნება';
+  String get accessHowOnceTitle => 'ყველაფერი ერთხელ იხსნება';
 
   @override
   String get accessHowOnceBody =>
@@ -2021,21 +2023,21 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessHowHistoryBody =>
-      'მთავარი პაროლით არის ჩაკეტილი. ახალი ტელეფონი მას ვერ წაიკითხავს. ასლისთვის ადამიანის ისტორია ფაილად შეინახეთ.';
+      'ჩაკეტილია მთავარი პაროლით. ახალი ტელეფონი მას ვერ წაიკითხავს. ასლისთვის ადამიანის ისტორია ფაილად შეინახეთ.';
 
   @override
   String get accessHowOrderTitle => 'გახსენით თანმიმდევრობით';
 
   @override
   String get accessHowOrderBody =>
-      'ძალიან ძველი შეტყობინება შეიძლება ვეღარ გაიხსნას. მაშინ სთხოვეთ, თავიდან ჩაკეტოს.';
+      'ძალიან ძველი შეტყობინება შეიძლება ვეღარ გაიხსნას. მაშინ სთხოვეთ, ხელახლა ჩაკეტოს.';
 
   @override
   String get accessHowCheckTitle => 'ადამიანის შემოწმება';
 
   @override
   String get accessHowCheckBody =>
-      'ორივე ტელეფონზე ერთნაირი ციფრები: შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენი საკუთარი ჩანიშვნაა.';
+      'ორივე ტელეფონზე ციფრები ერთნაირია — შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა.';
 
   @override
   String get accessHowLinksTitle => 'ბმულები';
@@ -2045,21 +2047,21 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'რაც # ნიშნის შემდეგ წერია, ჩვენს საიტამდე არასდროს მიდის.';
 
   @override
-  String get accessHowFilesTitle => 'ფაილები, რომლებსაც ინახავთ';
+  String get accessHowFilesTitle => 'შენახული ფაილები';
 
   @override
   String get accessHowFilesBody =>
       'აპი მხოლოდ ჩაკეტილ ფაილებს ინახავს. შენახული ასლის დაცვა თქვენზეა.';
 
   @override
-  String get accessHowHoodTitle => 'როგორ არის აწყობილი';
+  String get accessHowHoodTitle => 'ტექნიკური დეტალები';
 
   @override
   String get accessHowHoodBody =>
-      'შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებლად შემოწმებული): ყოველ შეტყობინებას ახალი გასაღები აქვს. ფაილები ნაწილებად იკეტება XChaCha20-Poly1305-ით. პაროლები Argon2id-ით მუშავდება. გასაღებები აპის შიდა ბირთვშია და არსად იგზავნება.';
+      'შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებელი აუდიტით შემოწმებული): ყოველ შეტყობინებას ახალი გასაღები აქვს. ფაილები ნაწილ-ნაწილ იკეტება XChaCha20-Poly1305-ით. პაროლები Argon2id-ით მუშავდება. გასაღებები აპის ნატიურ ბირთვშია და არსად იგზავნება.';
 
   @override
-  String get accessMoreAboutEncryption => 'მეტი ტექნიკური დეტალი';
+  String get accessMoreAboutEncryption => 'მეტი დაშიფვრის შესახებ';
 
   @override
   String personMoreFor(String name) {
@@ -2147,12 +2149,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String removePersonDone(String name) {
-    return 'წაიშალა: $name';
+    return '$name წაიშალა.';
   }
 
   @override
   String removePersonFailed(String name) {
-    return 'ვერ წაიშალა: $name. სცადეთ ხელახლა.';
+    return '$name ვერ წაიშალა. სცადეთ ხელახლა.';
   }
 
   @override
@@ -2174,12 +2176,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String itemForName(String name) {
-    return 'ვისთვის: $name';
+    return 'მიმღები: $name';
   }
 
   @override
   String itemYouLockedWhen(String day, String time) {
-    return 'ჩაკეტეთ · $day · $time';
+    return 'ჩაიკეტა · $day · $time';
   }
 
   @override
@@ -2246,14 +2248,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get inviteSharedLine => 'გაზიარების მენიუში გაიგზავნა.';
+  String get inviteSharedLine => 'გადაეცა გაზიარების მენიუს.';
 
   @override
-  String get inviteConnecting => 'უკავშირდება…';
+  String get inviteConnecting => 'კავშირი მყარდება…';
 
   @override
   String get inviteLoadFailed =>
-      'მოწვევა ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.';
+      'მოწვევის წაკითხვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით.';
 
   @override
   String get replyOpenTitle => 'პასუხის გახსნა';
@@ -2265,7 +2267,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chooseFile => 'ფაილის არჩევა';
 
   @override
-  String get chooseFileHint => 'მის მიერ გამოგზავნილი ფაილი';
+  String get chooseFileHint => 'ფაილი, რომელიც გამოგიგზავნათ';
 
   @override
   String get replyNothingToPaste =>
@@ -2279,11 +2281,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get notAReply => 'ეს პასუხი არ არის. შეამოწმეთ, რა ჩასვით.';
 
   @override
-  String get couldNotReadFile => 'ფაილი ვერ წავიკითხე.';
+  String get couldNotReadFile => 'ფაილის წაკითხვა ვერ მოხერხდა.';
 
   @override
   String get replyNotConnected =>
-      'ამ პასუხმა ვერ დაგაკავშირათ. ხელახლა სთხოვეთ.';
+      'ამ პასუხმა ვერ დაგაკავშირათ. სთხოვეთ ხელახლა.';
 
   @override
   String get gotStepOpen => 'გახსნა';
@@ -2316,14 +2318,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get gotAlreadyLine => 'ეს მოწვევა ამ ტელეფონზე უკვე გახსნილია.';
 
   @override
-  String get gotDamagedTitle => 'ამის გახსნა ვერ ხერხდება';
+  String get gotDamagedTitle => 'ეს ვერ იხსნება';
 
   @override
   String get gotDamagedLine =>
-      'შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+      'შეიძლება, ბოლომდე არ მოსულა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნოთ.';
 
   @override
-  String get gotAcceptFailed => 'მოწვევა ვერ მივიღე. სცადეთ ხელახლა.';
+  String get gotAcceptFailed => 'მოწვევის მიღება ვერ მოხერხდა. სცადეთ ხელახლა.';
 
   @override
   String replySendTo(String name) {
@@ -2334,7 +2336,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get replySameWay => 'იმავე გზით, რითაც მოწვევა მოვიდა.';
 
   @override
-  String get replyCheckTip => 'მერე ციფრები ერთად შეამოწმეთ.';
+  String get replyCheckTip => 'მერე ერთად შეამოწმეთ ციფრები.';
 
   @override
   String get stepInviteOpened => 'მოწვევა გაიხსნა';
@@ -2344,7 +2346,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String connectedWith(String name) {
-    return 'დაკავშირებულია: $name';
+    return 'თქვენ და $name დაკავშირებული ხართ';
   }
 
   @override
@@ -2366,7 +2368,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String twiceLine(String name) {
-    return 'მოწვევას ($name) ორი პასუხი მოუვიდა.';
+    return 'მოწვევაზე ($name) ორი პასუხი მოვიდა.';
   }
 
   @override
@@ -2383,8 +2385,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get safetyCompare =>
-      'შეადარეთ ზარით, ან ტელეფონები გვერდიგვერდ დადეთ.';
+  String get safetyCompare => 'შეადარეთ ზარით ან ტელეფონები გვერდიგვერდ დადეთ.';
 
   @override
   String get safetySame => 'ციფრები ერთნაირია';
@@ -2397,24 +2398,24 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String safetyCheckedBefore(String name) {
-    return 'უკვე შეამოწმეთ: $name.';
+    return '$name უკვე შემოწმებული გყავთ.';
   }
 
   @override
   String safetyNowNotChecked(String name) {
-    return 'ახლა შეუმოწმებელია: $name.';
+    return '$name ახლა შეუმოწმებელია.';
   }
 
   @override
   String get safetyLoadFailed =>
-      'ციფრები ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.';
+      'ციფრების წაკითხვა ვერ მოხერხდა. დახურეთ და ხელახლა გახსენით.';
 
   @override
   String get safetySaveFailed => 'ვერ შეინახა. სცადეთ ხელახლა.';
 
   @override
   String mismatchLead(String name) {
-    return 'ჯერ არაფერი გაუგზავნოთ.';
+    return 'არაფერი გაუგზავნოთ ამ ადამიანს.';
   }
 
   @override
@@ -2423,10 +2424,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String checkedTitle(String name) {
-    return 'ნამდვილად ის არის: $name';
+    return 'ეს ნამდვილად $name არის';
   }
 
   @override
   String get incomingFileUnreadable =>
-      'ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.';
+      'ფაილის წაკითხვა ვერ მოხერხდა. ხელახლა გახსენით იქიდან, სადაც არის.';
 }
