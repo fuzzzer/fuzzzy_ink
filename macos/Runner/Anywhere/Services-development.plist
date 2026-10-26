@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- "Lock from other apps" (experimental): the Services menu entries. Only the
+     development flavour carries them for now: the build phase "Services menu
+     (development flavour only)" adds this array to the built Info.plist as
+     NSServices for the *-development configurations; staging and production
+     never get it. NSRequiredContext is an empty dict (without it macOS hides
+     the entries); there is no NSRestricted (that would need the sandbox
+     exception). Lock returns plain text, so the selection is replaced in place;
+     NSTimeout gives the panel 120 s. Open returns nothing. -->
+<plist version="1.0">
+<array>
+	<dict>
+		<key>NSMenuItem</key>
+		<dict>
+			<key>default</key>
+			<string>Lock with Fuzzzy Ink</string>
+		</dict>
+		<key>NSMessage</key>
+		<string>lockText</string>
+		<key>NSSendTypes</key>
+		<array>
+			<string>public.utf8-plain-text</string>
+		</array>
+		<key>NSReturnTypes</key>
+		<array>
+			<string>public.utf8-plain-text</string>
+		</array>
+		<key>NSRequiredContext</key>
+		<dict/>
+		<key>NSTimeout</key>
+		<string>120000</string>
+	</dict>
+	<dict>
+		<key>NSMenuItem</key>
+		<dict>
+			<key>default</key>
+			<string>Open with Fuzzzy Ink</string>
+		</dict>
+		<key>NSMessage</key>
+		<string>openText</string>
+		<key>NSSendTypes</key>
+		<array>
+			<string>public.utf8-plain-text</string>
+		</array>
+		<key>NSRequiredContext</key>
+		<dict/>
+	</dict>
+</array>
+</plist>
