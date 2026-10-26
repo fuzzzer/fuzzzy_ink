@@ -485,6 +485,9 @@ final class InkDevice: NSObject, UIDocumentPickerDelegate {
   }
 
   /// Prints [image] on [printer] with no further sheet. `true` once queued.
+  /// The shared print controller lets go of the recovery key's image as
+  /// soon as the job is handed over, failed or cancelled (security review
+  /// 2026-10-26), so it is not kept until the next print.
   private static func send(
     _ image: UIImage, jobName: String, to printer: UIPrinter, result: @escaping FlutterResult
   ) {
@@ -495,15 +498,27 @@ final class InkDevice: NSObject, UIDocumentPickerDelegate {
     controller.printInfo = info
     controller.printingItem = image
     var answered = false
-    let started = controller.print(to: printer) { _, completed, error in
+    let finish = { (printed: Bool) in
+      release(controller)
       guard !answered else { return }
       answered = true
-      result(error == nil && completed)
+      result(printed)
     }
-    if !started && !answered {
-      answered = true
-      result(false)
+    let started = controller.print(to: printer) { _, completed, error in
+      finish(error == nil && completed)
     }
+    if !started {
+      finish(false)
+    }
+  }
+
+  /// Drops everything the shared print controller holds from the last job.
+  private static func release(_ controller: UIPrintInteractionController) {
+    controller.printingItem = nil
+    controller.printingItems = nil
+    controller.printPageRenderer = nil
+    controller.printFormatter = nil
+    controller.printInfo = nil
   }
 
   private func exportFile(_ url: URL, result: @escaping FlutterResult) {
