@@ -156,9 +156,9 @@ class _ProvidedChatInvitationPageState
   Widget _confirm(BuildContext context, String reply) {
     final localizations = context.fuzzzyInkLocalizations;
     final name = widget.payload.chatName;
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'replyLink',
-      close: true,
+      leading: FlowLeading.close,
       onLeading: () => context.go(AppRouter.home),
       footer: Column(
         mainAxisSize: MainAxisSize.min,

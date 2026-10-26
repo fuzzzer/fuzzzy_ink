@@ -27,8 +27,8 @@ class OpenConfirmView extends StatelessWidget {
     final space = context.fuzzzySpace;
     return FlowScaffold(
       qaId: 'open.confirm',
+      leading: FlowLeading.close,
       onLeading: onNotNow,
-      isClose: true,
       footer: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,23 +49,25 @@ class OpenConfirmView extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const FlowHero(
-            glyph: HeroGlyph(
-              icon: Icons.mail_lock_outlined,
-              qaId: 'open.confirm',
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const FlowHero(
+              glyph: HeroGlyph(
+                icon: Icons.mail_lock_outlined,
+                qaId: 'open.confirm',
+              ),
             ),
-          ),
-          FlowTitle(
-            title: isFile
-                ? l.openArrivedFileTitle(chat.chatName)
-                : l.openLinkTitle(chat.chatName),
-            line: l.openLinkLine,
-          ),
-        ],
-      ),
+            FlowTitle(
+              title: isFile
+                  ? l.openArrivedFileTitle(chat.chatName)
+                  : l.openLinkTitle(chat.chatName),
+              line: l.openLinkLine,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
