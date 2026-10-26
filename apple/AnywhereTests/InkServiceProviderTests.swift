@@ -23,8 +23,13 @@ final class InkServiceProviderTests: XCTestCase {
       makeModel: { mode, text, delivery in
         InkAnywhereModel(channel: dart, mode: mode, prefill: text, delivery: delivery)
       },
-      present: onPresent)
+      present: { [weak self] model, closed in
+        onPresent(model, closed)
+        return { self?.closedByProvider += 1 }
+      })
   }
+
+  private var closedByProvider = 0
 
   func testLockReplacesTheSelectionWithTheSealedOutput() {
     pasteboard.clearContents()
@@ -76,6 +81,7 @@ final class InkServiceProviderTests: XCTestCase {
     provider.timeout = 0.2
     XCTAssertEqual(provider.lockInPlace(pasteboard), "Nothing was locked.")
     XCTAssertEqual(pasteboard.string(forType: .string), "slow")
+    XCTAssertEqual(closedByProvider, 1, "the panel does not outlive the request")
   }
 
   func testOpenShowsThePanelAndWritesNothingBack() {

@@ -17,7 +17,8 @@ import Cocoa
 @MainActor
 final class InkServiceProvider: NSObject {
   /// Shows a model in a panel; calls the closure when the panel has closed.
-  typealias Present = (InkAnywhereModel, @escaping () -> Void) -> Void
+  /// Answers a way to close that panel.
+  typealias Present = (InkAnywhereModel, @escaping () -> Void) -> () -> Void
 
   private let makeModel: (AnywhereMode, String, InkAnywhereModel.Delivery) -> InkAnywhereModel
   private let present: Present
@@ -52,7 +53,7 @@ final class InkServiceProvider: NSObject {
       error.pointee = "No text was selected." as NSString
       return
     }
-    present(makeModel(.open, text, .copy)) {}
+    _ = present(makeModel(.open, text, .copy)) {}
   }
 
   /// Runs the Lock panel for the selected text and, once locked, puts the
@@ -67,7 +68,7 @@ final class InkServiceProvider: NSObject {
     var sealed: String?
     var isClosed = false
     let model = makeModel(.lock, text, .returnToCaller { sealed = $0 })
-    present(model) { isClosed = true }
+    let closePanel = present(model) { isClosed = true }
 
     // A nested event loop: the panel's clicks and keys, Flutter's channel
     // answers and Swift's main-actor work all go on while macOS waits.
@@ -81,7 +82,11 @@ final class InkServiceProvider: NSObject {
         app.sendEvent(event)
       }
     }
-    guard let sealed else { return "Nothing was locked." }
+    guard let sealed else {
+      // Out of time: the selection stays; the panel goes too.
+      if !isClosed { closePanel() }
+      return "Nothing was locked."
+    }
     InkServiceProvider.write(sealed, to: pasteboard)
     return nil
   }

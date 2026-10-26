@@ -42,7 +42,10 @@ final class InkAnywhereMac {
         makeModel: { [unowned self] mode, text, delivery in
           self.makeModel(mode: mode, prefill: text, delivery: delivery)
         },
-        present: { [unowned self] model, onClosed in self.present(model, onClosed: onClosed) })
+        present: { [unowned self] model, onClosed in
+          let controller = self.present(model, onClosed: onClosed)
+          return { [weak controller] in controller?.close() }
+        })
       services = provider
       NSApp.servicesProvider = provider
     }
@@ -124,7 +127,10 @@ final class InkAnywhereMac {
       sourceApp: InkAnywhereMac.frontmostApp(), delivery: delivery)
   }
 
-  private func present(_ model: InkAnywhereModel, onClosed: @escaping () -> Void) {
+  @discardableResult
+  private func present(_ model: InkAnywhereModel, onClosed: @escaping () -> Void)
+    -> InkPanelController
+  {
     panel?.close()
     let controller = InkPanelController(model: model) { [weak self] in
       if self?.panel?.model === model { self?.panel = nil }
@@ -132,6 +138,7 @@ final class InkAnywhereMac {
     }
     panel = controller
     controller.show()
+    return controller
   }
 
   /// The app the person is in (its bundle id, no permission needed), for
