@@ -9,6 +9,9 @@ class ChatGeneralDataListRepository {
   Stream<ChatGeneralDataListUpdated> get chatListUpdates =>
       fuzzyHub.on<ChatGeneralDataListUpdated>();
 
+  /// "Erase everything" emptied the storage: the list starts over.
+  Stream<AppDataErased> get appDataErased => fuzzyHub.on<AppDataErased>();
+
   ChatGeneralDataListRepository({
     required this.localDataSource,
     required this.pairedAcceptanceDataSource,

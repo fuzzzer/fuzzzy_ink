@@ -17,4 +17,8 @@ abstract final class RecentHistoryRow {
 
   /// Without clearing it (for a page that rebuilds before it shows rows).
   static int? peek(String chatId) => _newRows[chatId];
+
+  /// Every mark goes: the app starts over (first run, or after "Erase
+  /// everything").
+  static void forgetAll() => _newRows.clear();
 }

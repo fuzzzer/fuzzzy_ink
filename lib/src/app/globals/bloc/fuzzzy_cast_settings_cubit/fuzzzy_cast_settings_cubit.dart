@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
@@ -15,9 +17,30 @@ class FuzzzyCastSettingsCubit extends Cubit<FuzzzyCastSettingsState> {
             isEnabled: preferencesService.fuzzzyCastEnabled,
             softSounds: preferencesService.fuzzzyCastSoftSounds,
           ),
-        );
+        ) {
+    _appDataErasedSubscription =
+        fuzzyHub.on<AppDataErased>().listen((_) => _readStored());
+  }
 
   final PreferencesService _preferencesService;
+  late final StreamSubscription<AppDataErased> _appDataErasedSubscription;
+
+  @override
+  Future<void> close() {
+    _appDataErasedSubscription.cancel();
+    return super.close();
+  }
+
+  /// After "Erase everything" the switches are what the (cleared) storage
+  /// says, as after a restart.
+  void _readStored() {
+    emit(
+      FuzzzyCastSettingsState(
+        isEnabled: _preferencesService.fuzzzyCastEnabled,
+        softSounds: _preferencesService.fuzzzyCastSoftSounds,
+      ),
+    );
+  }
 
   Future<void> setEnabled(bool isEnabled) async {
     if (isEnabled == state.isEnabled) return;

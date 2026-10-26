@@ -19,6 +19,8 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
     _chatListUpdatesSubscription = chatRepository.chatListUpdates.listen((_) {
       _fetchChatsInBackground();
     });
+    _appDataErasedSubscription =
+        chatRepository.appDataErased.listen((_) => _startOver());
   }
 
   final CryptoCoreService cryptoCoreService;
@@ -28,11 +30,21 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
   final UserFileStore userFileStore;
   late final StreamSubscription<ChatGeneralDataListUpdated>
       _chatListUpdatesSubscription;
+  late final StreamSubscription<AppDataErased> _appDataErasedSubscription;
 
   @override
   Future<void> close() {
     _chatListUpdatesSubscription.cancel();
+    _appDataErasedSubscription.cancel();
     return super.close();
+  }
+
+  /// After "Erase everything": nothing of the erased people stays in memory
+  /// (their names, marks or a pending action); the list is read again from
+  /// the storage, which is empty now.
+  Future<void> _startOver() async {
+    emit(const ChatGeneralDataListState(status: StateStatus.initial));
+    await fetchChats();
   }
 
   Future<void> fetchChats() async {

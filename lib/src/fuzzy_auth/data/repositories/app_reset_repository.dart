@@ -26,8 +26,19 @@ class AppResetRepository {
   /// The first run erases what an earlier install left before it makes keys;
   /// it passes [keepFirstRunChoices] so the welcome, language and look the
   /// person just chose stay.
+  ///
+  /// Afterwards, whatever the outcome, [AppDataErased] tells every list held
+  /// in memory to read the (now empty) storage again.
   Future<CryptoCoreResponse<void>> eraseEverything({
     bool keepFirstRunChoices = false,
+  }) async {
+    final eraseRes = await _erase(keepFirstRunChoices: keepFirstRunChoices);
+    fuzzyHub.sendSignal(const AppDataErased());
+    return eraseRes;
+  }
+
+  Future<CryptoCoreResponse<void>> _erase({
+    required bool keepFirstRunChoices,
   }) async {
     await _cryptoCoreService.close();
     try {

@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fuzzzy_ink/lib.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'components/components.dart';
 
 export 'components/components.dart';
 
@@ -23,6 +24,29 @@ class ThemeCubit extends Cubit<ThemeState> with WidgetsBindingObserver {
         setBrightness(brightness);
       }
     });
+    _appDataErasedSubscription =
+        fuzzyHub.on<AppDataErased>().listen((_) => _readStored());
+  }
+
+  late final StreamSubscription<AppDataErased> _appDataErasedSubscription;
+
+  @override
+  Future<void> close() {
+    _appDataErasedSubscription.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    return super.close();
+  }
+
+  /// After "Erase everything": the look the storage still holds (the first
+  /// run's own erase keeps it), else "Like my phone", as after a restart.
+  Future<void> _readStored() async {
+    final brightness = await _getBrightnessPreferences();
+    if (isClosed) return;
+    emit(
+      state.copyWith(
+        chosenBrightness: brightness ?? ChosenBrightness.system,
+      ),
+    );
   }
 
   @override

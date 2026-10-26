@@ -151,6 +151,7 @@ class GlobalBlocListeners extends StatelessWidget {
             if (router == null) return;
             if (state.status.isSetupRequired) {
               AppRouter.forgetReturnPlace();
+              RecentHistoryRow.forgetAll();
               context.read<VaultAuthCubit>().checkVaultStatus();
               router.go(AppRouter.setup);
               return;

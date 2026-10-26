@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
@@ -20,9 +22,33 @@ class LocalizationCubit extends Cubit<LocalizationState>
         changeLocale(locale);
       }
     });
+    _appDataErasedSubscription =
+        fuzzyHub.on<AppDataErased>().listen((_) => _readStored());
   }
 
   static const _languageCodeKey = 'language_code';
+
+  late final StreamSubscription<AppDataErased> _appDataErasedSubscription;
+
+  @override
+  Future<void> close() {
+    _appDataErasedSubscription.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    return super.close();
+  }
+
+  /// After "Erase everything": the language the storage still holds (the
+  /// first run's own erase keeps it), else "Like my phone", as after a
+  /// restart.
+  Future<void> _readStored() async {
+    final locale = await loadFromPreferences();
+    if (isClosed) return;
+    emit(
+      locale == null
+          ? state.copyWith(followsPhone: true)
+          : state.copyWith(locale: locale, followsPhone: false),
+    );
+  }
 
   @override
   void didChangeLocales(List<Locale>? locales) {
