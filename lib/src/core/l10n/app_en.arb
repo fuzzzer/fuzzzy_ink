@@ -315,8 +315,6 @@
       "failureType": {}
     }
   },
-  "vaultPasswordStrength": "Password Strength",
-  "@vaultPasswordStrength": {},
   "fuzzyVault": "Fuzzy Vault",
   "@fuzzyVault": {},
   "menu": "Menu",
@@ -2501,30 +2499,6 @@
   },
   "exportHistorySaved": "History saved as a file.",
   "@exportHistorySaved": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthLabel": "Strength",
-  "@strengthLabel": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthHintEmpty": "Tip: a few random words.",
-  "@strengthHintEmpty": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthHintWeak": "Make it longer.",
-  "@strengthHintWeak": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthHintFair": "Add a few more words.",
-  "@strengthHintFair": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthHintGood": "Hard to guess.",
-  "@strengthHintGood": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "strengthHintStrong": "Very hard to guess.",
-  "@strengthHintStrong": {
     "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
   },
   "itemForName": "For {name}",

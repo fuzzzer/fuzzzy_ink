@@ -1019,12 +1019,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock failed: {failureType}'**
   String vaultUnlockFailed(Object failureType);
 
-  /// No description provided for @vaultPasswordStrength.
-  ///
-  /// In en, this message translates to:
-  /// **'Password Strength'**
-  String get vaultPasswordStrength;
-
   /// No description provided for @fuzzyVault.
   ///
   /// In en, this message translates to:
@@ -4607,42 +4601,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'History saved as a file.'**
   String get exportHistorySaved;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Strength'**
-  String get strengthLabel;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Tip: a few random words.'**
-  String get strengthHintEmpty;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Make it longer.'**
-  String get strengthHintWeak;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Add a few more words.'**
-  String get strengthHintFair;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Hard to guess.'**
-  String get strengthHintGood;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Very hard to guess.'**
-  String get strengthHintStrong;
 
   /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
   ///

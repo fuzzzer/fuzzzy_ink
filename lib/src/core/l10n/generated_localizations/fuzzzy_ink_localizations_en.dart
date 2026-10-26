@@ -496,9 +496,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get vaultPasswordStrength => 'Password Strength';
-
-  @override
   String get fuzzyVault => 'Fuzzy Vault';
 
   @override
@@ -2483,24 +2480,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get exportHistorySaved => 'History saved as a file.';
-
-  @override
-  String get strengthLabel => 'Strength';
-
-  @override
-  String get strengthHintEmpty => 'Tip: a few random words.';
-
-  @override
-  String get strengthHintWeak => 'Make it longer.';
-
-  @override
-  String get strengthHintFair => 'Add a few more words.';
-
-  @override
-  String get strengthHintGood => 'Hard to guess.';
-
-  @override
-  String get strengthHintStrong => 'Very hard to guess.';
 
   @override
   String itemForName(String name) {

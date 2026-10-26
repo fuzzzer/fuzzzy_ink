@@ -99,7 +99,6 @@ class _HistoryExportSheetBodyState extends State<HistoryExportSheetBody> {
     final space = context.fuzzzySpace;
     final service = sl.get<PasswordStrengthService>();
     final password = _password.text;
-    final level = password.isEmpty ? null : service.assess(password).level;
 
     return BlocConsumer<ChatArchiveExportCubit, ChatArchiveExportState>(
       bloc: _cubit,
@@ -154,7 +153,7 @@ class _HistoryExportSheetBodyState extends State<HistoryExportSheetBody> {
                 ),
               ),
               SizedBox(height: space.m),
-              InkStrengthMeter(level: level, qaId: 'exportHistory'),
+              PasswordMeter(password: password, qaId: 'exportHistory'),
               SizedBox(height: space.l),
               FuzzzyButton(
                 qaId: 'exportHistory.save',
@@ -167,56 +166,6 @@ class _HistoryExportSheetBodyState extends State<HistoryExportSheetBody> {
           ),
         );
       },
-    );
-  }
-}
-
-/// The kit's strength meter with the design's hint under it ("Tip: a few
-/// random words." while empty, then "Make it longer." … "Very hard to
-/// guess.").
-class InkStrengthMeter extends StatelessWidget {
-  const InkStrengthMeter({super.key, required this.level, this.qaId});
-
-  /// Null while nothing is typed.
-  final PasswordStrengthLevel? level;
-  final String? qaId;
-
-  @override
-  Widget build(BuildContext context) {
-    final localizations = context.fuzzzyInkLocalizations;
-    final level = this.level;
-    final hint = switch (level) {
-      null => localizations.strengthHintEmpty,
-      PasswordStrengthLevel.weak => localizations.strengthHintWeak,
-      PasswordStrengthLevel.fair => localizations.strengthHintFair,
-      PasswordStrengthLevel.good => localizations.strengthHintGood,
-      PasswordStrengthLevel.strong => localizations.strengthHintStrong,
-    };
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (level != null) ...[
-          FuzzzyPasswordStrengthMeter(
-            qaId: qaId,
-            label: localizations.strengthLabel,
-            level: switch (level) {
-              PasswordStrengthLevel.weak => FuzzzyPasswordStrength.weak,
-              PasswordStrengthLevel.fair => FuzzzyPasswordStrength.fair,
-              PasswordStrengthLevel.good => FuzzzyPasswordStrength.good,
-              PasswordStrengthLevel.strong => FuzzzyPasswordStrength.strong,
-            },
-          ),
-          SizedBox(height: context.fuzzzySpace.xs),
-        ],
-        Text(
-          hint,
-          style: context.fuzzzyTextStyles.bodyS.copyWith(
-            color: context.fuzzzyColors.inkMute,
-          ),
-        ),
-      ],
     );
   }
 }

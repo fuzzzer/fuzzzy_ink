@@ -315,8 +315,6 @@
       "failureType": {}
     }
   },
-  "vaultPasswordStrength": "პაროლის სიძლიერე",
-  "@vaultPasswordStrength": {},
   "fuzzyVault": "Fuzzy Vault",
   "@fuzzyVault": {},
   "menu": "მენიუ",
@@ -2515,30 +2513,6 @@
   },
   "exportHistorySaved": "ისტორია ფაილად შეინახა.",
   "@exportHistorySaved": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthLabel": "სიძლიერე",
-  "@strengthLabel": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthHintEmpty": "რჩევა: რამდენიმე შემთხვევითი სიტყვა.",
-  "@strengthHintEmpty": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthHintWeak": "გააგრძელეთ.",
-  "@strengthHintWeak": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthHintFair": "დაამატეთ კიდევ რამდენიმე სიტყვა.",
-  "@strengthHintFair": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthHintGood": "ძნელად გამოსაცნობია.",
-  "@strengthHintGood": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "strengthHintStrong": "ძალიან ძნელად გამოსაცნობია.",
-  "@strengthHintStrong": {
     "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
   },
   "itemForName": "ვისთვის: {name}",

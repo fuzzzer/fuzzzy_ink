@@ -506,9 +506,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get vaultPasswordStrength => 'პაროლის სიძლიერე';
-
-  @override
   String get fuzzyVault => 'Fuzzy Vault';
 
   @override
@@ -2500,24 +2497,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get exportHistorySaved => 'ისტორია ფაილად შეინახა.';
-
-  @override
-  String get strengthLabel => 'სიძლიერე';
-
-  @override
-  String get strengthHintEmpty => 'რჩევა: რამდენიმე შემთხვევითი სიტყვა.';
-
-  @override
-  String get strengthHintWeak => 'გააგრძელეთ.';
-
-  @override
-  String get strengthHintFair => 'დაამატეთ კიდევ რამდენიმე სიტყვა.';
-
-  @override
-  String get strengthHintGood => 'ძნელად გამოსაცნობია.';
-
-  @override
-  String get strengthHintStrong => 'ძალიან ძნელად გამოსაცნობია.';
 
   @override
   String itemForName(String name) {

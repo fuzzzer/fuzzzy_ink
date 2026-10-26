@@ -209,8 +209,9 @@ class _ChatArchiveExportDialogState extends State<_ChatArchiveExportDialog> {
                 ),
                 if (_passwordController.text.isNotEmpty) ...[
                   const SizedBox(height: 24),
-                  PasswordStrengthIndicator(
+                  PasswordMeter(
                     password: _passwordController.text,
+                    qaId: 'exportArchive',
                   ),
                 ],
                 if (isLoading) ...[
