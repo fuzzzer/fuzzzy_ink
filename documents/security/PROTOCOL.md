@@ -1077,28 +1077,43 @@ user-private storage with the default file mode; a process kill leaves it until 
 The vault has its own 32-byte key ([`vault.rs`](../../rust/fuzzy_crypto_core/src/vault.rs)). By default it is wrapped
 under the **master key** as a `0x20` with AAD `vault-key-wrap` (`vault_init_with_master`; one Argon2id run for the
 master password), so the master password opens the vault (`vault_unlock_with_master`). On request it gets a
-**password of its own** instead: a `0x10` with AAD `vault-key` under that password (`vault_init`, `vault_unlock`,
-`vault_rewrap`). Switching re-wraps the same key: `vault_use_own_password` (the master password opens the `0x20`,
-the key is wrapped under the new password) and back, `vault_use_master_password` (the vault password opens the
-`0x10`, the master password opens the master key, the key is wrapped under it). Which one a vault uses is read from
+**password of its own** instead: a `0x10` with AAD `vault-key` under that password (`vault_unlock`,
+`vault_rewrap`). The switch to its own password moves the vault to a new key (`vault_use_own_password`, below);
+the way back, `vault_use_master_password` (the vault password opens the `0x10`, the master password opens the
+master key, the key is wrapped under it), keeps the key. Which one a vault uses is read from
 the wrapped key's type byte (`vault_uses_own_password`, synchronous, no key). Either way the vault key opens no
 chat, and neither the store key nor any history key opens a vault item. An empty vault password is refused.
 
+**Its own password means a new key and a new recovery key** (security review 2026-10-26). Every vault starts under
+the master key (`vault_init_with_master`; there is no call that makes a vault with its own password from scratch).
+`vault_use_own_password` ([`api/vault.rs`](../../rust/fuzzy_crypto_core/src/api/vault.rs)) takes the master
+password, opens the master key and with it the current vault key, then draws a **new** vault key (wrapped as a
+`0x10` under the new password), a **new** recovery key (the master key wrapped under it as a `0x10` AAD
+`master-key-recovery`, its lock sealed under the store key) and seals the new vault key to the new lock (`0x11`);
+three Argon2id runs. It hands back both keys as handles. The app then, in this order: locks the vault; re-seals
+every item from the old key to the new one with `vault_reseal` (open under the old key, seal under the new one,
+same id and version, fresh nonce; the plaintext stays in Rust and is wiped) into a copy beside each item file,
+after first writing the new `vault.meta` beside the old one (`vault.meta.rekey`); deletes any old `0x11` box; then
+commits with one rename of `vault.meta.rekey` over `vault.meta` and renames the item copies over the old files.
+A stop before the commit leaves `vault.meta.rekey`, and the next read of the metadata deletes the copies and keeps
+the old vault; a stop after it is finished at the next read by renaming the remaining copies. After the commit the
+app deletes the old recovery wrap and lock and shows the new recovery key, keeping its wrap, lock and box only when
+the user confirms it is saved (as at the first run). The result: a copy of the old `vault.meta` plus the master
+password gives the old key, which opens no item kept after the switch; a recovery key somebody made earlier with
+the master password opens neither the new box nor the master key. An item with a password of its own cannot be
+re-sealed without that password; no screen makes such items any more, and the switch is refused if one exists.
+
 **The recovery key opens a vault with its own password too** (owner, 2026-10-26); the master password alone still
 does not. A vault under the master key needs nothing more: the recovery key opens the master key. A vault with its
-own password is also **sealed to the recovery lock** (a `0x11`, AAD `vault-key-recovery`, §6.10), when a recovery key
-is kept: `vault_init` and `vault_use_own_password` take the lock (the `0x20` under the store key, opened with the
-open store's key) and hand back the box with the wrapping
-([`api/vault.rs#L100`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L100), [`#L165`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L165)).
-The master password reaches the master key, the store key and the lock's public half, none of which opens the box.
+own password is **sealed to the recovery lock** (a `0x11`, AAD `vault-key-recovery`, §6.10) of the key shown at the
+switch. The master password reaches the master key, the store key and the lock's public half, none of which opens
+the box.
 The box needs no update when the vault password changes (`vault_rewrap`) — the vault key does not change — and is
 deleted when the vault goes back under the master key. With the recovery key (a typo is `Corrupt`, before any
 Argon2 run; another device's key `WrongPassword`) the vault gets a new password of its own, `vault_recover` (one
-Argon2id run, [`#L209`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L209)), or goes back under the master key,
-`vault_recover_to_master` (the recovery key also opens the master key's recovery wrap; one Argon2id run,
-[`#L231`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L231)); either way the vault is open and no item is
-re-encrypted. A new recovery key reseals the box with the vault password (`vault_seal_for_recovery`,
-[`#L191`](../../rust/fuzzy_crypto_core/src/api/vault.rs#L191); §10.2). Without a kept recovery key no box exists and
+Argon2id run), or goes back under the master key,
+`vault_recover_to_master` (the recovery key also opens the master key's recovery wrap; one Argon2id run); either way the vault is open and no item is
+re-encrypted (the key does not change). A new recovery key reseals the box with the vault password (`vault_seal_for_recovery`, §10.2). Without a kept recovery key no box exists and
 a vault with its own password is lost with its password; the app says which applies where the user chooses it.
 
 Items are sealed under the vault key **directly** (no sub-key: the key has one purpose) as `0x20` blobs with AAD
@@ -1106,8 +1121,9 @@ Items are sealed under the vault key **directly** (no sub-key: the key has one p
 failure is `Corrupt`. The version is the item's content version in the vault index (its database row); the app
 writes the item file first and the row second, so after a stop between the two it opens the file at the row's
 version or one ahead (and records the newer version). An item file copied over another item, or an older copy of
-the same item put back, does not open (security review 2026-10-22). A password change or a switch re-wraps the
-key; items are never re-encrypted. The key is held in an opaque handle (`VaultKey`) that behaves like the store
+the same item put back, does not open (security review 2026-10-22). A password change, a switch back to the master
+password or a recovery re-wraps the key and re-encrypts no item; only the switch to its own password moves every
+item to a new key (above). The key is held in an opaque handle (`VaultKey`) that behaves like the store
 handle (`close` → later calls `StoreLocked`). The vault's auto-lock is a constant of the app (5 minutes after
 opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`,
 `recovery_lock`, `vault_key_recovery`.

@@ -18,41 +18,23 @@ class VaultCryptoRepository {
   final ChatAuthRepository chatAuthRepository;
 
   /// The vault key never exists in Dart: the metadata keeps it wrapped
-  /// (`verificationToken`), and [unlock] hands back a handle. By default the
-  /// master key wraps it, so [password] is the master password; with
-  /// [ownPassword] the vault gets [password] as its own ("good" or better)
-  /// and, when a recovery key is kept, a copy sealed to its lock.
-  Future<VaultResponse<VaultMetadata>> initializeVault(
-    String password, {
-    bool ownPassword = false,
-  }) async {
+  /// (`verificationToken`), and [unlock] hands back a handle. A new vault is
+  /// always under the master key, so [password] is the master password; it
+  /// gets its own password only through [useOwnPassword], which also makes a
+  /// new recovery key (security review 2026-10-26).
+  Future<VaultResponse<VaultMetadata>> initializeVault(String password) async {
     try {
-      final CryptoCoreResponse<CryptoCoreVaultInit> initRes;
-      if (ownPassword) {
-        if (!passwordStrengthService.isStrongEnough(password)) {
-          return const VaultFailure(VaultFailureType.weakPassword);
-        }
-        final lockRes = await _recoveryLock();
-        if (lockRes is VaultFailure<Uint8List?>) {
-          return VaultFailure(lockRes.type, message: lockRes.message);
-        }
-        initRes = await cryptoCoreService.vaultInit(
-          password,
-          recoveryLock: (lockRes as VaultSuccess<Uint8List?>).data,
-        );
-      } else {
-        final wrapRes = await chatAuthRepository.passwordWrap();
-        if (wrapRes is CryptoCoreFailure<Uint8List>) {
-          return VaultFailure(
-            _failureOf(wrapRes.type),
-            message: wrapRes.type.name,
-          );
-        }
-        initRes = await cryptoCoreService.vaultInitWithMaster(
-          passwordWrap: (wrapRes as CryptoCoreSuccess<Uint8List>).data,
-          masterPassword: password,
+      final wrapRes = await chatAuthRepository.passwordWrap();
+      if (wrapRes is CryptoCoreFailure<Uint8List>) {
+        return VaultFailure(
+          _failureOf(wrapRes.type),
+          message: wrapRes.type.name,
         );
       }
+      final initRes = await cryptoCoreService.vaultInitWithMaster(
+        passwordWrap: (wrapRes as CryptoCoreSuccess<Uint8List>).data,
+        masterPassword: password,
+      );
       if (initRes is CryptoCoreFailure<CryptoCoreVaultInit>) {
         return VaultFailure(
           _failureOf(initRes.type),
@@ -65,7 +47,7 @@ class VaultCryptoRepository {
       await created.key.close();
       created.key.dispose();
       // A new vault replaces any copy an earlier vault left.
-      final copyRes = await _saveRecoveryCopy(created.recovery);
+      final copyRes = await _saveRecoveryCopy(null);
       if (copyRes != null) return VaultFailure(copyRes);
 
       final metadata = VaultMetadata(
@@ -145,8 +127,11 @@ class VaultCryptoRepository {
   }
 
   /// Gives a vault the master password opens its own [newPassword] ("good"
-  /// or better). The same key is re-wrapped; no item is re-encrypted.
-  Future<VaultResponse<VaultMetadata>> useOwnPassword({
+  /// or better): the core draws a new vault key and a new recovery key
+  /// (security review 2026-10-26). Nothing is stored here: the caller
+  /// re-seals the items ([reseal], through [VaultRepository.rekey]), then
+  /// keeps the new wrapping, and offers the recovery key to save.
+  Future<VaultResponse<CryptoCoreVaultOwnPassword>> useOwnPassword({
     required String masterPassword,
     required String newPassword,
     required VaultMetadata metadata,
@@ -162,33 +147,77 @@ class VaultCryptoRepository {
           message: wrapRes.type.name,
         );
       }
-      final lockRes = await _recoveryLock();
-      if (lockRes is VaultFailure<Uint8List?>) {
-        return VaultFailure(lockRes.type, message: lockRes.message);
-      }
-      final rewrapRes = await cryptoCoreService.vaultUseOwnPassword(
+      final switchRes = await cryptoCoreService.vaultUseOwnPassword(
         passwordWrap: (wrapRes as CryptoCoreSuccess<Uint8List>).data,
         masterPassword: masterPassword,
         wrapped: base64Decode(metadata.verificationToken),
         newPassword: newPassword,
-        recoveryLock: (lockRes as VaultSuccess<Uint8List?>).data,
       );
-      if (rewrapRes is CryptoCoreFailure<CryptoCoreVaultWrapping>) {
+      if (switchRes is CryptoCoreFailure<CryptoCoreVaultOwnPassword>) {
         return VaultFailure(
-          _failureOf(rewrapRes.type),
-          message: rewrapRes.type.name,
+          _failureOf(switchRes.type),
+          message: switchRes.type.name,
         );
       }
-      final changed =
-          (rewrapRes as CryptoCoreSuccess<CryptoCoreVaultWrapping>).data;
-      // The copy first: once the metadata names the new wrapping, the master
-      // password no longer opens the vault and the copy is the way back.
-      final copyRes = await _saveRecoveryCopy(changed.recovery);
-      if (copyRes != null) return VaultFailure(copyRes);
-      return _withToken(CryptoCoreSuccess(changed.wrapped), metadata);
+      return VaultSuccess(
+        (switchRes as CryptoCoreSuccess<CryptoCoreVaultOwnPassword>).data,
+      );
     } catch (e) {
       return VaultFailure(VaultFailureType.unknown, message: e.toString());
     }
+  }
+
+  /// Moves one item from the vault key [from] to [to], at the [version] its
+  /// index records or one ahead of it (as [decryptContent] accepts).
+  Future<VaultResponse<Uint8List>> reseal({
+    required VaultKey from,
+    required VaultKey to,
+    required String itemId,
+    required int version,
+    required Uint8List blob,
+  }) async {
+    var res = await cryptoCoreService.vaultReseal(
+      from: from,
+      to: to,
+      itemId: itemId,
+      version: version,
+      blob: blob,
+    );
+    if (res is CryptoCoreFailure<Uint8List> &&
+        res.type == CryptoCoreFailureType.corrupt) {
+      res = await cryptoCoreService.vaultReseal(
+        from: from,
+        to: to,
+        itemId: itemId,
+        version: version + 1,
+        blob: blob,
+      );
+    }
+    if (res is CryptoCoreFailure<Uint8List>) {
+      return VaultFailure(_failureOf(res.type), message: res.type.name);
+    }
+    return VaultSuccess((res as CryptoCoreSuccess<Uint8List>).data);
+  }
+
+  /// Ends the recovery key kept so far (its wrap, lock and vault copy): used
+  /// once a vault has moved to its own password and a new recovery key, so
+  /// a key somebody else may have made earlier opens nothing.
+  Future<VaultResponse<void>> endRecoveryKey() async {
+    final res = await chatAuthRepository.dropRecovery();
+    return res is CryptoCoreFailure<void>
+        ? const VaultFailure(VaultFailureType.storageWriteError)
+        : const VaultSuccess(null);
+  }
+
+  /// Keeps a recovery key the user saved (its wrap, lock and the vault's
+  /// copy).
+  Future<VaultResponse<void>> keepRecoveryKey(
+    PendingRecoveryKey pending,
+  ) async {
+    final res = await chatAuthRepository.saveRecovery(pending);
+    return res is CryptoCoreFailure<void>
+        ? const VaultFailure(VaultFailureType.storageWriteError)
+        : const VaultSuccess(null);
   }
 
   /// Puts a vault with its own password back under the master key.
@@ -344,20 +373,6 @@ class VaultCryptoRepository {
     } catch (e) {
       return VaultFailure(VaultFailureType.unknown, message: e.toString());
     }
-  }
-
-  /// The recovery lock the recovery key left (`null` without a recovery
-  /// key).
-  Future<VaultResponse<Uint8List?>> _recoveryLock() async {
-    final blobsRes = await chatAuthRepository.keyBlobs();
-    if (blobsRes is CryptoCoreFailure<MasterKeyBlobs>) {
-      return VaultFailure(
-        _failureOf(blobsRes.type),
-        message: blobsRes.type.name,
-      );
-    }
-    final blobs = (blobsRes as CryptoCoreSuccess<MasterKeyBlobs>).data;
-    return VaultSuccess(blobs.recoveryWrap == null ? null : blobs.recoveryLock);
   }
 
   /// Keeps [copy] (or removes the copy with `null`); `null` on success.

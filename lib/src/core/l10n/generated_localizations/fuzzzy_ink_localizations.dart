@@ -4589,6 +4589,12 @@ abstract class FuzzzyInkLocalizations {
   /// **'My safe now has its own password.'**
   String get accessSafeHasOwnPassword;
 
+  /// Safe gets its own password: a new safe key and a new recovery key are made in the same step (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Next you get a new recovery key. It opens My safe, and the old key stops working.'**
+  String get accessSafeGetsNewKey;
+
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:

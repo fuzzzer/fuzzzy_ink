@@ -2487,6 +2487,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ახლა ჩემს სეიფს საკუთარი პაროლი აქვს.';
 
   @override
+  String get accessSafeGetsNewKey =>
+      'შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის „ჩემს სეიფს“ გახსნის, ძველი გასაღები კი აღარ იმუშავებს.';
+
+  @override
   String get accessUseMasterPassword => 'მთავარი პაროლის გამოყენება';
 
   @override

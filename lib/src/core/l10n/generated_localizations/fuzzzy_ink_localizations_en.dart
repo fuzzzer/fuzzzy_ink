@@ -2468,6 +2468,10 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessSafeHasOwnPassword => 'My safe now has its own password.';
 
   @override
+  String get accessSafeGetsNewKey =>
+      'Next you get a new recovery key. It opens My safe, and the old key stops working.';
+
+  @override
   String get accessUseMasterPassword => 'Use master password';
 
   @override

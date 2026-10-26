@@ -8,7 +8,7 @@ import '../frb_generated.dart';
 import 'core.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `check_lock`, `recovery_copy`, `unlocked`
+// These functions are ignored because they are not marked as `pub`: `unlocked`
 
 /// Draws a fresh vault key and wraps it under the master key (the default:
 /// the master password opens the vault). `password_wrap` is the master key's
@@ -17,18 +17,6 @@ Future<VaultInitResult> vaultInitWithMaster(
         {required List<int> passwordWrap, required String masterPassword}) =>
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultInitWithMaster(
         passwordWrap: passwordWrap, masterPassword: masterPassword);
-
-/// Draws a fresh vault key and wraps it under the vault's own `password`,
-/// and — with a `recovery_lock` (the 0x20 the first run or a new recovery key
-/// left, opened with the store key of `core`) — seals it to the recovery
-/// lock too. Password strength is the app's judgement, not this function's;
-/// an empty password is refused (`WrongPassword`).
-Future<VaultInitResult> vaultInit(
-        {required CryptoCore core,
-        required String password,
-        Uint8List? recoveryLock}) =>
-    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultInit(
-        core: core, password: password, recoveryLock: recoveryLock);
 
 /// Which password opens the vault whose key is `wrapped`: `true` for its own
 /// password (0x10), `false` for the master password (0x20). Reads the type
@@ -66,26 +54,44 @@ Future<Uint8List> vaultRewrap(
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultRewrap(
         oldPassword: oldPassword, newPassword: newPassword, wrapped: wrapped);
 
-/// Gives a vault that the master password opens its own password: the master
-/// password opens the vault key's 0x20 `wrapped`, the key is wrapped again as
-/// a 0x10 under `new_password` and, with a `recovery_lock`, sealed to the
-/// recovery lock. Two Argon2id runs; the caller replaces the stored blobs,
-/// after which the master password no longer opens the vault — the recovery
-/// key still does.
+/// Gives a vault that the master password opens its own password. The master
+/// password opens the master key and, with it, the current vault key (the
+/// 0x20 `wrapped`); then a **new** vault key is drawn and wrapped as a 0x10
+/// under `new_password`, a **new** recovery key is drawn, the master key is
+/// wrapped under it and its lock sealed under the store key of `core`, and
+/// the new vault key is sealed to that lock (0x11). Three Argon2id runs.
+///
+/// The caller re-seals every item from `previous` to `key`
+/// ([`vault_reseal`]), replaces the stored wrapping in one atomic step,
+/// replaces the recovery blobs, and shows the recovery key. After that the
+/// master password no longer opens the vault — not even with a copy of the
+/// old `vault.meta` — and only the recovery key just shown does.
 Future<VaultOwnPassword> vaultUseOwnPassword(
         {required CryptoCore core,
         required List<int> passwordWrap,
         required String masterPassword,
         required List<int> wrapped,
-        required String newPassword,
-        Uint8List? recoveryLock}) =>
+        required String newPassword}) =>
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultUseOwnPassword(
         core: core,
         passwordWrap: passwordWrap,
         masterPassword: masterPassword,
         wrapped: wrapped,
-        newPassword: newPassword,
-        recoveryLock: recoveryLock);
+        newPassword: newPassword);
+
+/// Moves version `version` of the item `item_id` from the vault key `from`
+/// to the vault key `to`: opens `blob` under `from` and seals it under `to`
+/// with a fresh nonce, same item, same version. The plaintext stays in Rust
+/// and is wiped. A blob that does not open (another item, version or key) is
+/// `Corrupt`; a closed handle is `StoreLocked`.
+Future<Uint8List> vaultReseal(
+        {required VaultKey from,
+        required VaultKey to,
+        required String itemId,
+        required int version,
+        required List<int> blob}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultReseal(
+        from: from, to: to, itemId: itemId, version: version, blob: blob);
 
 /// Seals the key of a vault with its own password to a (new) recovery lock:
 /// the vault password opens `wrapped` (one Argon2id run), the lock comes from
@@ -171,32 +177,30 @@ abstract class VaultKey implements RustOpaqueInterface {
   Future<void> close();
 }
 
-/// What [`vault_init`] and [`vault_init_with_master`] hand back: the unlocked
-/// key and its wrapping, which the app stores in the vault metadata and feeds
-/// to the unlock call later. `non_opaque` so frb passes the two fields once
-/// instead of wrapping the struct in a second handle with a cloning accessor
-/// for the key.
+/// What [`vault_init_with_master`] hands back: the unlocked key and its
+/// wrapping (a 0x20 under the master key), which the app stores in the vault
+/// metadata and feeds to the unlock call later. `non_opaque` so frb passes the
+/// two fields once instead of wrapping the struct in a second handle with a
+/// cloning accessor for the key.
+///
+/// There is no call that makes a vault with its own password from scratch:
+/// every vault starts under the master key and gets its own password only
+/// through [`vault_use_own_password`], which also draws a new recovery key —
+/// so a vault key is never sealed to a recovery lock the user was not just
+/// shown (security review 2026-10-26).
 class VaultInitResult {
   final VaultKey key;
 
-  /// The vault key wrapped: a 0x20 under the master key, or a 0x10 under
-  /// the vault's own password.
+  /// The vault key wrapped: a 0x20 under the master key.
   final Uint8List wrapped;
-
-  /// 0x11 — the vault key sealed to the recovery lock, so the recovery key
-  /// opens a vault with its own password. `None` under the master key
-  /// (the recovery key reaches it through the master key) and without a
-  /// recovery key.
-  final Uint8List? recovery;
 
   const VaultInitResult({
     required this.key,
     required this.wrapped,
-    this.recovery,
   });
 
   @override
-  int get hashCode => key.hashCode ^ wrapped.hashCode ^ recovery.hashCode;
+  int get hashCode => key.hashCode ^ wrapped.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -204,30 +208,69 @@ class VaultInitResult {
       other is VaultInitResult &&
           runtimeType == other.runtimeType &&
           key == other.key &&
-          wrapped == other.wrapped &&
-          recovery == other.recovery;
+          wrapped == other.wrapped;
 }
 
-/// What [`vault_use_own_password`] hands back: the vault key under its new
-/// password, and sealed to the recovery lock when a recovery key is kept.
+/// What [`vault_use_own_password`] hands back. The vault gets a **new** key
+/// and a **new** recovery key in the same step (security review 2026-10-26):
+/// the old key, which anyone who knew the master password could have taken
+/// from an old copy of `vault.meta`, opens nothing written after the switch,
+/// and the box is sealed to a recovery key the user is shown now, never to
+/// one somebody else may have made earlier with the master password.
 class VaultOwnPassword {
+  /// The key before the switch: every item is re-sealed from it to `key`
+  /// ([`vault_reseal`]), then it is closed.
+  final VaultKey previous;
+
+  /// The new vault key, drawn fresh.
+  final VaultKey key;
+
+  /// 0x10 — `key` under the vault's own password.
   final Uint8List wrapped;
-  final Uint8List? recovery;
+
+  /// The new printable recovery key, shown once.
+  final String recoveryKey;
+
+  /// 0x10 — the master key under the new recovery key.
+  final Uint8List recoveryWrap;
+
+  /// 0x20 — the new recovery lock under the store key.
+  final Uint8List recoveryLock;
+
+  /// 0x11 — `key` sealed to the new recovery lock.
+  final Uint8List recovery;
 
   const VaultOwnPassword({
+    required this.previous,
+    required this.key,
     required this.wrapped,
-    this.recovery,
+    required this.recoveryKey,
+    required this.recoveryWrap,
+    required this.recoveryLock,
+    required this.recovery,
   });
 
   @override
-  int get hashCode => wrapped.hashCode ^ recovery.hashCode;
+  int get hashCode =>
+      previous.hashCode ^
+      key.hashCode ^
+      wrapped.hashCode ^
+      recoveryKey.hashCode ^
+      recoveryWrap.hashCode ^
+      recoveryLock.hashCode ^
+      recovery.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is VaultOwnPassword &&
           runtimeType == other.runtimeType &&
+          previous == other.previous &&
+          key == other.key &&
           wrapped == other.wrapped &&
+          recoveryKey == other.recoveryKey &&
+          recoveryWrap == other.recoveryWrap &&
+          recoveryLock == other.recoveryLock &&
           recovery == other.recovery;
 }
 

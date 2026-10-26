@@ -2505,6 +2505,10 @@
   "@accessSafeHasOwnPassword": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
+  "accessSafeGetsNewKey": "შემდეგ ახალ აღდგენის გასაღებს მიიღებთ. ის „ჩემს სეიფს“ გახსნის, ძველი გასაღები კი აღარ იმუშავებს.",
+  "@accessSafeGetsNewKey": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
+  },
   "accessUseMasterPassword": "მთავარი პაროლის გამოყენება",
   "@accessUseMasterPassword": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"

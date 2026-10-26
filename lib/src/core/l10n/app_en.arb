@@ -2541,6 +2541,10 @@
   "@accessSafeHasOwnPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
+  "accessSafeGetsNewKey": "Next you get a new recovery key. It opens My safe, and the old key stops working.",
+  "@accessSafeGetsNewKey": {
+    "description": "Safe gets its own password: a new safe key and a new recovery key are made in the same step (security review 2026-10-26)."
+  },
   "accessUseMasterPassword": "Use master password",
   "@accessUseMasterPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."

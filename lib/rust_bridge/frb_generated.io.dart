@@ -164,9 +164,6 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
-  Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
-
-  @protected
   Peek dco_decode_peek(dynamic raw);
 
   @protected
@@ -322,9 +319,6 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
-
-  @protected
-  Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
   Peek sse_decode_peek(SseDeserializer deserializer);
@@ -486,10 +480,6 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_opt_list_prim_u_8_strict(
-      Uint8List? self, SseSerializer serializer);
 
   @protected
   void sse_encode_peek(Peek self, SseSerializer serializer);

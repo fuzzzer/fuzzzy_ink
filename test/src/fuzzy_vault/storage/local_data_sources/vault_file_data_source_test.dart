@@ -123,4 +123,74 @@ void main() {
     );
     expect(File(path.join(vaultPath, 'vault.meta')).existsSync(), isFalse);
   });
+
+  group('moving the vault to a new key (security review 2026-10-26)', () {
+    late String vaultPath;
+    late VaultFileDataSource dataSource;
+
+    setUp(() async {
+      vaultPath = VaultFileDataSource.directoryIn(root.path);
+      dataSource = dataSourceAt(vaultPath);
+      await dataSource.writeMetaAtomic(utf8.encode('old meta'));
+      await dataSource.writeItemAtomic('a', [1]);
+      await dataSource.writeItemAtomic('b', [2]);
+    });
+
+    Future<String> meta() async => utf8.decode((await dataSource.readMeta())!);
+
+    test('commit: the new meta and every new item replace the old', () async {
+      await dataSource.beginRekey(utf8.encode('new meta'));
+      await dataSource.stageRekeyedItem('a', [10]);
+      await dataSource.stageRekeyedItem('b', [20]);
+      expect(await dataSource.readItem('a'), [1], reason: 'not yet');
+      await dataSource.commitRekey();
+      expect(await meta(), 'new meta');
+      expect(await dataSource.readItem('a'), [10]);
+      expect(await dataSource.readItem('b'), [20]);
+      expect(
+        Directory(path.join(vaultPath, 'items'))
+            .listSync()
+            .map((e) => path.basename(e.path)),
+        unorderedEquals(['a.vault', 'b.vault']),
+      );
+    });
+
+    test('a stop before the commit keeps the old vault whole', () async {
+      await dataSource.beginRekey(utf8.encode('new meta'));
+      await dataSource.stageRekeyedItem('a', [10]);
+      // The app stops here; the next start reads the metadata.
+      final restarted = dataSourceAt(vaultPath);
+      expect(utf8.decode((await restarted.readMeta())!), 'old meta');
+      expect(await restarted.readItem('a'), [1]);
+      expect(await restarted.readItem('b'), [2]);
+      expect(
+        Directory(vaultPath)
+            .listSync(recursive: true)
+            .where((e) => e.path.endsWith(VaultFileDataSource.rekeySuffix)),
+        isEmpty,
+      );
+    });
+
+    test('a stop after the commit is finished at the next read', () async {
+      await dataSource.beginRekey(utf8.encode('new meta'));
+      await dataSource.stageRekeyedItem('a', [10]);
+      await dataSource.stageRekeyedItem('b', [20]);
+      // The commit's rename happened, the item renames did not.
+      await File(path.join(vaultPath, 'vault.meta.rekey'))
+          .rename(path.join(vaultPath, 'vault.meta'));
+      final restarted = dataSourceAt(vaultPath);
+      expect(utf8.decode((await restarted.readMeta())!), 'new meta');
+      expect(await restarted.readItem('a'), [10]);
+      expect(await restarted.readItem('b'), [20]);
+    });
+
+    test('abandon removes every copy and keeps the old vault', () async {
+      await dataSource.beginRekey(utf8.encode('new meta'));
+      await dataSource.stageRekeyedItem('a', [10]);
+      await dataSource.abandonRekey();
+      expect(await meta(), 'old meta');
+      expect(await dataSource.readItem('a'), [1]);
+      expect(await dataSource.finishInterruptedRekey(), isTrue);
+    });
+  });
 }

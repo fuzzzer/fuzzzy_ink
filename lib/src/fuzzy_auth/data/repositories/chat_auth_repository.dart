@@ -209,6 +209,11 @@ class ChatAuthRepository {
         ),
       );
 
+  /// Ends the recovery key kept so far: its wrap, its vault copy and its
+  /// lock. The old key opens nothing from here on.
+  Future<CryptoCoreResponse<void>> dropRecovery() =>
+      _guard(_localDataSource.deleteRecovery);
+
   /// The recovery key's blobs the vault needs: the lock to seal a vault with
   /// its own password to, the vault's copy and the master key's recovery
   /// wrap (all `null` without a recovery key).

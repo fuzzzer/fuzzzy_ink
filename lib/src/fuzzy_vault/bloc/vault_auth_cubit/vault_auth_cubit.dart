@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -147,14 +148,12 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     await disableBiometric();
   }
 
-  /// By default [password] is the master password and the master key wraps
-  /// the vault key; with [ownPassword] the vault gets [password] as its own.
-  ///
-  /// Under the master key the typed master password counts toward the app
-  /// lock's wait, the same as [unlock].
-  Future<void> createVault(String password, {bool ownPassword = false}) async {
-    final usesMaster = !ownPassword;
-    if (usesMaster && await lockoutRemaining() > Duration.zero) {
+  /// [password] is the master password: a new vault is always under the
+  /// master key (it gets its own password only through [useOwnPassword]).
+  /// The typed master password counts toward the app lock's wait, the same
+  /// as [unlock].
+  Future<void> createVault(String password) async {
+    if (await lockoutRemaining() > Duration.zero) {
       emit(
         state.copyWith(
           status: StateStatus.failed,
@@ -165,13 +164,10 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     }
     emit(state.copyWith(status: StateStatus.loading));
 
-    final initRes = await cryptoRepository.initializeVault(
-      password,
-      ownPassword: ownPassword,
-    );
+    final initRes = await cryptoRepository.initializeVault(password);
     if (initRes is VaultFailure) {
       final type = (initRes as VaultFailure).type;
-      if (usesMaster && type == VaultFailureType.incorrectMasterPassword) {
+      if (type == VaultFailureType.incorrectMasterPassword) {
         final before = await appLockThrottleRepository.read();
         await appLockThrottleRepository.save(before.afterFailure(_now()));
       }
@@ -183,7 +179,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       );
       return;
     }
-    if (usesMaster) await appLockThrottleRepository.clear();
+    await appLockThrottleRepository.clear();
 
     final metadata = (initRes as VaultSuccess<VaultMetadata>).data;
     final saveRes = await vaultRepository.saveMetadata(metadata);
@@ -217,8 +213,8 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
         status: StateStatus.success,
         authState: VaultAuthEnum.unlocked,
         masterKey: masterKey,
-        usesOwnPassword: ownPassword,
-        recoverable: ownPassword && await cryptoRepository.hasRecoveryCopy(),
+        usesOwnPassword: false,
+        recoverable: false,
       ),
     );
   }
@@ -306,19 +302,91 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
   }
 
   /// Gives the vault its own password; [masterPassword] proves the change.
-  /// The biometric copy held the master password and is dropped.
-  Future<VaultFailureType?> useOwnPassword({
+  ///
+  /// The vault gets a new key and a new recovery key in the same step
+  /// (security review 2026-10-26): every item is re-sealed to the new key and
+  /// the new wrapping replaces the old in one atomic step, so an old copy of
+  /// `vault.meta` and the master password open nothing kept here; the
+  /// recovery key kept so far ends, so one somebody else made earlier with
+  /// the master password opens nothing either. The vault is left locked. The
+  /// answer carries the new recovery key, which the caller shows and keeps
+  /// only once the user has saved it ([keepRecoveryKey]). The biometric copy
+  /// held the master password and is dropped.
+  Future<({VaultFailureType? failure, PendingRecoveryKey? recovery})>
+      useOwnPassword({
     required String masterPassword,
     required String newPassword,
-  }) {
-    return _changeWrapping(
-      (metadata) => cryptoRepository.useOwnPassword(
-        masterPassword: masterPassword,
-        newPassword: newPassword,
-        metadata: metadata,
-      ),
-      usesOwnPassword: true,
+  }) async {
+    ({VaultFailureType? failure, PendingRecoveryKey? recovery}) failed(
+      VaultFailureType type,
+    ) =>
+        (failure: type, recovery: null);
+
+    final metaRes = await vaultRepository.getMetadata();
+    if (metaRes is VaultFailure) return failed((metaRes as VaultFailure).type);
+    final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
+    final switchRes = await cryptoRepository.useOwnPassword(
+      masterPassword: masterPassword,
+      newPassword: newPassword,
+      metadata: metadata,
     );
+    if (switchRes is VaultFailure) {
+      return failed((switchRes as VaultFailure).type);
+    }
+    final changed =
+        (switchRes as VaultSuccess<CryptoCoreVaultOwnPassword>).data;
+
+    // Nothing may write an item under the old key from here on.
+    await lock();
+    final rekeyRes = await vaultRepository.rekey(
+      previous: changed.previous,
+      key: changed.key,
+      metadata: metadata.copyWith(
+        verificationToken: base64Encode(changed.wrapped),
+      ),
+      // A copy of the old key sealed to the old recovery lock must not
+      // outlive the move: it would put the old key back.
+      beforeCommit: () async {
+        final dropRes = await cryptoRepository.dropRecoveryCopy();
+        return dropRes is VaultFailure ? dropRes.type : null;
+      },
+    );
+    await _closeKey(changed.previous);
+    await _closeKey(changed.key);
+    if (rekeyRes is VaultFailure) {
+      return failed(rekeyRes.type);
+    }
+
+    final endRes = await cryptoRepository.endRecoveryKey();
+    if (endRes is VaultFailure) {
+      logger.w('The old recovery key could not be removed');
+    }
+    await biometricAuthRepository.disable(BiometricScope.vault);
+    emit(
+      state.copyWith(
+        usesOwnPassword: true,
+        biometricEnabled: false,
+        recoverable: false,
+        recoveryKeyKept: false,
+      ),
+    );
+    return (
+      failure: null,
+      recovery: PendingRecoveryKey(
+        recoveryKey: changed.recovery.recoveryKey,
+        recoveryWrap: changed.recovery.recoveryWrap,
+        recoveryLock: changed.recovery.recoveryLock,
+        vaultRecovery: changed.vaultRecovery,
+      ),
+    );
+  }
+
+  /// Keeps the recovery key [useOwnPassword] made, once the user has saved
+  /// it. `null` on success.
+  Future<VaultFailureType?> keepRecoveryKey(PendingRecoveryKey pending) async {
+    final keepRes = await cryptoRepository.keepRecoveryKey(pending);
+    await refreshRecovery();
+    return keepRes is VaultFailure ? keepRes.type : null;
   }
 
   /// Opens the vault with the master password again.
