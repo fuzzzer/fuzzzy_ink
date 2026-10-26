@@ -330,4 +330,46 @@ void main() {
       ],
     );
   });
+
+  // -----------------------------------------------------------------------
+  // reloadMessages
+  // -----------------------------------------------------------------------
+  group('reloadMessages', () {
+    test(
+        'reads the loaded pages again from the newest row and replaces the '
+        'list', () async {
+      final cubit = ConnectedChatCubit(
+        messageDataRepository: mockRepo,
+        cryptoCoreService: mockService,
+        chatId: _chatId,
+        messagesPerPage: 2,
+      );
+      addTearDown(cubit.close);
+      var rows = [
+        for (var id = 5; id >= 1; id--) _storedText(id: id, isSent: true),
+      ];
+      when(
+        () => mockRepo.getMessagesForChatPaginated(
+          _chatId,
+          pageSize: any(named: 'pageSize'),
+          pageIndex: any(named: 'pageIndex'),
+        ),
+      ).thenAnswer((invocation) async {
+        final size = invocation.namedArguments[#pageSize] as int;
+        final index = invocation.namedArguments[#pageIndex] as int;
+        return rows.skip(size * index).take(size).toList();
+      });
+
+      await cubit.loadInitialMessages();
+      await cubit.loadOlderMessages();
+      expect(cubit.state.messages.map((m) => m.id), [5, 4, 3, 2]);
+
+      // Lock added a row while the page was away.
+      rows = [_storedText(id: 6, isSent: true), ...rows];
+      await cubit.reloadMessages();
+
+      expect(cubit.state.status, StateStatus.success);
+      expect(cubit.state.messages.map((m) => m.id), [6, 5, 4, 3]);
+    });
+  });
 }

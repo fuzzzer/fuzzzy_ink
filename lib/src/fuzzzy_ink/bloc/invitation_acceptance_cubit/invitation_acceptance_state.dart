@@ -32,3 +32,18 @@ class InvitationAcceptanceState {
     return 'InvitationAcceptanceState(status: $status, chatData: $chatData, generatedAcceptance: $generatedAcceptance, failure: $failure)';
   }
 }
+
+/// What [InvitationAcceptanceCubit.checkInvitation] found.
+enum InvitationCheck {
+  /// A good invite from someone new.
+  good,
+
+  /// Cut off, changed, not an invite, or from a newer Fuzzzy Ink.
+  damaged,
+
+  /// An invite this phone made.
+  ownInvitation,
+
+  /// An invite this phone already accepted.
+  alreadyConnected,
+}
