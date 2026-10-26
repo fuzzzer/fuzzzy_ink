@@ -179,10 +179,12 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   `test/src/core/services/user_file_store/user_file_store_test.dart`). A `.fuzz` file another app opens in this
   one (the system's "open with": Android `VIEW` intents for `file:` and `content:` URIs, the exported type
   `com.fuzzzycore.ink.fuzz` on iOS and macOS; `IncomingFiles`, since 2026-10-26) is only read, once, into a fresh
-  hand-off folder — iOS's own `Documents/Inbox` copy is deleted once taken, the Mac user's original is left where
-  it is — never run and never handed on, and goes to Open as an arrived file (§2.6); that sealed copy goes once
-  Open used it or was left, when the app locks and at every launch (`test/platform/incoming_files_test.dart`,
-  `test/src/core/services/incoming_files/incoming_files_test.dart`). Nothing goes to Android's public
+  folder of `<app support>/incoming/` — iOS's own `Documents/Inbox` or `tmp/<bundle id>-Inbox` copy is deleted
+  once taken, the Mac user's original is left where it is — never run and never handed on, and goes to Open as an
+  arrived file (§2.6); that sealed copy goes once Open used it or was left, at erase and at every launch. A lock
+  keeps it (it is sealed): one still waiting on Open, or arriving as the app locks on return, is offered again
+  after the unlock (`test/platform/incoming_files_test.dart`,
+  `test/src/core/services/incoming_files/incoming_files_test.dart`, `fuzzy_link_handler_test.dart`). Nothing goes to Android's public
   Downloads or MediaStore, Android holds no storage permission, its FileProvider serves the hand-off folder
   only (never the store key or the vault; `test/platform/user_files_test.dart`), and iOS no longer exposes
   Documents to the Files app. Deleting a chat deletes its files folder and rows (and its state, so every kept

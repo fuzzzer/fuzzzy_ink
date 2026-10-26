@@ -892,9 +892,11 @@ Isar (app database)     StoredMessageData.sealedPlaintext                one loc
                                                                         name becomes <name> (1).<ext>.fuzz
 <application support directory>/sealed_files/basics/<name>.fuzz        the password containers Basics made (0x04, password mode)
 <application support directory>/handoff/<one folder per use>/<name>    transient: a plain (or staged sealed) file for one use — the in-app viewer, the save dialog,
-                                                                        the share sheet, a .fuzz another app handed over — wiped right after, at lock and by the
+                                                                        the share sheet — wiped right after, at lock and by the
                                                                         launch sweep (§10.5); the only folder
                                                                         Android's FileProvider serves
+<application support directory>/incoming/<one folder per file>/<name>   a sealed .fuzz another app handed over, waiting for Open: wiped once Open used or left
+                                                                        it, at erase and by the launch sweep; a lock keeps it for Open after the unlock
 ```
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
