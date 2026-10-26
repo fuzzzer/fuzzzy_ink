@@ -111,6 +111,84 @@ void main() {
       expect(request.text, 'Fuzz/AwEC');
     });
 
+    group("iPhone's own Paste button (final regression 2026-10-26)", () {
+      const codec = StandardMethodCodec();
+      late List<MethodCall> platformViewCalls;
+
+      setUp(() => InkPasteButton.debugIsAvailable = true);
+      tearDown(() => InkPasteButton.debugIsAvailable = null);
+
+      Future<void> pumpWithPlatformViews(WidgetTester tester) async {
+        platformViewCalls = [];
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform_views,
+          (call) async {
+            platformViewCalls.add(call);
+            return null;
+          },
+        );
+        addTearDown(
+          () => tester.binding.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.platform_views, null),
+        );
+        await pumpOpen(tester);
+      }
+
+      Future<void> pasteFromSystem(WidgetTester tester, String? text) async {
+        final created = platformViewCalls
+            .firstWhere((call) => call.method == 'create')
+            .arguments as Map<Object?, Object?>;
+        await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+          '${InkPasteButton.viewType}/${created['id']}',
+          codec.encodeMethodCall(MethodCall('pasted', text)),
+          (_) {},
+        );
+        await tester.pump();
+      }
+
+      testWidgets(
+          'sits on the Paste it row and opens what it pastes, without '
+          'reading the clipboard itself', (tester) async {
+        show(const OpenFlowState());
+        clipboard = 'not read';
+        await pumpWithPlatformViews(tester);
+        expect(find.byKey(const Key('paste.open')), findsOneWidget);
+        final created = platformViewCalls.singleWhere(
+          (call) => call.method == 'create',
+        );
+        expect(
+          (created.arguments as Map<Object?, Object?>)['viewType'],
+          InkPasteButton.viewType,
+        );
+
+        await pasteFromSystem(tester, '  Fuzz/AwEC ');
+        final request = verify(() => cubit.open(captureAny())).captured.single
+            as OpenPastedText;
+        expect(request.text, 'Fuzz/AwEC');
+      });
+
+      testWidgets('a paste with no text says there is nothing to paste',
+          (tester) async {
+        show(const OpenFlowState());
+        await pumpWithPlatformViews(tester);
+        await pasteFromSystem(tester, null);
+        expect(
+          find.text('Nothing to paste. Copy the locked text first.'),
+          findsOneWidget,
+        );
+        verifyNever(() => cubit.open(any()));
+        await tester.pump(const Duration(seconds: 3));
+      });
+    });
+
+    testWidgets('elsewhere there is no system button; the row pastes',
+        (tester) async {
+      show(const OpenFlowState());
+      await pumpOpen(tester);
+      expect(find.byKey(const Key('paste.open')), findsNothing);
+      expect(find.byType(UiKitView), findsNothing);
+    });
+
     testWidgets('nothing to paste says so and stays', (tester) async {
       show(const OpenFlowState());
       await pumpOpen(tester);

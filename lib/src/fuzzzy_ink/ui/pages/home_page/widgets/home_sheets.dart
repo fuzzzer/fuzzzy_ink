@@ -141,6 +141,7 @@ class SheetDoorRow extends StatelessWidget {
     required this.onTap,
     this.emphasised = false,
     this.divider = true,
+    this.trailing,
   });
 
   final String qaId;
@@ -150,6 +151,10 @@ class SheetDoorRow extends StatelessWidget {
   final VoidCallback? onTap;
   final bool emphasised;
   final bool divider;
+
+  /// In place of the chevron: the iPhone's own Paste button on a paste row
+  /// ([InkPasteButton]).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -207,13 +212,17 @@ class SheetDoorRow extends StatelessWidget {
                   ],
                 ),
               ),
-              ExcludeSemantics(
-                child: Icon(
-                  Icons.chevron_right,
-                  size: context.fuzzzyIconSize.m,
-                  color: colors.inkFaint,
+              if (trailing case final trailing?) ...[
+                SizedBox(width: space.s),
+                trailing,
+              ] else
+                ExcludeSemantics(
+                  child: Icon(
+                    Icons.chevron_right,
+                    size: context.fuzzzyIconSize.m,
+                    color: colors.inkFaint,
+                  ),
                 ),
-              ),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import Flutter
 import LocalAuthentication
 import UIKit
+import UniformTypeIdentifiers
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -17,6 +18,7 @@ import UIKit
     registerBackupChannel()
     registerGuardChannel()
     registerDeviceChannel()
+    registerPasteButton()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -523,5 +525,120 @@ final class InkDevice: NSObject, UIDocumentPickerDelegate {
   func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
     pendingExport?(false)
     pendingExport = nil
+  }
+}
+
+// MARK: - Paste button
+
+extension AppDelegate {
+  fileprivate func registerPasteButton() {
+    guard #available(iOS 16.0, *),
+      let registrar = registrar(forPlugin: "FuzzzyPasteButton")
+    else { return }
+    registrar.register(
+      InkPasteButtonFactory(messenger: registrar.messenger()),
+      withId: InkPasteButtonFactory.viewType)
+  }
+}
+
+/// The system Paste button (`UIPasteControl`, iOS 16 and later) for
+/// `ink_paste_button.dart`. A paste through it is the person's own tap on a
+/// button the system draws, so iOS reads the clipboard without asking
+/// "Allow Paste?" every time (final regression 2026-10-26). Dart passes the
+/// colours and the corner radius; each button answers on its own channel
+/// (`…/paste_button/<view id>`, method `pasted` with the text, or null when
+/// the clipboard held no text).
+@available(iOS 16.0, *)
+final class InkPasteButtonFactory: NSObject, FlutterPlatformViewFactory {
+  static let viewType = "com.fuzzzycore.ink/paste_button"
+
+  private let messenger: FlutterBinaryMessenger
+
+  init(messenger: FlutterBinaryMessenger) {
+    self.messenger = messenger
+    super.init()
+  }
+
+  func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+    FlutterStandardMessageCodec.sharedInstance()
+  }
+
+  func create(
+    withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?
+  ) -> FlutterPlatformView {
+    let channel = FlutterMethodChannel(
+      name: "\(InkPasteButtonFactory.viewType)/\(viewId)", binaryMessenger: messenger)
+    return InkPasteButton(
+      frame: frame, arguments: args as? [String: Any] ?? [:], channel: channel)
+  }
+}
+
+@available(iOS 16.0, *)
+final class InkPasteButton: NSObject, FlutterPlatformView {
+  private let target: InkPasteTarget
+
+  init(frame: CGRect, arguments: [String: Any], channel: FlutterMethodChannel) {
+    target = InkPasteTarget(frame: frame, channel: channel)
+    super.init()
+    let configuration = UIPasteControl.Configuration()
+    configuration.displayMode = .iconAndLabel
+    configuration.cornerStyle = .fixed
+    configuration.cornerRadius = CGFloat(arguments["cornerRadius"] as? Double ?? 8)
+    if let foreground = arguments["foreground"] as? Int {
+      configuration.baseForegroundColor = InkGuard.color(argb: foreground)
+    }
+    if let background = arguments["background"] as? Int {
+      configuration.baseBackgroundColor = InkGuard.color(argb: background)
+    }
+    let control = UIPasteControl(configuration: configuration)
+    control.target = target
+    control.translatesAutoresizingMaskIntoConstraints = false
+    target.addSubview(control)
+    NSLayoutConstraint.activate([
+      control.leadingAnchor.constraint(equalTo: target.leadingAnchor),
+      control.trailingAnchor.constraint(equalTo: target.trailingAnchor),
+      control.topAnchor.constraint(equalTo: target.topAnchor),
+      control.bottomAnchor.constraint(equalTo: target.bottomAnchor),
+    ])
+  }
+
+  func view() -> UIView { target }
+}
+
+/// What the Paste button pastes into: takes plain text or a link and hands
+/// it to Dart; nothing is kept here.
+@available(iOS 16.0, *)
+final class InkPasteTarget: UIView {
+  private let channel: FlutterMethodChannel
+
+  init(frame: CGRect, channel: FlutterMethodChannel) {
+    self.channel = channel
+    super.init(frame: frame)
+    backgroundColor = .clear
+    pasteConfiguration = UIPasteConfiguration(acceptableTypeIdentifiers: [
+      UTType.plainText.identifier, UTType.url.identifier,
+    ])
+  }
+
+  required init?(coder: NSCoder) { nil }
+
+  override func paste(itemProviders: [NSItemProvider]) {
+    if let provider = itemProviders.first(where: { $0.canLoadObject(ofClass: NSString.self) }) {
+      _ = provider.loadObject(ofClass: NSString.self) { [weak self] object, _ in
+        self?.send(object as? String)
+      }
+    } else if let provider = itemProviders.first(where: { $0.canLoadObject(ofClass: NSURL.self) }) {
+      _ = provider.loadObject(ofClass: NSURL.self) { [weak self] object, _ in
+        self?.send((object as? URL)?.absoluteString)
+      }
+    } else {
+      send(nil)
+    }
+  }
+
+  private func send(_ text: String?) {
+    DispatchQueue.main.async { [channel] in
+      channel.invokeMethod("pasted", arguments: text)
+    }
   }
 }

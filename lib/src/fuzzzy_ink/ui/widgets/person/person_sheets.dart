@@ -236,8 +236,26 @@ Future<String?> pasteSealedText(
   required String notIt,
 }) async {
   final data = await Clipboard.getData(Clipboard.kTextPlain);
-  final text = data?.text?.trim() ?? '';
   if (!context.mounted) return null;
+  return sealedTextFromPaste(
+    context,
+    data?.text ?? '',
+    kind: kind,
+    nothingToPaste: nothingToPaste,
+    notIt: notIt,
+  );
+}
+
+/// [pasteSealedText] for a text already pasted (the iPhone's own Paste
+/// button, [InkPasteButton]).
+String? sealedTextFromPaste(
+  BuildContext context,
+  String pasted, {
+  required SealedTextKind kind,
+  required String nothingToPaste,
+  required String notIt,
+}) {
+  final text = pasted.trim();
   if (text.isEmpty) {
     showInkToast(context, message: nothingToPaste, kind: FuzzzyToastKind.info);
     return null;
@@ -320,6 +338,20 @@ Future<String?> showOpenReplySheet(BuildContext context) {
                   notIt: localizations.notAReply,
                 ),
               ),
+              trailing: InkPasteButton.isAvailable
+                  ? InkPasteButton(
+                      qaId: 'openReply',
+                      onPasted: (text) => done(
+                        sealedTextFromPaste(
+                          sheetContext,
+                          text,
+                          kind: SealedTextKind.acceptance,
+                          nothingToPaste: localizations.replyNothingToPaste,
+                          notIt: localizations.notAReply,
+                        ),
+                      ),
+                    )
+                  : null,
             ),
             SheetDoorRow(
               qaId: 'openReply.file',

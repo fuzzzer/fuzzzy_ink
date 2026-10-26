@@ -23,6 +23,7 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 | `PersonRow`, `PersonTrustChip`, `WaitNotes` | `fuzzzy_ink/ui/widgets/people/` | A person on Home or in a picker; the trust chip; the two waiting notes. |
 | `HistoryRow`, `FileCard`, `LockedTextPreview` | `fuzzzy_ink/ui/widgets/history/` | History rows (never the text); a file with its state; the faded locked text. |
 | `SafetyNumberGrid` | `fuzzzy_ink/ui/widgets/safety/` | The 12 × 5 digits of "Is it really X?". |
+| `InkPasteButton` | `fuzzzy_ink/ui/widgets/paste/` | iPhone (iOS 16+): the system's own Paste button in a paste row's trailing slot (`SheetDoorRow.trailing`); pastes without the "Allow Paste?" question. `InkPasteButton.isAvailable` is false elsewhere, where the row's own tap reads the clipboard. |
 | `showSealedShareSheet`, `SealedQrCodePage` | `fuzzzy_ink/ui/widgets/share_sheet/` | The one Share button; answers what happened (`SealedShareResult.isDone` for "Share again"). |
 | `FlowScaffold`, `FlowHeader`, `FlowLeading` | `fuzzzy_ink/ui/widgets/flow/` | The one flow screen of the app (Lock, Open, adding a person, the person's screens): the 56 px header with back, close or nothing (`FlowLeading`), an optional title, avatar and actions, the content scrolling between 20 px margins, the main buttons at the bottom. |
 | `FlowHero`, `FlowTitle`, `FlowErrorLine`, `FlowWorkingView` | `fuzzzy_ink/ui/widgets/flow/` | The picture slot with Fuzzz; one title and line; one failure line; Locking / Opening with real progress. |

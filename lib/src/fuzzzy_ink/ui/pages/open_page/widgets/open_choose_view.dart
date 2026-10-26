@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// "Open what you got": Paste it (the clipboard is read only on this tap),
-/// Choose a file (or drop one on a computer), and the tip that links and QR
+/// "Open what you got": Paste it (the clipboard is read only on this tap;
+/// on iPhone the system's own Paste button pastes without asking), Choose a
+/// file (or drop one on a computer), and the tip that links and QR
 /// codes open here by themselves.
 class OpenChooseView extends StatefulWidget {
   const OpenChooseView({super.key, required this.onClose});
@@ -22,8 +23,11 @@ class _OpenChooseViewState extends State<OpenChooseView> {
 
   Future<void> _paste() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
-    final text = data?.text?.trim() ?? '';
     if (!mounted) return;
+    await _openPasted(data?.text?.trim() ?? '');
+  }
+
+  Future<void> _openPasted(String text) async {
     if (text.isEmpty) {
       showInkToast(
         context,
@@ -95,6 +99,9 @@ class _OpenChooseViewState extends State<OpenChooseView> {
                 title: localizations.openPasteIt,
                 hint: localizations.openPasteItHint,
                 onTap: _paste,
+                trailing: InkPasteButton.isAvailable
+                    ? InkPasteButton(qaId: 'open', onPasted: _openPasted)
+                    : null,
               ),
               SheetDoorRow(
                 qaId: 'open.file',

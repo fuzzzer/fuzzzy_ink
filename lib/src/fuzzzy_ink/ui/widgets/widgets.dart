@@ -3,6 +3,7 @@ export 'chat_deletion_dialog.dart';
 export 'flow/flow.dart';
 export 'history/history.dart';
 export 'home/home.dart';
+export 'paste/paste.dart';
 export 'people/people.dart';
 export 'person/person.dart';
 export 'plain_file/plain_file.dart';

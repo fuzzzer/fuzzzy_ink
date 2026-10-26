@@ -210,6 +210,20 @@ class _ProvidedInvitationAcceptancePageState
                 notIt: localizations.gotDamagedLine,
               ),
             ),
+            trailing: InkPasteButton.isAvailable
+                ? InkPasteButton(
+                    qaId: 'gotInvite',
+                    onPasted: (text) => _read(
+                      sealedTextFromPaste(
+                        context,
+                        text,
+                        kind: SealedTextKind.invitation,
+                        nothingToPaste: localizations.inviteNothingToPaste,
+                        notIt: localizations.gotDamagedLine,
+                      ),
+                    ),
+                  )
+                : null,
           ),
           SheetDoorRow(
             qaId: 'gotInvite.file',
