@@ -101,6 +101,39 @@ void main() {
       expect(after.isUnlocked, isTrue);
     });
 
+    test('read as off at the first unlock of a run: the entry points hear it',
+        () async {
+      // "Off" looks like the starting state; an earlier run may have left
+      // the Android entry points on (security review 2026-10-26).
+      app.storeSettings(FuzzAnywhereSettings.standard);
+      final events = <AnywhereEvent>[];
+      app.service.events.listen(events.add);
+      await app.boot();
+      await app.unlockInApp();
+      await pumpEventQueue();
+
+      final switches = events.whereType<AnywhereSettingsChanged>().toList();
+      expect(switches, hasLength(1));
+      expect(switches.single.isOn, isFalse);
+    });
+
+    test('no master password (new, or after Erase everything): switched off',
+        () async {
+      when(app.chatAuth.status).thenAnswer(
+        (_) async => const CryptoCoreSuccess(MasterKeyStatus.notSetUp),
+      );
+      when(app.chatAuth.hasLegacyData)
+          .thenAnswer((_) async => const CryptoCoreSuccess(false));
+      final events = <AnywhereEvent>[];
+      app.service.events.listen(events.add);
+      await app.boot();
+      await pumpEventQueue();
+
+      final switches = events.whereType<AnywhereSettingsChanged>().toList();
+      expect(switches, hasLength(1));
+      expect(switches.single.isOn, isFalse);
+    });
+
     test('found off at an unlock from outside: the app locks again', () async {
       app.storeSettings(FuzzAnywhereSettings.standard);
       await app.boot();

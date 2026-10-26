@@ -33,6 +33,10 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 ///   clipboard monitors; cleared after its time and when the window closes.
 /// - Linux: the Flutter clipboard; a clipboard manager may keep a copy.
 /// Every copy is cleared when the app locks, if it is still the app's.
+/// Sealed output that "Lock from other apps" copies is marked sensitive the
+/// same way (it still pastes everywhere), so on Android it too is cleared
+/// after its 2 minutes while the person is in another app; a copy a killed
+/// process left behind is cleared at the app's next start (`Guard.kt`).
 const guardChannel = MethodChannel('com.fuzzzycore.ink/guard');
 
 /// Settings → My safe → Copy passwords (decided 2026-10-26: kept, on by
@@ -219,14 +223,23 @@ class ClipboardGuard {
   Stream<ClipboardCopyCleared> get cleared => _cleared.stream;
 
   /// Copies [text] when the policy allows [content]; answers whether it did.
-  Future<bool> copy(String text, CopyContent content) async {
+  ///
+  /// [markSensitive] marks an allowed copy sensitive although its content
+  /// is not (the policy's clear time stays): "Lock from other apps" copies
+  /// sealed output while the person is in another app, where Android can
+  /// clear it only blind (security review 2026-10-26).
+  Future<bool> copy(
+    String text,
+    CopyContent content, {
+    bool markSensitive = false,
+  }) async {
     if (!policy.allows(content)) return false;
 
     final clearAfter = policy.clearAfter(content);
     _clearTimer?.cancel();
     await _clipboard.write(
       text,
-      sensitive: policy.isSensitive(content),
+      sensitive: markSensitive || policy.isSensitive(content),
       clearAfter: clearAfter,
     );
     _isClearPending = true;
@@ -326,12 +339,14 @@ abstract final class CopyGuard {
 
   /// Copies [text] if [content] may leave the app, with no toast: for a
   /// control that confirms in place ("Copied" on the button or row itself).
-  /// Answers whether it copied.
+  /// Answers whether it copied. See [ClipboardGuard.copy] for
+  /// [markSensitive].
   static Future<bool> copyQuietly({
     required String text,
     required CopyContent content,
+    bool markSensitive = false,
   }) =>
-      _clipboardGuard.copy(text, content);
+      _clipboardGuard.copy(text, content, markSensitive: markSensitive);
 
   /// The id of the latest copy ([ClipboardGuard.lastCopyId]).
   static int get lastCopyId => _clipboardGuard.lastCopyId;

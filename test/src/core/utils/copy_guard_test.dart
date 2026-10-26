@@ -119,6 +119,26 @@ void main() {
       });
     });
 
+    test('sealed output for another app is marked sensitive, same 2 minutes',
+        () {
+      fakeAsync((async) {
+        final clipboard = _FakeSecureClipboard();
+        final guard = ClipboardGuard(clipboard: clipboard);
+        unawaited(
+          guard.copy('FUZZ:abc', CopyContent.sealedLink, markSensitive: true),
+        );
+        unawaited(
+          guard.copy('typed', CopyContent.plaintext, markSensitive: true),
+        );
+        async.flushMicrotasks();
+
+        expect(clipboard.writes, hasLength(1), reason: 'plaintext stays out');
+        expect(clipboard.writes.single.sensitive, isTrue);
+        expect(clipboard.writes.single.clearAfter, CopyPolicy.sealedClearAfter);
+        guard.dispose();
+      });
+    });
+
     test('copies sealed output and clears it after two minutes', () {
       fakeAsync((async) {
         final clipboard = _FakeSecureClipboard();

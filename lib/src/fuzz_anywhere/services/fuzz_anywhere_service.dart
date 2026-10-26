@@ -99,8 +99,11 @@ class FuzzAnywhereService {
   /// Locked or unlocked, Settings changed, a shown message closed.
   Stream<AnywhereEvent> get events => _events.stream;
 
+  /// Marked sensitive: the person pastes it in another app, so it is kept
+  /// out of clipboard previews and history and, on Android, cleared after
+  /// its 2 minutes even while Fuzzzy Ink is not in front (CHANNEL.md, lock).
   static Future<bool> _copyThroughGuard(String text, CopyContent content) =>
-      CopyGuard.copyQuietly(text: text, content: content);
+      CopyGuard.copyQuietly(text: text, content: content, markSensitive: true);
 
   Future<AnywhereStatus> status() async {
     final auth = authStore.state;
@@ -529,6 +532,10 @@ class FuzzAnywhereService {
   }
 
   void _onAuthChanged(FuzzyAuthState state) {
+    // No master password (a new install, or "Erase everything"): nothing
+    // can be on. Said every time, so the entry points an earlier setup
+    // switched on go too (security review 2026-10-26).
+    if (state.status.isSetupRequired) _sendSwitchOff();
     final isUnlocked = state.status.hasAccess;
     if (isUnlocked == _wasUnlocked) return;
     _wasUnlocked = isUnlocked;
@@ -548,10 +555,14 @@ class FuzzAnywhereService {
     }
   }
 
+  /// Sent when the switches change, and at every first read of a run even
+  /// when they read as before: "off" then looks like the starting state, and
+  /// the native side must still switch off what an earlier run left on.
   void _onSettingsChanged(FuzzAnywhereSettingsState state) {
     final before = _lastSettings;
     _lastSettings = state;
-    if (before.isOn == state.isOn &&
+    if (before.isLoaded == state.isLoaded &&
+        before.isOn == state.isOn &&
         before.settings.locksAgainAfterUse ==
             state.settings.locksAgainAfterUse) {
       return;
@@ -563,6 +574,13 @@ class FuzzAnywhereService {
       ),
     );
   }
+
+  void _sendSwitchOff() => _send(
+        AnywhereSettingsChanged(
+          isOn: false,
+          locksAgainAfterUse: FuzzAnywhereSettings.standard.locksAgainAfterUse,
+        ),
+      );
 
   void _send(AnywhereEvent event) {
     if (!_events.isClosed) _events.add(event);

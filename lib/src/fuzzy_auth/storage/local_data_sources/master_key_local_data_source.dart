@@ -56,6 +56,10 @@ class MasterKeyLocalDataSource {
     'biometric_key_version_vault',
     'biometric_legacy_cleanup_chat',
     'biometric_legacy_cleanup_vault',
+    // "Lock from other apps" (experimental): its two sealed settings go too
+    // when the wildcard delete is refused (security review 2026-10-26).
+    FuzzAnywhereLocalDataSource.settingsKey,
+    FuzzAnywhereLocalDataSource.appPeopleKey,
   ];
 
   /// The keys whose presence under the old service means an earlier build
