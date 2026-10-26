@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../tools/native_strings/apple_strings.dart' as native_strings;
+
 /// "Lock from other apps" on the Mac and the iPhone (experimental,
 /// `documents/fuzz_anywhere/CHANNEL.md`): what the native pieces may
 /// declare and use. The Services menu exists only in the development
@@ -182,10 +184,13 @@ void main() {
   });
 
   test('the native strings are generated from the current .arb files', () {
-    final check = Process.runSync(
-      'python3',
-      ['scripts/anywhere_native_strings.py', '--check'],
-    );
-    expect(check.exitCode, 0, reason: '${check.stdout}${check.stderr}');
+    for (final MapEntry(key: path, value: content)
+        in native_strings.expectedFiles().entries) {
+      expect(
+        File(path).readAsStringSync(),
+        content,
+        reason: '$path is stale: run tools/native_strings/apple_strings.dart',
+      );
+    }
   });
 }

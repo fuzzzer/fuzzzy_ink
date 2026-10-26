@@ -65,7 +65,7 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
         receiveQueue: receiveQueue,
       ),
       display: _showOpened,
-      handOff: _openInApp,
+      presentOpen: _presentOpen,
     );
     _settings = settings;
     _service = service;
@@ -81,17 +81,12 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
     await router.push<void>(AppRouter.personItem, extra: payload);
   }
 
-  /// Open, with what the person brought from another app, as if pasted
-  /// there (an invite, a reply or a password-locked text).
-  static void _openInApp(OpenRequest request) {
+  /// The app's Open screen with a sealed text filled in ("Open in Fuzzzy
+  /// Ink" from another app).
+  static Future<void> _presentOpen(OpenPagePayload payload) async {
     final router = AppRouter.routerInstance;
     if (router == null) return;
-    unawaited(
-      router.push<void>(
-        AppRouter.open,
-        extra: OpenPagePayload(request: request),
-      ),
-    );
+    await router.push<void>(AppRouter.open, extra: payload);
   }
 
   /// The language picked in Settings; null while it is "Like my phone".

@@ -2813,64 +2813,137 @@
   "@infoOtherAppsLine3": {
     "description": "Lock from other apps (experimental, 2026-10-26)."
   },
+  "anywhereSheetOpenTitle": "Open this locked text?",
+  "@anywhereSheetOpenTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkTitle": "Open it in Fuzzzy Ink",
+  "@anywhereSheetOpenInInkTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkLine": "It's an invite, a reply or text locked with a password. Fuzzzy Ink shows what comes next.",
+  "@anywhereSheetOpenInInkLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkAction": "Open in Fuzzzy Ink",
+  "@anywhereSheetOpenInInkAction": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetGotIt": "Got it",
+  "@anywhereSheetGotIt": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetChange": "Change",
+  "@anywhereSheetChange": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSelectedText": "Your selected text",
+  "@anywhereSheetSelectedText": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetLockedFor": "Locked for {name}",
+  "@anywhereSheetLockedFor": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "anywhereSheetPutInPlace": "It's in place of the text you selected.",
+  "@anywhereSheetPutInPlace": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetCopied": "Copied. Paste it where you want. It clears in 2 minutes.",
+  "@anywhereSheetCopied": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNoPeopleLine": "Connect with someone in Fuzzzy Ink, then come back.",
+  "@anywhereSheetNoPeopleLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenApp": "Open Fuzzzy Ink",
+  "@anywhereSheetOpenApp": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSetUpTitle": "Set up Fuzzzy Ink first",
+  "@anywhereSheetSetUpTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSetUpLine": "Make a master password in the app, then come back.",
+  "@anywhereSheetSetUpLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNotReadyTitle": "Fuzzzy Ink isn't ready",
+  "@anywhereSheetNotReadyTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNotReadyLine": "Open Fuzzzy Ink, then try again.",
+  "@anywhereSheetNotReadyLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetFailedTitle": "Something went wrong",
+  "@anywhereSheetFailedTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetUnlockLine": "Unlock to lock or open text here.",
+  "@anywhereSheetUnlockLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetClose": "Close",
+  "@anywhereSheetClose": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetStarting": "Starting Fuzzzy Ink…",
+  "@anywhereSheetStarting": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSelected": "Selected",
+  "@anywhereSheetSelected": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetTileLabel": "Lock text",
+  "@anywhereSheetTileLabel": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
   "anywhereNativeLockTitle": "Lock a message",
   "@anywhereNativeLockTitle": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeOpenTitle": "Open a message",
   "@anywhereNativeOpenTitle": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeLockIntentDescription": "Write a message and lock it for one of your people.",
   "@anywhereNativeLockIntentDescription": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeUnlock": "Unlock",
   "@anywhereNativeUnlock": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeUseTouchId": "Unlock with Touch ID",
   "@anywhereNativeUseTouchId": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeUseFaceId": "Unlock with Face ID",
   "@anywhereNativeUseFaceId": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
-  },
-  "anywhereNativeSetUpFirst": "Make your master password in Fuzzzy Ink first.",
-  "@anywhereNativeSetUpFirst": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
-  },
-  "anywhereNativeOpenApp": "Open Fuzzzy Ink",
-  "@anywhereNativeOpenApp": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeTurnOn": "Turn on Lock from other apps in Fuzzzy Ink's Settings.",
   "@anywhereNativeTurnOn": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeCopiedPressPaste": "Copied. Press ⌘V to paste it.",
   "@anywhereNativeCopiedPressPaste": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
-  },
-  "anywhereNativeReplaced": "Your text is locked in place.",
-  "@anywhereNativeReplaced": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeShownInApp": "It's open in Fuzzzy Ink.",
   "@anywhereNativeShownInApp": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
-  },
-  "anywhereNativeOpenInApp": "Open in Fuzzzy Ink",
-  "@anywhereNativeOpenInApp": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
-  },
-  "anywhereNativeNotForAPerson": "Invites, replies and password texts open in Fuzzzy Ink.",
-  "@anywhereNativeNotForAPerson": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   },
   "anywhereNativeShowApp": "Show Fuzzzy Ink",
   "@anywhereNativeShowApp": {
-    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   }
 }

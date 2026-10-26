@@ -60,9 +60,6 @@ const openedSecret = 'the key is under the blue pot';
 const blobFromNino = 'Fuzz/AwECbmlubw';
 const lockedBlob = 'Fuzz/AwECc2VhbGVk';
 
-/// An invite someone sent (the peek says so; nothing in it opens).
-const inviteBlob = 'Fuzz/AwEBaW52aXRl';
-
 final nino = ChatGeneralData(
   chatId: ninoId,
   chatName: 'Nino',
@@ -160,7 +157,7 @@ class AnywhereHarness {
         shown.add(payload);
         return (displayClosed = Completer<void>()).future;
       },
-      handOff: handedOff.add,
+      presentOpen: (payload) async => presented.add(payload),
       keepSealedCopyAtLock: () => keptAtLock++,
       copySealed: (text, content) async {
         copies.add((text, content));
@@ -195,14 +192,14 @@ class AnywhereHarness {
   final shown = <HistoryItemPagePayload>[];
   Completer<void>? displayClosed;
 
-  /// What [FuzzAnywhereService.openInApp] handed to the app's Open screen.
-  final handedOff = <OpenRequest>[];
-
-  /// How often a relock asked the copy guard to keep the sealed copy.
-  int keptAtLock = 0;
+  /// What [FuzzAnywhereService.openInApp] handed to the Open screen.
+  final presented = <OpenPagePayload>[];
 
   /// What went to the copy guard.
   final copies = <(String, CopyContent)>[];
+
+  /// How often a relock asked the copy guard to keep the sealed copy.
+  int keptAtLock = 0;
 
   AppLockThrottleData throttleData = AppLockThrottleData.none;
 
@@ -270,15 +267,12 @@ class AnywhereHarness {
     ).thenAnswer((call) async {
       final text = call.namedArguments[#text] as String;
       return CryptoCoreSuccess(
-        switch (text) {
-          blobFromNino => const CryptoCorePeek(
-              kind: CryptoCorePeekKind.message,
-              chatId: ninoId,
-            ),
-          inviteBlob =>
-            const CryptoCorePeek(kind: CryptoCorePeekKind.invitation),
-          _ => const CryptoCorePeek(kind: CryptoCorePeekKind.notFuzzzy),
-        },
+        text == blobFromNino
+            ? const CryptoCorePeek(
+                kind: CryptoCorePeekKind.message,
+                chatId: ninoId,
+              )
+            : const CryptoCorePeek(kind: CryptoCorePeekKind.notFuzzzy),
       );
     });
     when(() => crypto.decryptText(chatId: ninoId, blob: blobFromNino))

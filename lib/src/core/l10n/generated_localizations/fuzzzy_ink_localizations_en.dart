@@ -2330,6 +2330,79 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.';
 
   @override
+  String get anywhereSheetOpenTitle => 'Open this locked text?';
+
+  @override
+  String get anywhereSheetOpenInInkTitle => 'Open it in Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetOpenInInkLine =>
+      'It\'s an invite, a reply or text locked with a password. Fuzzzy Ink shows what comes next.';
+
+  @override
+  String get anywhereSheetOpenInInkAction => 'Open in Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetGotIt => 'Got it';
+
+  @override
+  String get anywhereSheetChange => 'Change';
+
+  @override
+  String get anywhereSheetSelectedText => 'Your selected text';
+
+  @override
+  String anywhereSheetLockedFor(String name) {
+    return 'Locked for $name';
+  }
+
+  @override
+  String get anywhereSheetPutInPlace =>
+      'It\'s in place of the text you selected.';
+
+  @override
+  String get anywhereSheetCopied =>
+      'Copied. Paste it where you want. It clears in 2 minutes.';
+
+  @override
+  String get anywhereSheetNoPeopleLine =>
+      'Connect with someone in Fuzzzy Ink, then come back.';
+
+  @override
+  String get anywhereSheetOpenApp => 'Open Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetSetUpTitle => 'Set up Fuzzzy Ink first';
+
+  @override
+  String get anywhereSheetSetUpLine =>
+      'Make a master password in the app, then come back.';
+
+  @override
+  String get anywhereSheetNotReadyTitle => 'Fuzzzy Ink isn\'t ready';
+
+  @override
+  String get anywhereSheetNotReadyLine => 'Open Fuzzzy Ink, then try again.';
+
+  @override
+  String get anywhereSheetFailedTitle => 'Something went wrong';
+
+  @override
+  String get anywhereSheetUnlockLine => 'Unlock to lock or open text here.';
+
+  @override
+  String get anywhereSheetClose => 'Close';
+
+  @override
+  String get anywhereSheetStarting => 'Starting Fuzzzy Ink…';
+
+  @override
+  String get anywhereSheetSelected => 'Selected';
+
+  @override
+  String get anywhereSheetTileLabel => 'Lock text';
+
+  @override
   String get anywhereNativeLockTitle => 'Lock a message';
 
   @override
@@ -2349,13 +2422,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get anywhereNativeUseFaceId => 'Unlock with Face ID';
 
   @override
-  String get anywhereNativeSetUpFirst =>
-      'Make your master password in Fuzzzy Ink first.';
-
-  @override
-  String get anywhereNativeOpenApp => 'Open Fuzzzy Ink';
-
-  @override
   String get anywhereNativeTurnOn =>
       'Turn on Lock from other apps in Fuzzzy Ink\'s Settings.';
 
@@ -2363,17 +2429,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get anywhereNativeCopiedPressPaste => 'Copied. Press ⌘V to paste it.';
 
   @override
-  String get anywhereNativeReplaced => 'Your text is locked in place.';
-
-  @override
   String get anywhereNativeShownInApp => 'It\'s open in Fuzzzy Ink.';
-
-  @override
-  String get anywhereNativeOpenInApp => 'Open in Fuzzzy Ink';
-
-  @override
-  String get anywhereNativeNotForAPerson =>
-      'Invites, replies and password texts open in Fuzzzy Ink.';
 
   @override
   String get anywhereNativeShowApp => 'Show Fuzzzy Ink';

@@ -1,7 +1,7 @@
 import Foundation
 
 /// The native sheets' words, read from `Anywhere.strings`, which
-/// `scripts/anywhere_native_strings.py` writes from the app's `.arb` files.
+/// `tools/native_strings/apple_strings.dart` writes from the app's `.arb` files.
 /// The language is the one the person picked in Fuzzzy Ink's Settings (the
 /// `language` in `status`), else the device's, else English.
 @available(iOS 15.0, macOS 12.0, *)
@@ -41,7 +41,7 @@ struct InkText {
   var openTitle: String { word("anywhereNativeOpenTitle") }
   var lockIntentDescription: String { word("anywhereNativeLockIntentDescription") }
   var showApp: String { word("anywhereNativeShowApp") }
-  var openApp: String { word("anywhereNativeOpenApp") }
+  var openApp: String { word("anywhereSheetOpenApp") }
 
   var lockedTitle: String { word("accessLockedTitle") }
   var unlock: String { word("anywhereNativeUnlock") }
@@ -53,7 +53,7 @@ struct InkText {
   var biometricChanged: String { word("accessBioChanged") }
   func wait(_ time: String) -> String { word("lockoutWaitLeft", time) }
 
-  var setUpFirst: String { word("anywhereNativeSetUpFirst") }
+  var setUpFirst: String { word("anywhereSheetSetUpLine") }
   var turnOn: String { word("anywhereNativeTurnOn") }
 
   var whoFor: String { word("lockWhoTitle") }
@@ -68,7 +68,7 @@ struct InkText {
   var nowSendIt: String { word("lockedNowSendIt") }
   var copied: String { word("copiedToTheClipboard") }
   var copiedPressPaste: String { word("anywhereNativeCopiedPressPaste") }
-  var replaced: String { word("anywhereNativeReplaced") }
+  var replaced: String { word("anywhereSheetPutInPlace") }
   var draftNote: String { word("infoOtherAppsLine3") }
 
   var paste: String { word("openPasteIt") }
@@ -77,8 +77,8 @@ struct InkText {
   var opening: String { word("workingOpening") }
   func inHistory(_ name: String) -> String { word("openedInHistoryNow", name) }
   var shownInApp: String { word("anywhereNativeShownInApp") }
-  var openInApp: String { word("anywhereNativeOpenInApp") }
-  var notForAPerson: String { word("anywhereNativeNotForAPerson") }
+  var openInApp: String { word("anywhereSheetOpenInInkAction") }
+  var notForAPerson: String { word("anywhereSheetOpenInInkLine") }
   var openFailed: String { word("openFailed") }
 
   /// The app's Open wording for a message that does not open.
