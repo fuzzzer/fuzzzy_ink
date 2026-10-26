@@ -46,6 +46,7 @@ void main() {
   late AnywhereHarness app;
   late FuzzAnywhereChannel channel;
   late List<MethodCall> sentToPlatform;
+  String? chosenLanguage;
 
   setUp(() async {
     app = AnywhereHarness()
@@ -53,12 +54,16 @@ void main() {
         const FuzzAnywhereSettings(isOn: true, locksAgainAfterUse: true),
       );
     sentToPlatform = [];
+    chosenLanguage = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(fuzzAnywhereMethodChannel, (call) async {
       sentToPlatform.add(call);
       return null;
     });
-    channel = FuzzAnywhereChannel(service: app.service)..attach();
+    channel = FuzzAnywhereChannel(
+      service: app.service,
+      language: () => chosenLanguage,
+    )..attach();
     await app.boot();
   });
 
@@ -81,6 +86,17 @@ void main() {
       'setUp': true,
       'biometric': 'on',
     });
+  });
+
+  test(
+      'status names the language picked in Settings, none while it follows '
+      'the device', () async {
+    final following = (await _call('status'))!.value! as Map<Object?, Object?>;
+    expect(following.containsKey('language'), isFalse);
+
+    chosenLanguage = 'ka';
+    final picked = (await _call('status'))!.value! as Map<Object?, Object?>;
+    expect(picked['language'], 'ka');
   });
 
   test('a newer contract, a bad argument and an unknown method are refused',
@@ -181,6 +197,19 @@ void main() {
       for (final call in sentToPlatform) {
         expect('${call.arguments}', isNot(contains(openedSecret)));
       }
+    });
+
+    test('openInApp hands an invite to the app and answers no text', () async {
+      final handed = await _call('openInApp', {'text': inviteBlob});
+      expect(handed!.value, {'status': 'shown'});
+      expect(app.handedOff, hasLength(1));
+
+      expect(
+        (await _call('openInApp', {'text': blobFromNino}))!.code,
+        'badRequest',
+      );
+      expect((await _call('openInApp'))!.code, 'badRequest');
+      expect(app.handedOff, hasLength(1));
     });
 
     test('relock answers whether it locked, and the platform hears it',

@@ -381,6 +381,68 @@ void main() {
     });
   });
 
+  group('open in the app', () {
+    setUp(() async {
+      app.storeSettings(_on);
+      await app.boot();
+      await app.service.unlockWithPassword(rightPassword);
+    });
+
+    test("an invite goes to the app's Open screen, as if pasted there",
+        () async {
+      expect(_refusal(await app.service.openInApp(' $inviteBlob\n')), isNull);
+
+      expect(app.handedOff, hasLength(1));
+      final request = app.handedOff.single;
+      expect(request, isA<OpenPastedText>());
+      expect((request as OpenPastedText).text, inviteBlob);
+      verifyNothingOpened();
+      expect(app.rows, isEmpty);
+    });
+
+    test('the use goes on in the app: closing the sheet does not lock it',
+        () async {
+      await app.service.openInApp(inviteBlob);
+
+      expect(await app.service.relock(), isFalse);
+      expect(app.authStore.state.status, AuthStateStatus.authenticated);
+    });
+
+    test('a message is refused: it opens only through open', () async {
+      expect(
+        _refusal(await app.service.openInApp(blobFromNino)),
+        AnywhereFailure.badRequest,
+      );
+      expect(
+        _refusal(await app.service.openInApp('just words')),
+        AnywhereFailure.badRequest,
+      );
+      expect(
+        _refusal(await app.service.openInApp('  ')),
+        AnywhereFailure.emptyText,
+      );
+      expect(app.handedOff, isEmpty);
+      verifyNothingOpened();
+    });
+
+    test('refused while locked or switched off', () async {
+      await app.authStore.lock();
+      expect(
+        _refusal(await app.service.openInApp(inviteBlob)),
+        AnywhereFailure.locked,
+      );
+
+      await app.unlockInApp();
+      await pumpEventQueue(); // the settings are read again after an unlock
+      await app.settings.setOn(false);
+      expect(
+        _refusal(await app.service.openInApp(inviteBlob)),
+        AnywhereFailure.disabled,
+      );
+      expect(app.handedOff, isEmpty);
+    });
+  });
+
   group('unlocking', () {
     setUp(() => app.storeSettings(_on));
 

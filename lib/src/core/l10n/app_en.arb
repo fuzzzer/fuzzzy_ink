@@ -2812,5 +2812,65 @@
   "infoOtherAppsLine3": "Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.",
   "@infoOtherAppsLine3": {
     "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereNativeLockTitle": "Lock a message",
+  "@anywhereNativeLockTitle": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeOpenTitle": "Open a message",
+  "@anywhereNativeOpenTitle": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeLockIntentDescription": "Write a message and lock it for one of your people.",
+  "@anywhereNativeLockIntentDescription": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeUnlock": "Unlock",
+  "@anywhereNativeUnlock": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeUseTouchId": "Unlock with Touch ID",
+  "@anywhereNativeUseTouchId": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeUseFaceId": "Unlock with Face ID",
+  "@anywhereNativeUseFaceId": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeSetUpFirst": "Make your master password in Fuzzzy Ink first.",
+  "@anywhereNativeSetUpFirst": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeOpenApp": "Open Fuzzzy Ink",
+  "@anywhereNativeOpenApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeTurnOn": "Turn on Lock from other apps in Fuzzzy Ink's Settings.",
+  "@anywhereNativeTurnOn": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeCopiedPressPaste": "Copied. Press ⌘V to paste it.",
+  "@anywhereNativeCopiedPressPaste": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeReplaced": "Your text is locked in place.",
+  "@anywhereNativeReplaced": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeShownInApp": "It's open in Fuzzzy Ink.",
+  "@anywhereNativeShownInApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeOpenInApp": "Open in Fuzzzy Ink",
+  "@anywhereNativeOpenInApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeNotForAPerson": "Invites, replies and password texts open in Fuzzzy Ink.",
+  "@anywhereNativeNotForAPerson": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
+  },
+  "anywhereNativeShowApp": "Show Fuzzzy Ink",
+  "@anywhereNativeShowApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by scripts/anywhere_native_strings.py."
   }
 }

@@ -65,10 +65,12 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
         receiveQueue: receiveQueue,
       ),
       display: _showOpened,
+      handOff: _openInApp,
     );
     _settings = settings;
     _service = service;
-    _channel = FuzzAnywhereChannel(service: service)..attach();
+    _channel = FuzzAnywhereChannel(service: service, language: _language)
+      ..attach();
   }
 
   /// The opened message on the history item screen (private, behind the
@@ -77,6 +79,26 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
     final router = AppRouter.routerInstance;
     if (router == null) return;
     await router.push<void>(AppRouter.personItem, extra: payload);
+  }
+
+  /// Open, with what the person brought from another app, as if pasted
+  /// there (an invite, a reply or a password-locked text).
+  static void _openInApp(OpenRequest request) {
+    final router = AppRouter.routerInstance;
+    if (router == null) return;
+    unawaited(
+      router.push<void>(
+        AppRouter.open,
+        extra: OpenPagePayload(request: request),
+      ),
+    );
+  }
+
+  /// The language picked in Settings; null while it is "Like my phone".
+  String? _language() {
+    if (!mounted) return null;
+    final language = context.read<LocalizationCubit>().state;
+    return language.followsPhone ? null : language.locale.languageCode;
   }
 
   @override

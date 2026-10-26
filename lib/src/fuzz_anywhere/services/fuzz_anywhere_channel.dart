@@ -17,12 +17,18 @@ const fuzzAnywhereMethodChannel = MethodChannel('com.fuzzzycore.ink/anywhere');
 class FuzzAnywhereChannel {
   FuzzAnywhereChannel({
     required this.service,
+    this.language,
     MethodChannel channel = fuzzAnywhereMethodChannel,
   }) : _channel = channel;
 
   static const contractVersion = 1;
 
   final FuzzAnywhereService service;
+
+  /// The language the person chose in Settings (`en`, `ka`), or null while
+  /// the app follows the device's. The native sheets speak the same one.
+  final String? Function()? language;
+
   final MethodChannel _channel;
   StreamSubscription<AnywhereEvent>? _eventSubscription;
 
@@ -101,6 +107,9 @@ class FuzzAnywhereChannel {
       case 'show':
         _valueOf(await service.show(_string(arguments, 'displayId')));
         return const {'status': 'shown'};
+      case 'openInApp':
+        _valueOf(await service.openInApp(_string(arguments, 'text')));
+        return const {'status': 'shown'};
       case 'relock':
         return {'relocked': await service.relock()};
       default:
@@ -116,6 +125,7 @@ class FuzzAnywhereChannel {
         'unlocked': status.isUnlocked,
         'setUp': status.isSetUp,
         'biometric': status.biometric.code,
+        if (language?.call() case final code?) 'language': code,
       };
 
   Map<String, Object?> _unlocked(AnywhereResult<void> result) {

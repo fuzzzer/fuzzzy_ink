@@ -33,6 +33,7 @@ class FuzzAnywhereService {
     required this.lockFlow,
     required this.openFlow,
     required this.display,
+    required this.handOff,
     Future<bool> Function(String text, CopyContent content)? copySealed,
     DateTime Function()? now,
   })  : _copySealed = copySealed ?? _copyThroughGuard,
@@ -60,6 +61,10 @@ class FuzzAnywhereService {
   /// Shows an opened message on the app's private history screen; done
   /// when the person closes it (or the app locks).
   final Future<void> Function(HistoryItemPagePayload payload) display;
+
+  /// Brings up the app's Open screen with `request` (an invite, a reply or
+  /// a password-locked text), where the person goes on as after Paste it.
+  final void Function(OpenRequest request) handOff;
 
   final Future<bool> Function(String text, CopyContent content) _copySealed;
   final DateTime Function() _now;
@@ -350,6 +355,42 @@ class FuzzAnywhereService {
       return const AnywhereRefused(AnywhereFailure.notForAPerson);
     }
     return AnywhereRefused(_failureOf(opened.problem));
+  }
+
+  /// The person pressed "Open in Fuzzzy Ink" on something [open] answered
+  /// [AnywhereFailure.notForAPerson] for: an invite, a reply or a
+  /// password-locked text. The app's Open screen takes it as if it had been
+  /// pasted there, and every next step (Connect, the password) is the
+  /// person's own press in the app. Anything else is refused: a message
+  /// opens only through [open].
+  ///
+  /// The use goes on inside the app, so "Lock again after each use" no
+  /// longer applies to it: the app's own auto-lock does.
+  Future<AnywhereResult<void>> openInApp(String text) async {
+    final refusal = await _gate();
+    if (refusal != null) return AnywhereRefused(refusal);
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) {
+      return const AnywhereRefused(AnywhereFailure.emptyText);
+    }
+    final AnywhereKind kind;
+    switch (await peek(trimmed)) {
+      case AnywhereRefused(:final failure):
+        return AnywhereRefused(failure);
+      case AnywhereDone(:final value):
+        kind = value.kind;
+    }
+    const handedOver = {
+      AnywhereKind.invite,
+      AnywhereKind.reply,
+      AnywhereKind.passwordText,
+    };
+    if (!handedOver.contains(kind)) {
+      return const AnywhereRefused(AnywhereFailure.badRequest);
+    }
+    _unlockedHere = false;
+    handOff(OpenPastedText(trimmed));
+    return const AnywhereDone(null);
   }
 
   /// Shows the message [open] just opened on the app's private screen,

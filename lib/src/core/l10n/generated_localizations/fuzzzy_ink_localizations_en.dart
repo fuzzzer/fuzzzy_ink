@@ -2328,4 +2328,53 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get infoOtherAppsLine3 =>
       'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.';
+
+  @override
+  String get anywhereNativeLockTitle => 'Lock a message';
+
+  @override
+  String get anywhereNativeOpenTitle => 'Open a message';
+
+  @override
+  String get anywhereNativeLockIntentDescription =>
+      'Write a message and lock it for one of your people.';
+
+  @override
+  String get anywhereNativeUnlock => 'Unlock';
+
+  @override
+  String get anywhereNativeUseTouchId => 'Unlock with Touch ID';
+
+  @override
+  String get anywhereNativeUseFaceId => 'Unlock with Face ID';
+
+  @override
+  String get anywhereNativeSetUpFirst =>
+      'Make your master password in Fuzzzy Ink first.';
+
+  @override
+  String get anywhereNativeOpenApp => 'Open Fuzzzy Ink';
+
+  @override
+  String get anywhereNativeTurnOn =>
+      'Turn on Lock from other apps in Fuzzzy Ink\'s Settings.';
+
+  @override
+  String get anywhereNativeCopiedPressPaste => 'Copied. Press ⌘V to paste it.';
+
+  @override
+  String get anywhereNativeReplaced => 'Your text is locked in place.';
+
+  @override
+  String get anywhereNativeShownInApp => 'It\'s open in Fuzzzy Ink.';
+
+  @override
+  String get anywhereNativeOpenInApp => 'Open in Fuzzzy Ink';
+
+  @override
+  String get anywhereNativeNotForAPerson =>
+      'Invites, replies and password texts open in Fuzzzy Ink.';
+
+  @override
+  String get anywhereNativeShowApp => 'Show Fuzzzy Ink';
 }

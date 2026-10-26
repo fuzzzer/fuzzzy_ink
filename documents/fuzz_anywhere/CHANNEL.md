@@ -27,7 +27,7 @@ shortcut and panel, the iPhone quick sheet). The Dart side is `lib/src/fuzz_anyw
 
 | Method | Arguments | Answer | Refusals |
 |---|---|---|---|
-| `status` | — | `{version: 1, enabled, settingKnown, lockAgainAfterUse, unlocked, setUp, biometric}` | `unsupportedVersion` |
+| `status` | — | `{version: 1, enabled, settingKnown, lockAgainAfterUse, unlocked, setUp, biometric, language?}` | `unsupportedVersion` |
 | `unlock` | — | `{status: "unlocked"}` | `disabled`, `notSetUp`, `notReady`, `biometricOff`, `biometricGone`, `notUnlocked` |
 | `unlockWithPassword` | `password` (string) | `{status: "unlocked"}` | `disabled`, `notSetUp`, `notReady`, `badRequest` (missing or empty), `wrongPassword` (+ `waitSeconds` when a wait started), `lockedOut` (+ `waitSeconds`), `notUnlocked` |
 | `people` | `sourceApp` (string, optional) | `{people: [{id, name, verified, lastUsedHere}]}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `failed` |
@@ -35,6 +35,7 @@ shortcut and panel, the iPhone quick sheet). The Dart side is `lib/src/fuzz_anyw
 | `peek` | `text` | `{kind, personId?, personName?}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `emptyText`, `failed` |
 | `open` | `text` | `{status: "opened", displayId, personId, personName}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `emptyText`, `notForAPerson`, `alreadyOpened`, `tooOld`, `newerApp`, `damaged`, `notFuzzzy`, `notFromYourPeople`, `failed` |
 | `show` | `displayId` | `{status: "shown"}` | `unknownDisplay`, `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` |
+| `openInApp` | `text` | `{status: "shown"}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` (missing, or not an invite, a reply or a password-locked text), `emptyText`, `failed` |
 | `relock` | — | `{relocked: bool}` | — |
 
 Notes, method by method:
@@ -44,7 +45,9 @@ Notes, method by method:
   "Unlock Fuzzzy Ink", and after the unlock read `status` again (or wait for `settingsChanged`).
   `biometric` is `"on"` (turned on in Fuzzzy Ink), `"off"` (the device can, Fuzzzy Ink does not) or `"none"`.
   Which kind (face, fingerprint) is the platform's own to read for its icon. `setUp` is false until a master
-  password exists (and while the app is still starting).
+  password exists (and while the app is still starting). `language` (`en` or `ka`) is there only when the person
+  picked a language in Settings → Language; without it the app follows the device, and so does the native sheet
+  (English when the device's language is neither). Added 2026-10-26 for the Apple sheets; version 1.
 - **`unlock`.** Runs the app's own fingerprint or face prompt (the biometric copy of the master password). On
   Android the prompt needs a `FragmentActivity` in front. Already unlocked: answers at once.
 - **`unlockWithPassword`.** The password is sent once, used once and never kept; clear the native field right
@@ -73,11 +76,18 @@ Notes, method by method:
 - **`open`.** Call it only on the person's own **Open** press. The message is opened through the app's Open flow:
   its key is spent (it opens once, on one device) and the text goes into that person's history. The text itself
   is **not** answered: the answer is a `displayId` (valid once, for the latest `open` only, dropped at any lock).
-  `notForAPerson` means an invite, a reply or a password-locked text: say "Open it in Fuzzzy Ink" and bring the
-  app forward; the person pastes it into Open there.
+  `notForAPerson` means an invite, a reply or a password-locked text: offer "Open in Fuzzzy Ink", bring the app
+  forward and call `openInApp` with the same text.
 - **`show`.** Asks the app to show the opened message on its own private screen (the history item, behind the
   lock, out of screenshots, no copy, no selection). Bring the app's window or activity forward first (Mac:
   activate the app; Android: the Flutter activity). `shownClosed` arrives when the person closes it.
+- **`openInApp`.** Call it on the person's own "Open in Fuzzzy Ink" press after `open` answered `notForAPerson`.
+  Bring the app forward first. The app's Open screen takes the text as if it had been pasted there: an invite
+  goes on to "Who sent it?", a reply to its "Connect" question, a password-locked text to its password. Nothing
+  is opened or connected without the person's next press in the app. A message (or anything not an invite, a
+  reply or a password-locked text) is refused with `badRequest`: messages open only through `open`. The use goes
+  on inside the app, so `relock` afterwards does nothing for it; the app's own auto-lock applies. Added
+  2026-10-26 for the Apple sheets; version 1.
 - **`relock`.** Call it when your sheet, panel or activity goes away, whatever happened (locked, cancelled,
   dismissed). It locks the app only when this entry point unlocked it and "Lock again after each use" is on (the
   default); an app the person had already unlocked stays as it was. While a message from `show` is on screen it
@@ -151,7 +161,8 @@ first." (it is the "Why?" line in Settings → Other apps).
 
 **Open:** the person selects or pastes a sealed text → `peek(text)` ("Open the message from Nino?") → the person
 presses Open → `open(text)` → bring the app forward → `show(displayId)` → `shownClosed` → (the app locks again
-by itself when this entry unlocked it).
+by itself when this entry unlocked it). If `open` answers `notForAPerson`: the person presses "Open in Fuzzzy
+Ink" → bring the app forward → `openInApp(text)`.
 
 ## 7. Changing the contract
 

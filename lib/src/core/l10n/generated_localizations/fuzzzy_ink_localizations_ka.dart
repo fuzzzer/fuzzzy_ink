@@ -2341,4 +2341,54 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get infoOtherAppsLine3 =>
       'სხვა აპში აკრეფილი ტექსტი შეიძლება იქ უკვე შენახული ან სინქრონიზებული იყოს. პირადი სიტყვები Fuzzzy Ink-ში დაწერეთ.';
+
+  @override
+  String get anywhereNativeLockTitle => 'შეტყობინების ჩაკეტვა';
+
+  @override
+  String get anywhereNativeOpenTitle => 'შეტყობინების გახსნა';
+
+  @override
+  String get anywhereNativeLockIntentDescription =>
+      'დაწერეთ შეტყობინება და ჩაკეტეთ თქვენი ერთ-ერთი ადამიანისთვის.';
+
+  @override
+  String get anywhereNativeUnlock => 'განბლოკვა';
+
+  @override
+  String get anywhereNativeUseTouchId => 'Touch ID-ით განბლოკვა';
+
+  @override
+  String get anywhereNativeUseFaceId => 'Face ID-ით განბლოკვა';
+
+  @override
+  String get anywhereNativeSetUpFirst =>
+      'ჯერ Fuzzzy Ink-ში მთავარი პაროლი შექმენით.';
+
+  @override
+  String get anywhereNativeOpenApp => 'Fuzzzy Ink-ის გახსნა';
+
+  @override
+  String get anywhereNativeTurnOn =>
+      'ჩართეთ „ჩაკეტვა სხვა აპებიდან“ Fuzzzy Ink-ის პარამეტრებში.';
+
+  @override
+  String get anywhereNativeCopiedPressPaste =>
+      'დაკოპირდა. ჩასასმელად დააჭირეთ ⌘V-ს.';
+
+  @override
+  String get anywhereNativeReplaced => 'თქვენი ტექსტი იქვე ჩაიკეტა.';
+
+  @override
+  String get anywhereNativeShownInApp => 'Fuzzzy Ink-ში გაიხსნა.';
+
+  @override
+  String get anywhereNativeOpenInApp => 'Fuzzzy Ink-ში გახსნა';
+
+  @override
+  String get anywhereNativeNotForAPerson =>
+      'მოწვევა, პასუხი და პაროლით ჩაკეტილი ტექსტი Fuzzzy Ink-ში იხსნება.';
+
+  @override
+  String get anywhereNativeShowApp => 'Fuzzzy Ink-ის ჩვენება';
 }
