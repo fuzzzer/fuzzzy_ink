@@ -425,6 +425,12 @@ void main() {
             builder: (_, state) => Text('accept ${state.extra}'),
           ),
           GoRoute(
+            path: AppRouter.personAnsweredTwice,
+            builder: (_, state) => Text(
+              'answered twice: ${(state.extra! as ChatGeneralData).chatName}',
+            ),
+          ),
+          GoRoute(
             path: AppRouter.chatInvitation,
             builder: (_, state) => Text(
               'reply for '
@@ -474,6 +480,18 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('reply for Nino: Fuzz/AgE'), findsOneWidget);
+      await states.close();
+    });
+
+    testWidgets('a second reply goes to "Someone else may have answered"',
+        (tester) async {
+      final states = StreamController<OpenFlowState>();
+      whenListen(cubit, states.stream, initialState: const OpenFlowState());
+      await pumpRouted(tester);
+      states.add(OpenFlowState(route: OpenRouteSecondReply(_nino)));
+      await tester.pumpAndSettle();
+      expect(find.text('answered twice: Nino'), findsOneWidget);
+      verify(() => cubit.routeTaken()).called(1);
       await states.close();
     });
   });

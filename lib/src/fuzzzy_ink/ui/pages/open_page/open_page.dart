@@ -9,7 +9,9 @@ export 'widgets/widgets.dart';
 /// Open (DESIGN.md section 4.8): "Open what you got" — Paste it, Choose a
 /// file, and links that open here by themselves — then whatever it was:
 /// the opened message or file (private), the password question, or one
-/// "can't open" screen. Invites and replies go on to adding a person.
+/// "can't open" screen. Invites go on to "I got an invite" (straight to
+/// "Who sent it?"), replies connect on the invite's page, and a second reply
+/// goes to "Someone else may have answered".
 class OpenPage extends StatelessWidget {
   const OpenPage({super.key, this.payload = const OpenPagePayload()});
 
@@ -72,12 +74,8 @@ class OpenFlowView extends StatelessWidget {
         );
       case OpenRouteSecondReply(:final chat):
         cubit.routeTaken();
-        showPairingWarningDialog(
-          context,
-          chatName: chat.chatName,
-          onCheckSafetyNumber: () =>
-              context.pushReplacement(AppRouter.chatVerify, extra: chat),
-        );
+        // "Someone else may have answered": Check numbers or Remove.
+        context.pushReplacement(AppRouter.personAnsweredTwice, extra: chat);
     }
   }
 

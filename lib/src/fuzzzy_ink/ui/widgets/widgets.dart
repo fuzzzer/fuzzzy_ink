@@ -5,7 +5,6 @@ export 'file_processing_progresses_displays/file_processing_progresses_displays.
 export 'flow/flow.dart';
 export 'history/history.dart';
 export 'home/home.dart';
-export 'pairing_warning_dialog.dart';
 export 'pasted_link_unwrapper.dart';
 export 'people/people.dart';
 export 'person/person.dart';

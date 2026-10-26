@@ -37,9 +37,10 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
   from their page (Who's it for is skipped); Home's sheet passes `returnsToPerson: false`. Lock with a password:
   `AppRouter.lockWithPassword`.
 - Open: `context.push(AppRouter.open, extra: const OpenPagePayload(returnsToPerson: true))` from a person page;
-  a message link opens `OpenPagePayload(request: OpenMessageLink(…))`. Invites go on to `AppRouter.chatAccept`
-  (extra: the invite text) and replies to `AppRouter.chatInvitation` (`prefillAcceptanceContent`); a second reply
-  shows `showPairingWarningDialog`. Point those three at the new add-person screens when they exist.
+  a message link opens `OpenPagePayload(request: OpenMessageLink(…))`. Invites go on to "I got an invite"
+  (`AppRouter.chatAccept`, extra: the invite text, straight to "Who sent it?"), replies connect on the invite's page
+  (`AppRouter.chatInvitation`, `prefillAcceptanceContent`) and a second reply goes to "Someone else may have
+  answered" (`AppRouter.personAnsweredTwice`, extra: the person).
 
 ## Rules they already keep
 
