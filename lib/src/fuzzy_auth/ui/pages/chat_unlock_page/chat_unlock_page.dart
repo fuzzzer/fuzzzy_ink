@@ -194,6 +194,16 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
                 onPressed: () =>
                     context.read<FuzzyAuthStore>().checkAuthStatus(),
               ),
+              // Keys this build cannot read (an earlier build's leftovers on
+              // a development Mac, a wiped keychain): the clean start.
+              SizedBox(height: space.s),
+              FuzzzyButton(
+                label: localizations.chatUnlockErase,
+                variant: FuzzzyButtonVariant.ghost,
+                qaId: 'unlock.erase',
+                onPressed: () =>
+                    confirmAndEraseEverything(context, qaId: 'unlock'),
+              ),
             ] else ...[
               Semantics(
                 liveRegion: true,

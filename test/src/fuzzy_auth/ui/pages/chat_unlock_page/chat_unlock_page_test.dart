@@ -188,6 +188,17 @@ void main() {
     expect(passwordField(), findsNothing);
     await tester.tap(find.text(l10n.tryAgain));
     verify(() => harness.authStore.checkAuthStatus()).called(1);
+
+    // Keys an earlier build left that this one cannot read: start fresh,
+    // after the confirmation.
+    when(() => harness.authStore.eraseEverything())
+        .thenAnswer((_) async => const CryptoCoreSuccess(null));
+    await tester.tap(find.text(l10n.chatUnlockErase));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.eraseMessage), findsOneWidget);
+    await tester.tap(find.text(l10n.eraseConfirm));
+    await tester.pumpAndSettle();
+    verify(() => harness.authStore.eraseEverything()).called(1);
   });
 
   testWidgets('"Forgot your password?" leads to the recovery key',

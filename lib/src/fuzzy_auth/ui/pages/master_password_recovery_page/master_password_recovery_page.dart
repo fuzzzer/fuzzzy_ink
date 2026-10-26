@@ -138,43 +138,8 @@ class _MasterPasswordRecoveryViewState
   }
 
   /// Everything goes, after an explicit confirmation.
-  Future<void> _onErase() async {
-    final localizations = context.fuzzzyInkLocalizations;
-    final erase = await FuzzzyDialog.show<bool>(
-      context,
-      title: localizations.eraseTitle,
-      qaId: 'recover.eraseConfirm',
-      content: Text(
-        localizations.eraseMessage,
-        style: context.fuzzzyTextStyles.body
-            .copyWith(color: context.fuzzzyColors.ink),
-      ),
-      actions: [
-        FuzzzyButton(
-          label: localizations.cancel,
-          variant: FuzzzyButtonVariant.secondary,
-          qaId: 'recover.eraseCancel',
-          onPressed: () =>
-              Navigator.of(context, rootNavigator: true).pop(false),
-        ),
-        FuzzzyButton(
-          label: localizations.eraseConfirm,
-          variant: FuzzzyButtonVariant.destructive,
-          qaId: 'recover.eraseYes',
-          onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
-        ),
-      ],
-    );
-    if (!(erase ?? false) || !mounted) return;
-    final eraseRes = await context.read<FuzzyAuthStore>().eraseEverything();
-    if (eraseRes is CryptoCoreFailure<void> && mounted) {
-      showInkToast(
-        context,
-        message: localizations.unknownError,
-        kind: FuzzzyToastKind.error,
-      );
-    }
-  }
+  Future<void> _onErase() =>
+      confirmAndEraseEverything(context, qaId: 'recover');
 
   @override
   Widget build(BuildContext context) {

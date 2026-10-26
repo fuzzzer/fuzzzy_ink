@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
@@ -11,11 +11,18 @@ import 'package:fuzzzy_ink/src/src.dart';
 /// sealed to that lock (0x11). Only wrapped forms ever reach Dart; storage
 /// errors are thrown to the repository.
 class MasterKeyLocalDataSource {
-  MasterKeyLocalDataSource({FlutterSecureStorage? secureStorage})
-      : _secureStorage = secureStorage ??
+  MasterKeyLocalDataSource({
+    FlutterSecureStorage? secureStorage,
+    FlutterSecureStorage? legacyStorage,
+  })  : _secureStorage = secureStorage ??
             const FlutterSecureStorage(
               iOptions: secureStorageIosOptions,
               mOptions: secureStorageMacOsOptions,
+            ),
+        _legacyStorage = legacyStorage ??
+            const FlutterSecureStorage(
+              iOptions: legacySecureStorageIosOptions,
+              mOptions: legacySecureStorageMacOsOptions,
             );
 
   static const passwordWrapKey = 'master_key_password_v2';
@@ -28,7 +35,37 @@ class MasterKeyLocalDataSource {
   /// before the master password kept it (the lock could be off then).
   static const legacyStoreKeyKey = 'crypto_store_key_v1';
 
+  /// Every name an earlier build kept under the plugin's shared default
+  /// keychain service (before `secureStorageService`): looked for as
+  /// leftovers and removed one by one, never with a wildcard — in the macOS
+  /// login keychain that service is shared with other apps.
+  static const legacyNamespaceKeys = [
+    legacyStoreKeyKey,
+    passwordWrapKey,
+    recoveryWrapKey,
+    storeWrapKey,
+    recoveryLockKey,
+    vaultRecoveryKey,
+    'app_lock_throttle_v1',
+    'auto_lock_settings_v1',
+    'biometric_enabled_chat',
+    'biometric_enabled_vault',
+    'biometric_key_version_chat',
+    'biometric_key_version_vault',
+    'biometric_legacy_cleanup_chat',
+    'biometric_legacy_cleanup_vault',
+  ];
+
+  /// The keys whose presence under the old service means an earlier build
+  /// was set up here.
+  static const _legacyMarkers = [
+    legacyStoreKeyKey,
+    passwordWrapKey,
+    storeWrapKey,
+  ];
+
   final FlutterSecureStorage _secureStorage;
+  final FlutterSecureStorage _legacyStorage;
 
   /// `null` until the first run has finished: the password wrap is written
   /// last, so a run that stopped half-way reads as "not set up".
@@ -45,8 +82,16 @@ class MasterKeyLocalDataSource {
     );
   }
 
-  Future<bool> hasLegacyKey() =>
-      _secureStorage.containsKey(key: legacyStoreKeyKey);
+  /// Whether an earlier build left its keys: the app-lock store key of the
+  /// builds before the master password (under either service), or a master
+  /// key kept under the old shared service.
+  Future<bool> hasLegacyKey() async {
+    if (await _secureStorage.containsKey(key: legacyStoreKeyKey)) return true;
+    for (final key in _legacyMarkers) {
+      if (await _legacyStorage.containsKey(key: key)) return true;
+    }
+    return false;
+  }
 
   /// The store wrap and the recovery wrap first, the password wrap last: it
   /// is the mark that the first run is complete.
@@ -95,8 +140,27 @@ class MasterKeyLocalDataSource {
 
   /// Every entry this app keeps in the secure storage: the key blobs, the
   /// legacy key, the biometric flags, the attempt counter and the sealed
-  /// settings.
-  Future<void> deleteAll() => _secureStorage.deleteAll();
+  /// settings. Throws when this app's own entries could not be removed.
+  /// What an earlier build left under the old shared service is removed too,
+  /// as far as the system lets this build: an entry it refuses (one an
+  /// earlier, differently signed build made) cannot be read by this build
+  /// either, so it does not stop a fresh start.
+  Future<void> deleteAll() async {
+    await _secureStorage.deleteAll();
+    for (final key in legacyNamespaceKeys) {
+      try {
+        await _legacyStorage.delete(key: key);
+      } catch (ex) {
+        logger.w('Leftover keychain entry not removed: ${_describe(ex)}');
+      }
+    }
+  }
+
+  /// A storage error for the log: its type and, for a platform error, the
+  /// system's code and message (never a value).
+  static String _describe(Object ex) => ex is PlatformException
+      ? 'PlatformException(${ex.code}, ${ex.message})'
+      : '${ex.runtimeType}';
 
   Future<Uint8List?> _readBytes(String key) async {
     final value = await _secureStorage.read(key: key);

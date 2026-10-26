@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
 /// The master password: one password above every key on the device. It
@@ -256,7 +255,12 @@ class ChatAuthRepository {
     try {
       return CryptoCoreSuccess(await call());
     } catch (ex) {
-      logger.e('Secure storage failed: ${ex.runtimeType}');
+      logger.e(
+        ex is PlatformException
+            ? 'Secure storage failed: PlatformException(${ex.code}, '
+                '${ex.message})'
+            : 'Secure storage failed: ${ex.runtimeType}',
+      );
       return const CryptoCoreFailure(CryptoCoreFailureType.io);
     }
   }
