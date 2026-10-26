@@ -17,6 +17,17 @@ void main() {
     expect(release, contains('com.apple.security.app-sandbox'));
   });
 
+  test(
+      'both entitlement files allow printing (the recovery key sheet goes '
+      'to the system print dialog; sandboxed without it, macOS answers '
+      '"This application does not support printing")', () {
+    final debug =
+        File('macos/Runner/DebugProfile.entitlements').readAsStringSync();
+    for (final entitlements in [release, debug]) {
+      expect(entitlements, contains('<key>com.apple.security.print</key>'));
+    }
+  });
+
   test('every Release configuration of every flavour uses them', () {
     final configs = RegExp(
       r'isa = XCBuildConfiguration;(.*?)name = "?([^";]+)"?;',
