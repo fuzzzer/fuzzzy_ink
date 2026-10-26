@@ -115,7 +115,7 @@ void main() {
           .single as Map<String, dynamic>;
 
       final ids = (details['appIDs'] as List<dynamic>).cast<String>();
-      expect(ids, ['REPLACE_WITH_APPLE_TEAM_ID.${appIds.first}']);
+      expect(ids, ['7W88HRQFXP.${appIds.first}']);
       final testIds = ((((jsonDecode(
         read(
           'link_site_test_builds/.well-known/'
@@ -126,7 +126,7 @@ void main() {
           .single as Map<String, dynamic>)['appIDs'] as List<dynamic>;
       expect(testIds, [
         for (final id in [...appIds.skip(1), devAppId])
-          'REPLACE_WITH_APPLE_TEAM_ID.$id',
+          '7W88HRQFXP.$id',
       ]);
 
       final components =

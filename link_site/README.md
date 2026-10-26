@@ -1,6 +1,12 @@
 # Link page for `ink.fuzzzycore.com`
 
-Not published. Hosting is the owner's step.
+Published on Firebase Hosting (project `fuzzy-core-website`, site `fuzzzy-ink`) with `firebase.json`
+here: from this folder, `firebase deploy --only hosting`. The domain's DNS is on Cloudflare: its records
+for `ink` stay "DNS only" (grey cloud) so Firebase holds the certificate and serves the link files
+untouched.
+
+`assetlinks.json` is left out of the deploy (`ignore` in `firebase.json`) until it holds the real Play
+signing fingerprint; then remove it from `ignore` and deploy again.
 
 ## Files
 
@@ -14,14 +20,17 @@ key must never be able to take over production links (security review 2026-10-26
 in `../link_site_test_builds/.well-known/`; publish those only on a separate test host, never on
 `ink.fuzzzycore.com`. Until a test host exists, test builds open links by pasting them into Open.
 
-## Before publishing, replace
+## Still to replace
+
+The Apple team id (`7W88HRQFXP`, owner 2026-10-27) is in. Left:
 
 | Placeholder | Where | What |
 |---|---|---|
-| `REPLACE_WITH_APPLE_TEAM_ID` | `apple-app-site-association` | the Apple Developer team id that signs the app |
 | `REPLACE_WITH_PRODUCTION_RELEASE_CERT_SHA256_FINGERPRINT` | `assetlinks.json` | SHA-256 of the certificate Google Play signs `com.fuzzzycore.ink` with (Play Console › App integrity › App signing), as `AB:CD:…` |
 | `REPLACE_WITH_APP_STORE_ID` | `index.html` | the number in the App Store address |
 | `REPLACE_WITH_DESKTOP_DOWNLOAD_URL` | `index.html` | where the Mac, Windows and Linux builds are downloaded |
+
+The download buttons are `hidden` until the two `index.html` values exist.
 
 
 ## Hosting rules

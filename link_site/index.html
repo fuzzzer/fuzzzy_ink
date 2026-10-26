@@ -65,6 +65,7 @@
       .lead, .note { color: var(--ink-mute); margin: 0 0 var(--space); }
       .steps { margin: calc(var(--space) * 1.5) 0; padding-left: 1.25rem; }
       .steps li { margin-bottom: calc(var(--space) / 2); }
+      .downloads[hidden] { display: none; }
       .downloads {
         display: grid;
         gap: calc(var(--space) * 0.75);
@@ -106,11 +107,13 @@
       </p>
 
       <ol class="steps">
-        <li>Get Fuzzzy Ink below.</li>
+        <li>Get the Fuzzzy Ink app.</li>
         <li>Come back here and tap the link again. It opens in the app.</li>
       </ol>
 
-      <nav class="downloads" aria-label="Get Fuzzzy Ink">
+      <!-- Hidden until the store listings exist: remove `hidden` once the App Store id and
+           desktop download address below are filled in. -->
+      <nav class="downloads" aria-label="Get Fuzzzy Ink" hidden>
         <!-- REPLACE_WITH_APP_STORE_ID: the number in the app's App Store address. -->
         <a class="download" href="https://apps.apple.com/app/idREPLACE_WITH_APP_STORE_ID" rel="noreferrer">
           Get it on the App Store
