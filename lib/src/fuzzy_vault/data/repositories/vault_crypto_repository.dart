@@ -411,24 +411,20 @@ class VaultCryptoRepository {
     };
   }
 
-  /// The id an item's list label is sealed under: the item seal binds the
-  /// id, so a label never opens as an item or as another item's label (item
-  /// ids are UUIDs and never start with `label:`).
-  static String labelIdOf(String itemId) => 'label:$itemId';
-
   /// Seals an item's list label under the vault key, bound to the item and
-  /// its content version like the item itself.
+  /// its content version like the item itself but in its own domain, padded
+  /// in the core to one fixed size (an empty [label] too).
   Future<VaultResponse<Uint8List>> sealLabel(
     String label,
     VaultKey key, {
     required String itemId,
     required int version,
   }) async {
-    final sealRes = await cryptoCoreService.vaultSeal(
+    final sealRes = await cryptoCoreService.vaultSealLabel(
       key: key,
-      itemId: labelIdOf(itemId),
+      itemId: itemId,
       version: version,
-      bytes: utf8.encode(label),
+      label: label,
     );
     if (sealRes is CryptoCoreFailure<Uint8List>) {
       return VaultFailure(_failureOf(sealRes.type), message: sealRes.type.name);
@@ -445,17 +441,47 @@ class VaultCryptoRepository {
     required int version,
   }) async {
     for (final candidate in [version, version + 1]) {
-      final openRes = await cryptoCoreService.vaultOpen(
+      final openRes = await cryptoCoreService.vaultOpenLabel(
         key: key,
-        itemId: labelIdOf(itemId),
+        itemId: itemId,
         version: candidate,
         blob: blob,
       );
-      if (openRes is CryptoCoreSuccess<Uint8List>) {
-        return utf8.decode(openRes.data, allowMalformed: true);
-      }
+      if (openRes is CryptoCoreSuccess<String>) return openRes.data;
     }
     return null;
+  }
+
+  /// Moves an item's label from the vault key [from] to [to], at the
+  /// [version] its index records or one ahead of it (as [reseal]).
+  Future<VaultResponse<Uint8List>> resealLabel({
+    required VaultKey from,
+    required VaultKey to,
+    required String itemId,
+    required int version,
+    required Uint8List blob,
+  }) async {
+    var res = await cryptoCoreService.vaultResealLabel(
+      from: from,
+      to: to,
+      itemId: itemId,
+      version: version,
+      blob: blob,
+    );
+    if (res is CryptoCoreFailure<Uint8List> &&
+        res.type == CryptoCoreFailureType.corrupt) {
+      res = await cryptoCoreService.vaultResealLabel(
+        from: from,
+        to: to,
+        itemId: itemId,
+        version: version + 1,
+        blob: blob,
+      );
+    }
+    if (res is CryptoCoreFailure<Uint8List>) {
+      return VaultFailure(_failureOf(res.type), message: res.type.name);
+    }
+    return VaultSuccess((res as CryptoCoreSuccess<Uint8List>).data);
   }
 
   /// Seals [content] as version [version] of the item [itemId]: the sealed

@@ -489,6 +489,20 @@ fn all_vectors() -> Vec<Vector> {
         }),
     ));
 
+    vectors.push(Vector::bytes(
+        "vault_label",
+        vault::seal_label_with(&STORE_KEY_33, CHAT_ID, 3, "user", NONCE_44).expect("vault label"),
+        json!({
+            "vault_key": hex(&STORE_KEY_33),
+            "item_id": CHAT_ID,
+            "version": 3,
+            "nonce": hex(&NONCE_44),
+            "aad": format!("vault-label ‖ 00000003 ‖ {CHAT_ID}"),
+            "label": "user",
+            "plaintext": "04 ‖ \"user\" ‖ 251 zero bytes (256 bytes)",
+        }),
+    ));
+
     vectors.push(Vector::blob(
         "password_sealed_text",
         passwords::seal_bytes_with(PASSWORD, b"hello", ARGON2_PARAMS, SALT_11, NONCE_22)

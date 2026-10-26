@@ -77,6 +77,11 @@ class VaultRepository {
   /// metadata. An item with a password of its own (no screen makes one any
   /// more) cannot be re-sealed without that password, so the move is refused
   /// (`fileCorrupted`).
+  ///
+  /// No list label stays under the old key: a label that did not move, for
+  /// whatever reason (it did not open, a file step failed, its item file is
+  /// missing, it has no row), is deleted before the commit, and a failed
+  /// delete stops the move (security review 2026-10-26).
   Future<VaultResponse<void>> rekey({
     required VaultKey previous,
     required VaultKey key,
@@ -113,6 +118,9 @@ class VaultRepository {
         );
         await _restageLabel(previous, key, item);
       }
+      // Before [beforeCommit], so a failed delete stops the move before
+      // anything outside the vault folder changed.
+      await fileDataSource.deleteUnmovedLabels();
       final stop = await beforeCommit?.call();
       if (stop != null) {
         await fileDataSource.abandonRekey();
@@ -143,8 +151,10 @@ class VaultRepository {
   }
 
   /// The item's label moves to the new key with it. A label that does not
-  /// open (a stop left it a version behind) is dropped: the list then shows
-  /// the item's type until the item is saved again.
+  /// move (it does not open — a stop left it a version behind — or a file
+  /// step fails) is not staged, so [VaultFileDataSource.deleteUnmovedLabels]
+  /// deletes it before the commit: the list then shows the item's type until
+  /// the item is saved again. Never stops the move by itself.
   Future<void> _restageLabel(
     VaultKey previous,
     VaultKey key,
@@ -153,18 +163,16 @@ class VaultRepository {
     try {
       final bytes = await fileDataSource.readLabel(item.itemId);
       if (bytes == null) return;
-      final resealRes = await cryptoRepository.reseal(
+      final resealRes = await cryptoRepository.resealLabel(
         from: previous,
         to: key,
-        itemId: VaultCryptoRepository.labelIdOf(item.itemId),
+        itemId: item.itemId,
         version: item.contentVersion,
         blob: Uint8List.fromList(bytes),
       );
       if (resealRes is VaultSuccess<Uint8List>) {
         await fileDataSource.stageRekeyedLabel(item.itemId, resealRes.data);
-        return;
       }
-      await fileDataSource.deleteLabel(item.itemId);
     } catch (e) {
       logger.w('VAULT: list label not moved: $e');
     }
@@ -184,9 +192,12 @@ class VaultRepository {
   }
 
   /// Seals [item]'s label beside it under the vault key (version [version],
-  /// like the item), or removes it when the item has none. An item with a
-  /// password of its own keeps no label: only that password opens anything
-  /// of it. Never fails the save: without its label the row shows the type.
+  /// like the item). Every password and file item has one, empty when there
+  /// is no username, so the file's presence (and, padded in the core, its
+  /// size) says nothing about the label (security review 2026-10-26). A note
+  /// and an item with a password of its own keep none: only that password
+  /// opens anything of it. Never fails the save: without its label the row
+  /// shows the type.
   Future<void> _writeLabel(
     VaultItem item,
     VaultKey key, {
@@ -195,17 +206,18 @@ class VaultRepository {
   }) async {
     final itemId = item.metadata.id;
     try {
-      final label = labelOf(item);
       final hasOwnPassword = item.metadata.hasCustomPassword ||
           (customPassword != null && customPassword.isNotEmpty);
-      final sealRes = label == null || hasOwnPassword
-          ? null
-          : await cryptoRepository.sealLabel(
-              label,
+      final keepsLabel =
+          item.metadata.type != VaultItemType.note && !hasOwnPassword;
+      final sealRes = keepsLabel
+          ? await cryptoRepository.sealLabel(
+              labelOf(item) ?? '',
               key,
               itemId: itemId,
               version: version,
-            );
+            )
+          : null;
       if (sealRes is VaultSuccess<Uint8List>) {
         await fileDataSource.writeLabelAtomic(itemId, sealRes.data);
       } else {
@@ -218,8 +230,9 @@ class VaultRepository {
 
   /// The list labels of [items] (item id → label), opened with the vault
   /// key once the safe is open: only each item's small label, never the
-  /// item. An item without one, with its own password, or whose label does
-  /// not open, is left out (the list shows its type). Never fails.
+  /// item. An item without one, with an empty one, with its own password, or
+  /// whose label does not open, is left out (the list shows its type). Never
+  /// fails.
   Future<Map<String, String>> readLabels(
     List<VaultItemMetadata> items,
     VaultKey key,

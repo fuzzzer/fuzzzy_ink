@@ -191,6 +191,23 @@ class VaultFileDataSource {
     await tmpFile.rename('${_labelFile(itemId).path}$rekeySuffix');
   }
 
+  /// Before [commitRekey]: deletes every label with no re-sealed copy
+  /// beside it. Such a label is still under the old key, which a copy of the
+  /// old `vault.meta` and the master password would open (security review
+  /// 2026-10-26). A failed delete throws, and the move is then abandoned.
+  Future<void> deleteUnmovedLabels() async {
+    await _ensureNotMigrating();
+    if (!await _itemsDir.exists()) return;
+    final labels = [
+      await for (final entity in _itemsDir.list())
+        if (entity is File && entity.path.endsWith(labelFileExtension)) entity,
+    ];
+    for (final label in labels) {
+      if (await File('${label.path}$rekeySuffix').exists()) continue;
+      await label.delete();
+    }
+  }
+
   /// The commit: one rename puts the new `vault.meta` in place; then every
   /// staged item replaces its old file. From here the old key opens nothing.
   Future<void> commitRekey() async {
