@@ -36,10 +36,16 @@ class AppResetLocalDataSource {
     await compactMarkerIn(supportDirectoryPath).create(recursive: true);
   }
 
-  /// Every preference, the remembered pairing replies included.
-  Future<void> clearPreferences() async {
+  /// Every preference, the remembered pairing replies included; with
+  /// [keepFirstRunChoices], what the first run's welcome set stays
+  /// ([PreferencesService.firstRunChoiceKeys]).
+  Future<void> clearPreferences({bool keepFirstRunChoices = false}) async {
     if (sl.isRegistered<PreferencesService>()) {
-      await sl.get<PreferencesService>().clearAll();
+      await sl.get<PreferencesService>().clearAll(
+            keep: keepFirstRunChoices
+                ? PreferencesService.firstRunChoiceKeys
+                : const {},
+          );
     }
     vaultPasswordCopySetting.value = true;
   }

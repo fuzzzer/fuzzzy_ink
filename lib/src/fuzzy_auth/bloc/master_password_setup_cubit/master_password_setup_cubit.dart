@@ -69,7 +69,8 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
     }
     emit(state.copyWith(status: StateStatus.loading));
 
-    final eraseRes = await _appResetRepository.eraseEverything();
+    final eraseRes =
+        await _appResetRepository.eraseEverything(keepFirstRunChoices: true);
     if (eraseRes is CryptoCoreFailure<void>) {
       emit(
         state.copyWith(

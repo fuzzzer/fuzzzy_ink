@@ -50,8 +50,11 @@ void main() {
     reset = MockAppResetRepository();
     store = MockFuzzyAuthStore();
     biometrics = MockBiometricAuthRepository();
-    when(() => reset.eraseEverything())
-        .thenAnswer((_) async => const CryptoCoreSuccess(null));
+    when(
+      () => reset.eraseEverything(
+        keepFirstRunChoices: any(named: 'keepFirstRunChoices'),
+      ),
+    ).thenAnswer((_) async => const CryptoCoreSuccess(null));
     when(() => chatAuth.prepareSetUp(any()))
         .thenAnswer((_) async => CryptoCoreSuccess(pending));
     when(
@@ -112,6 +115,14 @@ void main() {
     expect(cubit.state.step, MasterPasswordSetupStep.done);
     verify(() => store.onSetUpComplete()).called(1);
     verify(() => store.setBiometricEnabled(enabled: true)).called(1);
+    await cubit.close();
+  });
+
+  test("the first run's erase keeps the welcome, language and look just chosen",
+      () async {
+    final cubit = build();
+    await cubit.create(strong);
+    verify(() => reset.eraseEverything(keepFirstRunChoices: true)).called(1);
     await cubit.close();
   });
 

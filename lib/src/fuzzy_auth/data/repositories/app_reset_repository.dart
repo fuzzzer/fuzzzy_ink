@@ -21,7 +21,14 @@ class AppResetRepository {
   final BiometricAuthRepository _biometricAuthRepository;
   final CryptoCoreService _cryptoCoreService;
 
-  Future<CryptoCoreResponse<void>> eraseEverything() async {
+  /// Erases everything this app keeps on the device.
+  ///
+  /// The first run erases what an earlier install left before it makes keys;
+  /// it passes [keepFirstRunChoices] so the welcome, language and look the
+  /// person just chose stay.
+  Future<CryptoCoreResponse<void>> eraseEverything({
+    bool keepFirstRunChoices = false,
+  }) async {
     await _cryptoCoreService.close();
     try {
       await _masterKeyLocalDataSource.deleteAll();
@@ -33,7 +40,9 @@ class AppResetRepository {
       await _localDataSource.deleteVault();
       await _localDataSource.deleteSealedFiles();
       await _localDataSource.wipePlainCopies();
-      await _localDataSource.clearPreferences();
+      await _localDataSource.clearPreferences(
+        keepFirstRunChoices: keepFirstRunChoices,
+      );
       _localDataSource.discardPendingLink();
       return const CryptoCoreSuccess(null);
     } catch (ex) {

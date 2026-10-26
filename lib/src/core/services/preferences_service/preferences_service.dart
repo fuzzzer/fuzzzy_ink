@@ -8,8 +8,40 @@ class PreferencesService {
   PreferencesService(this._prefs);
 
   /// Erase everything: every preference, the remembered pairing replies
-  /// included (security review 2026-10-26).
-  Future<void> clearAll() => _prefs.clear();
+  /// included (security review 2026-10-26). The values under [keep] are put
+  /// back afterwards.
+  Future<void> clearAll({Set<String> keep = const {}}) async {
+    final kept = {
+      for (final key in keep)
+        if (_prefs.containsKey(key)) key: _prefs.get(key),
+    };
+    await _prefs.clear();
+    for (final MapEntry(:key, :value) in kept.entries) {
+      switch (value) {
+        case final bool v:
+          await _prefs.setBool(key, v);
+        case final int v:
+          await _prefs.setInt(key, v);
+        case final double v:
+          await _prefs.setDouble(key, v);
+        case final String v:
+          await _prefs.setString(key, v);
+        case final List<String> v:
+          await _prefs.setStringList(key, v);
+      }
+    }
+  }
+
+  /// What a person chose in this first run before its erase (the welcome
+  /// seen, the language and the look picked on it): the first run's own
+  /// erase keeps them, so finishing it does not land on the welcome again
+  /// and the language does not switch back. The names are those
+  /// `LocalizationCubit` and `ThemeCubit` store under.
+  static const firstRunChoiceKeys = {
+    _hasSeenOnboardingKey,
+    'language_code',
+    'brightness',
+  };
 
   static const _hasSeenOnboardingKey = 'has_seen_onboarding';
   static const _hasCompletedTutorialKey = 'has_completed_tutorial';
