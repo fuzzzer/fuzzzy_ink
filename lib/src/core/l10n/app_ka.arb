@@ -2594,5 +2594,9 @@
         "type": "String"
       }
     }
+  },
+  "incomingFileUnreadable": "ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.",
+  "@incomingFileUnreadable": {
+    "description": "Georgian draft, needs a native read (opening .fuzz files from other apps, 2026-10-26)"
   }
 }

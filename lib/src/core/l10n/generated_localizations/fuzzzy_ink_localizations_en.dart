@@ -2251,4 +2251,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String checkedTitle(String name) {
     return 'It\'s really $name';
   }
+
+  @override
+  String get incomingFileUnreadable =>
+      'Couldn\'t read that file. Open it again from where it is.';
 }

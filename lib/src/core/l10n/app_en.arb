@@ -2716,5 +2716,9 @@
         "type": "String"
       }
     }
+  },
+  "incomingFileUnreadable": "Couldn't read that file. Open it again from where it is.",
+  "@incomingFileUnreadable": {
+    "description": "A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission)."
   }
 }

@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 /// The Android side of handing a file to the user (`UserFiles.kt`): the
 /// system save dialog and the share sheet, both by content URI from the
 /// app's hand-off folder (`res/xml/user_file_paths.xml` exposes nothing
-/// else). Every call throws a [PlatformException] whose `code` is
-/// `notFound`, `noHandler` or `failed`.
+/// else); and reading a `.fuzz` file another app opened in this one
+/// (`IncomingFiles`). Every call throws a [PlatformException] whose `code`
+/// is `notFound`, `noHandler` or `failed`.
 class UserFilesChannel {
   const UserFilesChannel();
 
@@ -32,4 +33,13 @@ class UserFilesChannel {
         'shareFile',
         {'path': path, 'mimeType': mimeType},
       );
+
+  /// The name the provider gives the file at content [uri], if any.
+  Future<String?> incomingName(String uri) =>
+      _channel.invokeMethod<String>('incomingName', {'uri': uri});
+
+  /// Copies the file at content [uri] to [path], which must be inside the
+  /// hand-off folder; only reads [uri].
+  Future<void> copyIncoming(String uri, String path) =>
+      _channel.invokeMethod<void>('copyIncoming', {'uri': uri, 'path': path});
 }

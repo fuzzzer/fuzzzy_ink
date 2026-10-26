@@ -2264,4 +2264,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String checkedTitle(String name) {
     return 'ნამდვილად ის არის: $name';
   }
+
+  @override
+  String get incomingFileUnreadable =>
+      'ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.';
 }

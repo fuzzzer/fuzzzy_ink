@@ -57,6 +57,28 @@
                 <data android:path="/accept" />
                 <data android:path="/message" />
             </intent-filter>
+            <!-- .fuzz files opened from another app (Files, mail, a chat):
+                 read once into the private hand-off folder and handed to
+                 Open (UserFiles.kt, incoming_files.dart); never run. Most
+                 apps send a .fuzz file as a plain binary; a file manager
+                 that names the file is matched by its extension. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.fuzz" />
+                <data android:pathPattern=".*\\..*\\.fuzz" />
+                <data android:pathPattern=".*\\..*\\..*\\.fuzz" />
+            </intent-filter>
         </activity>
 
         <!-- Content URIs for the share sheet, served from the private hand-off

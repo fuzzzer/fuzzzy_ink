@@ -152,6 +152,11 @@ class DependencyInjection {
         chatRepository: sl.get<ChatGeneralDataListRepository>(),
         authStore: sl.get<FuzzyAuthStore>(),
         cryptoCoreService: sl.get<CryptoCoreService>(),
+        incomingFiles: IncomingFiles(
+          userFileStore: sl.get<UserFileStore>(),
+          documentsDirectoryPath:
+              sl.get<AppDocumentsDirectory>().directory.path,
+        ),
       ),
     );
 

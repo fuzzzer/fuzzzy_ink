@@ -17,6 +17,7 @@ class MainFlutterWindow: NSWindow {
     registerBackupChannel(messenger: flutterViewController.engine.binaryMessenger)
     InkGuard.shared.register(
       window: self, messenger: flutterViewController.engine.binaryMessenger)
+    InkIncoming.shared.register(messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }

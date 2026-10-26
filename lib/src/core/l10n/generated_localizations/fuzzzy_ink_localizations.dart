@@ -4167,6 +4167,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'It\'s really {name}'**
   String checkedTitle(String name);
+
+  /// A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file. Open it again from where it is.'**
+  String get incomingFileUnreadable;
 }
 
 class _FuzzzyInkLocalizationsDelegate

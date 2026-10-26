@@ -4,27 +4,43 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
+/// Opens what arrives from outside the app: Fuzzzy Ink links, and `.fuzz`
+/// files other apps opened in this one ([IncomingFiles], straight to Open).
+/// While the app is locked, the one that came last waits for the unlock.
 class FuzzyLinkHandler {
   FuzzyLinkHandler({
     required FuzzyLinkService linkService,
     required ChatGeneralDataListRepository chatRepository,
     required FuzzyAuthStore authStore,
     required CryptoCoreService cryptoCoreService,
+    IncomingFiles? incomingFiles,
+    void Function(String path, Object? extra)? navigate,
   })  : _linkService = linkService,
         _chatRepository = chatRepository,
         _authStore = authStore,
-        _cryptoCoreService = cryptoCoreService;
+        _cryptoCoreService = cryptoCoreService,
+        _incomingFiles = incomingFiles,
+        _navigate = navigate;
 
   final FuzzyLinkService _linkService;
   final ChatGeneralDataListRepository _chatRepository;
   final FuzzyAuthStore _authStore;
   final CryptoCoreService _cryptoCoreService;
+  final IncomingFiles? _incomingFiles;
+
+  /// Tests watch where things go; the app goes Home, then pushes `path`.
+  final void Function(String path, Object? extra)? _navigate;
 
   StreamSubscription<Uri>? _subscription;
+  StreamSubscription<Uri>? _fileSubscription;
   FuzzyLinkPayload? _pendingPayload;
+
+  /// A `.fuzz` file's hand-off copy waiting for the unlock.
+  String? _pendingFilePath;
   bool _isInitialized = false;
 
-  bool get hasPendingPayload => _pendingPayload != null;
+  bool get hasPendingPayload =>
+      _pendingPayload != null || _pendingFilePath != null;
 
   /// Whether a link waits for the unlock: the lock screen says so ("A link
   /// is waiting. Unlock to open it.").
@@ -57,17 +73,29 @@ class FuzzyLinkHandler {
     }
 
     _subscription = _linkService.onLinkReceived.listen(_handleUri);
-  }
 
-  void processPendingPayload() {
-    if (_pendingPayload != null) {
-      _processPayload(_pendingPayload!);
-      _pendingPayload = null;
-      _pendingLink.value = false;
+    final incomingFiles = _incomingFiles;
+    if (incomingFiles != null) {
+      _fileSubscription = incomingFiles.opened.listen(_handleUri);
+      await incomingFiles.start();
     }
   }
 
+  void processPendingPayload() {
+    final payload = _pendingPayload;
+    final filePath = _pendingFilePath;
+    _pendingPayload = null;
+    _pendingFilePath = null;
+    _pendingLink.value = false;
+    if (payload != null) _processPayload(payload);
+    if (filePath != null) _openFile(filePath);
+  }
+
   void _handleUri(Uri uri) {
+    if (IncomingFiles.isFileUri(uri)) {
+      unawaited(_handleIncomingFile(uri));
+      return;
+    }
     final payload = FuzzyLinkParser.parse(uri);
     if (payload == null) {
       if (navigatorKey.currentContext == null) return;
@@ -81,11 +109,40 @@ class FuzzyLinkHandler {
   Future<void> _routePayload(FuzzyLinkPayload payload) async {
     if (await _isAppLocked()) {
       _pendingPayload = payload;
+      _pendingFilePath = null;
       _pendingLink.value = true;
       return;
     }
 
     _processPayload(payload);
+  }
+
+  /// A `.fuzz` file from another app: read once into the hand-off folder,
+  /// then Open (after the unlock when the app is locked).
+  Future<void> _handleIncomingFile(Uri uri) async {
+    final incomingFiles = _incomingFiles;
+    if (incomingFiles == null) return;
+    final filePath = await incomingFiles.take(uri);
+    if (filePath == null) {
+      if (navigatorKey.currentContext != null) {
+        _showMessage(_l10n.incomingFileUnreadable);
+      }
+      return;
+    }
+    if (await _isAppLocked()) {
+      _pendingFilePath = filePath;
+      _pendingPayload = null;
+      _pendingLink.value = true;
+      return;
+    }
+    _openFile(filePath);
+  }
+
+  void _openFile(String filePath) {
+    _navigateCleanly(
+      AppRouter.open,
+      extra: OpenPagePayload(request: OpenChosenFile(filePath)),
+    );
   }
 
   void _processPayload(FuzzyLinkPayload payload) {
@@ -186,6 +243,8 @@ class FuzzyLinkHandler {
   }
 
   void _navigateCleanly(String path, {Object? extra}) {
+    final navigate = _navigate;
+    if (navigate != null) return navigate(path, extra);
     final router = AppRouter.routerInstance;
     if (router == null) return;
     router.go(AppRouter.home);
@@ -199,5 +258,6 @@ class FuzzyLinkHandler {
 
   void dispose() {
     _subscription?.cancel();
+    _fileSubscription?.cancel();
   }
 }

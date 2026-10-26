@@ -20,6 +20,8 @@ class MockFuzzyAuthStore extends Mock implements FuzzyAuthStore {}
 
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
+class MockIncomingFiles extends Mock implements IncomingFiles {}
+
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _invitation = 'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
 const _acceptance = 'Fuzz/RlVaWgECJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
@@ -264,5 +266,116 @@ void main() {
     verifyNever(() => chatRepository.getChatById(any()));
     await settleMessage(tester);
     handler.dispose();
+  });
+
+  group('a .fuzz file opened from another app', () {
+    const fileUri = 'content://com.android.providers.downloads/document/7';
+    const copy = '/support/handoff/1_0/note.fuzz';
+    late MockIncomingFiles incomingFiles;
+    late StreamController<Uri> desktopFiles;
+    late List<(String, Object?)> went;
+
+    setUp(() {
+      incomingFiles = MockIncomingFiles();
+      desktopFiles = StreamController<Uri>();
+      went = [];
+      registerFallbackValue(Uri());
+      when(() => incomingFiles.opened).thenAnswer((_) => desktopFiles.stream);
+      when(() => incomingFiles.start()).thenAnswer((_) async {});
+      when(() => incomingFiles.take(Uri.parse(fileUri)))
+          .thenAnswer((_) async => copy);
+    });
+
+    tearDown(() => desktopFiles.close());
+
+    Future<FuzzyLinkHandler> pumpWithFiles(WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
+          navigatorKey: navigatorKey,
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+          supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+          home: const Scaffold(body: Text('chat list')),
+        ),
+      );
+      final handler = FuzzyLinkHandler(
+        linkService: linkService,
+        chatRepository: chatRepository,
+        authStore: authStore,
+        cryptoCoreService: cryptoCoreService,
+        incomingFiles: incomingFiles,
+        navigate: (path, extra) => went.add((path, extra)),
+      );
+      await handler.initialize();
+      return handler;
+    }
+
+    void expectOpenedInOpen() {
+      expect(went, hasLength(1));
+      final (path, extra) = went.single;
+      expect(path, AppRouter.open);
+      final request = (extra! as OpenPagePayload).request;
+      expect(request, isA<OpenChosenFile>());
+      expect((request! as OpenChosenFile).filePath, copy);
+    }
+
+    testWidgets('is copied once and opens in Open, never as a link',
+        (tester) async {
+      final handler = await pumpWithFiles(tester);
+      await receive(tester, fileUri);
+
+      verify(() => incomingFiles.take(Uri.parse(fileUri))).called(1);
+      expectOpenedInOpen();
+      expect(find.text('This link is invalid or corrupted.'), findsNothing);
+      handler.dispose();
+    });
+
+    testWidgets('handed over by the desktop (macOS) opens the same way',
+        (tester) async {
+      final handler = await pumpWithFiles(tester);
+      desktopFiles.add(Uri.parse(fileUri));
+      await tester.pump();
+      await tester.pump();
+
+      expectOpenedInOpen();
+      verify(() => incomingFiles.start()).called(1);
+      handler.dispose();
+    });
+
+    testWidgets('while the app is locked, waits for the unlock',
+        (tester) async {
+      when(() => authStore.state).thenReturn(
+        const FuzzyAuthState.initial().copyWith(status: AuthStateStatus.locked),
+      );
+      final handler = await pumpWithFiles(tester);
+      await receive(tester, fileUri);
+
+      expect(went, isEmpty);
+      expect(handler.hasPendingPayload, isTrue);
+      expect(handler.pendingLink.value, isTrue);
+
+      handler.processPendingPayload();
+      expectOpenedInOpen();
+      expect(handler.hasPendingPayload, isFalse);
+      expect(handler.pendingLink.value, isFalse);
+      handler.dispose();
+    });
+
+    testWidgets('that cannot be read says so and opens nothing',
+        (tester) async {
+      when(() => incomingFiles.take(Uri.parse(fileUri)))
+          .thenAnswer((_) async => null);
+      final handler = await pumpWithFiles(tester);
+      await receive(tester, fileUri);
+
+      expect(went, isEmpty);
+      expect(
+        find.text("Couldn't read that file. Open it again from where it is."),
+        findsOneWidget,
+      );
+      await settleMessage(tester);
+      handler.dispose();
+    });
   });
 }
