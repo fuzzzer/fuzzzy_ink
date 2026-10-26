@@ -2224,9 +2224,9 @@
   "@accessPrintMade": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessPrintHint": "გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა.",
+  "accessPrintHint": "გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა და არა ფოტოებში ან ღრუბელში შენახვა.",
   "@accessPrintHint": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
   },
   "accessPrintFailed": "ბეჭდვის ფურცელი ვერ შეიქმნა. სცადეთ ფაილად შენახვა.",
   "@accessPrintFailed": {

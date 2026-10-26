@@ -2245,7 +2245,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get accessPrintHint =>
-      'Your phone\'s share menu opens. Choose Print there.';
+      'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.';
 
   @override
   String get accessPrintFailed =>

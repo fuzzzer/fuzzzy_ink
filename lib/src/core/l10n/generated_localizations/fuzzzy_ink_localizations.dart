@@ -4148,7 +4148,7 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'Your phone\'s share menu opens. Choose Print there.'**
+  /// **'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.'**
   String get accessPrintHint;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).

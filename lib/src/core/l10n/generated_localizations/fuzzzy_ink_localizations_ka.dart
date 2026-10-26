@@ -2259,7 +2259,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessPrintHint =>
-      'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა.';
+      'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა და არა ფოტოებში ან ღრუბელში შენახვა.';
 
   @override
   String get accessPrintFailed =>
