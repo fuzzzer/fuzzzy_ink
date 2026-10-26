@@ -60,6 +60,9 @@ String stubText(GoRouterState state) {
     final HistoryItemPagePayload payload => ' item ${payload.message.id}',
     final ConnectedChatPagePayload payload =>
       ' ${payload.chatGeneralData.chatName}',
+    final LockPagePayload payload =>
+      ' ${payload.chat?.chatName}${payload.returnsToPerson ? ' back' : ''}',
+    final OpenPagePayload payload => payload.returnsToPerson ? ' back' : '',
     final String text => ' $text',
     _ => '',
   };

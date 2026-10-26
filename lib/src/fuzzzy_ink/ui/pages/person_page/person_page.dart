@@ -135,7 +135,8 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
   @override
   void initState() {
     super.initState();
-    _highlightId = widget.newMessageId;
+    // The row Lock or Open just wrote, when they landed here from Home.
+    _highlightId = widget.newMessageId ?? RecentHistoryRow.take(widget.chatId);
     _scroll.addListener(_onScroll);
     if (_holdBanner) {
       // The chip rises where the banner was (micro-interaction 7).
@@ -163,7 +164,8 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
   }
 
   /// Runs a flow that may add rows (Lock, Open), then reads the history
-  /// again; a row that was not there before glows once.
+  /// again; the row the flow wrote ([RecentHistoryRow]) glows once, or else
+  /// any row that was not there before.
   Future<void> _runAndReload(Future<void> Function() flow) async {
     final cubit = context.read<ConnectedChatCubit>();
     final known = {for (final message in cubit.state.messages) message.id};
@@ -171,35 +173,34 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
     if (!mounted) return;
     await cubit.reloadMessages();
     if (!mounted) return;
+    final marked = RecentHistoryRow.take(widget.chatId);
     final added = [
       for (final message in cubit.state.messages)
         if (!known.contains(message.id)) message.id,
     ];
-    if (added.isNotEmpty) {
-      setState(() => _highlightId = added.reduce((a, b) => a > b ? a : b));
-    }
+    final glow = marked ??
+        (added.isEmpty ? null : added.reduce((a, b) => a > b ? a : b));
+    if (glow != null) setState(() => _highlightId = glow);
   }
 
-  /// Lock or Open for this person: their flow when the app has it (the
-  /// route is registered), otherwise the older chat screen, which still
-  /// locks and opens.
-  Future<void> _openFlow(String route, ChatGeneralData chat) {
-    return _runAndReload(() async {
-      final location = Uri(
-        path: route,
-        queryParameters: {'chat': chat.chatId},
-      ).toString();
-      final router = GoRouter.of(context);
-      final hasRoute = !router.configuration.findMatch(location).isError;
-      if (hasRoute) {
-        await context.push(location, extra: chat.chatId);
-      } else {
-        await context.push(
-          AppRouter.chatConnected,
-          extra: ConnectedChatPagePayload(chatGeneralData: chat),
-        );
-      }
-    });
+  /// Lock for this person: straight to "What?"; Done comes back here.
+  Future<void> _lockFor(ChatGeneralData chat) {
+    return _runAndReload(
+      () => context.push(
+        AppRouter.lockFor,
+        extra: LockPagePayload(chat: chat, returnsToPerson: true),
+      ),
+    );
+  }
+
+  /// Open what they sent; Done comes back here.
+  Future<void> _openFrom() {
+    return _runAndReload(
+      () => context.push(
+        AppRouter.open,
+        extra: const OpenPagePayload(returnsToPerson: true),
+      ),
+    );
   }
 
   Future<void> _checkNumbers(ChatGeneralData chat) async {
@@ -413,7 +414,7 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
                           qaId: 'person.lock',
                           label: localizations.homeLockTitle,
                           icon: const Icon(Icons.lock_outline),
-                          onPressed: () => _openFlow(AppRouter.lockFor, chat),
+                          onPressed: () => _lockFor(chat),
                         ),
                       ),
                       SizedBox(width: space.s + space.xs / 2),
@@ -423,7 +424,7 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
                           label: localizations.homeOpenTitle,
                           icon: const Icon(Icons.lock_open_outlined),
                           variant: FuzzzyButtonVariant.secondary,
-                          onPressed: () => _openFlow(AppRouter.open, chat),
+                          onPressed: _openFrom,
                         ),
                       ),
                     ],

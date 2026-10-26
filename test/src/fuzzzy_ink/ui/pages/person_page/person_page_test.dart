@@ -224,17 +224,8 @@ void main() {
       expect(find.text('to /chat/verify Nino'), findsOneWidget);
     });
 
-    testWidgets('Lock opens the older chat screen until the Lock screens exist',
-        (tester) async {
-      showHistory(_history);
-      await pumpPerson(tester);
-      await tester.tap(find.byKey(const Key('btn.person.lock')));
-      await tester.pumpAndSettle();
-      expect(find.text('to /chat/connected Nino'), findsOneWidget);
-    });
-
     testWidgets(
-        'Lock and Open go to their screens with the chat id, and the '
+        'Lock and Open go to their screens and come back here, and the '
         'history is read again on the way back', (tester) async {
       showHistory(_history);
       await pumpPerson(
@@ -244,20 +235,30 @@ void main() {
 
       await tester.tap(find.byKey(const Key('btn.person.open')));
       await tester.pumpAndSettle();
-      expect(
-        find.text('to /open?chat=$peopleChatId $peopleChatId'),
-        findsOneWidget,
-      );
+      expect(find.text('to /open back'), findsOneWidget);
       Navigator.of(tester.element(find.textContaining('to /open'))).pop();
       await tester.pumpAndSettle();
       verify(() => history.reloadMessages()).called(1);
 
       await tester.tap(find.byKey(const Key('btn.person.lock')));
       await tester.pumpAndSettle();
-      expect(
-        find.text('to /lock/for?chat=$peopleChatId $peopleChatId'),
-        findsOneWidget,
+      expect(find.text('to /lock/for Nino back'), findsOneWidget);
+    });
+
+    testWidgets('the row Lock or Open wrote glows once on the way back',
+        (tester) async {
+      showHistory(_history);
+      await pumpPerson(tester, extraStubs: [AppRouter.lockFor]);
+      await tester.tap(find.byKey(const Key('btn.person.lock')));
+      await tester.pumpAndSettle();
+      RecentHistoryRow.mark(chatId: peopleChatId, messageId: _history.first.id);
+      Navigator.of(tester.element(find.textContaining('to /lock/for'))).pop();
+      await tester.pumpAndSettle();
+      final row = tester.widget<HistoryRow>(
+        find.byKey(ValueKey(_history.first.id)),
       );
+      expect(row.highlight, isTrue);
+      expect(RecentHistoryRow.take(peopleChatId), isNull);
     });
   });
 
