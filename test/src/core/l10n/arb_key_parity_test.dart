@@ -29,11 +29,9 @@ void main() {
   });
 
   /// Keys whose Georgian text is, on purpose, the same as the English: brand
-  /// and product names stay in Latin letters, and "Fuzz" is the app's own
-  /// technical term (Georgian writes "Fuzz-ის კოპირება").
+  /// and product names stay in Latin letters.
   const sameInBothLanguages = {
     'fuzzzyInk', // "Fuzzzy Ink" — the brand
-    'fuzz', // "Fuzz" — the encrypted text, a technical term
     'fuzzzyCast', // "Fuzzzy Cast" — the character layer's name stays Latin
     'languageEnglish', // a language is named in its own language
     'languageGeorgian', // "ქართული" in both lists, for the same reason

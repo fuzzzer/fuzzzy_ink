@@ -99,23 +99,11 @@ abstract class FuzzzyInkLocalizations {
     Locale('ka')
   ];
 
-  /// No description provided for @chat.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat'**
-  String get chat;
-
   /// No description provided for @fuzzzyInk.
   ///
   /// In en, this message translates to:
   /// **'Fuzzzy Ink'**
   String get fuzzzyInk;
-
-  /// No description provided for @acceptInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept Invitation'**
-  String get acceptInvitation;
 
   /// No description provided for @back.
   ///
@@ -123,34 +111,22 @@ abstract class FuzzzyInkLocalizations {
   /// **'Back'**
   String get back;
 
-  /// No description provided for @create.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get create;
-
   /// No description provided for @failedToCreateChat.
   ///
   /// In en, this message translates to:
-  /// **'Failed to create chat.'**
+  /// **'Couldn\'t add the person. Try again.'**
   String get failedToCreateChat;
-
-  /// No description provided for @accept.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept'**
-  String get accept;
 
   /// No description provided for @failedToReadAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to read acceptance.'**
+  /// **'Couldn\'t read the reply.'**
   String get failedToReadAcceptance;
 
   /// No description provided for @deleteChat.
   ///
   /// In en, this message translates to:
-  /// **'Delete Chat'**
+  /// **'Remove person'**
   String get deleteChat;
 
   /// No description provided for @cancel.
@@ -186,13 +162,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @areYouSureYouWantToDeleteChatWith.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete chat with {personName}'**
+  /// **'Remove {personName}?'**
   String areYouSureYouWantToDeleteChatWith(Object personName);
 
   /// No description provided for @failedToGetAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to get acceptance'**
+  /// **'Couldn\'t get the reply.'**
   String get failedToGetAcceptance;
 
   /// No description provided for @errorPickingFiles.
@@ -207,12 +183,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Loading'**
   String get loading;
 
-  /// No description provided for @fuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzz'**
-  String get fuzz;
-
   /// No description provided for @failedToProcessFiles.
   ///
   /// In en, this message translates to:
@@ -222,14 +192,8 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @chatWithIndicatedNameAlreadyExists.
   ///
   /// In en, this message translates to:
-  /// **'Chat with indicated name already exists'**
+  /// **'You already have someone with this name.'**
   String get chatWithIndicatedNameAlreadyExists;
-
-  /// No description provided for @show.
-  ///
-  /// In en, this message translates to:
-  /// **'Show'**
-  String get show;
 
   /// No description provided for @open.
   ///
@@ -264,7 +228,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @textToEncryptDecrypt.
   ///
   /// In en, this message translates to:
-  /// **'Text to Encrypt Decrypt'**
+  /// **'Text to encrypt or decrypt'**
   String get textToEncryptDecrypt;
 
   /// No description provided for @encryptText.
@@ -330,7 +294,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @decryptionFailedCheckYourKeyOrEncryptedText.
   ///
   /// In en, this message translates to:
-  /// **'Decryption failed check your key or encrypted text'**
+  /// **'Decryption failed. Check your key or the encrypted text.'**
   String get decryptionFailedCheckYourKeyOrEncryptedText;
 
   /// No description provided for @next.
@@ -360,26 +324,20 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @cantAcceptOwnInvitation.
   ///
   /// In en, this message translates to:
-  /// **'You can\'t accept your own invitation.'**
+  /// **'You can\'t accept your own invite.'**
   String get cantAcceptOwnInvitation;
 
   /// No description provided for @chatNotFoundForAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Chat not found for this acceptance link.'**
+  /// **'This reply doesn\'t match any invite you sent.'**
   String get chatNotFoundForAcceptance;
 
   /// No description provided for @failedToProcessAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to process acceptance link.'**
+  /// **'Couldn\'t read this reply link.'**
   String get failedToProcessAcceptance;
-
-  /// No description provided for @shareFile.
-  ///
-  /// In en, this message translates to:
-  /// **'Share File'**
-  String get shareFile;
 
   /// No description provided for @vaultUntitled.
   ///
@@ -435,35 +393,17 @@ abstract class FuzzzyInkLocalizations {
   /// **'Note'**
   String get vaultNoteLabel;
 
-  /// No description provided for @vaultPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault Password'**
-  String get vaultPassword;
-
   /// No description provided for @vaultIncorrectPassword.
   ///
   /// In en, this message translates to:
   /// **'Incorrect password'**
   String get vaultIncorrectPassword;
 
-  /// No description provided for @vaultUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock'**
-  String get vaultUnlock;
-
   /// No description provided for @vaultForgotPassword.
   ///
   /// In en, this message translates to:
   /// **'Forgot password? Your data is encrypted and cannot be recovered.'**
   String get vaultForgotPassword;
-
-  /// No description provided for @menu.
-  ///
-  /// In en, this message translates to:
-  /// **'Menu'**
-  String get menu;
 
   /// No description provided for @unknownError.
   ///
@@ -571,55 +511,49 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @biometricNotStrongEnough.
   ///
   /// In en, this message translates to:
-  /// **'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.'**
+  /// **'Fingerprint or face unlock on this device isn\'t strong enough to protect your password. Keep unlocking with your password.'**
   String get biometricNotStrongEnough;
 
   /// No description provided for @biometricNotTurnedOn.
   ///
   /// In en, this message translates to:
-  /// **'Biometric unlock was not turned on.'**
+  /// **'Quick unlock was not turned on.'**
   String get biometricNotTurnedOn;
 
   /// No description provided for @vaultBiometricInvalidated.
   ///
   /// In en, this message translates to:
-  /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
+  /// **'Your fingerprint or face changed, so quick unlock was turned off. Turn it on again in Settings.'**
   String get vaultBiometricInvalidated;
 
   /// No description provided for @invitationAlreadyUsed.
   ///
   /// In en, this message translates to:
-  /// **'This invitation was already used.'**
+  /// **'This invite was already used.'**
   String get invitationAlreadyUsed;
 
   /// No description provided for @invalidInvitation.
   ///
   /// In en, this message translates to:
-  /// **'This invitation is invalid or damaged.'**
+  /// **'This invite is not valid or is damaged.'**
   String get invalidInvitation;
 
   /// No description provided for @invalidAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'This acceptance is invalid or damaged.'**
+  /// **'This reply is not valid or is damaged.'**
   String get invalidAcceptance;
 
   /// No description provided for @wrongChatBlob.
   ///
   /// In en, this message translates to:
-  /// **'This code belongs to a different chat.'**
+  /// **'This belongs to a different person.'**
   String get wrongChatBlob;
-
-  /// No description provided for @alreadyUnfuzzed.
-  ///
-  /// In en, this message translates to:
-  /// **'This message was already unfuzzed on this device, or its one-time key is no longer kept.'**
-  String get alreadyUnfuzzed;
 
   /// No description provided for @corruptBlob.
   ///
   /// In en, this message translates to:
-  /// **'This is not a valid fuzzed message.'**
+  /// **'This is not a valid locked message.'**
   String get corruptBlob;
 
   /// No description provided for @safetyNumberTitle.
@@ -631,13 +565,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @safetyNumberVersion.
   ///
   /// In en, this message translates to:
-  /// **'Version {version}. If your partner sees another version, or none, update both apps before comparing.'**
+  /// **'Version {version}. If the other person sees another version, or none, update both apps before comparing.'**
   String safetyNumberVersion(int version);
 
   /// No description provided for @wrongPasswordFile.
   ///
   /// In en, this message translates to:
-  /// **'Wrong password — this file cannot be unfuzzed with it.'**
+  /// **'Wrong password — this file doesn\'t open with it.'**
   String get wrongPasswordFile;
 
   /// No description provided for @fileStillArriving.
@@ -655,19 +589,19 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @basicsWrongPassword.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect key — this text cannot be unfuzzed with it.'**
+  /// **'Incorrect key — this text doesn\'t open with it.'**
   String get basicsWrongPassword;
 
   /// No description provided for @forwardSecrecyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unfuzzed once, on this device'**
+  /// **'Opened once, on this device'**
   String get forwardSecrecyTitle;
 
   /// No description provided for @forwardSecrecyNotice.
   ///
   /// In en, this message translates to:
-  /// **'Each fuzzed message can be unfuzzed once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot re-read old blobs.'**
+  /// **'Each locked message can be opened once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot read old messages.'**
   String get forwardSecrecyNotice;
 
   /// No description provided for @aboutEncryptionTitle.
@@ -691,13 +625,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionWindowTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unfuzz in order'**
+  /// **'Open in order'**
   String get aboutEncryptionWindowTitle;
 
   /// No description provided for @aboutEncryptionBodyWindow.
   ///
   /// In en, this message translates to:
-  /// **'The app keeps keys for skipped messages, but not without limit. A blob more than 63 messages behind the newest one you already read in that chat can no longer be unfuzzed — the app says it is too old — and no more than 40 skipped messages are kept at once. Your own sent blobs cannot be unfuzzed by you either; that is why the app keeps what you sent.'**
+  /// **'The app keeps keys for skipped messages, but not without limit. A message more than 63 behind the newest one you already opened from that person can no longer be opened — the app says it is too old — and no more than 40 skipped messages are kept at once. You cannot open your own sent messages either; that is why the app keeps what you sent.'**
   String get aboutEncryptionBodyWindow;
 
   /// No description provided for @aboutEncryptionLinksTitle.
@@ -721,13 +655,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyErrors.
   ///
   /// In en, this message translates to:
-  /// **'“Already unfuzzed”: this blob was unfuzzed on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the chat has moved on several rounds since — so it can never be read here. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already unfuzzed from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
+  /// **'“Already opened”: this message was opened on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the conversation has moved on several rounds since — so it can never be read here. “Not a valid locked message”: it is damaged, incomplete, or belongs to a different person — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already opened from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
   String get aboutEncryptionBodyErrors;
 
   /// No description provided for @aboutEncryptionBodySafetyNumber.
   ///
   /// In en, this message translates to:
-  /// **'Every chat has a 60-digit safety number, computed from both devices’ identity keys. Compare it with your partner by voice or in person: if the digits match, nobody sat in the middle when you paired. “Verified” is your own note that you did this — the app cannot check it for you.'**
+  /// **'Each person you connect with has a 60-digit safety number, computed from both devices’ identity keys. Compare it with them by voice or in person: if the digits match, nobody sat in the middle when you connected. “Checked” is your own note that you did this — the app cannot check it for you.'**
   String get aboutEncryptionBodySafetyNumber;
 
   /// No description provided for @aboutEncryptionUnderTheHoodTitle.
@@ -739,43 +673,43 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyUnderTheHood.
   ///
   /// In en, this message translates to:
-  /// **'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a blob single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.'**
+  /// **'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a locked message single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.'**
   String get aboutEncryptionBodyUnderTheHood;
 
   /// No description provided for @alreadyReceived.
   ///
   /// In en, this message translates to:
-  /// **'This file was already received on this device — it cannot be unfuzzed a second time.'**
+  /// **'This file was already received on this device — it can\'t be opened a second time.'**
   String get alreadyReceived;
 
   /// No description provided for @fileTooOld.
   ///
   /// In en, this message translates to:
-  /// **'This file is too old to unfuzz — too many newer messages were unfuzzed first.'**
+  /// **'This file is too old to open — many newer messages were opened first.'**
   String get fileTooOld;
 
   /// No description provided for @fileCorrupt.
   ///
   /// In en, this message translates to:
-  /// **'This is not a valid fuzzed file — it is damaged, incomplete, or from a different chat.'**
+  /// **'This is not a valid locked file — it is damaged, incomplete, or from a different person.'**
   String get fileCorrupt;
 
   /// No description provided for @fileCancelled.
   ///
   /// In en, this message translates to:
-  /// **'Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.'**
+  /// **'Receiving was cancelled — this file can\'t be opened on this device now; ask the sender to send it again.'**
   String get fileCancelled;
 
   /// No description provided for @exportChatArchiveFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to export the chat archive.'**
+  /// **'Couldn\'t save the history as a file.'**
   String get exportChatArchiveFailed;
 
   /// No description provided for @exportChatArchiveNothingToExport.
   ///
   /// In en, this message translates to:
-  /// **'This chat has no messages to export.'**
+  /// **'There is no history to save yet.'**
   String get exportChatArchiveNothingToExport;
 
   /// No description provided for @exportChatArchiveStoreLocked.
@@ -783,12 +717,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Unlock Fuzzzy Ink first — your history cannot be read while it is locked.'**
   String get exportChatArchiveStoreLocked;
-
-  /// No description provided for @export.
-  ///
-  /// In en, this message translates to:
-  /// **'Export'**
-  String get export;
 
   /// No description provided for @couldNotOpenFile.
   ///
@@ -829,19 +757,19 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @biometricUnlockChats.
   ///
   /// In en, this message translates to:
-  /// **'Authenticate to unlock chats'**
+  /// **'Confirm it\'s you to unlock Fuzzzy Ink'**
   String get biometricUnlockChats;
 
   /// No description provided for @biometricUnlockVault.
   ///
   /// In en, this message translates to:
-  /// **'Authenticate to unlock vault'**
+  /// **'Confirm it\'s you to open My safe'**
   String get biometricUnlockVault;
 
   /// No description provided for @biometricUnlockVaultTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock Fuzzy Vault'**
+  /// **'Open My safe'**
   String get biometricUnlockVaultTitle;
 
   /// No description provided for @biometricSavePassword.
@@ -853,13 +781,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @vaultMoveUnfinishedTitle.
   ///
   /// In en, this message translates to:
-  /// **'Vault not moved'**
+  /// **'My safe wasn\'t moved'**
   String get vaultMoveUnfinishedTitle;
 
   /// No description provided for @vaultMoveUnfinishedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.'**
+  /// **'My safe couldn\'t be moved to its protected place in the app. Nothing was deleted. Close and reopen the app to try again.'**
   String get vaultMoveUnfinishedMessage;
 
   /// No description provided for @copyRefused.
@@ -895,7 +823,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @unfuzzingFile.
   ///
   /// In en, this message translates to:
-  /// **'Unfuzzing…'**
+  /// **'Opening…'**
   String get unfuzzingFile;
 
   /// No description provided for @fileNoPreview.
@@ -907,7 +835,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @basicsFuzzedFilesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Fuzzed files kept in the app'**
+  /// **'Locked files kept in the app'**
   String get basicsFuzzedFilesTitle;
 
   /// No description provided for @masterPassword.
@@ -1012,41 +940,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Lock Fuzzzy Ink'**
   String get appLockNow;
 
-  /// No description provided for @autoLockMinutes.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} min'**
-  String autoLockMinutes(int count);
-
   /// No description provided for @autoLockSaveFailed.
   ///
   /// In en, this message translates to:
   /// **'The setting was not saved.'**
   String get autoLockSaveFailed;
-
-  /// No description provided for @vaultUsesOwnPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'The vault has its own password.'**
-  String get vaultUsesOwnPassword;
-
-  /// No description provided for @vaultUseOwnPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Use a different password for the vault'**
-  String get vaultUseOwnPassword;
-
-  /// No description provided for @vaultUseMasterPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Open the vault with the master password'**
-  String get vaultUseMasterPassword;
-
-  /// No description provided for @vaultOwnPasswordRecoveryNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Your recovery key can still open My safe.'**
-  String get vaultOwnPasswordRecoveryNote;
 
   /// No description provided for @vaultRecoveryUseMasterPassword.
   ///

@@ -9,31 +9,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   FuzzzyInkLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get chat => 'Chat';
-
-  @override
   String get fuzzzyInk => 'Fuzzzy Ink';
-
-  @override
-  String get acceptInvitation => 'Accept Invitation';
 
   @override
   String get back => 'Back';
 
   @override
-  String get create => 'Create';
+  String get failedToCreateChat => 'Couldn\'t add the person. Try again.';
 
   @override
-  String get failedToCreateChat => 'Failed to create chat.';
+  String get failedToReadAcceptance => 'Couldn\'t read the reply.';
 
   @override
-  String get accept => 'Accept';
-
-  @override
-  String get failedToReadAcceptance => 'Failed to read acceptance.';
-
-  @override
-  String get deleteChat => 'Delete Chat';
+  String get deleteChat => 'Remove person';
 
   @override
   String get cancel => 'Cancel';
@@ -52,11 +40,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String areYouSureYouWantToDeleteChatWith(Object personName) {
-    return 'Are you sure you want to delete chat with $personName';
+    return 'Remove $personName?';
   }
 
   @override
-  String get failedToGetAcceptance => 'Failed to get acceptance';
+  String get failedToGetAcceptance => 'Couldn\'t get the reply.';
 
   @override
   String get errorPickingFiles => 'Error picking files.';
@@ -65,17 +53,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get loading => 'Loading';
 
   @override
-  String get fuzz => 'Fuzz';
-
-  @override
   String get failedToProcessFiles => 'Failed to process files';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
-      'Chat with indicated name already exists';
-
-  @override
-  String get show => 'Show';
+      'You already have someone with this name.';
 
   @override
   String get open => 'Open';
@@ -93,7 +75,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get enterYourSecretKey => 'Enter your secret key';
 
   @override
-  String get textToEncryptDecrypt => 'Text to Encrypt Decrypt';
+  String get textToEncryptDecrypt => 'Text to encrypt or decrypt';
 
   @override
   String get encryptText => 'Encrypt Text';
@@ -128,7 +110,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get decryptionFailedCheckYourKeyOrEncryptedText =>
-      'Decryption failed check your key or encrypted text';
+      'Decryption failed. Check your key or the encrypted text.';
 
   @override
   String get next => 'Next';
@@ -143,18 +125,14 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get alreadyConnected => 'Already connected!';
 
   @override
-  String get cantAcceptOwnInvitation =>
-      'You can\'t accept your own invitation.';
+  String get cantAcceptOwnInvitation => 'You can\'t accept your own invite.';
 
   @override
   String get chatNotFoundForAcceptance =>
-      'Chat not found for this acceptance link.';
+      'This reply doesn\'t match any invite you sent.';
 
   @override
-  String get failedToProcessAcceptance => 'Failed to process acceptance link.';
-
-  @override
-  String get shareFile => 'Share File';
+  String get failedToProcessAcceptance => 'Couldn\'t read this reply link.';
 
   @override
   String get vaultUntitled => 'Untitled';
@@ -184,20 +162,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get vaultNoteLabel => 'Note';
 
   @override
-  String get vaultPassword => 'Vault Password';
-
-  @override
   String get vaultIncorrectPassword => 'Incorrect password';
-
-  @override
-  String get vaultUnlock => 'Unlock';
 
   @override
   String get vaultForgotPassword =>
       'Forgot password? Your data is encrypted and cannot be recovered.';
-
-  @override
-  String get menu => 'Menu';
 
   @override
   String get unknownError => 'Unknown error';
@@ -260,45 +229,41 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get biometricNotStrongEnough =>
-      'This device\'s biometrics aren\'t strong enough to protect your password. Keep unlocking with your password.';
+      'Fingerprint or face unlock on this device isn\'t strong enough to protect your password. Keep unlocking with your password.';
 
   @override
-  String get biometricNotTurnedOn => 'Biometric unlock was not turned on.';
+  String get biometricNotTurnedOn => 'Quick unlock was not turned on.';
 
   @override
   String get vaultBiometricInvalidated =>
-      'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.';
+      'Your fingerprint or face changed, so quick unlock was turned off. Turn it on again in Settings.';
 
   @override
-  String get invitationAlreadyUsed => 'This invitation was already used.';
+  String get invitationAlreadyUsed => 'This invite was already used.';
 
   @override
-  String get invalidInvitation => 'This invitation is invalid or damaged.';
+  String get invalidInvitation => 'This invite is not valid or is damaged.';
 
   @override
-  String get invalidAcceptance => 'This acceptance is invalid or damaged.';
+  String get invalidAcceptance => 'This reply is not valid or is damaged.';
 
   @override
-  String get wrongChatBlob => 'This code belongs to a different chat.';
+  String get wrongChatBlob => 'This belongs to a different person.';
 
   @override
-  String get alreadyUnfuzzed =>
-      'This message was already unfuzzed on this device, or its one-time key is no longer kept.';
-
-  @override
-  String get corruptBlob => 'This is not a valid fuzzed message.';
+  String get corruptBlob => 'This is not a valid locked message.';
 
   @override
   String get safetyNumberTitle => 'Safety number';
 
   @override
   String safetyNumberVersion(int version) {
-    return 'Version $version. If your partner sees another version, or none, update both apps before comparing.';
+    return 'Version $version. If the other person sees another version, or none, update both apps before comparing.';
   }
 
   @override
   String get wrongPasswordFile =>
-      'Wrong password — this file cannot be unfuzzed with it.';
+      'Wrong password — this file doesn\'t open with it.';
 
   @override
   String get fileStillArriving =>
@@ -310,14 +275,14 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get basicsWrongPassword =>
-      'Incorrect key — this text cannot be unfuzzed with it.';
+      'Incorrect key — this text doesn\'t open with it.';
 
   @override
-  String get forwardSecrecyTitle => 'Unfuzzed once, on this device';
+  String get forwardSecrecyTitle => 'Opened once, on this device';
 
   @override
   String get forwardSecrecyNotice =>
-      'Each fuzzed message can be unfuzzed once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot re-read old blobs.';
+      'Each locked message can be opened once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot read old messages.';
 
   @override
   String get aboutEncryptionTitle => 'About encryption';
@@ -330,11 +295,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Every text you lock or open is kept in the app, sealed per person under a key only this device holds. Your master password protects every key: without it, or your recovery key, nothing kept here can be opened. My safe opens with the master password or with a password of its own; giving it its own password also gives it a new key and a new recovery key. Files are kept the same way: the app keeps only the sealed file and unlocks it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. The app locks itself after the idle time you choose, and when it has been in the background for a while. If you turn on fingerprint or face unlock, your password is stored on this device so your fingerprint or face can release it.';
 
   @override
-  String get aboutEncryptionWindowTitle => 'Unfuzz in order';
+  String get aboutEncryptionWindowTitle => 'Open in order';
 
   @override
   String get aboutEncryptionBodyWindow =>
-      'The app keeps keys for skipped messages, but not without limit. A blob more than 63 messages behind the newest one you already read in that chat can no longer be unfuzzed — the app says it is too old — and no more than 40 skipped messages are kept at once. Your own sent blobs cannot be unfuzzed by you either; that is why the app keeps what you sent.';
+      'The app keeps keys for skipped messages, but not without limit. A message more than 63 behind the newest one you already opened from that person can no longer be opened — the app says it is too old — and no more than 40 skipped messages are kept at once. You cannot open your own sent messages either; that is why the app keeps what you sent.';
 
   @override
   String get aboutEncryptionLinksTitle => 'Message links';
@@ -348,48 +313,45 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyErrors =>
-      '“Already unfuzzed”: this blob was unfuzzed on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the chat has moved on several rounds since — so it can never be read here. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already unfuzzed from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.';
+      '“Already opened”: this message was opened on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the conversation has moved on several rounds since — so it can never be read here. “Not a valid locked message”: it is damaged, incomplete, or belongs to a different person — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already opened from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.';
 
   @override
   String get aboutEncryptionBodySafetyNumber =>
-      'Every chat has a 60-digit safety number, computed from both devices’ identity keys. Compare it with your partner by voice or in person: if the digits match, nobody sat in the middle when you paired. “Verified” is your own note that you did this — the app cannot check it for you.';
+      'Each person you connect with has a 60-digit safety number, computed from both devices’ identity keys. Compare it with them by voice or in person: if the digits match, nobody sat in the middle when you connected. “Checked” is your own note that you did this — the app cannot check it for you.';
 
   @override
   String get aboutEncryptionUnderTheHoodTitle => 'Under the hood';
 
   @override
   String get aboutEncryptionBodyUnderTheHood =>
-      'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a blob single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.';
+      'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a locked message single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.';
 
   @override
   String get alreadyReceived =>
-      'This file was already received on this device — it cannot be unfuzzed a second time.';
+      'This file was already received on this device — it can\'t be opened a second time.';
 
   @override
   String get fileTooOld =>
-      'This file is too old to unfuzz — too many newer messages were unfuzzed first.';
+      'This file is too old to open — many newer messages were opened first.';
 
   @override
   String get fileCorrupt =>
-      'This is not a valid fuzzed file — it is damaged, incomplete, or from a different chat.';
+      'This is not a valid locked file — it is damaged, incomplete, or from a different person.';
 
   @override
   String get fileCancelled =>
-      'Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.';
+      'Receiving was cancelled — this file can\'t be opened on this device now; ask the sender to send it again.';
 
   @override
-  String get exportChatArchiveFailed => 'Failed to export the chat archive.';
+  String get exportChatArchiveFailed => 'Couldn\'t save the history as a file.';
 
   @override
   String get exportChatArchiveNothingToExport =>
-      'This chat has no messages to export.';
+      'There is no history to save yet.';
 
   @override
   String get exportChatArchiveStoreLocked =>
       'Unlock Fuzzzy Ink first — your history cannot be read while it is locked.';
-
-  @override
-  String get export => 'Export';
 
   @override
   String get couldNotOpenFile => 'Could not open file.';
@@ -410,23 +372,23 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get couldNotOpenLink => 'Could not open the link.';
 
   @override
-  String get biometricUnlockChats => 'Authenticate to unlock chats';
+  String get biometricUnlockChats => 'Confirm it\'s you to unlock Fuzzzy Ink';
 
   @override
-  String get biometricUnlockVault => 'Authenticate to unlock vault';
+  String get biometricUnlockVault => 'Confirm it\'s you to open My safe';
 
   @override
-  String get biometricUnlockVaultTitle => 'Unlock Fuzzy Vault';
+  String get biometricUnlockVaultTitle => 'Open My safe';
 
   @override
   String get biometricSavePassword => 'Authenticate to save password';
 
   @override
-  String get vaultMoveUnfinishedTitle => 'Vault not moved';
+  String get vaultMoveUnfinishedTitle => 'My safe wasn\'t moved';
 
   @override
   String get vaultMoveUnfinishedMessage =>
-      'Your vault couldn\'t be moved to its safe place in the app. Nothing was deleted. Close and reopen the app to try again.';
+      'My safe couldn\'t be moved to its protected place in the app. Nothing was deleted. Close and reopen the app to try again.';
 
   @override
   String get copyRefused => 'Only sealed text can be copied.';
@@ -444,14 +406,14 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get couldNotSaveFile => 'Could not save the file.';
 
   @override
-  String get unfuzzingFile => 'Unfuzzing…';
+  String get unfuzzingFile => 'Opening…';
 
   @override
   String get fileNoPreview =>
       'This file cannot be shown in the app. Save it to open it with another app.';
 
   @override
-  String get basicsFuzzedFilesTitle => 'Fuzzed files kept in the app';
+  String get basicsFuzzedFilesTitle => 'Locked files kept in the app';
 
   @override
   String get masterPassword => 'Master password';
@@ -513,26 +475,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get appLockNow => 'Lock Fuzzzy Ink';
 
   @override
-  String autoLockMinutes(int count) {
-    return '$count min';
-  }
-
-  @override
   String get autoLockSaveFailed => 'The setting was not saved.';
-
-  @override
-  String get vaultUsesOwnPassword => 'The vault has its own password.';
-
-  @override
-  String get vaultUseOwnPassword => 'Use a different password for the vault';
-
-  @override
-  String get vaultUseMasterPassword =>
-      'Open the vault with the master password';
-
-  @override
-  String get vaultOwnPasswordRecoveryNote =>
-      'Your recovery key can still open My safe.';
 
   @override
   String get vaultRecoveryUseMasterPassword =>

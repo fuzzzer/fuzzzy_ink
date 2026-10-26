@@ -9,31 +9,20 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   FuzzzyInkLocalizationsKa([String locale = 'ka']) : super(locale);
 
   @override
-  String get chat => 'ჩատი';
-
-  @override
   String get fuzzzyInk => 'Fuzzzy Ink';
-
-  @override
-  String get acceptInvitation => 'მოწვევის მიღება';
 
   @override
   String get back => 'უკან';
 
   @override
-  String get create => 'შექმნა';
-
-  @override
-  String get failedToCreateChat => 'ჩატი ვერ შეიქმნა.';
-
-  @override
-  String get accept => 'მიღება';
+  String get failedToCreateChat =>
+      'ადამიანის დამატება ვერ მოხერხდა. სცადეთ ხელახლა.';
 
   @override
   String get failedToReadAcceptance => 'პასუხის წაკითხვა ვერ მოხერხდა.';
 
   @override
-  String get deleteChat => 'ჩატის წაშლა';
+  String get deleteChat => 'ადამიანის წაშლა';
 
   @override
   String get cancel => 'გაუქმება';
@@ -52,7 +41,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String areYouSureYouWantToDeleteChatWith(Object personName) {
-    return 'წავშალოთ ჩატი: $personName?';
+    return 'წავშალოთ $personName?';
   }
 
   @override
@@ -65,17 +54,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get loading => 'იტვირთება';
 
   @override
-  String get fuzz => 'Fuzz';
-
-  @override
   String get failedToProcessFiles => 'ფაილები ვერ დამუშავდა.';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
-      'ამ სახელით ჩატი უკვე არსებობს';
-
-  @override
-  String get show => 'ჩვენება';
+      'ამ სახელით უკვე გყავთ ადამიანი.';
 
   @override
   String get open => 'გახსნა';
@@ -147,13 +130,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get chatNotFoundForAcceptance =>
-      'ამ პასუხის ბმულისთვის ჩატი ვერ მოიძებნა.';
+      'ეს პასუხი თქვენს არცერთ მოწვევას არ შეესაბამება.';
 
   @override
   String get failedToProcessAcceptance => 'პასუხის ბმული ვერ დამუშავდა.';
-
-  @override
-  String get shareFile => 'ფაილის გაზიარება';
 
   @override
   String get vaultUntitled => 'უსათაურო';
@@ -183,20 +163,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultNoteLabel => 'ჩანაწერი';
 
   @override
-  String get vaultPassword => 'სეიფის პაროლი';
-
-  @override
   String get vaultIncorrectPassword => 'არასწორი პაროლი';
-
-  @override
-  String get vaultUnlock => 'გახსნა';
 
   @override
   String get vaultForgotPassword =>
       'დაგავიწყდათ პაროლი? მონაცემები დაშიფრულია და მათი აღდგენა შეუძლებელია.';
-
-  @override
-  String get menu => 'მენიუ';
 
   @override
   String get unknownError => 'უცნობი შეცდომა';
@@ -278,11 +249,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get invalidAcceptance => 'ეს პასუხი არასწორია ან დაზიანებულია.';
 
   @override
-  String get wrongChatBlob => 'ეს კოდი სხვა ჩატს ეკუთვნის.';
-
-  @override
-  String get alreadyUnfuzzed =>
-      'ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ ინახება.';
+  String get wrongChatBlob => 'ეს სხვა ადამიანს ეკუთვნის.';
 
   @override
   String get corruptBlob => 'ეს სწორი ჩაკეტილი შეტყობინება არ არის.';
@@ -333,7 +300,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyWindow =>
-      'აპი გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ჩატში ბოლოს წაკითხულს 63-ზე მეტით ჩამორჩება, ვეღარ გაიხსნება — აპი გეტყვით, რომ ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. საკუთარ გაგზავნილ შეტყობინებებს ვერც თქვენ გახსნით; სწორედ ამიტომ ინახავს აპი იმას, რაც გაგზავნეთ.';
+      'აპი გამოტოვებული შეტყობინებების გასაღებებს ინახავს, მაგრამ არა უსასრულოდ. შეტყობინება, რომელიც ამ ადამიანისგან ბოლოს გახსნილს 63-ზე მეტით ჩამორჩება, ვეღარ გაიხსნება — აპი გეტყვით, რომ ძალიან ძველია — და ერთდროულად 40-ზე მეტი გამოტოვებული შეტყობინების გასაღები არ ინახება. საკუთარ გაგზავნილ შეტყობინებებს ვერც თქვენ გახსნით; სწორედ ამიტომ ინახავს აპი იმას, რაც გაგზავნეთ.';
 
   @override
   String get aboutEncryptionLinksTitle => 'შეტყობინების ბმულები';
@@ -347,11 +314,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyErrors =>
-      '„უკვე გახსნილია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოტოვდა, ან ჩატი მას შემდეგ რამდენიმე წრით წავიდა წინ — ამიტომ აქ ვეღარასოდეს წაიკითხება. „სწორი ჩაკეტილი შეტყობინება არ არის“: ტექსტი დაზიანებულია, არასრულია ან სხვა ჩატს ეკუთვნის — აპი ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გახსნილ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფვრა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპი ამასაც ვერ არჩევს. თუ ფაილის მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე დახარჯულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
+      '„უკვე გახსნილია“: ეს შეტყობინება ამ მოწყობილობაზე უკვე გაიხსნა, ან მისი ერთჯერადი გასაღები აღარ არსებობს — მის წინ 40-ზე მეტი შეტყობინება გამოტოვდა, ან მიმოწერა მას შემდეგ რამდენიმე წრით წავიდა წინ — ამიტომ აქ ვეღარასოდეს წაიკითხება. „სწორი ჩაკეტილი შეტყობინება არ არის“: ტექსტი დაზიანებულია, არასრულია ან სხვა ადამიანს ეკუთვნის — აპი ამათ ერთმანეთისგან ვერ არჩევს. „ძალიან ძველია“: ის 63-ზე მეტით ჩამორჩება ამ ადამიანისგან ბოლოს გახსნილ შეტყობინებას. „არასწორი გასაღები“ / „არასწორი პაროლი“ (მარტივი დაშიფვრა): გასაღები ან პაროლი არ ემთხვევა, ან ტექსტი თუ ფაილი დაზიანებულია — აპი ამასაც ვერ არჩევს. თუ ფაილის მიღება დაწყების შემდეგ ჩაიშალა ან გაუქმდა, ფაილის ერთჯერადი გასაღები უკვე დახარჯულია: სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
 
   @override
   String get aboutEncryptionBodySafetyNumber =>
-      'ყოველ ჩატს 60 უსაფრთხოების ციფრი აქვს, რომლებიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ისინი მეორე ადამიანთან ზარით ან პირისპირ: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა, რომ ეს გააკეთეთ — აპი ამას თქვენ მაგივრად ვერ შეამოწმებს.';
+      'ყოველ დაკავშირებულ ადამიანთან 60 უსაფრთხოების ციფრი გაქვთ, რომლებიც ორივე მოწყობილობის საიდენტიფიკაციო გასაღებებიდან გამოითვლება. შეადარეთ ისინი მეორე ადამიანთან ზარით ან პირისპირ: თუ ციფრები ემთხვევა, დაკავშირებისას შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენივე ჩანიშვნაა, რომ ეს გააკეთეთ — აპი ამას თქვენ მაგივრად ვერ შეამოწმებს.';
 
   @override
   String get aboutEncryptionUnderTheHoodTitle => 'ტექნიკური დეტალები';
@@ -370,25 +337,22 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get fileCorrupt =>
-      'ეს სწორი ჩაკეტილი ფაილი არ არის — დაზიანებულია, არასრულია ან სხვა ჩატიდანაა.';
+      'ეს სწორი ჩაკეტილი ფაილი არ არის — დაზიანებულია, არასრულია ან სხვა ადამიანისგანაა.';
 
   @override
   String get fileCancelled =>
       'მიღება გაუქმდა — ეს ფაილი ამ მოწყობილობაზე ვეღარ გაიხსნება. სთხოვეთ გამომგზავნს, ხელახლა გამოგიგზავნოთ.';
 
   @override
-  String get exportChatArchiveFailed => 'ჩატის არქივის ექსპორტი ვერ მოხერხდა.';
+  String get exportChatArchiveFailed => 'ისტორიის ფაილად შენახვა ვერ მოხერხდა.';
 
   @override
   String get exportChatArchiveNothingToExport =>
-      'ამ ჩატში ექსპორტისთვის შეტყობინებები არ არის.';
+      'შესანახი ისტორია ჯერ არ არის.';
 
   @override
   String get exportChatArchiveStoreLocked =>
       'ჯერ განბლოკეთ Fuzzzy Ink — სანამ ჩაკეტილია, ისტორია ვერ წაიკითხება.';
-
-  @override
-  String get export => 'ექსპორტი';
 
   @override
   String get couldNotOpenFile => 'ფაილი ვერ გაიხსნა.';
@@ -409,7 +373,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get couldNotOpenLink => 'ბმული ვერ გაიხსნა.';
 
   @override
-  String get biometricUnlockChats => 'ჩატების განსაბლოკად დაადასტურეთ ვინაობა';
+  String get biometricUnlockChats =>
+      'Fuzzzy Ink-ის განსაბლოკად დაადასტურეთ ვინაობა';
 
   @override
   String get biometricUnlockVault =>
@@ -422,11 +387,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get biometricSavePassword => 'პაროლის შესანახად დაადასტურეთ ვინაობა';
 
   @override
-  String get vaultMoveUnfinishedTitle => 'სეიფის გადატანა ვერ მოხერხდა';
+  String get vaultMoveUnfinishedTitle => 'ჩემი სეიფის გადატანა ვერ მოხერხდა';
 
   @override
   String get vaultMoveUnfinishedMessage =>
-      'სეიფი აპის დაცულ ადგილას ვერ გადავიდა. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ და თავიდან გახსენით აპი.';
+      'ჩემი სეიფი აპის დაცულ ადგილას ვერ გადავიდა. არაფერი წაშლილა. ხელახლა საცდელად დახურეთ და თავიდან გახსენით აპი.';
 
   @override
   String get copyRefused => 'მხოლოდ ჩაკეტილი ტექსტი კოპირდება.';
@@ -512,25 +477,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get appLockNow => 'Fuzzzy Ink-ის ჩაკეტვა';
 
   @override
-  String autoLockMinutes(int count) {
-    return '$count წთ';
-  }
-
-  @override
   String get autoLockSaveFailed => 'პარამეტრი ვერ შეინახა.';
-
-  @override
-  String get vaultUsesOwnPassword => 'სეიფს საკუთარი პაროლი აქვს.';
-
-  @override
-  String get vaultUseOwnPassword => 'სეიფისთვის ცალკე პაროლი';
-
-  @override
-  String get vaultUseMasterPassword => 'სეიფის გახსნა მთავარი პაროლით';
-
-  @override
-  String get vaultOwnPasswordRecoveryNote =>
-      'აღდგენის გასაღები ჩემს სეიფს მაინც გახსნის.';
 
   @override
   String get vaultRecoveryUseMasterPassword =>

@@ -113,7 +113,7 @@ void main() {
       FuzzyLinkGenerator.generateInvitationLink(_invitation)!,
     );
 
-    expect(find.text("You can't accept your own invitation."), findsOneWidget);
+    expect(find.text("You can't accept your own invite."), findsOneWidget);
     expect(find.text('chat list'), findsOneWidget);
     expect(navigatorKey.currentState!.canPop(), isFalse);
     await settleMessage(tester);
