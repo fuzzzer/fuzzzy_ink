@@ -42,7 +42,6 @@ class InkMark extends StatelessWidget {
             width: size,
             height: size,
             fit: BoxFit.contain,
-            filterQuality: FilterQuality.medium,
             gaplessPlayback: true,
           ),
         ),

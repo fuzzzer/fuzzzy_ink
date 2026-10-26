@@ -28,7 +28,6 @@ void main() {
       await pumpRedesign(
         tester,
         const Center(child: InkMark(size: 56)),
-        skin: FuzzzySkin.night,
       );
       final image = tester.widget<Image>(find.byType(Image));
       expect(
