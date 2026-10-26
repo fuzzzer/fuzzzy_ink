@@ -101,6 +101,9 @@ class FuzzAnywhereChannel {
       case 'show':
         _valueOf(await service.show(_string(arguments, 'displayId')));
         return const {'status': 'shown'};
+      case 'openInApp':
+        _valueOf(await service.openInApp(_string(arguments, 'text')));
+        return const {'status': 'shown'};
       case 'relock':
         return {'relocked': await service.relock()};
       default:

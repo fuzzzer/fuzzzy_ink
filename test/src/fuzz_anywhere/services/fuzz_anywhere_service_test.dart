@@ -381,6 +381,67 @@ void main() {
     });
   });
 
+  group('open in the app', () {
+    const invite = 'Fuzz/AwEBaW52aXRl';
+
+    setUp(() async {
+      app.storeSettings(_on);
+      await app.boot();
+      await app.service.unlockWithPassword(rightPassword);
+      when(
+        () =>
+            app.crypto.peekPasted(text: invite, chatIds: any(named: 'chatIds')),
+      ).thenAnswer(
+        (_) async => const CryptoCoreSuccess(
+          CryptoCorePeek(kind: CryptoCorePeekKind.invitation),
+        ),
+      );
+    });
+
+    test('an invite goes to the Open screen filled in, nothing opened',
+        () async {
+      expect(_refusal(await app.service.openInApp('  $invite\n')), isNull);
+      final request = app.presented.single.request;
+      expect(request, isA<OpenPastedText>());
+      expect((request! as OpenPastedText).text, invite);
+      verifyNothingOpened();
+      expect(app.rows, isEmpty);
+    });
+
+    test('the person goes on in the app: lock again no longer applies',
+        () async {
+      await app.service.openInApp(invite);
+      expect(await app.service.relock(), isFalse);
+      expect(app.authStore.state.status, AuthStateStatus.authenticated);
+    });
+
+    test('a message is refused: it opens only through open', () async {
+      expect(
+        _refusal(await app.service.openInApp(blobFromNino)),
+        AnywhereFailure.badRequest,
+      );
+      expect(
+        _refusal(await app.service.openInApp('hello there')),
+        AnywhereFailure.notFuzzzy,
+      );
+      expect(
+        _refusal(await app.service.openInApp(' ')),
+        AnywhereFailure.emptyText,
+      );
+      expect(app.presented, isEmpty);
+      verifyNothingOpened();
+    });
+
+    test('locked or switched off: refused', () async {
+      await app.authStore.lock();
+      expect(
+        _refusal(await app.service.openInApp(invite)),
+        AnywhereFailure.locked,
+      );
+      expect(app.presented, isEmpty);
+    });
+  });
+
   group('unlocking', () {
     setUp(() => app.storeSettings(_on));
 

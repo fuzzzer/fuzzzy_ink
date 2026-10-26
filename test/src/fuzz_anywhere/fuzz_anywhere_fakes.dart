@@ -157,6 +157,7 @@ class AnywhereHarness {
         shown.add(payload);
         return (displayClosed = Completer<void>()).future;
       },
+      presentOpen: (payload) async => presented.add(payload),
       copySealed: (text, content) async {
         copies.add((text, content));
         return true;
@@ -189,6 +190,9 @@ class AnywhereHarness {
   /// What [FuzzAnywhereService.show] put on the private screen.
   final shown = <HistoryItemPagePayload>[];
   Completer<void>? displayClosed;
+
+  /// What [FuzzAnywhereService.openInApp] handed to the Open screen.
+  final presented = <OpenPagePayload>[];
 
   /// What went to the copy guard.
   final copies = <(String, CopyContent)>[];

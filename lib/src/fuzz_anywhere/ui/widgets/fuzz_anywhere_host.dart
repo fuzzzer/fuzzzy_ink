@@ -65,6 +65,7 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
         receiveQueue: receiveQueue,
       ),
       display: _showOpened,
+      presentOpen: _presentOpen,
     );
     _settings = settings;
     _service = service;
@@ -77,6 +78,14 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
     final router = AppRouter.routerInstance;
     if (router == null) return;
     await router.push<void>(AppRouter.personItem, extra: payload);
+  }
+
+  /// The app's Open screen with a sealed text filled in ("Open in Fuzzzy
+  /// Ink" from another app).
+  static Future<void> _presentOpen(OpenPagePayload payload) async {
+    final router = AppRouter.routerInstance;
+    if (router == null) return;
+    await router.push<void>(AppRouter.open, extra: payload);
   }
 
   @override

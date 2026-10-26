@@ -36,6 +36,7 @@ shortcut and panel, the iPhone quick sheet). The Dart side is `lib/src/fuzz_anyw
 | `open` | `text` | `{status: "opened", displayId, personId, personName}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `emptyText`, `notForAPerson`, `alreadyOpened`, `tooOld`, `newerApp`, `damaged`, `notFuzzzy`, `notFromYourPeople`, `failed` |
 | `show` | `displayId` | `{status: "shown"}` | `unknownDisplay`, `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` |
 | `relock` | — | `{relocked: bool}` | — |
+| `openInApp` | `text` | `{status: "shown"}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` (missing, or a message: those open with `open`), `emptyText`, `newerApp`, `damaged`, `notFuzzzy`, `failed` |
 
 Notes, method by method:
 
@@ -78,11 +79,18 @@ Notes, method by method:
 - **`show`.** Asks the app to show the opened message on its own private screen (the history item, behind the
   lock, out of screenshots, no copy, no selection). Bring the app's window or activity forward first (Mac:
   activate the app; Android: the Flutter activity). `shownClosed` arrives when the person closes it.
+- **`openInApp`** (added for "Open in Fuzzzy Ink", additive, version 1). After `open` answered `notForAPerson`
+  (an invite, a reply or a password-locked text), on the person's "Open in Fuzzzy Ink" press: bring the app
+  forward first, then call it. The app's own Open screen comes up with the sealed text filled in; nothing is
+  opened by the call (Open asks again there: Connect, the password). The person goes on in the app, so "Lock
+  again after each use" no longer applies to this use; the app's own auto-lock does. A message is refused
+  (`badRequest`): it opens only through `open`.
 - **`relock`.** Call it when your sheet, panel or activity goes away, whatever happened (locked, cancelled,
   dismissed). It locks the app only when this entry point unlocked it and "Lock again after each use" is on (the
   default); an app the person had already unlocked stays as it was. While a message from `show` is on screen it
   does nothing: closing that screen locks instead. The app's own auto-lock (idle and background times) applies on
-  top in every case.
+  top in every case. One exception (the Android sheet): when the person chose to go on in the app itself ("Open
+  Fuzzzy Ink", Open with `show`, "Open in Fuzzzy Ink"), the app is in front and the sheet does not call it.
 
 ## 3. Events (Dart calls native)
 

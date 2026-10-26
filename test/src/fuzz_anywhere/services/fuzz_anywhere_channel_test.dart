@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../fuzz_anywhere_fakes.dart';
 
@@ -181,6 +182,24 @@ void main() {
       for (final call in sentToPlatform) {
         expect('${call.arguments}', isNot(contains(openedSecret)));
       }
+    });
+
+    test('open in the app hands a sealed text over, never opens it', () async {
+      const invite = 'Fuzz/AwEBaW52aXRl';
+      when(
+        () =>
+            app.crypto.peekPasted(text: invite, chatIds: any(named: 'chatIds')),
+      ).thenAnswer(
+        (_) async => const CryptoCoreSuccess(
+          CryptoCorePeek(kind: CryptoCorePeekKind.invitation),
+        ),
+      );
+      final reply = await _call('openInApp', {'text': invite});
+      expect(reply!.value, {'status': 'shown'});
+      expect(app.presented, hasLength(1));
+      expect((await _call('openInApp', {'text': blobFromNino}))!.code,
+          'badRequest');
+      expect((await _call('openInApp'))!.code, 'badRequest');
     });
 
     test('relock answers whether it locked, and the platform hears it',

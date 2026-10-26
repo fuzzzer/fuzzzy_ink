@@ -33,6 +33,7 @@ class FuzzAnywhereService {
     required this.lockFlow,
     required this.openFlow,
     required this.display,
+    this.presentOpen,
     Future<bool> Function(String text, CopyContent content)? copySealed,
     DateTime Function()? now,
   })  : _copySealed = copySealed ?? _copyThroughGuard,
@@ -60,6 +61,10 @@ class FuzzAnywhereService {
   /// Shows an opened message on the app's private history screen; done
   /// when the person closes it (or the app locks).
   final Future<void> Function(HistoryItemPagePayload payload) display;
+
+  /// Brings the app's own Open screen forward with [OpenPagePayload] filled
+  /// in ([openInApp]).
+  final Future<void> Function(OpenPagePayload payload)? presentOpen;
 
   final Future<bool> Function(String text, CopyContent content) _copySealed;
   final DateTime Function() _now;
@@ -364,6 +369,49 @@ class FuzzAnywhereService {
     _pending = null;
     _shownId = displayId;
     unawaited(_showUntilClosed(pending));
+    return const AnywhereDone(null);
+  }
+
+  /// Hands a sealed text that is not a message for one person (an invite, a
+  /// reply, a password-locked text: what [open] refuses as
+  /// [AnywhereFailure.notForAPerson]) to the app's own Open screen, filled
+  /// in, on the person's "Open in Fuzzzy Ink" press. Nothing is opened here:
+  /// Open asks again on its own screen (Connect, the password). The person
+  /// goes on in the app, so "Lock again after each use" no longer applies to
+  /// this use; the app's own auto-lock does. A message is refused
+  /// ([AnywhereFailure.badRequest]): it opens only through [open].
+  Future<AnywhereResult<void>> openInApp(String text) async {
+    final refusal = await _gate();
+    if (refusal != null) return AnywhereRefused(refusal);
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) {
+      return const AnywhereRefused(AnywhereFailure.emptyText);
+    }
+    final peeked = await peek(trimmed);
+    if (peeked case AnywhereRefused(:final failure)) {
+      return AnywhereRefused(failure);
+    }
+    final kind = (peeked as AnywhereDone<AnywherePeek>).value.kind;
+    final kindRefusal = switch (kind) {
+      AnywhereKind.invite ||
+      AnywhereKind.reply ||
+      AnywhereKind.passwordText =>
+        null,
+      AnywhereKind.message => AnywhereFailure.badRequest,
+      AnywhereKind.newerApp => AnywhereFailure.newerApp,
+      AnywhereKind.damaged => AnywhereFailure.damaged,
+      AnywhereKind.notFuzzzy => AnywhereFailure.notFuzzzy,
+    };
+    if (kindRefusal != null) return AnywhereRefused(kindRefusal);
+    final present = presentOpen;
+    if (present == null) return const AnywhereRefused(AnywhereFailure.failed);
+    _unlockedHere = false;
+    unawaited(
+      present(OpenPagePayload(request: OpenPastedText(trimmed))).catchError(
+        (Object error) =>
+            logger.w('ANYWHERE: could not show Open: ${error.runtimeType}'),
+      ),
+    );
     return const AnywhereDone(null);
   }
 
