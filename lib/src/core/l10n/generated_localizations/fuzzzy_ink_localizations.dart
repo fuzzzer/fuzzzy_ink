@@ -3094,11 +3094,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'New master password'**
   String get accessNewMasterPassword;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// No description provided for @accessKeyAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Your key is checked when you save.'**
-  String get accessKeyCheckedOnSave;
+  /// **'Key accepted.'**
+  String get accessKeyAccepted;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///

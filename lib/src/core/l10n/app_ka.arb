@@ -1763,9 +1763,9 @@
   "@accessNewMasterPassword": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessKeyCheckedOnSave": "გასაღები შენახვისას შემოწმდება.",
-  "@accessKeyCheckedOnSave": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+  "accessKeyAccepted": "გასაღები მიღებულია.",
+  "@accessKeyAccepted": {
+    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
   },
   "accessSaveNewPassword": "ახალი პაროლის შენახვა",
   "@accessSaveNewPassword": {

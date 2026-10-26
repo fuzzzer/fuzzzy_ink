@@ -929,7 +929,9 @@ the lock's public half only, which seals but does not open.
   spaces, dashes and line breaks and reads `0`, `1`, `8` as `O`, `I`, `B`; anything else, a wrong length or a
   wrong check byte is `Corrupt` — a typo, told apart before any Argon2 run from a key that does not open this
   device (`WrongPassword` at unwrap). The KDF input is the 20 bytes. The recovery key crosses the FFI as text
-  only twice: Rust → Dart once to be shown, Dart → Rust when typed (§13). The app never stores it.
+  only as Rust → Dart once to be shown and Dart → Rust when typed (§13): `check_recovery_key` reads its form
+  and check byte (no key work, no Argon2 run) so the app can say "Key accepted." before it asks for a new
+  password, then the call that uses it. The app never stores it.
 - **The recovery lock** ([`master.rs#L216`](../../rust/fuzzy_crypto_core/src/master.rs#L216)): an X25519 key pair the
   recovery key determines — secret = `SHA-256(the 20 bytes ‖ 00 00 00 01 ‖ "fuzzy-recovery-lock-v1")` (X9.63 KDF,
   clamped by X25519), lock = its public key. The 20 bytes are 152 random bits drawn by the crate, so a hash KDF is

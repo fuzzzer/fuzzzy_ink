@@ -50,3 +50,7 @@ const legacySecureStorageMacOsOptions = MacOsOptions(
 /// `kDebugMode` on purpose: a debug build ships the crate's dev profile, so
 /// only a `--profile`/`--release` development build measures the real core.
 const isFileBenchmarkEnabled = appFlavor == 'development';
+
+/// The example in every recovery-key field: the form the key is shown and
+/// printed in (eight groups of four, dashes), so both fields agree.
+const recoveryKeyHint = 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX';

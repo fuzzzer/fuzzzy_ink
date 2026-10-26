@@ -112,7 +112,7 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
         FuzzzyTextField(
           controller: _recoveryKeyController,
           label: localizations.recoveryKeyField,
-          hint: 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX',
+          hint: recoveryKeyHint,
           errorText: _errorText(),
           qaId: 'vault.recover.key',
         ),

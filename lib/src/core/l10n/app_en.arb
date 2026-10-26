@@ -1870,10 +1870,8 @@
   "@accessNewMasterPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessKeyCheckedOnSave": "Your key is checked when you save.",
-  "@accessKeyCheckedOnSave": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
-  },
+  "accessKeyAccepted": "Key accepted.",
+  "@accessKeyAccepted": {},
   "accessSaveNewPassword": "Save new password",
   "@accessSaveNewPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."

@@ -40,6 +40,8 @@ void main() {
         newPassword: any(named: 'newPassword'),
       ),
     ).thenAnswer((_) async {});
+    when(() => harness.chatAuth.checkRecoveryKey(any()))
+        .thenAnswer((_) async => const CryptoCoreSuccess(null));
   });
 
   tearDown(() async {
@@ -101,11 +103,31 @@ void main() {
     expect(find.text(l10n.accessNewMasterPassword), findsNothing);
   });
 
+  testWidgets(
+      'a typo (its check byte does not match) is caught before the new '
+      'password, never after typing it twice', (tester) async {
+    when(() => harness.chatAuth.checkRecoveryKey(any())).thenAnswer(
+      (_) async => const CryptoCoreFailure(CryptoCoreFailureType.corrupt),
+    );
+    await pumpPage(tester);
+    await typeKeyAndContinue(tester, key);
+    verify(() => harness.chatAuth.checkRecoveryKey(key)).called(1);
+    expect(find.text(l10n.accessKeyDoesntMatch), findsOneWidget);
+    expect(find.text(l10n.accessNewMasterPassword), findsNothing);
+  });
+
+  testWidgets('both key fields show one example, the printed form',
+      (tester) async {
+    await pumpPage(tester);
+    expect(find.text(recoveryKeyHint), findsOneWidget);
+    expect(recoveryKeyHint, 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX');
+  });
+
   testWidgets('key, then a Good password, then the core checks both',
       (tester) async {
     await pumpPage(tester);
     await typeKeyAndContinue(tester, key);
-    expect(find.text(l10n.accessKeyCheckedOnSave), findsOneWidget);
+    expect(find.text(l10n.accessKeyAccepted), findsOneWidget);
     expect(kitButton(tester, 'recover.submit').onPressed, isNull);
 
     await typeNewPassword(tester);
@@ -177,6 +199,6 @@ void main() {
       textScale: textScale,
     );
     await typeKeyAndContinue(tester, key);
-    expect(find.text(l10n.accessKeyCheckedOnSave), findsOneWidget);
+    expect(find.text(l10n.accessKeyAccepted), findsOneWidget);
   });
 }

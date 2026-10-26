@@ -182,6 +182,11 @@ class ChatAuthRepository {
     return writeRes;
   }
 
+  /// Whether a typed [recoveryKey] has a recovery key's form, check byte
+  /// included: `corrupt` for a typo. Says nothing about this device.
+  Future<CryptoCoreResponse<void>> checkRecoveryKey(String recoveryKey) =>
+      _cryptoCoreService.checkRecoveryKey(recoveryKey);
+
   /// A new recovery key, once [password] is right. [sealVault] — given when
   /// the vault has its own password — seals that vault to the new key's lock
   /// and answers the copy; if it fails, nothing changes and the old key keeps

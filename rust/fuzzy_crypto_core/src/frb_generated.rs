@@ -42,7 +42,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1115550883;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2121807;
 
 // Section: executor
 
@@ -1666,6 +1666,39 @@ fn wire__crate__api__core__change_master_password_impl(
                         api_old_password,
                         api_new_password,
                     )?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__core__check_recovery_key_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "check_recovery_key",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_recovery_key = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::error::CoreError>((move || {
+                    let output_ok = crate::api::core::check_recovery_key(api_recovery_key)?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -3414,58 +3447,59 @@ fn pde_ffi_dispatcher_primary_impl(
         31 => {
             wire__crate__api__core__change_master_password_impl(port, ptr, rust_vec_len, data_len)
         }
-        32 => wire__crate__api__health__core_version_impl(port, ptr, rust_vec_len, data_len),
-        33 => wire__crate__api__core__create_master_key_impl(port, ptr, rust_vec_len, data_len),
-        34 => wire__crate__api__files__decrypt_file_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__files__encrypt_file_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__files__new_file_job_impl(port, ptr, rust_vec_len, data_len),
-        37 => wire__crate__api__core__new_recovery_key_impl(port, ptr, rust_vec_len, data_len),
-        38 => wire__crate__api__core__open_store_impl(port, ptr, rust_vec_len, data_len),
-        39 => {
+        32 => wire__crate__api__core__check_recovery_key_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__api__health__core_version_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__api__core__create_master_key_impl(port, ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__files__decrypt_file_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__files__encrypt_file_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__files__new_file_job_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__core__new_recovery_key_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__api__core__open_store_impl(port, ptr, rust_vec_len, data_len),
+        40 => {
             wire__crate__api__passwords__password_open_bytes_impl(port, ptr, rust_vec_len, data_len)
         }
-        40 => {
+        41 => {
             wire__crate__api__passwords__password_open_text_impl(port, ptr, rust_vec_len, data_len)
         }
-        41 => {
+        42 => {
             wire__crate__api__passwords__password_seal_bytes_impl(port, ptr, rust_vec_len, data_len)
         }
-        42 => {
+        43 => {
             wire__crate__api__passwords__password_seal_text_impl(port, ptr, rust_vec_len, data_len)
         }
-        44 => {
+        45 => {
             wire__crate__api__core__recover_master_password_impl(port, ptr, rust_vec_len, data_len)
         }
-        45 => wire__crate__api__health__round_trip_impl(port, ptr, rust_vec_len, data_len),
-        46 => wire__crate__api__files__run_file_job_impl(port, ptr, rust_vec_len, data_len),
-        47 => wire__crate__api__vault__vault_init_impl(port, ptr, rust_vec_len, data_len),
-        48 => {
+        46 => wire__crate__api__health__round_trip_impl(port, ptr, rust_vec_len, data_len),
+        47 => wire__crate__api__files__run_file_job_impl(port, ptr, rust_vec_len, data_len),
+        48 => wire__crate__api__vault__vault_init_impl(port, ptr, rust_vec_len, data_len),
+        49 => {
             wire__crate__api__vault__vault_init_with_master_impl(port, ptr, rust_vec_len, data_len)
         }
-        49 => wire__crate__api__vault__vault_open_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__vault__vault_recover_impl(port, ptr, rust_vec_len, data_len),
-        51 => {
+        50 => wire__crate__api__vault__vault_open_impl(port, ptr, rust_vec_len, data_len),
+        51 => wire__crate__api__vault__vault_recover_impl(port, ptr, rust_vec_len, data_len),
+        52 => {
             wire__crate__api__vault__vault_recover_to_master_impl(port, ptr, rust_vec_len, data_len)
         }
-        52 => wire__crate__api__vault__vault_rewrap_impl(port, ptr, rust_vec_len, data_len),
-        53 => wire__crate__api__vault__vault_seal_impl(port, ptr, rust_vec_len, data_len),
-        54 => {
+        53 => wire__crate__api__vault__vault_rewrap_impl(port, ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__vault__vault_seal_impl(port, ptr, rust_vec_len, data_len),
+        55 => {
             wire__crate__api__vault__vault_seal_for_recovery_impl(port, ptr, rust_vec_len, data_len)
         }
-        55 => wire__crate__api__vault__vault_unlock_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__vault__vault_unlock_with_master_impl(
+        56 => wire__crate__api__vault__vault_unlock_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__vault__vault_unlock_with_master_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        57 => wire__crate__api__vault__vault_use_master_password_impl(
+        58 => wire__crate__api__vault__vault_use_master_password_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        58 => {
+        59 => {
             wire__crate__api__vault__vault_use_own_password_impl(port, ptr, rust_vec_len, data_len)
         }
         _ => unreachable!(),
@@ -3484,8 +3518,8 @@ fn pde_ffi_dispatcher_sync_impl(
         26 => wire__crate__api__files__FileJob_pause_impl(ptr, rust_vec_len, data_len),
         27 => wire__crate__api__files__FileJob_resume_impl(ptr, rust_vec_len, data_len),
         30 => wire__crate__api__formats__blob_type_of_impl(ptr, rust_vec_len, data_len),
-        43 => wire__crate__api__formats__peek_chat_id_impl(ptr, rust_vec_len, data_len),
-        59 => wire__crate__api__vault__vault_uses_own_password_impl(ptr, rust_vec_len, data_len),
+        44 => wire__crate__api__formats__peek_chat_id_impl(ptr, rust_vec_len, data_len),
+        60 => wire__crate__api__vault__vault_uses_own_password_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

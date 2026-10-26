@@ -1651,7 +1651,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessNewMasterPassword => 'New master password';
 
   @override
-  String get accessKeyCheckedOnSave => 'Your key is checked when you save.';
+  String get accessKeyAccepted => 'Key accepted.';
 
   @override
   String get accessSaveNewPassword => 'Save new password';

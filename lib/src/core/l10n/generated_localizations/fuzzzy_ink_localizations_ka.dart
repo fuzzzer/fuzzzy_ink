@@ -1660,7 +1660,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessNewMasterPassword => 'ახალი მთავარი პაროლი';
 
   @override
-  String get accessKeyCheckedOnSave => 'გასაღები შენახვისას შემოწმდება.';
+  String get accessKeyAccepted => 'გასაღები მიღებულია.';
 
   @override
   String get accessSaveNewPassword => 'ახალი პაროლის შენახვა';

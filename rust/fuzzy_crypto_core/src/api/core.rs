@@ -117,6 +117,17 @@ pub fn change_master_password(
     master::wrap_with_password(&master_key, &new_password)
 }
 
+/// Checks the form of a typed `recovery_key` — 32 base32 characters (case,
+/// spaces, dashes, line breaks and the look-alikes `0`, `1`, `8` ignored, as
+/// [`RecoveryKey::parse`] reads it) with a matching check byte — so the app
+/// can say "Key accepted." before asking for a new password. No key work
+/// and no Argon2 run: a typo is `Corrupt`; whether the key opens this device
+/// is known only when it is used (`WrongPassword` then).
+pub fn check_recovery_key(recovery_key: String) -> Result<(), CoreError> {
+    let recovery_key = Zeroizing::new(recovery_key);
+    RecoveryKey::parse(&recovery_key).map(|_| ())
+}
+
 /// The forgotten-password path: reads the typed `recovery_key` (a typo is
 /// `Corrupt`, before any Argon2 run), unwraps the master key from
 /// `recovery_wrap` (a key of another device is `WrongPassword`), wraps it
@@ -484,6 +495,44 @@ mod tests {
             )),
             CoreError::WrongPassword
         );
+        let _ = fs::remove_dir_all(dir);
+    }
+
+    #[test]
+    fn a_typed_recovery_key_is_checked_for_form_only() {
+        let dir = temp_dir();
+        let setup = created(&dir);
+        let shown = setup.recovery_key.clone();
+        check_recovery_key(shown.clone()).unwrap();
+        check_recovery_key(shown.replace('-', " ").to_lowercase()).unwrap();
+
+        // The protocol's vector key, and the same key one character off: the
+        // check byte no longer matches (PROTOCOL.md §10.2).
+        check_recovery_key("AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ".into()).unwrap();
+        assert_eq!(
+            err_of(check_recovery_key(
+                "AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQA".into()
+            )),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            err_of(check_recovery_key(
+                "AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQ".into()
+            )),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            err_of(check_recovery_key("AAAA-AAAA".into())),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            err_of(check_recovery_key(String::new())),
+            CoreError::Corrupt
+        );
+
+        // Another device's key has the right form: only its use tells.
+        let other = created(&dir);
+        check_recovery_key(other.recovery_key.clone()).unwrap();
         let _ = fs::remove_dir_all(dir);
     }
 

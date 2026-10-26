@@ -52,6 +52,16 @@ Future<Uint8List> changeMasterPassword(
         oldPassword: oldPassword,
         newPassword: newPassword);
 
+/// Checks the form of a typed `recovery_key` — 32 base32 characters (case,
+/// spaces, dashes, line breaks and the look-alikes `0`, `1`, `8` ignored, as
+/// [`RecoveryKey::parse`] reads it) with a matching check byte — so the app
+/// can say "Key accepted." before asking for a new password. No key work
+/// and no Argon2 run: a typo is `Corrupt`; whether the key opens this device
+/// is known only when it is used (`WrongPassword` then).
+Future<void> checkRecoveryKey({required String recoveryKey}) =>
+    FuzzyCryptoCoreLib.instance.api
+        .crateApiCoreCheckRecoveryKey(recoveryKey: recoveryKey);
+
 /// The forgotten-password path: reads the typed `recovery_key` (a typo is
 /// `Corrupt`, before any Argon2 run), unwraps the master key from
 /// `recovery_wrap` (a key of another device is `WrongPassword`), wraps it
