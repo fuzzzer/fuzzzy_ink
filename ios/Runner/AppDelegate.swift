@@ -17,6 +17,7 @@ import UIKit
     registerBackupChannel()
     registerGuardChannel()
     registerDeviceChannel()
+    registerAnywhere()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -81,6 +82,17 @@ import UIKit
   }
 }
 
+// MARK: - Lock from other apps (experimental)
+
+extension AppDelegate {
+  /// The native "Lock a message" sheet (ios/Runner/Anywhere); it asks Dart
+  /// whether the build has the feature and the Settings switch is on.
+  fileprivate func registerAnywhere() {
+    guard let registrar = registrar(forPlugin: "FuzzzyAnywhere") else { return }
+    InkAnywhereIOS.shared.register(messenger: registrar.messenger())
+  }
+}
+
 // MARK: - Screen and copy guard
 
 extension AppDelegate {
@@ -132,6 +144,8 @@ final class InkGuard: NSObject {
   static let coverMarkSize: CGFloat = 64
 
   private var isSecure = false
+  private var isSecureForDart = false
+  private var nativeSecureHolds = 0
   private var isInactive = false
   private var secureField: SecureCanvasField?
   private var cover: UIView?
@@ -193,6 +207,20 @@ final class InkGuard: NSObject {
   }
 
   private func setSecure(_ secure: Bool) {
+    isSecureForDart = secure
+    applySecure()
+  }
+
+  /// A native sheet that holds typed text ("Lock from other apps") keeps the
+  /// protection on while it is up, whatever the Flutter screen under it
+  /// asks; each hold is released once.
+  func holdSecure(_ hold: Bool) {
+    nativeSecureHolds = max(0, nativeSecureHolds + (hold ? 1 : -1))
+    applySecure()
+  }
+
+  private func applySecure() {
+    let secure = isSecureForDart || nativeSecureHolds > 0
     isSecure = secure
     if secure { installSecureLayer() }
     secureField?.isSecureTextEntry = secure

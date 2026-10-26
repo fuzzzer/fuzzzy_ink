@@ -283,6 +283,8 @@ final class InkAnywhereModel: ObservableObject {
   /// "Open in Fuzzzy Ink" for an invite, a reply or a password text.
   func openInApp() async {
     guard step == .notForAPerson else { return }
+    // A running step: the panel stays while the app comes forward.
+    step = .opening
     host?.bringAppForward()
     do {
       _ = try await channel.call("openInApp", ["text": lockedText])
