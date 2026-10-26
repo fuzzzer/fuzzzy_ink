@@ -43,6 +43,11 @@ class DependencyInjection {
       ),
     );
 
+    // After an erase, the database is copied compacted so the pages the
+    // erase freed leave the file (security review 2026-10-26).
+    final compactMarker =
+        AppResetLocalDataSource.compactMarkerIn(supportDirectory.path);
+    final compactNow = await compactMarker.exists();
     final isar = await Isar.open(
       [
         StoredChatGeneralDataSchema,
@@ -54,7 +59,10 @@ class DependencyInjection {
         StoredVaultMetadataSchema,
       ],
       directory: supportDirectory.path,
+      compactOnLaunch:
+          compactNow ? const CompactCondition(minFileSize: 0) : null,
     );
+    if (compactNow) await compactMarker.delete();
 
     sl.safeRegisterSingleton<Isar>(isar);
 

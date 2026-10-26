@@ -7,6 +7,10 @@ class PreferencesService {
 
   PreferencesService(this._prefs);
 
+  /// Erase everything: every preference, the remembered pairing replies
+  /// included (security review 2026-10-26).
+  Future<void> clearAll() => _prefs.clear();
+
   static const _hasSeenOnboardingKey = 'has_seen_onboarding';
   static const _hasCompletedTutorialKey = 'has_completed_tutorial';
 

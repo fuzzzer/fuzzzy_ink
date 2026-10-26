@@ -78,6 +78,13 @@ class FuzzyLinkHandler {
     };
   }
 
+  /// Erase everything: a link waiting at the lock screen is dropped, so it
+  /// does not run after the next first run (security review 2026-10-26).
+  void discardPending() {
+    _pendingPayload = null;
+    _pendingLink.value = false;
+  }
+
   void processPendingPayload() {
     if (_holds > 0) return;
     if (_pendingPayload != null) {
