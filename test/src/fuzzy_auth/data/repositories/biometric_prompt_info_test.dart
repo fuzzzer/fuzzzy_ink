@@ -41,8 +41,10 @@ void main() {
   test('English prompt texts use the current names', () {
     final chat = biometricPromptInfo(BiometricScope.chat, en);
     expect(chat.androidPromptInfo.title, 'Unlock Fuzzzy Ink');
-    expect(chat.androidPromptInfo.subtitle,
-        "Confirm it's you to unlock Fuzzzy Ink");
+    expect(
+      chat.androidPromptInfo.subtitle,
+      "Confirm it's you to unlock Fuzzzy Ink",
+    );
     expect(chat.iosPromptInfo.saveTitle, 'Authenticate to save password');
 
     final vault = biometricPromptInfo(BiometricScope.vault, en);
