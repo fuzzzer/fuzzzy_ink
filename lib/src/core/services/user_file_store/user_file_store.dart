@@ -31,12 +31,17 @@ class UserFileStore {
     required String supportDirectoryPath,
     required String temporaryDirectoryPath,
     required String documentsDirectoryPath,
+    String? systemTemporaryDirectoryPath,
     TargetPlatform? platform,
     Future<void> Function()? clearPickerCache,
     BackupExclusion backupExclusion = const BackupExclusion(),
   })  : _supportDirectoryPath = supportDirectoryPath,
         _temporaryDirectoryPath = temporaryDirectoryPath,
         _documentsDirectoryPath = documentsDirectoryPath,
+        // Only a real iPhone's own `tmp/` is ever swept unless a folder is
+        // given: a test that pretends to be iOS never touches the host's.
+        _systemTemporaryDirectoryPath = systemTemporaryDirectoryPath ??
+            (Platform.isIOS ? Directory.systemTemp.path : null),
         _platform = platform,
         _clearPickerCache = clearPickerCache ?? _clearFilePickerCache,
         _backupExclusion = backupExclusion;
@@ -44,6 +49,12 @@ class UserFileStore {
   final String _supportDirectoryPath;
   final String _temporaryDirectoryPath;
   final String _documentsDirectoryPath;
+
+  /// The process's own temporary folder (`NSTemporaryDirectory()` on iOS,
+  /// the app's `tmp/`): the iOS picker copies files there, not into
+  /// [_temporaryDirectoryPath] (`Library/Caches`). Security review
+  /// 2026-10-26.
+  final String? _systemTemporaryDirectoryPath;
   final TargetPlatform? _platform;
   final Future<void> Function() _clearPickerCache;
   final BackupExclusion _backupExclusion;
@@ -219,13 +230,40 @@ class UserFileStore {
     }
   }
 
-  /// A file the picker copied into the app's cache to hand it over (Android,
-  /// iOS) is deleted once it was used; on a computer the picker hands over
-  /// the user's own file, which is never deleted.
+  /// The app's own temporary folders a picker copy can be in: the cache
+  /// folder (Android's picker) and, on iOS, the process's `tmp/` (the
+  /// document picker's `<bundle id>-Inbox`).
+  List<String> get _pickerCopyRoots {
+    final tmp = _systemTemporaryDirectoryPath;
+    return [
+      _temporaryDirectoryPath,
+      if (_hostPlatform == TargetPlatform.iOS && tmp != null) tmp,
+    ];
+  }
+
+  /// Whether [inputPath] is a copy a picker made inside the app (a phone);
+  /// on a computer the picker hands over the user's own file.
+  bool isPickedCopy(String inputPath) =>
+      _isPhone &&
+      _pickerCopyRoots.any((root) => path.isWithin(root, inputPath));
+
+  /// A file the picker copied into the app to hand it over (Android, iOS) is
+  /// deleted once it was used, or when the flow that picked it ends without
+  /// using it; on a computer the picker hands over the user's own file,
+  /// which is never deleted.
   Future<void> discardPickedCopy(String inputPath) async {
-    if (!_isPhone) return;
-    if (!path.isWithin(_temporaryDirectoryPath, inputPath)) return;
+    if (!isPickedCopy(inputPath)) return;
     await _deleteQuietly(File(inputPath));
+  }
+
+  /// When the app locks (security review 2026-10-26): every plain hand-off
+  /// copy and every picker copy goes, as at launch. A page still showing a
+  /// copy is behind the lock screen; it reads the file again only after a
+  /// new unfuzz.
+  Future<void> wipeAtLock() async {
+    _pendingWipes.clear();
+    await _deleteQuietly(Directory(handoffRootPath));
+    await _wipePickerCopies();
   }
 
   /// At every launch, before anything is unfuzzed: every plain copy a
@@ -252,13 +290,9 @@ class UserFileStore {
 
     if (!_isPhone) return;
 
-    try {
-      await _clearPickerCache();
-    } catch (error) {
-      logger.w('FILE STORE: could not clear the picker cache: $error');
-    }
+    await _wipePickerCopies();
     if (_hostPlatform == TargetPlatform.android) {
-      for (final staging in ['file_picker', 'user_files', 'share_plus']) {
+      for (final staging in ['user_files', 'share_plus']) {
         await _deleteQuietly(
           Directory(path.join(_temporaryDirectoryPath, staging)),
         );
@@ -267,6 +301,36 @@ class UserFileStore {
     await _deleteQuietly(
       Directory(path.join(_documentsDirectoryPath, legacyBasicsFolderName)),
     );
+  }
+
+  /// The picker's copies on a phone: its own clean-up, Android's
+  /// `cache/file_picker`, and on iOS everything in the app's `tmp/` — a
+  /// folder private to the app that nothing else of the app writes to.
+  Future<void> _wipePickerCopies() async {
+    if (!_isPhone) return;
+    try {
+      await _clearPickerCache();
+    } catch (error) {
+      logger.w('FILE STORE: could not clear the picker cache: $error');
+    }
+    if (_hostPlatform == TargetPlatform.android) {
+      await _deleteQuietly(
+        Directory(path.join(_temporaryDirectoryPath, 'file_picker')),
+      );
+    }
+    final tmpPath = _systemTemporaryDirectoryPath;
+    if (_hostPlatform == TargetPlatform.iOS && tmpPath != null) {
+      try {
+        final tmp = Directory(tmpPath);
+        if (await tmp.exists()) {
+          await for (final entity in tmp.list()) {
+            await _deleteQuietly(entity);
+          }
+        }
+      } catch (error) {
+        logger.w('FILE STORE: could not sweep the iOS tmp folder: $error');
+      }
+    }
   }
 
   static Future<void> _clearFilePickerCache() async {

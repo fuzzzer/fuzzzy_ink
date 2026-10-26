@@ -169,8 +169,11 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   the Basics password containers and the vault items — all under `<app support>/` (`sealed_files/chats/<safe
   chat name> (<chat id prefix>)/`, `sealed_files/basics/`, `vault/`), never in a user-visible folder. A plain file
   exists only for one use, in a fresh folder of `<app support>/handoff/`: shown in the app (images, text), given
-  to the system save dialog or the share sheet, and wiped right after, when the chat or Basics page closes, and at
-  every launch — the launch sweep also deletes the file picker's cache copies, Android's old share staging
+  to the system save dialog or the share sheet, and wiped right after, when the chat or Basics page closes, when the
+  app locks, and at every launch. A file the phone's picker copied into the app (Android `cache/file_picker`, the
+  iPhone's `tmp/<bundle id>-Inbox`) is deleted once used, when a lock fails or is stopped, when another file is
+  chosen and when the flow closes, and swept at every lock and launch (security review 2026-10-26) — the launch
+  sweep also deletes Android's old share staging
   (`cache/user_files`, `cache/share_plus`), the archive working file and, on a phone, the old Basics
   `Working Folder` (`UserFileStore.wipeTemporaryPlainCopies`; test
   `test/src/core/services/user_file_store/user_file_store_test.dart`). Nothing goes to Android's public

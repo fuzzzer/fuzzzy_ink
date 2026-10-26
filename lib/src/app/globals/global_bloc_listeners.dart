@@ -121,8 +121,15 @@ class GlobalBlocListeners extends StatelessWidget {
         BlocListener<FuzzyAuthStore, FuzzyAuthState>(
           listenWhen: (previous, current) =>
               previous.status.hasAccess && !current.status.hasAccess,
-          // The whole app locks: the vault's key is wiped with the store's.
-          listener: (context, __) => context.read<VaultAuthCubit>().lock(),
+          // The whole app locks: the vault's key is wiped with the store's,
+          // and every plain hand-off or picker copy goes (security review
+          // 2026-10-26).
+          listener: (context, __) {
+            context.read<VaultAuthCubit>().lock();
+            if (sl.isRegistered<UserFileStore>()) {
+              unawaited(sl.get<UserFileStore>().wipeAtLock());
+            }
+          },
         ),
         BlocListener<FuzzyAuthStore, FuzzyAuthState>(
           listenWhen: (previous, current) =>

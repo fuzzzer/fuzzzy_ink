@@ -62,6 +62,7 @@ void main() {
       (call) => path.join(dir.path, call.positionalArguments[0] as String),
     );
     when(() => store.discardPickedCopy(any())).thenAnswer((_) async {});
+    when(() => store.isPickedCopy(any())).thenReturn(true);
   });
 
   tearDown(() async {
@@ -254,8 +255,24 @@ void main() {
       await pumpEventQueue();
       expect(cubit.state.phase, LockPhase.what);
       expect(cubit.state.failure, LockFailure.stopped);
+      // The plain picker copy goes at once (security review 2026-10-26).
+      verify(() => store.discardPickedCopy(picked)).called(1);
+      expect(cubit.state.file, isNull, reason: 'picked again on a phone');
       await events.close();
       await cubit.close();
+    });
+
+    test(
+        'a picked copy goes when another file is chosen and when the flow '
+        'closes unused (security review 2026-10-26)', () async {
+      final other = path.join(dir.path, 'other.jpg');
+      File(other).writeAsBytesSync([1]);
+      final cubit = cubitFor(const LockTarget.password());
+      await cubit.chooseFile(picked);
+      await cubit.chooseFile(other);
+      verify(() => store.discardPickedCopy(picked)).called(1);
+      await cubit.close();
+      verify(() => store.discardPickedCopy(other)).called(1);
     });
   });
 

@@ -21,8 +21,9 @@ part 'lock_flow_state.dart';
 ///   must reach "good"; the file lands in the sealed Basics folder. Nothing
 ///   goes into anyone's history.
 ///
-/// The original file stays where it was; on a phone the picker's cache copy
-/// is deleted once used.
+/// The original file stays where it was; on a phone the picker's copy is
+/// deleted once used, when the lock fails or is stopped, when another file is
+/// chosen, and when the flow closes (security review 2026-10-26).
 class LockFlowCubit extends Cubit<LockFlowState> {
   LockFlowCubit({
     required this.target,
@@ -55,6 +56,10 @@ class LockFlowCubit extends Cubit<LockFlowState> {
   /// A picked or dropped file. Only its name and size are read here.
   Future<void> chooseFile(String filePath) async {
     if (state.phase != LockPhase.what) return;
+    final previous = state.file?.filePath;
+    if (previous != null && previous != filePath) {
+      await userFileStore.discardPickedCopy(previous);
+    }
     var size = 0;
     try {
       size = await File(filePath).length();
@@ -197,11 +202,11 @@ class LockFlowCubit extends Cubit<LockFlowState> {
             ),
           );
         case FileProcessingStatus.canceled:
-          _backToWhat(LockFailure.stopped);
+          unawaited(_droppedFile(file, LockFailure.stopped));
         case FileProcessingStatus.failed:
         case FileProcessingStatus.pending:
         case FileProcessingStatus.inProgress:
-          _backToWhat(LockFailure.failed);
+          unawaited(_droppedFile(file, LockFailure.failed));
       }
     });
 
@@ -231,7 +236,7 @@ class LockFlowCubit extends Cubit<LockFlowState> {
     );
     if (isClosed) return;
     if (res is CryptoCoreFailure<FileProcessingHandler>) {
-      return _backToWhat(LockFailure.failed);
+      return _droppedFile(file, LockFailure.failed);
     }
     final handler = (res as CryptoCoreSuccess<FileProcessingHandler>).data;
     _passwordFileHandler = handler;
@@ -239,12 +244,12 @@ class LockFlowCubit extends Cubit<LockFlowState> {
       if (isClosed) return;
       if (event.isCancelled) {
         _passwordFileHandler = null;
-        return _backToWhat(LockFailure.stopped);
+        return _droppedFile(file, LockFailure.stopped);
       }
       // A failure ends with isComplete set too: it must win.
       if (event.errorMessage != null) {
         _passwordFileHandler = null;
-        return _backToWhat(LockFailure.failed);
+        return _droppedFile(file, LockFailure.failed);
       }
       if (event.isComplete) {
         _passwordFileHandler = null;
@@ -314,17 +319,25 @@ class LockFlowCubit extends Cubit<LockFlowState> {
     }
   }
 
-  void _backToWhat(LockFailure failure) {
+  void _backToWhat(LockFailure failure, {bool dropFile = false}) {
     if (isClosed) return;
     emit(
-      state.copyWith(
-        phase: LockPhase.what,
-        isBusy: false,
-        isPaused: false,
-        progress: 0,
+      LockFlowState(
+        kind: state.kind,
+        file: dropFile ? null : state.file,
         failure: failure,
+        item: state.item,
+        isShared: state.isShared,
       ),
     );
+  }
+
+  /// A file lock that failed or was stopped: the picker's plain copy goes at
+  /// once (the file queue deletes its own), and on a phone the person picks
+  /// the file again; a computer's own file stays chosen.
+  Future<void> _droppedFile(LockFileChoice file, LockFailure failure) async {
+    await userFileStore.discardPickedCopy(file.filePath);
+    _backToWhat(failure, dropFile: userFileStore.isPickedCopy(file.filePath));
   }
 
   void _fail(LockFailure failure) {
@@ -337,6 +350,15 @@ class LockFlowCubit extends Cubit<LockFlowState> {
     await _queueSubscription?.cancel();
     await _rowSubscription?.cancel();
     await _passwordFileSubscription?.cancel();
+    // A picked copy nothing will use any more: never handed over, or its
+    // password lock is stopped here. One the file queue is working on is the
+    // queue's to delete.
+    final picked = state.file?.filePath;
+    final queueOwnsIt = state.phase.isWorking && _passwordFileHandler == null;
+    if (picked != null && state.phase != LockPhase.locked && !queueOwnsIt) {
+      _passwordFileHandler?.cancel();
+      await userFileStore.discardPickedCopy(picked);
+    }
     return super.close();
   }
 }

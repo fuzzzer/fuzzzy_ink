@@ -15,13 +15,15 @@ void main() {
   late String temporary;
   late String documents;
   late int pickerClears;
+  late String processTmp;
 
   setUp(() {
     root = Directory.systemTemp.createTempSync('user_file_store_');
     support = path.join(root.path, 'support');
     temporary = path.join(root.path, 'tmp');
     documents = path.join(root.path, 'documents');
-    for (final folder in [support, temporary, documents]) {
+    processTmp = path.join(root.path, 'process_tmp');
+    for (final folder in [support, temporary, documents, processTmp]) {
       Directory(folder).createSync();
     }
     pickerClears = 0;
@@ -33,6 +35,7 @@ void main() {
         supportDirectoryPath: support,
         temporaryDirectoryPath: temporary,
         documentsDirectoryPath: documents,
+        systemTemporaryDirectoryPath: processTmp,
         platform: platform,
         clearPickerCache: () async => pickerClears++,
         backupExclusion: const BackupExclusion(isApplePlatform: false),
@@ -185,6 +188,53 @@ void main() {
 
       await storeOn(TargetPlatform.android).discardPickedCopy(picked.path);
       expect(picked.existsSync(), isFalse);
+    });
+
+    test(
+        "an iPhone picker's copy in the app's tmp/ is discarded too "
+        '(security review 2026-10-26)', () async {
+      final picked = write(
+        path.join(processTmp, 'com.fuzzzycore.ink-Inbox', 'photo.jpg'),
+      );
+      final store = storeOn(TargetPlatform.iOS);
+      expect(store.isPickedCopy(picked.path), isTrue);
+      expect(
+          storeOn(TargetPlatform.android).isPickedCopy(picked.path), isFalse);
+      await store.discardPickedCopy(picked.path);
+      expect(picked.existsSync(), isFalse);
+    });
+  });
+
+  group('the lock sweep (security review 2026-10-26)', () {
+    test('hand-off copies and picker copies go; sealed files stay', () async {
+      final store = storeOn(TargetPlatform.iOS);
+      final handoff = write(await store.newHandoffPath('plain.jpg'));
+      store.wipeWhenBack(handoff.path);
+      final inbox = write(path.join(processTmp, 'x-Inbox', 'a.pdf'));
+      final sealed = write(
+        path.join(
+          await store.chatFolder(chatName: 'Bob', chatId: chatId),
+          'a.fuzz',
+        ),
+      );
+
+      await store.wipeAtLock();
+
+      expect(handoff.existsSync(), isFalse);
+      expect(inbox.existsSync(), isFalse);
+      expect(Directory(processTmp).existsSync(), isTrue);
+      expect(pickerClears, 1);
+      expect(sealed.existsSync(), isTrue);
+    });
+
+    test("on a computer the user's files are never touched", () async {
+      final store = storeOn(TargetPlatform.macOS);
+      final handoff = write(await store.newHandoffPath('plain.jpg'));
+      final mine = write(path.join(processTmp, 'mine.pdf'));
+      await store.wipeAtLock();
+      expect(handoff.existsSync(), isFalse);
+      expect(mine.existsSync(), isTrue);
+      expect(pickerClears, 0);
     });
   });
 
