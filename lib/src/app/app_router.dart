@@ -88,8 +88,11 @@ class AppRouter {
             sl.get<PreferencesService>().hasSeenOnboarding;
         final isOnboarding = state.matchedLocation == onboarding;
 
-        if (!hasSeenOnboarding && !isOnboarding) return onboarding;
-        if (hasSeenOnboarding && isOnboarding) return AppRouter.home;
+        // The welcome comes first and is final while unseen: falling
+        // through to the first-run rule below would send it to /setup,
+        // which sends it back here (a redirect loop, QA 2026-10-26).
+        if (!hasSeenOnboarding) return isOnboarding ? null : onboarding;
+        if (isOnboarding) return AppRouter.home;
 
         final authStatus = sl.get<FuzzyAuthStore>().state.status;
         final matchedLocation = state.matchedLocation;

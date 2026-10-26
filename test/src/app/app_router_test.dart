@@ -130,6 +130,29 @@ void main() {
     expect(await redirectFor(tester, AppRouter.setup), isNull);
   });
 
+  testWidgets(
+      'a new install: the welcome is final while unseen (no loop through the '
+      'first run), and once seen it hands over to the first run',
+      (tester) async {
+    final preferences = sl.get<PreferencesService>();
+    await preferences.setHasSeenOnboarding(false);
+    expect(store.state.status, AuthStateStatus.setupRequired);
+
+    expect(await redirectFor(tester, AppRouter.onboarding), isNull);
+    expect(await redirectFor(tester, AppRouter.home), AppRouter.onboarding);
+    expect(await redirectFor(tester, AppRouter.setup), AppRouter.onboarding);
+    expect(
+      await redirectFor(tester, AppRouter.chatUnlock),
+      AppRouter.onboarding,
+    );
+
+    // Next on "How it works", or the boot check landing meanwhile.
+    await preferences.setHasSeenOnboarding(true);
+    expect(await redirectFor(tester, AppRouter.setup), isNull);
+    expect(await redirectFor(tester, AppRouter.onboarding), AppRouter.home);
+    expect(await redirectFor(tester, AppRouter.home), AppRouter.setup);
+  });
+
   testWidgets('a secure storage error fails closed', (tester) async {
     when(() => mockChatAuth.status()).thenAnswer(
       (_) async => const CryptoCoreFailure(CryptoCoreFailureType.io),
