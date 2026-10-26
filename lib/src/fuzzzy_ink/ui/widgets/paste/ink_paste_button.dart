@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -13,6 +14,12 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 /// the caller reads the clipboard on its own tap, as before.
 ///
 /// The button's word ("Paste") is the system's, in the phone's language.
+///
+/// It sits inside rows and sheets that have gestures of their own (the
+/// row's tap reads the clipboard with "Allow Paste?", a sheet drags to
+/// close). Every press that starts on the button is the button's from the
+/// first touch ([EagerGestureRecognizer]), so none of them takes it away;
+/// a press anywhere else is theirs as before (security review 2026-10-26).
 class InkPasteButton extends StatefulWidget {
   const InkPasteButton({
     super.key,
@@ -51,6 +58,10 @@ class InkPasteButton extends StatefulWidget {
 }
 
 class _InkPasteButtonState extends State<InkPasteButton> {
+  static final _ownEveryPress = <Factory<OneSequenceGestureRecognizer>>{
+    const Factory<OneSequenceGestureRecognizer>(EagerGestureRecognizer.new),
+  };
+
   MethodChannel? _channel;
 
   void _created(int viewId) {
@@ -84,6 +95,7 @@ class _InkPasteButtonState extends State<InkPasteButton> {
             'cornerRadius': context.fuzzzyRadius.m,
           },
           creationParamsCodec: const StandardMessageCodec(),
+          gestureRecognizers: _ownEveryPress,
           onPlatformViewCreated: _created,
         ),
       ),
