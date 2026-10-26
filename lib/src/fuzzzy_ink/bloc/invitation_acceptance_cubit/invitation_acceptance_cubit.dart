@@ -124,9 +124,11 @@ class InvitationAcceptanceCubit extends Cubit<InvitationAcceptanceState> {
   /// it asks for a name.
   Future<InvitationCheck> checkInvitation(String invitationContent) async {
     final chatIdRes = cryptoCoreService.peekChatId(invitationContent);
-    // The core reports a newer version and a wrong prefix alike
-    // (`unsupportedFormat`), so every unreadable invite reads as damaged.
-    if (chatIdRes is CryptoCoreFailure<String>) return InvitationCheck.damaged;
+    if (chatIdRes is CryptoCoreFailure<String>) {
+      return chatIdRes.type == CryptoCoreFailureType.newerVersion
+          ? InvitationCheck.newerApp
+          : InvitationCheck.damaged;
+    }
     final chatId = (chatIdRes as CryptoCoreSuccess<String>).data;
     final existingChat =
         await chatGeneralDataListRepository.getChatById(chatId);
@@ -150,6 +152,7 @@ class InvitationAcceptanceCubit extends Cubit<InvitationAcceptanceState> {
 
   static ChatCreationFailureType _failureTypeOf(CryptoCoreFailureType type) {
     return switch (type) {
+      CryptoCoreFailureType.newerVersion => ChatCreationFailureType.newerApp,
       CryptoCoreFailureType.unsupportedFormat ||
       CryptoCoreFailureType.invalidSignature ||
       CryptoCoreFailureType.corrupt =>

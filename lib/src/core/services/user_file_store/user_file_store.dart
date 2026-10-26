@@ -220,9 +220,12 @@ class UserFileStore {
   }
 
   /// A file the picker copied into the app's cache to hand it over (Android,
-  /// iOS) is deleted once it was used; on a computer the picker hands over
-  /// the user's own file, which is never deleted.
+  /// iOS), or a hand-off copy, is deleted once it was used; on a computer the
+  /// picker hands over the user's own file, which is never deleted.
   Future<void> discardPickedCopy(String inputPath) async {
+    // A file another app opened in this one was copied into the hand-off
+    // folder ([IncomingFiles]): that copy goes once used, on every platform.
+    if (isHandoff(inputPath)) return wipe(inputPath);
     if (!_isPhone) return;
     if (!path.isWithin(_temporaryDirectoryPath, inputPath)) return;
     await _deleteQuietly(File(inputPath));

@@ -15,22 +15,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get fuzzzyInk => 'Fuzzzy Ink';
 
   @override
-  String get failedToLoadChats => 'ჩატების ჩატვირთვა ვერ მოხერხდა.';
-
-  @override
-  String get newChat => 'ახალი ჩატი';
-
-  @override
   String get acceptInvitation => 'მოწვევის მიღება';
-
-  @override
-  String get createANewChat => 'ახალი ჩატის შექმნა';
-
-  @override
-  String get enterChatName => 'შეიყვანეთ ჩატის სახელი';
-
-  @override
-  String get eg => 'მაგ.';
 
   @override
   String get back => 'უკან';
@@ -39,97 +24,16 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get create => 'შექმნა';
 
   @override
-  String get chatWithAlice => 'ჩატი ანასთან';
-
-  @override
   String get failedToCreateChat => 'ჩატის შექმნა ვერ მოხერხდა.';
-
-  @override
-  String get pleaseEnterAChatName => 'გთხოვთ, შეიყვანოთ ჩატის სახელი.';
-
-  @override
-  String get pleasePasteTheAcceptanceContent =>
-      'გთხოვთ, ჩასვათ მიღების ტექსტი.';
-
-  @override
-  String get failedToCompleteHandshake =>
-      'ხელის ჩამორთმევის დასრულება ვერ მოხერხდა.';
-
-  @override
-  String get sendInvitation => 'მოწვევის გაგზავნა';
-
-  @override
-  String get copyInvitation => 'მოწვევის კოპირება';
-
-  @override
-  String get invitationCopiedToClipboard => 'მოწვევა კოპირებულია ბუფერში.';
-
-  @override
-  String get provideAcceptance => 'მიღების ტექსტის მიწოდება';
-
-  @override
-  String get pasteAcceptanceText => 'ჩასვით მიღების ტექსტი';
 
   @override
   String get accept => 'მიღება';
 
   @override
-  String get unexpectedFailureOccuredPleaseContactUs =>
-      'მოხდა მოულოდნელი შეცდომა. გთხოვთ, დაგვიკავშირდეთ.';
-
-  @override
-  String get failedToGenerateInvitation => 'მოწვევის შექმნა ვერ მოხერხდა.';
-
-  @override
-  String get inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages =>
-      'ჩატის დასაწყებად მეორე ადამიანმა ჯერ უნდა შემოიტანოს მოწვევა და გამოგიგზავნოთ მის ჩატში შექმნილი მიღების ტექსტი. ამის შემდეგ ისიც შეძლებს შეტყობინებების გაგზავნას და გახსნას.';
-
-  @override
-  String get theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere =>
-      'მოწვეული ადამიანისგან მიღებული მიღების ტექსტი აქ ჩასვით:';
-
-  @override
-  String get failedToAcceptInvitation => 'მოწვევის მიღება ვერ მოხერხდა.';
-
-  @override
-  String get pleaseProvideInvitationTextAndChatName =>
-      'გთხოვთ, მიუთითოთ მოწვევის ტექსტი და ჩატის სახელი.';
-
-  @override
-  String get acceptChatInvitation => 'ჩატის მოწვევის მიღება';
-
-  @override
-  String get pasteInvitationText => 'ჩასვით მოწვევის ტექსტი';
-
-  @override
-  String get failedToGenerateAcceptance =>
-      'მიღების ტექსტის შექმნა ვერ მოხერხდა.';
-
-  @override
   String get failedToReadAcceptance => 'მიღების ტექსტის წაკითხვა ვერ მოხერხდა.';
 
   @override
-  String get goToChat => 'ჩატზე გადასვლა';
-
-  @override
-  String get copyAcceptance => 'მიღების კოპირება';
-
-  @override
-  String get yourAcceptanceHasBeenGeneratedSuccessfully =>
-      'თქვენი მიღების ტექსტი წარმატებით შეიქმნა.';
-
-  @override
-  String get tapToViewChat => 'შეეხეთ ჩატის სანახავად.';
-
-  @override
-  String get waitingForAcceptance => 'ველოდებით მიღებას.';
-
-  @override
   String get deleteChat => 'ჩატის წაშლა';
-
-  @override
-  String get areYouSureYouWantToDeleteThisChat =>
-      'დარწმუნებული ხართ, რომ გსურთ ამ ჩატის წაშლა?';
 
   @override
   String get cancel => 'გაუქმება';
@@ -155,10 +59,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get failedToGetAcceptance => 'მიღების ტექსტის აღება ვერ მოხერხდა';
 
   @override
-  String get storagePermissionDenied =>
-      'მეხსიერებაზე წვდომის ნებართვა არ არის მიცემული.';
-
-  @override
   String get errorPickingFiles => 'ფაილების არჩევისას მოხდა შეცდომა.';
 
   @override
@@ -168,17 +68,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get fuzz => 'Fuzz';
 
   @override
-  String get defuzz => 'Defuzz';
-
-  @override
   String get failedToProcessFiles => 'ფაილების დამუშავება ვერ მოხერხდა';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
       'ამ სახელით ჩატი უკვე არსებობს';
-
-  @override
-  String get reveal => 'ჩვენება';
 
   @override
   String get show => 'ჩვენება';
@@ -188,12 +82,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get dropFilesHere => 'გადმოიტანეთ ფაილები აქ';
-
-  @override
-  String get shareInvitation => 'მოწვევის გაზიარება';
-
-  @override
-  String get acceptanceText => 'მიღების ტექსტი';
 
   @override
   String get basicEncryption => 'მარტივი დაშიფრვა';
@@ -244,82 +132,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'გაშიფრვა ვერ მოხერხდა შეამოწმეთ გასაღები ან დაშიფრული ტექსტი';
 
   @override
-  String get welcomeToFuzzzyInk => 'მოგესალმებით Fuzzzy Ink-ში';
-
-  @override
-  String get offlineEncryptedClipboard => 'ოფლაინ დაშიფრული ბუფერი';
-
-  @override
-  String get yourDataNeverLeavesYourDeviceNoServersNoTracking =>
-      'თქვენი მონაცემები არასდროს ტოვებს თქვენს მოწყობილობას. არანაირი სერვერი, არანაირი თვალთვალი.';
-
-  @override
-  String get secureHandshake => 'უსაფრთხო ხელის ჩამორთმევა';
-
-  @override
-  String get connectWithOthersUsingASecureOfflineCodeExchange =>
-      'დაუკავშირდით სხვებს უსაფრთხო, ოფლაინ კოდების გაცვლის გამოყენებით.';
-
-  @override
-  String get getStarted => 'დაწყება';
-
-  @override
   String get next => 'შემდეგი';
-
-  @override
-  String get noOngoingChats => 'მიმდინარე ჩატები არ არის';
-
-  @override
-  String get tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation =>
-      'დააჭირეთ ღილაკს ქვემოთ, რომ შექმნათ ახალი უსაფრთხო ხელის ჩამორთმევა ან მიიღოთ მოწვევა.';
-
-  @override
-  String get stepSendYourInviteCode =>
-      'ნაბიჯი 1: გაგზავნეთ თქვენი მოწვევის კოდი';
-
-  @override
-  String get sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel =>
-      'გაუგზავნეთ ეს კოდი იმ ადამიანს, ვისთანაც გსურთ საუბარი, ნებისმიერი უსაფრთხო არხის გამოყენებით.';
-
-  @override
-  String get stepPasteTheirAcceptanceCode =>
-      'ნაბიჯი 2: ჩასვით მათი მიღების კოდი';
-
-  @override
-  String get onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow =>
-      'როგორც კი მიიღებენ თქვენს მოწვევას, ისინი გამოგიგზავნიან კოდს უკან. ჩასვით ის ქვემოთ.';
-
-  @override
-  String get stepPasteTheirInviteCode => 'ნაბიჯი 1: ჩასვით მათი მოწვევის კოდი';
-
-  @override
-  String get askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow =>
-      'სთხოვეთ თქვენს კონტაქტს უსაფრთხოდ გაგიზიარონ მოწვევის კოდი და ჩასვით ის ქვემოთ.';
-
-  @override
-  String get stepNameThisChat => 'ნაბიჯი 2: დაარქვით სახელი ამ საუბარს';
-
-  @override
-  String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou =>
-      'აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.';
 
   @override
   String get settings => 'პარამეტრები';
 
   @override
-  String get shareAcceptance => 'მიღების გაზიარება';
-
-  @override
-  String get linkExpired => 'ამ ბმულის ვადა ამოიწურა.';
-
-  @override
-  String get linkShared => 'ბმული გაზიარებულია.';
-
-  @override
   String get invalidLink => 'ეს ბმული არასწორია ან დაზიანებულია.';
-
-  @override
-  String get noMatchingChat => 'შესაბამისი ჩატი ვერ მოიძებნა.';
 
   @override
   String get alreadyConnected => 'უკვე დაკავშირებულია!';
@@ -327,12 +146,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get cantAcceptOwnInvitation =>
       'თქვენი საკუთარი მოწვევის მიღება შეუძლებელია.';
-
-  @override
-  String get connectionComplete => 'კავშირი დამყარებულია!';
-
-  @override
-  String get incomingInvitation => 'შემომავალი მოწვევა აღმოჩენილია.';
 
   @override
   String get chatNotFoundForAcceptance =>
@@ -349,30 +162,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultUntitled => 'უსათაურო';
 
   @override
-  String get vaultNewPassword => 'ახალი პაროლი';
-
-  @override
-  String get vaultNewNote => 'ახალი ჩანაწერი';
-
-  @override
-  String get vaultEditItem => 'ელემენტის რედაქტირება';
-
-  @override
-  String get vaultTitle => 'სათაური';
-
-  @override
-  String get vaultUsernameEmail => 'მომხმარებელი / ელ-ფოსტა';
-
-  @override
-  String get vaultUrlWebsite => 'URL (ვებგვერდი)';
-
-  @override
-  String get vaultNotesOptional => 'შენიშვნები (არასავალდებულო)';
-
-  @override
-  String get vaultSecureNote => 'დაცული ჩანაწერი';
-
-  @override
   String get vaultSave => 'შენახვა';
 
   @override
@@ -385,42 +174,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultFiles => 'ფაილები';
 
   @override
-  String get vaultNoFilesYet => 'ფაილები არ არის';
-
-  @override
   String get vaultFileLabel => 'ფაილი';
 
   @override
   String get vaultAll => 'ყველა';
-
-  @override
-  String get vaultAddGroup => 'ჯგუფის დამატება';
-
-  @override
-  String get vaultNewGroup => 'ახალი ჯგუფი';
-
-  @override
-  String get vaultGroupName => 'ჯგუფის სახელი';
-
-  @override
-  String get vaultMoveToGroup => 'ჯგუფში გადატანა';
-
-  @override
-  String get vaultNoOtherGroups => 'სხვა ჯგუფები არ არის';
-
-  @override
-  String get vaultNoResultsFound => 'შედეგები ვერ მოიძებნა.';
-
-  @override
-  String get vaultNoPasswordsYet =>
-      'პაროლები ჯერ არ არის.\nდასამატებლად დააჭირეთ +.';
-
-  @override
-  String get vaultNoNotesYet =>
-      'ჩანაწერები ჯერ არ არის.\nდასამატებლად დააჭირეთ +.';
-
-  @override
-  String get vaultIsEmpty => 'საცავი ცარიელია.\nდაამატეთ პაროლი ან ჩანაწერი.';
 
   @override
   String get vaultPasswordLabel => 'პაროლი';
@@ -429,27 +186,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultNoteLabel => 'ჩანაწერი';
 
   @override
-  String get vaultFailedToLoadItem => 'ელემენტის ჩატვირთვა ვერ მოხერხდა';
-
-  @override
-  String get vaultSearchHint => 'პაროლების და ჩანაწერების ძიება';
-
-  @override
-  String get vaultCreateYourVault => 'შექმენით თქვენი საცავი';
-
-  @override
   String get vaultPassword => 'ვოლტის პაროლი';
-
-  @override
-  String get vaultCreateVault => 'საცავის შექმნა';
-
-  @override
-  String vaultFailedToCreate(Object failureType) {
-    return 'საცავის შექმნა ვერ მოხერხდა: $failureType';
-  }
-
-  @override
-  String get vaultUnlockVault => 'საცავის განბლოკვა';
 
   @override
   String get vaultIncorrectPassword => 'არასწორი პაროლი';
@@ -462,33 +199,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'დაგავიწყდათ პაროლი? თქვენი მონაცემები დაშიფრულია და აღდგენა შეუძლებელია.';
 
   @override
-  String vaultUnlockFailed(Object failureType) {
-    return 'განბლოკვა ვერ მოხერხდა: $failureType';
-  }
-
-  @override
-  String get fuzzyVault => 'Fuzzy Vault';
-
-  @override
   String get menu => 'მენიუ';
 
   @override
-  String get fuzzyUserAuth => 'მომხმარებლის ავთენტიფიკაცია';
-
-  @override
-  String authError(Object errorMessage) {
-    return 'შეცდომა: $errorMessage';
-  }
-
-  @override
   String get unknownError => 'უცნობი შეცდომა';
-
-  @override
-  String get noDataFoundPleaseSetYourData =>
-      'მონაცემები ვერ მოიძებნა. გთხოვთ დააყენოთ თქვენი მონაცემები.';
-
-  @override
-  String get lastUpdated => 'ბოლო განახლება:';
 
   @override
   String get keyStrengthWeak => 'სუსტი (ძალიან მოკლე)';
@@ -515,43 +229,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatUnlockTitle => 'Fuzzzy Ink-ის განბლოკვა';
 
   @override
-  String get chatUnlockSubtitle => 'აპის გასახსნელად შეიყვანეთ მთავარი პაროლი.';
-
-  @override
-  String get chatAuthPassword => 'პაროლი';
-
-  @override
   String get chatAuthIncorrectPassword => 'არასწორი პაროლი';
 
   @override
   String get chatAuthUnlock => 'განბლოკვა';
 
   @override
-  String get chatAuthSetupDescription =>
-      'დააყენეთ პაროლი ჩატის გასაღებების დასაშიფრად. ეს თქვენს საუბრებს დამატებით დაცვას მისცემს.';
-
-  @override
-  String get chatAuthSetPassword => 'პაროლის დაყენება';
-
-  @override
-  String get chatAuthConfirmPassword => 'პაროლის დადასტურება';
-
-  @override
-  String get chatAuthPasswordsDoNotMatch => 'პაროლები არ ემთხვევა';
-
-  @override
-  String get chatAuthProtectionDescription =>
-      'მთავარი პაროლი აპის ყველა გასაღებს იცავს: ჩატებს, ისტორიას და საცავს, თუ მას საკუთარი პაროლი არ აქვს. მისი გამორთვა შეუძლებელია.';
-
-  @override
   String get chatAuthResecuringKeys => 'გასაღებების ხელახლა დაცვა…';
-
-  @override
-  String get chatAuthentication => 'მთავარი პაროლი';
-
-  @override
-  String get chatAuthenticationDescription =>
-      'პაროლი, აღდგენის გასაღები და ავტომატური დაბლოკვა';
 
   @override
   String get benchmarkFileEncryption => 'ფაილის დაშიფვრის ბენჩმარკი (dev)';
@@ -573,45 +257,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get close => 'დახურვა';
 
   @override
-  String get chatAuthBiometricUnlock => 'განბლოკვა ბიომეტრიით';
-
-  @override
-  String get chatAuthBiometricEnable => 'ბიომეტრიული განბლოკვის ჩართვა';
-
-  @override
-  String get chatAuthBiometricDisable => 'ბიომეტრიული განბლოკვის გამორთვა';
-
-  @override
-  String get chatAuthBiometricEnabled => 'ბიომეტრიული განბლოკვა ჩართულია';
-
-  @override
-  String get chatAuthBiometricDescription =>
-      'შეიყვანეთ პაროლი დასტურისთვის, შემდეგ განბლოკეთ თითის ანაბეჭდით ან Face ID-ით.';
-
-  @override
-  String get chatAuthBiometricUnavailable =>
-      'ბიომეტრიული ავთენტიფიკაცია ამ მოწყობილობაზე მიუწვდომელია.';
-
-  @override
-  String get chatAuthBiometricFailed =>
-      'ბიომეტრიული ავთენტიფიკაცია ვერ მოხერხდა.';
-
-  @override
-  String get chatAuthBiometricInvalidated =>
-      'თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.';
-
-  @override
   String get chatAuthPasswordTooWeak =>
       'პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.';
-
-  @override
-  String chatAuthLockedOut(Object time) {
-    return 'ძალიან ბევრი არასწორი მცდელობა. ხელახლა სცადეთ $time-ის შემდეგ.';
-  }
-
-  @override
-  String get chatAuthBiometricReset =>
-      'ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.';
 
   @override
   String get biometricNotStrongEnough =>
@@ -621,58 +268,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get biometricNotTurnedOn => 'ბიომეტრიული განბლოკვა არ ჩაირთო.';
 
   @override
-  String get vaultBiometricUnlock => 'განბლოკვა ბიომეტრიით';
-
-  @override
-  String get vaultBiometricEnable => 'ბიომეტრიული განბლოკვის ჩართვა';
-
-  @override
-  String get vaultBiometricDisable => 'ბიომეტრიული განბლოკვის გამორთვა';
-
-  @override
-  String get vaultBiometricEnabled => 'ბიომეტრიული განბლოკვა ჩართულია';
-
-  @override
-  String get vaultBiometricDescription =>
-      'ბიომეტრიული განბლოკვის ჩასართავად დაადასტურეთ მთავარი პაროლი.';
-
-  @override
-  String get vaultBiometricUnavailable =>
-      'ბიომეტრიული ავთენტიფიკაცია ამ მოწყობილობაზე მიუწვდომელია.';
-
-  @override
-  String get vaultBiometricSettings => 'ბიომეტრიის პარამეტრები';
-
-  @override
-  String get vaultBiometricInvalidPassword => 'არასწორი ვოლტის პაროლი.';
-
-  @override
   String get vaultBiometricInvalidated =>
       'თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.';
-
-  @override
-  String get vaultAuthentication => 'ვოლტის ავთენტიფიკაცია';
-
-  @override
-  String get vaultAuthenticationDescription =>
-      'ვოლტის ბიომეტრიული განბლოკვის მართვა';
-
-  @override
-  String get vaultNotCreated =>
-      'ბიომეტრიული განბლოკვისთვის ჯერ შექმენით ვოლტი.';
-
-  @override
-  String get chatAuthCurrentPassword => 'მიმდინარე პაროლი';
-
-  @override
-  String get chatAuthNewPassword => 'ახალი პაროლი';
-
-  @override
-  String get chatAuthPasswordChanged => 'ჩატის პაროლი შეიცვალა';
-
-  @override
-  String get vaultFileSaveWarning =>
-      '⚠️ ორიგინალი ფაილი არ იშლება ავტომატურად. შენახვის შემდეგ ფაილი რჩება მოწყობილობაზე. გთხოვთ წაშალოთ ის უსაფრთხოების მიზნით.';
 
   @override
   String get invitationAlreadyUsed => 'ეს მოწვევა უკვე გამოყენებულია.';
@@ -691,32 +288,15 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ეს შეტყობინება ამ მოწყობილობაზე უკვე გაშიფრულია, ან მისი ერთჯერადი გასაღები აღარ ინახება.';
 
   @override
-  String get blobTooOld =>
-      'ეს შეტყობინება გასაშიფრად ძალიან ძველია — მასზე ბევრად ახალი შეტყობინებები უკვე გაშიფრულია.';
-
-  @override
   String get corruptBlob => 'ეს არ არის სწორი დაშიფრული შეტყობინება.';
 
   @override
   String get safetyNumberTitle => 'უსაფრთხოების ნომერი';
 
   @override
-  String get safetyNumberExplanation =>
-      'შეადარეთ ეს ციფრები თქვენს პარტნიორს ხმით ან პირადად. სანამ ისინი არ დაემთხვევა, შესაძლოა ვინმემ, ვინც მოწვევა ან მიღება გადაიჭირა, შუაში იყოს.';
-
-  @override
   String safetyNumberVersion(int version) {
     return 'ვერსია $version. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.';
   }
-
-  @override
-  String get safetyNumberMarkVerified => 'მონიშნე როგორც დადასტურებული';
-
-  @override
-  String get safetyNumberUnmark => 'მონიშვნის მოხსნა';
-
-  @override
-  String get safetyNumberVerifiedBadge => 'დადასტურებული';
 
   @override
   String get wrongPasswordFile =>
@@ -743,10 +323,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionTitle => 'დაშიფვრის შესახებ';
-
-  @override
-  String get aboutEncryptionDescription =>
-      'რას ნიშნავს ერთჯერადი გაშიფვრა და როგორ ინახება თქვენი ისტორია';
 
   @override
   String get aboutEncryptionHistoryTitle => 'თქვენი ისტორია ამ მოწყობილობაზე';
@@ -821,45 +397,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get couldNotOpenFile => 'ფაილის გახსნა ვერ მოხერხდა.';
 
   @override
-  String get legalAndSupport => 'სამართლებრივი ინფორმაცია და მხარდაჭერა';
-
-  @override
-  String get legalAndSupportDescription =>
-      'ეს ბმულები fuzzzycore.com-ს ბრაუზერში გახსნის. თავად Fuzzzy Ink ინტერნეტს არასოდეს უკავშირდება.';
-
-  @override
   String get privacyPolicy => 'კონფიდენციალურობის პოლიტიკა';
-
-  @override
-  String get privacyPolicyDescription => 'რას ინახავს აპლიკაცია და სად';
 
   @override
   String get termsOfUse => 'გამოყენების პირობები';
 
   @override
-  String get termsOfUseDescription => 'Fuzzzy Ink-ის გამოყენების წესები';
-
-  @override
   String get support => 'მხარდაჭერა';
-
-  @override
-  String get supportDescription =>
-      'დახმარება, კითხვები და პრობლემის შეტყობინება';
 
   @override
   String get dataDeletion => 'მონაცემების წაშლა';
 
   @override
-  String get dataDeletionDescription =>
-      'როგორ წაშალოთ ყველაფერი, რასაც აპლიკაცია ინახავს';
-
-  @override
   String get couldNotOpenLink => 'ბმულის გახსნა ვერ მოხერხდა.';
-
-  @override
-  String appVersion(Object version, Object build) {
-    return 'ვერსია $version (ანაწყობი $build)';
-  }
 
   @override
   String get biometricUnlockChats => 'ჩატების განსაბლოკად დაადასტურეთ ვინაობა';
@@ -884,51 +434,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get copyRefused => 'კოპირება მხოლოდ დაშიფრული ტექსტის შეიძლება.';
 
   @override
-  String get copyPolicyTitle => 'კოპირება';
-
-  @override
-  String get copyPolicyDescription =>
-      'აპლიკაციიდან მხოლოდ თქვენ მიერ გასაგზავნი დაშიფრული ტექსტი კოპირდება. გაშიფრული შეტყობინებები, ჩანაწერები და ფაილების მდებარეობა აპლიკაციაში რჩება. დაკოპირებული ტექსტი ბუფერიდან მალევე იშლება.';
-
-  @override
-  String copyPolicyVaultPasswordNote(int seconds) {
-    return 'გამონაკლისი მხოლოდ საცავის პაროლია: დაკოპირებული პაროლი, სადაც სისტემა ამის საშუალებას იძლევა, ბუფერის ისტორიაში არ ინახება და $seconds წამში იშლება.';
-  }
-
-  @override
   String get vaultCopyPassword => 'პაროლის კოპირება';
-
-  @override
-  String vaultPasswordCopiedClearsIn(int seconds) {
-    return 'პაროლი დაკოპირდა. ბუფერიდან $seconds წამში წაიშლება.';
-  }
-
-  @override
-  String get shareAsLinkOption => 'ბმულად გაგზავნა';
-
-  @override
-  String get shareAsLinkOptionHint =>
-      'პირდაპირ Fuzzzy Ink-ში იხსნება. თუ აპი არ აქვთ, ბმული აჩვენებს, საიდან ჩამოტვირთონ.';
-
-  @override
-  String get shareAsQrCodeOption => 'QR კოდის ჩვენება';
-
-  @override
-  String get shareAsQrCodeOptionHint => 'მეორე ტელეფონი კამერით დაასკანერებს.';
-
-  @override
-  String get shareAsFileOption => 'ფაილად გაგზავნა';
-
-  @override
-  String get shareAsFileOptionHint =>
-      'ელფოსტისთვის ან ჩატისთვის, რომელიც გრძელ ბმულს ჭრის.';
-
-  @override
-  String get qrCodeHint =>
-      'მეორე ტელეფონის კამერა ამ კოდს მიუშვირეთ. იქ Fuzzzy Ink გაიხსნება, ან ჩამოტვირთვის გვერდი, თუ აპი არ არის.';
-
-  @override
-  String get notVerified => 'დაუდასტურებელი';
 
   @override
   String get saveFile => 'შენახვა';
@@ -953,66 +459,17 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get masterPassword => 'მთავარი პაროლი';
 
   @override
-  String get masterPasswordSetupTitle => 'შექმენით მთავარი პაროლი';
-
-  @override
-  String get masterPasswordSetupDescription =>
-      'ერთი პაროლი იცავს ყველაფერს Fuzzzy Ink-ში: ჩატებს, ისტორიას და საცავს. აპის ყოველ გახსნაზე ამ პაროლს შეიყვანთ.';
-
-  @override
   String get masterPasswordPreviousData =>
       'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
-
-  @override
-  String get masterPasswordCreate => 'მთავარი პაროლის შექმნა';
-
-  @override
-  String get masterPasswordCreating => 'ვქმნით თქვენს გასაღებებს…';
 
   @override
   String get masterPasswordFailed => 'გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.';
 
   @override
-  String get masterPasswordIsOn => 'მთავარი პაროლი ჩართულია';
-
-  @override
   String get recoveryKeyTitle => 'აღდგენის გასაღები';
 
   @override
-  String get recoveryKeyDescription =>
-      'თუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. ჩაიწერეთ ან შეინახეთ და მოწყობილობისგან მოშორებით, უსაფრთხო ადგილას გადადეთ. მას მხოლოდ ახლა ხედავთ.';
-
-  @override
-  String get recoveryKeyWarning =>
-      'პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.';
-
-  @override
-  String get recoveryKeySave => 'შენახვა ან ამობეჭდვა…';
-
-  @override
-  String get recoveryKeySaved => 'აღდგენის გასაღები ფაილში შეინახა';
-
-  @override
   String get recoveryKeySaveFailed => 'აღდგენის გასაღები ვერ შეინახა.';
-
-  @override
-  String get recoveryKeyConfirm => 'აღდგენის გასაღები შევინახე';
-
-  @override
-  String get recoveryKeyContinue => 'გაგრძელება';
-
-  @override
-  String get recoveryKeySkip => 'გაგრძელება აღდგენის გასაღების გარეშე';
-
-  @override
-  String get recoveryKeySkipTitle => 'გააგრძელებთ აღდგენის გასაღების გარეშე?';
-
-  @override
-  String get recoveryKeySkipMessage =>
-      'თუ მთავარ პაროლს დაგავიწყდებათ, ჩატები, ისტორია და საცავი სამუდამოდ დაიკარგება. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.';
-
-  @override
-  String get recoveryKeySkipConfirm => 'გაგრძელება მის გარეშე';
 
   @override
   String recoveryKeyFileText(String key) {
@@ -1020,31 +477,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get recoveryKeyIsSet => 'აღდგენის გასაღები დაყენებულია.';
-
-  @override
-  String get recoveryKeyNotSet =>
-      'აღდგენის გასაღები არ გაქვთ. თუ მთავარ პაროლს დაგავიწყდებათ, მონაცემები სამუდამოდ დაიკარგება.';
-
-  @override
-  String get recoveryKeyCreateNew => 'ახალი აღდგენის გასაღების შექმნა';
-
-  @override
-  String get recoveryKeyCreateNewDescription =>
-      'ახალი აღდგენის გასაღების შესაქმნელად შეიყვანეთ მთავარი პაროლი. ძველი გასაღები აღარ იმუშავებს.';
-
-  @override
-  String get recoveryTitle => 'ახალი პაროლი აღდგენის გასაღებით';
-
-  @override
-  String get recoveryDescription =>
-      'შეიყვანეთ აპის დაყენებისას შენახული აღდგენის გასაღები და აირჩიეთ ახალი მთავარი პაროლი.';
-
-  @override
   String get recoveryKeyField => 'აღდგენის გასაღები';
-
-  @override
-  String get recoverySubmit => 'ახალი პაროლის დაყენება';
 
   @override
   String get recoveryKeyTypo =>
@@ -1052,12 +485,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get recoveryKeyWrong => 'ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.';
-
-  @override
-  String get chatUnlockForgot => 'დაგავიწყდათ პაროლი?';
-
-  @override
-  String get chatUnlockUseRecoveryKey => 'აღდგენის გასაღების გამოყენება';
 
   @override
   String get chatUnlockErase => 'ყველაფრის წაშლა და თავიდან დაწყება';
@@ -1083,30 +510,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get appLockNow => 'Fuzzzy Ink-ის დაბლოკვა';
 
   @override
-  String get autoLockTitle => 'ავტომატური დაბლოკვა';
-
-  @override
-  String get autoLockIdle => 'დაბლოკვა, თუ აპს არ იყენებთ';
-
-  @override
-  String get autoLockBackground => 'დაბლოკვა აპიდან გასვლის შემდეგ';
-
-  @override
-  String get autoLockImmediately => 'მაშინვე';
-
-  @override
   String autoLockMinutes(int count) {
     return '$count წთ';
   }
 
   @override
   String get autoLockSaveFailed => 'პარამეტრი ვერ შეინახა.';
-
-  @override
-  String get vaultPasswordModeTitle => 'საცავის პაროლი';
-
-  @override
-  String get vaultUsesMasterPassword => 'საცავს მთავარი პაროლი ხსნის.';
 
   @override
   String get vaultUsesOwnPassword => 'საცავს საკუთარი პაროლი აქვს.';
@@ -1118,22 +527,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get vaultUseMasterPassword => 'საცავის გახსნა მთავარი პაროლით';
 
   @override
-  String get vaultOwnPasswordNote =>
-      'აღდგენის გასაღები არ არის შენახული: ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.';
-
-  @override
   String get vaultOwnPasswordRecoveryNote =>
       'აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.';
-
-  @override
-  String get vaultUseRecoveryKey => 'აღდგენის გასაღების გამოყენება';
-
-  @override
-  String get vaultRecoveryTitle => '„ჩემი სეიფის“ გახსნა აღდგენის გასაღებით';
-
-  @override
-  String get vaultRecoveryDescription =>
-      'შეიყვანეთ აღდგენის გასაღები და აირჩიეთ „ჩემი სეიფის“ ახალი პაროლი, ან გახსენით ის მთავარი პაროლით.';
 
   @override
   String get vaultRecoveryUseMasterPassword =>
@@ -1141,31 +536,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get vaultRecoverySubmit => '„ჩემი სეიფის“ გახსნა';
-
-  @override
-  String get recoveryKeyVaultPasswordNote =>
-      '„ჩემ სეიფს“ საკუთარი პაროლი აქვს. შეიყვანეთ ისიც, რომ ახალმა გასაღებმა „ჩემი სეიფიც“ გახსნას.';
-
-  @override
-  String get vaultOwnNewPassword => 'საცავის ახალი პაროლი';
-
-  @override
-  String get vaultCurrentPassword => 'საცავის მიმდინარე პაროლი';
-
-  @override
-  String get vaultPasswordModeChanged => 'საცავის პაროლი განახლდა';
-
-  @override
-  String get vaultCreateWithMasterDescription =>
-      'საცავი პაროლებს, ჩანაწერებსა და ფაილებს ამ მოწყობილობაზე დალუქულად ინახავს. მას მთავარი პაროლი ხსნის — საცავის შესაქმნელად შეიყვანეთ ის.';
-
-  @override
-  String get vaultForgotMasterPassword =>
-      'დაგავიწყდათ მთავარი პაროლი? დაბლოკეთ აპი და გამოიყენეთ აღდგენის გასაღები.';
-
-  @override
-  String get vaultTooManyAttempts =>
-      'ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.';
 
   @override
   String get tabHome => 'მთავარი';
@@ -1408,9 +778,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get tagNoCopy => 'კოპირება გამორთულია';
 
   @override
-  String get tagNoScreenshots => 'ეკრანის ანაბეჭდი გამორთულია';
-
-  @override
   String get lockWhoTitle => 'ვისთვისაა?';
 
   @override
@@ -1495,21 +862,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get lockPasswordNotGood => 'საჭიროა დონე „კარგი“.';
-
-  @override
-  String get lockStrengthLabel => 'სიძლიერე';
-
-  @override
-  String get lockStrengthWeak => 'სუსტი';
-
-  @override
-  String get lockStrengthFair => 'საშუალო';
-
-  @override
-  String get lockStrengthGood => 'კარგი';
-
-  @override
-  String get lockStrengthStrong => 'ძლიერი';
 
   @override
   String get lockFailed => 'ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.';
@@ -1846,9 +1198,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get softSounds => 'რბილი ხმები';
-
-  @override
-  String get softSoundsLine => 'უხმო რეჟიმში არასდროს';
 
   @override
   String get safeLockedTitle => 'ჩემი სეიფი ჩაკეტილია';
@@ -2593,11 +1942,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get historyLoadError => 'ისტორია ვერ ჩაიტვირთა.';
 
   @override
-  String historyNewRow(String name) {
-    return 'ახლა ისტორიაშია.';
-  }
-
-  @override
   String waitingCardTitle(String name) {
     return 'პასუხს ველოდებით: $name';
   }
@@ -2920,4 +2264,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String checkedTitle(String name) {
     return 'ნამდვილად ის არის: $name';
   }
+
+  @override
+  String get incomingFileUnreadable =>
+      'ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.';
 }

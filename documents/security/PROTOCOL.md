@@ -20,7 +20,7 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 - `‖` is byte concatenation. Hex is lowercase. `0x..×n` means the byte repeated `n` times.
 - "AEAD" means XChaCha20-Poly1305 (24-byte nonce, 16-byte tag, tag appended to the ciphertext); "KDF" means
   Argon2id; "Olm" means the Olm v1 double ratchet as vodozemac implements it (`SessionConfig::version_1()`).
-- Every error the core reports is one of 13 payload-free variants of `CoreError`
+- Every error the core reports is one of 14 payload-free variants of `CoreError`
   ([`error.rs#L11`](../../rust/fuzzy_crypto_core/src/error.rs#L11)); Appendix B lists them. Tables below name the
   variant a check produces.
 - Links of the form `file.rs#Lnn` point at the line that defines the constant or check in the crate at the
@@ -131,7 +131,8 @@ Order of checks on every pasted pairing blob ([`pairing.rs#L92`](../../rust/fuzz
 [`#L162`](../../rust/fuzzy_crypto_core/src/pairing.rs#L162)):
 
 1. the Dart-supplied `chat_id` has the uuid shape (`Corrupt`) — before the store is touched;
-2. text envelope and outer envelope decode (`UnsupportedFormat`); the blob is of the expected type
+2. text envelope and outer envelope decode (`UnsupportedFormat`; a newer version or an unknown type byte
+   `NewerVersion`); the blob is of the expected type
    (`UnsupportedFormat`); the payload parses with no trailing bytes (`Corrupt`);
 3. **signature** verifies under the key carried in the blob (`InvalidSignature`);
 4. the blob's `chat_id` equals the caller's (`WrongChat`).
@@ -311,7 +312,8 @@ discriminator (see §12).
 | 6.. | | payload | per type |
 
 Envelope length 6 ([`formats.rs#L21`](../../rust/fuzzy_crypto_core/src/formats.rs#L21)). Any other magic,
-version or type byte is `UnsupportedFormat` ([`formats.rs#L158`](../../rust/fuzzy_crypto_core/src/formats.rs#L158));
+version is `UnsupportedFormat`, except a version above `0x01` or a type byte this build does not know, which
+is `NewerVersion` (made by a newer app, §12) ([`formats.rs#L158`](../../rust/fuzzy_crypto_core/src/formats.rs#L158));
 a blob of the wrong type for the call (an invitation given to the message decoder) is also
 `UnsupportedFormat`. Types `0x10`, `0x11` and `0x20` are refused by the paste path (`decode_pasted`) — they are
 valid only where the device stores them.
@@ -536,7 +538,7 @@ after any rejection the file on disk is byte-identical and the ratchet has not a
 
 | # | Check | Failure |
 |---|---|---|
-| 1 | Text envelope, outer envelope, type `0x03` | `UnsupportedFormat` |
+| 1 | Text envelope, outer envelope, type `0x03` | `UnsupportedFormat` (a newer version or unknown type byte: `NewerVersion`) |
 | 2 | `olm_type` known, body non-empty, and the body parses as a vodozemac `PreKeyMessage` / `Message` | `Corrupt` |
 | 3 | **Olm decrypt** on a *copy* of the session: `MissingMessageKey` (the message key was consumed or evicted) | `Replay` |
 | | `TooBigMessageGap` (more than 2000 ahead of the chain) | `TooOld` |
@@ -1169,14 +1171,16 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 ## 12. Versioning policy
 
 - **Magic, version, type** (§6.2) are the whole negotiation. A decoder that does not recognise all three
-  refuses the input with `UnsupportedFormat` and never guesses.
+  refuses the input and never guesses: a version above its own, or a type byte it does not know, is
+  `NewerVersion` (the app says "Needs a newer Fuzzzy Ink"); anything else it does not recognise is
+  `UnsupportedFormat`.
 - **A version bump (`0x01` → `0x02`) means an incompatible layout** of the envelope or of any payload it
   carries. Nothing in this document survives a version bump unless the next document says so explicitly.
   This build carries no compatibility shims and no legacy readers (the project's rule for the hardening);
   whether a version-2 build would read version-1 blobs is a decision that version's document must make —
   the version-1 layout is not designed to coexist with another version in one decoder.
 - **Adding a type byte is not a bump.** New types can appear under version 1; an old build reports them as
-  `UnsupportedFormat`, which is the intended behaviour for "this build cannot read that".
+  `NewerVersion`, which is the intended behaviour for "this build cannot read that".
 - **Removing or changing the meaning of a type byte, a field, an AAD string, a domain string, a KDF
   parameter's semantics, a nonce layout or a check in §7.2** is a bump.
 - **Inner header version** (`inner_version`, §7.1) and **state body version** (`format_version`, §10.3) are
@@ -1459,7 +1463,8 @@ a file job's terminal event carries.
 
 | Variant | Text | Meaning |
 |---|---|---|
-| `UnsupportedFormat` | `unsupported format` | unknown magic, version, type byte or text encoding; a blob of the wrong type for the call; storage-only type pasted |
+| `UnsupportedFormat` | `unsupported format` | unknown magic or text encoding, a version below `0x01`; a blob of the wrong type for the call; storage-only type pasted |
+| `NewerVersion` | `newer version` | a version above `0x01`, or a type byte this build does not know: made by a newer app (§12) |
 | `InvalidSignature` | `invalid signature` | an invitation/acceptance signature did not verify (or the key/signature bytes do not parse) |
 | `InvitationAlreadyUsed` | `invitation already used` | §4.5 |
 | `WrongChat` | `wrong chat` | the blob names another chat, or its identity keys are not this chat's peer/ours |

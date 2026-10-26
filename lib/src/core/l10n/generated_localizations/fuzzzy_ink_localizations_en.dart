@@ -15,22 +15,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get fuzzzyInk => 'Fuzzzy Ink';
 
   @override
-  String get failedToLoadChats => 'Failed to load chats.';
-
-  @override
-  String get newChat => 'New Chat';
-
-  @override
   String get acceptInvitation => 'Accept Invitation';
-
-  @override
-  String get createANewChat => 'Create a New Chat';
-
-  @override
-  String get enterChatName => 'Enter Chat Name';
-
-  @override
-  String get eg => 'e.g.';
 
   @override
   String get back => 'Back';
@@ -39,95 +24,16 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get create => 'Create';
 
   @override
-  String get chatWithAlice => 'Chat with Alice';
-
-  @override
   String get failedToCreateChat => 'Failed to create chat.';
-
-  @override
-  String get pleaseEnterAChatName => 'Please enter a chat name.';
-
-  @override
-  String get pleasePasteTheAcceptanceContent =>
-      'Please paste the acceptance content.';
-
-  @override
-  String get failedToCompleteHandshake => 'Failed to complete handshake.';
-
-  @override
-  String get sendInvitation => 'Send Invitation';
-
-  @override
-  String get copyInvitation => 'Copy Invitation';
-
-  @override
-  String get invitationCopiedToClipboard => 'Invitation copied to clipboard.';
-
-  @override
-  String get provideAcceptance => 'Provide Acceptance';
-
-  @override
-  String get pasteAcceptanceText => 'Paste Acceptance Text';
 
   @override
   String get accept => 'Accept';
 
   @override
-  String get unexpectedFailureOccuredPleaseContactUs =>
-      'Unexpected failure occurred, please contact us.';
-
-  @override
-  String get failedToGenerateInvitation => 'Failed to generate invitation.';
-
-  @override
-  String get inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages =>
-      'To start a chat with someone, they must first import the invitation and provide the acceptance text generated in their chat. This will allow them to send and unlock messages.';
-
-  @override
-  String get theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere =>
-      'The acceptance that you get from the invited person should be pasted here:';
-
-  @override
-  String get failedToAcceptInvitation => 'Failed to accept invitation.';
-
-  @override
-  String get pleaseProvideInvitationTextAndChatName =>
-      'Please provide invitation text and chat name.';
-
-  @override
-  String get acceptChatInvitation => 'Accept Chat Invitation';
-
-  @override
-  String get pasteInvitationText => 'Paste Invitation Text';
-
-  @override
-  String get failedToGenerateAcceptance => 'Failed to generate acceptance.';
-
-  @override
   String get failedToReadAcceptance => 'Failed to read acceptance.';
 
   @override
-  String get goToChat => 'Go to Chat';
-
-  @override
-  String get copyAcceptance => 'Copy Acceptance';
-
-  @override
-  String get yourAcceptanceHasBeenGeneratedSuccessfully =>
-      'Your acceptance has been generated successfully.';
-
-  @override
-  String get tapToViewChat => 'Tap to view chat.';
-
-  @override
-  String get waitingForAcceptance => 'Waiting for acceptance.';
-
-  @override
   String get deleteChat => 'Delete Chat';
-
-  @override
-  String get areYouSureYouWantToDeleteThisChat =>
-      'Are you sure you want to delete this chat?';
 
   @override
   String get cancel => 'Cancel';
@@ -153,9 +59,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get failedToGetAcceptance => 'Failed to get acceptance';
 
   @override
-  String get storagePermissionDenied => 'Storage permission denied.';
-
-  @override
   String get errorPickingFiles => 'Error picking files.';
 
   @override
@@ -165,17 +68,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get fuzz => 'Fuzz';
 
   @override
-  String get defuzz => 'Defuzz';
-
-  @override
   String get failedToProcessFiles => 'Failed to process files';
 
   @override
   String get chatWithIndicatedNameAlreadyExists =>
       'Chat with indicated name already exists';
-
-  @override
-  String get reveal => 'Reveal';
 
   @override
   String get show => 'Show';
@@ -185,12 +82,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get dropFilesHere => 'Drop files here';
-
-  @override
-  String get shareInvitation => 'Share invitation';
-
-  @override
-  String get acceptanceText => 'Acceptance Text';
 
   @override
   String get basicEncryption => 'Basic Encryption';
@@ -240,81 +131,13 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Decryption failed check your key or encrypted text';
 
   @override
-  String get welcomeToFuzzzyInk => 'Welcome to Fuzzzy Ink';
-
-  @override
-  String get offlineEncryptedClipboard => 'Offline Encrypted Clipboard';
-
-  @override
-  String get yourDataNeverLeavesYourDeviceNoServersNoTracking =>
-      'Your data never leaves your device. No servers, no tracking.';
-
-  @override
-  String get secureHandshake => 'Secure Handshake';
-
-  @override
-  String get connectWithOthersUsingASecureOfflineCodeExchange =>
-      'Connect with others using a secure, offline code exchange.';
-
-  @override
-  String get getStarted => 'Get Started';
-
-  @override
   String get next => 'Next';
-
-  @override
-  String get noOngoingChats => 'No Ongoing Chats';
-
-  @override
-  String get tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation =>
-      'Tap the button below to create a new secure handshake or accept an invitation.';
-
-  @override
-  String get stepSendYourInviteCode => 'Step 1: Send Your Invite Code';
-
-  @override
-  String get sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel =>
-      'Send this code to the person you want to chat with using any secure channel.';
-
-  @override
-  String get stepPasteTheirAcceptanceCode =>
-      'Step 2: Paste Their Acceptance Code';
-
-  @override
-  String get onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow =>
-      'Once they accept your invite, they will send a code back. Paste it below.';
-
-  @override
-  String get stepPasteTheirInviteCode => 'Step 1: Paste Their Invite Code';
-
-  @override
-  String get askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow =>
-      'Ask your contact to share their invite code securely and paste it below.';
-
-  @override
-  String get stepNameThisChat => 'Step 2: Name This Chat';
-
-  @override
-  String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou =>
-      'Choose a local name for this chat. This is only visible to you.';
 
   @override
   String get settings => 'Settings';
 
   @override
-  String get shareAcceptance => 'Share acceptance';
-
-  @override
-  String get linkExpired => 'This link has expired.';
-
-  @override
-  String get linkShared => 'Link shared.';
-
-  @override
   String get invalidLink => 'This link is invalid or corrupted.';
-
-  @override
-  String get noMatchingChat => 'No matching chat found.';
 
   @override
   String get alreadyConnected => 'Already connected!';
@@ -322,12 +145,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get cantAcceptOwnInvitation =>
       'You can\'t accept your own invitation.';
-
-  @override
-  String get connectionComplete => 'Connection established!';
-
-  @override
-  String get incomingInvitation => 'Incoming invitation detected.';
 
   @override
   String get chatNotFoundForAcceptance =>
@@ -343,30 +160,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get vaultUntitled => 'Untitled';
 
   @override
-  String get vaultNewPassword => 'New Password';
-
-  @override
-  String get vaultNewNote => 'New Note';
-
-  @override
-  String get vaultEditItem => 'Edit Item';
-
-  @override
-  String get vaultTitle => 'Title';
-
-  @override
-  String get vaultUsernameEmail => 'Username / Email';
-
-  @override
-  String get vaultUrlWebsite => 'URL (Website)';
-
-  @override
-  String get vaultNotesOptional => 'Notes (Optional)';
-
-  @override
-  String get vaultSecureNote => 'Secure Note';
-
-  @override
   String get vaultSave => 'Save';
 
   @override
@@ -379,40 +172,10 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get vaultFiles => 'Files';
 
   @override
-  String get vaultNoFilesYet => 'No files yet';
-
-  @override
   String get vaultFileLabel => 'File';
 
   @override
   String get vaultAll => 'All';
-
-  @override
-  String get vaultAddGroup => 'Add Group';
-
-  @override
-  String get vaultNewGroup => 'New Group';
-
-  @override
-  String get vaultGroupName => 'Group name';
-
-  @override
-  String get vaultMoveToGroup => 'Move to Group';
-
-  @override
-  String get vaultNoOtherGroups => 'No other groups available';
-
-  @override
-  String get vaultNoResultsFound => 'No results found.';
-
-  @override
-  String get vaultNoPasswordsYet => 'No passwords yet.\nTap + to add one.';
-
-  @override
-  String get vaultNoNotesYet => 'No notes yet.\nTap + to add one.';
-
-  @override
-  String get vaultIsEmpty => 'Vault is empty.\nAdd a password or note.';
 
   @override
   String get vaultPasswordLabel => 'Password';
@@ -421,27 +184,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get vaultNoteLabel => 'Note';
 
   @override
-  String get vaultFailedToLoadItem => 'Failed to load item';
-
-  @override
-  String get vaultSearchHint => 'Search passwords & notes';
-
-  @override
-  String get vaultCreateYourVault => 'Create Your Vault';
-
-  @override
   String get vaultPassword => 'Vault Password';
-
-  @override
-  String get vaultCreateVault => 'Create Vault';
-
-  @override
-  String vaultFailedToCreate(Object failureType) {
-    return 'Failed to create vault: $failureType';
-  }
-
-  @override
-  String get vaultUnlockVault => 'Unlock Vault';
 
   @override
   String get vaultIncorrectPassword => 'Incorrect password';
@@ -454,33 +197,10 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Forgot password? Your data is encrypted and cannot be recovered.';
 
   @override
-  String vaultUnlockFailed(Object failureType) {
-    return 'Unlock failed: $failureType';
-  }
-
-  @override
-  String get fuzzyVault => 'Fuzzy Vault';
-
-  @override
   String get menu => 'Menu';
 
   @override
-  String get fuzzyUserAuth => 'Fuzzy User Auth';
-
-  @override
-  String authError(Object errorMessage) {
-    return 'Error: $errorMessage';
-  }
-
-  @override
   String get unknownError => 'Unknown error';
-
-  @override
-  String get noDataFoundPleaseSetYourData =>
-      'No data found. Please set your data.';
-
-  @override
-  String get lastUpdated => 'Last Updated:';
 
   @override
   String get keyStrengthWeak => 'Weak (Too short)';
@@ -507,44 +227,13 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get chatUnlockTitle => 'Unlock Fuzzzy Ink';
 
   @override
-  String get chatUnlockSubtitle =>
-      'Enter your master password to open the app.';
-
-  @override
-  String get chatAuthPassword => 'Password';
-
-  @override
   String get chatAuthIncorrectPassword => 'Incorrect password';
 
   @override
   String get chatAuthUnlock => 'Unlock';
 
   @override
-  String get chatAuthSetupDescription =>
-      'Set a password to encrypt your chat keys. This adds an extra layer of security to your conversations.';
-
-  @override
-  String get chatAuthSetPassword => 'Set Password';
-
-  @override
-  String get chatAuthConfirmPassword => 'Confirm Password';
-
-  @override
-  String get chatAuthPasswordsDoNotMatch => 'Passwords do not match';
-
-  @override
-  String get chatAuthProtectionDescription =>
-      'Your master password protects every key in the app: your chats, your history and, unless it has its own password, the vault. It cannot be switched off.';
-
-  @override
   String get chatAuthResecuringKeys => 'Re-securing your keys…';
-
-  @override
-  String get chatAuthentication => 'Master password';
-
-  @override
-  String get chatAuthenticationDescription =>
-      'Password, recovery key and auto-lock';
 
   @override
   String get benchmarkFileEncryption => 'Benchmark file encryption (dev)';
@@ -566,44 +255,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get close => 'Close';
 
   @override
-  String get chatAuthBiometricUnlock => 'Unlock with biometrics';
-
-  @override
-  String get chatAuthBiometricEnable => 'Enable Biometric Unlock';
-
-  @override
-  String get chatAuthBiometricDisable => 'Disable Biometric Unlock';
-
-  @override
-  String get chatAuthBiometricEnabled => 'Biometric Unlock Enabled';
-
-  @override
-  String get chatAuthBiometricDescription =>
-      'Enter your password to confirm, then unlock with fingerprint or Face ID.';
-
-  @override
-  String get chatAuthBiometricUnavailable =>
-      'Biometric authentication is not available on this device.';
-
-  @override
-  String get chatAuthBiometricFailed => 'Biometric authentication failed.';
-
-  @override
-  String get chatAuthBiometricInvalidated =>
-      'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.';
-
-  @override
   String get chatAuthPasswordTooWeak =>
       'Password is too weak. Use a longer one with letters, numbers and symbols.';
-
-  @override
-  String chatAuthLockedOut(Object time) {
-    return 'Too many wrong attempts. Try again in $time.';
-  }
-
-  @override
-  String get chatAuthBiometricReset =>
-      'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.';
 
   @override
   String get biometricNotStrongEnough =>
@@ -613,57 +266,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get biometricNotTurnedOn => 'Biometric unlock was not turned on.';
 
   @override
-  String get vaultBiometricUnlock => 'Unlock with biometrics';
-
-  @override
-  String get vaultBiometricEnable => 'Enable Biometric Unlock';
-
-  @override
-  String get vaultBiometricDisable => 'Disable Biometric Unlock';
-
-  @override
-  String get vaultBiometricEnabled => 'Biometric Unlock Enabled';
-
-  @override
-  String get vaultBiometricDescription =>
-      'Confirm with your master password to enable biometric unlock for this vault.';
-
-  @override
-  String get vaultBiometricUnavailable =>
-      'Biometric authentication is not available on this device.';
-
-  @override
-  String get vaultBiometricSettings => 'Biometric Settings';
-
-  @override
-  String get vaultBiometricInvalidPassword => 'Incorrect vault password.';
-
-  @override
   String get vaultBiometricInvalidated =>
       'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.';
-
-  @override
-  String get vaultAuthentication => 'Vault Authentication';
-
-  @override
-  String get vaultAuthenticationDescription => 'Manage vault biometric unlock';
-
-  @override
-  String get vaultNotCreated =>
-      'Create a vault first to enable biometric unlock.';
-
-  @override
-  String get chatAuthCurrentPassword => 'Current Password';
-
-  @override
-  String get chatAuthNewPassword => 'New Password';
-
-  @override
-  String get chatAuthPasswordChanged => 'Chat Password Changed';
-
-  @override
-  String get vaultFileSaveWarning =>
-      '⚠️ The original file is NOT auto-deleted. After a successful save, the user\'s source file remains on disk untouched. The app currently doesn\'t warn about this.';
 
   @override
   String get invitationAlreadyUsed => 'This invitation was already used.';
@@ -682,32 +286,15 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'This message was already unfuzzed on this device, or its one-time key is no longer kept.';
 
   @override
-  String get blobTooOld =>
-      'This message is too old to unfuzz — too many newer messages were unfuzzed first.';
-
-  @override
   String get corruptBlob => 'This is not a valid fuzzed message.';
 
   @override
   String get safetyNumberTitle => 'Safety number';
 
   @override
-  String get safetyNumberExplanation =>
-      'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.';
-
-  @override
   String safetyNumberVersion(int version) {
     return 'Version $version. If your partner sees another version, or none, update both apps before comparing.';
   }
-
-  @override
-  String get safetyNumberMarkVerified => 'Mark as verified';
-
-  @override
-  String get safetyNumberUnmark => 'Unmark';
-
-  @override
-  String get safetyNumberVerifiedBadge => 'Verified';
 
   @override
   String get wrongPasswordFile =>
@@ -734,10 +321,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionTitle => 'About encryption';
-
-  @override
-  String get aboutEncryptionDescription =>
-      'What single-use unfuzzing means, and how your history is kept';
 
   @override
   String get aboutEncryptionHistoryTitle => 'Your history on this device';
@@ -812,44 +395,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get couldNotOpenFile => 'Could not open file.';
 
   @override
-  String get legalAndSupport => 'Legal and support';
-
-  @override
-  String get legalAndSupportDescription =>
-      'These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.';
-
-  @override
   String get privacyPolicy => 'Privacy policy';
-
-  @override
-  String get privacyPolicyDescription => 'What the app keeps, and where';
 
   @override
   String get termsOfUse => 'Terms of use';
 
   @override
-  String get termsOfUseDescription => 'The rules for using Fuzzzy Ink';
-
-  @override
   String get support => 'Support';
-
-  @override
-  String get supportDescription => 'Help, questions and reporting a problem';
 
   @override
   String get dataDeletion => 'Deleting your data';
 
   @override
-  String get dataDeletionDescription =>
-      'How to remove everything the app keeps';
-
-  @override
   String get couldNotOpenLink => 'Could not open the link.';
-
-  @override
-  String appVersion(Object version, Object build) {
-    return 'Version $version (build $build)';
-  }
 
   @override
   String get biometricUnlockChats => 'Authenticate to unlock chats';
@@ -874,52 +432,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get copyRefused => 'Only sealed text can be copied.';
 
   @override
-  String get copyPolicyTitle => 'Copying';
-
-  @override
-  String get copyPolicyDescription =>
-      'Only the sealed text you send can be copied out of the app. Decrypted messages, notes and file locations stay inside. Anything copied is removed from the clipboard after a short time.';
-
-  @override
-  String copyPolicyVaultPasswordNote(int seconds) {
-    return 'Vault passwords are the one exception: a copied password is kept out of clipboard history where the system allows it and is removed after $seconds seconds.';
-  }
-
-  @override
   String get vaultCopyPassword => 'Copy password';
-
-  @override
-  String vaultPasswordCopiedClearsIn(int seconds) {
-    return 'Password copied. It is removed from the clipboard in $seconds seconds.';
-  }
-
-  @override
-  String get shareAsLinkOption => 'Send as a link';
-
-  @override
-  String get shareAsLinkOptionHint =>
-      'Opens straight in Fuzzzy Ink. Without the app, the link shows where to get it.';
-
-  @override
-  String get shareAsQrCodeOption => 'Show a QR code';
-
-  @override
-  String get shareAsQrCodeOptionHint =>
-      'The other phone scans it with its camera.';
-
-  @override
-  String get shareAsFileOption => 'Send as a file';
-
-  @override
-  String get shareAsFileOptionHint =>
-      'For e-mail, or a chat that cuts long links.';
-
-  @override
-  String get qrCodeHint =>
-      'Point the other phone\'s camera at this code. It opens Fuzzzy Ink there, or the download page if the app is missing.';
-
-  @override
-  String get notVerified => 'Not verified';
 
   @override
   String get saveFile => 'Save';
@@ -944,67 +457,18 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get masterPassword => 'Master password';
 
   @override
-  String get masterPasswordSetupTitle => 'Create your master password';
-
-  @override
-  String get masterPasswordSetupDescription =>
-      'One password protects everything in Fuzzzy Ink: your chats, your history and your vault. You will enter it each time you open the app.';
-
-  @override
   String get masterPasswordPreviousData =>
       'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.';
-
-  @override
-  String get masterPasswordCreate => 'Create master password';
-
-  @override
-  String get masterPasswordCreating => 'Creating your keys…';
 
   @override
   String get masterPasswordFailed =>
       'Your keys could not be created. Try again.';
 
   @override
-  String get masterPasswordIsOn => 'Master password is on';
-
-  @override
   String get recoveryKeyTitle => 'Recovery key';
 
   @override
-  String get recoveryKeyDescription =>
-      'If you forget your master password, this key lets you set a new one. Write it down or save it, and keep it somewhere safe, away from this device. You see it only now.';
-
-  @override
-  String get recoveryKeyWarning =>
-      'Without your password or this recovery key, nobody — not even us — can get your data back.';
-
-  @override
-  String get recoveryKeySave => 'Save or print…';
-
-  @override
-  String get recoveryKeySaved => 'Recovery key saved to a file';
-
-  @override
   String get recoveryKeySaveFailed => 'The recovery key was not saved.';
-
-  @override
-  String get recoveryKeyConfirm => 'I have saved my recovery key';
-
-  @override
-  String get recoveryKeyContinue => 'Continue';
-
-  @override
-  String get recoveryKeySkip => 'Continue without a recovery key';
-
-  @override
-  String get recoveryKeySkipTitle => 'Go on without a recovery key?';
-
-  @override
-  String get recoveryKeySkipMessage =>
-      'If you forget your master password, your chats, history and vault are lost for good. Without your password or this recovery key, nobody — not even us — can get your data back.';
-
-  @override
-  String get recoveryKeySkipConfirm => 'Continue without it';
 
   @override
   String recoveryKeyFileText(String key) {
@@ -1012,31 +476,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get recoveryKeyIsSet => 'A recovery key is set.';
-
-  @override
-  String get recoveryKeyNotSet =>
-      'No recovery key. If you forget your master password, your data is lost for good.';
-
-  @override
-  String get recoveryKeyCreateNew => 'Create a new recovery key';
-
-  @override
-  String get recoveryKeyCreateNewDescription =>
-      'Enter your master password to create a new recovery key. The old one stops working.';
-
-  @override
-  String get recoveryTitle => 'New password with your recovery key';
-
-  @override
-  String get recoveryDescription =>
-      'Enter the recovery key you saved when you set up the app, then choose a new master password.';
-
-  @override
   String get recoveryKeyField => 'Recovery key';
-
-  @override
-  String get recoverySubmit => 'Set new password';
 
   @override
   String get recoveryKeyTypo =>
@@ -1044,12 +484,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get recoveryKeyWrong => 'This recovery key does not open this app.';
-
-  @override
-  String get chatUnlockForgot => 'Forgot your password?';
-
-  @override
-  String get chatUnlockUseRecoveryKey => 'Use my recovery key';
 
   @override
   String get chatUnlockErase => 'Erase everything and start over';
@@ -1075,30 +509,12 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get appLockNow => 'Lock Fuzzzy Ink';
 
   @override
-  String get autoLockTitle => 'Auto-lock';
-
-  @override
-  String get autoLockIdle => 'Lock after no activity for';
-
-  @override
-  String get autoLockBackground => 'Lock after leaving the app';
-
-  @override
-  String get autoLockImmediately => 'At once';
-
-  @override
   String autoLockMinutes(int count) {
     return '$count min';
   }
 
   @override
   String get autoLockSaveFailed => 'The setting was not saved.';
-
-  @override
-  String get vaultPasswordModeTitle => 'Vault password';
-
-  @override
-  String get vaultUsesMasterPassword => 'Your master password opens the vault.';
 
   @override
   String get vaultUsesOwnPassword => 'The vault has its own password.';
@@ -1111,22 +527,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Open the vault with the master password';
 
   @override
-  String get vaultOwnPasswordNote =>
-      'No recovery key is set: without this password the vault is lost for good.';
-
-  @override
   String get vaultOwnPasswordRecoveryNote =>
       'Your recovery key can still open My safe.';
-
-  @override
-  String get vaultUseRecoveryKey => 'Use my recovery key';
-
-  @override
-  String get vaultRecoveryTitle => 'Open My safe with your recovery key';
-
-  @override
-  String get vaultRecoveryDescription =>
-      'Enter your recovery key, then choose a new password for My safe, or let your master password open it.';
 
   @override
   String get vaultRecoveryUseMasterPassword =>
@@ -1134,31 +536,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get vaultRecoverySubmit => 'Open My safe';
-
-  @override
-  String get recoveryKeyVaultPasswordNote =>
-      'My safe has its own password. Enter it too, so the new key opens My safe as well.';
-
-  @override
-  String get vaultOwnNewPassword => 'New vault password';
-
-  @override
-  String get vaultCurrentPassword => 'Current vault password';
-
-  @override
-  String get vaultPasswordModeChanged => 'Vault password updated';
-
-  @override
-  String get vaultCreateWithMasterDescription =>
-      'Your vault keeps passwords, notes and files sealed on this device. Your master password opens it; enter it to create the vault.';
-
-  @override
-  String get vaultForgotMasterPassword =>
-      'Forgot your master password? Lock the app and use your recovery key.';
-
-  @override
-  String get vaultTooManyAttempts =>
-      'Too many wrong passwords. Wait a moment and try again.';
 
   @override
   String get tabHome => 'Home';
@@ -1399,9 +776,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get tagNoCopy => 'No copy';
 
   @override
-  String get tagNoScreenshots => 'No screenshots';
-
-  @override
   String get lockWhoTitle => 'Who\'s it for?';
 
   @override
@@ -1486,21 +860,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get lockPasswordNotGood => 'It needs to reach Good.';
-
-  @override
-  String get lockStrengthLabel => 'Strength';
-
-  @override
-  String get lockStrengthWeak => 'Weak';
-
-  @override
-  String get lockStrengthFair => 'Fair';
-
-  @override
-  String get lockStrengthGood => 'Good';
-
-  @override
-  String get lockStrengthStrong => 'Strong';
 
   @override
   String get lockFailed => 'Couldn\'t lock it. Try again.';
@@ -1836,9 +1195,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get softSounds => 'Soft sounds';
-
-  @override
-  String get softSoundsLine => 'Never on silent';
 
   @override
   String get safeLockedTitle => 'My safe is locked';
@@ -2576,11 +1932,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get historyLoadError => 'Couldn\'t load the history.';
 
   @override
-  String historyNewRow(String name) {
-    return 'In $name\'s history now.';
-  }
-
-  @override
   String waitingCardTitle(String name) {
     return 'Waiting for $name\'s reply';
   }
@@ -2900,4 +2251,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String checkedTitle(String name) {
     return 'It\'s really $name';
   }
+
+  @override
+  String get incomingFileUnreadable =>
+      'Couldn\'t read that file. Open it again from where it is.';
 }

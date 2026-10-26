@@ -137,10 +137,12 @@ class _PersonLoader extends StatelessWidget {
           return FlowScaffold(
             qaId: 'lock.missing',
             onLeading: context.goBack,
-            isClose: true,
-            body: FlowTitle(
-              title: context.fuzzzyInkLocalizations.openErrorNotYoursTitle,
-            ),
+            leading: FlowLeading.close,
+            children: [
+              FlowTitle(
+                title: context.fuzzzyInkLocalizations.openErrorNotYoursTitle,
+              ),
+            ],
           );
         }
         return LockPage(

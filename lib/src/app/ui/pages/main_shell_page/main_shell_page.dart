@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 /// rail from 600 px wide. Every full-screen flow (first run, lock screen,
 /// recovery, Lock, Open, adding a person, a person's page) is a route
 /// outside this shell. The content lifts in once when the shell appears,
-/// which is right after an unlock.
+/// which is right after an unlock. On a computer, ⌘/Ctrl + L, O and ,
+/// open Lock, Open and Settings ([DesktopShortcuts]).
 class MainShellPage extends StatelessWidget {
   const MainShellPage({
     super.key,
@@ -40,6 +41,16 @@ class MainShellPage extends StatelessWidget {
     context.go(location);
   }
 
+  /// Lock, as Home's tile: "Who's it for?" first.
+  void _lock(BuildContext context) {
+    final people = context.read<ChatGeneralDataListCubit>().state;
+    showLockWhoSheet(
+      context,
+      people: people.chatList ?? const [],
+      unverifiedChatIds: people.unverifiedChatIds,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
@@ -53,8 +64,14 @@ class MainShellPage extends StatelessWidget {
       (Icons.settings_outlined, localizations.tabSettings),
     ];
 
-    final body = LiftIn(
-      child: index == 1 ? _MySafeFrame(child: child) : child,
+    final body = DesktopShortcuts(
+      onLock: () => _lock(context),
+      onOpen: () => context.push(AppRouter.open),
+      onSettings: () => _select(context, 2),
+      onLockApp: () => context.read<FuzzyAuthStore>().lock(),
+      child: LiftIn(
+        child: index == 1 ? _MySafeFrame(child: child) : child,
+      ),
     );
 
     if (isWide) {

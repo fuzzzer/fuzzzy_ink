@@ -4,8 +4,6 @@ import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
-export 'components/components.dart';
-
 /// I got an invite (DESIGN.md section 4.4, prototypes `got-start` and
 /// `got-name`): step 1 "Open the invite" (Paste it · Choose a file; a tapped
 /// invite link skips it), step 2 "The invite is good. Who sent it?" with
@@ -121,6 +119,9 @@ class _ProvidedInvitationAcceptancePageState
         case ChatCreationFailureType.invalidInvitation:
           _invitation = null;
           _problem = InvitationCheck.damaged;
+        case ChatCreationFailureType.newerApp:
+          _invitation = null;
+          _problem = InvitationCheck.newerApp;
         case ChatCreationFailureType.invalidAcceptance ||
               ChatCreationFailureType.invitationAlreadyUsed ||
               ChatCreationFailureType.wrongChat ||
@@ -161,10 +162,10 @@ class _ProvidedInvitationAcceptancePageState
     final space = context.fuzzzySpace;
     final problem = _problem;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'gotInvite',
       title: localizations.addGotInvite,
-      close: true,
+      leading: FlowLeading.close,
       children: [
         StepsIndicator(
           qaId: 'gotInvite',
@@ -239,10 +240,10 @@ class _ProvidedInvitationAcceptancePageState
     final localizations = context.fuzzzyInkLocalizations;
     final space = context.fuzzzySpace;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'gotInvite',
       title: localizations.addGotInvite,
-      close: true,
+      leading: FlowLeading.close,
       footer: FuzzzyButton(
         qaId: 'gotInvite.accept',
         label: localizations.gotAccept,
@@ -305,6 +306,10 @@ class _ProblemNotice extends StatelessWidget {
       InvitationCheck.alreadyConnected => (
           localizations.gotAlreadyTitle,
           localizations.gotAlreadyLine,
+        ),
+      InvitationCheck.newerApp => (
+          localizations.openErrorNewerTitle,
+          localizations.openErrorNewerLine,
         ),
       InvitationCheck.damaged || InvitationCheck.good => (
           localizations.gotDamagedTitle,

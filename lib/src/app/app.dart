@@ -45,6 +45,23 @@ class App extends StatelessWidget {
                   localizationsDelegates:
                       FuzzzyInkLocalizations.localizationsDelegates,
                   supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+                  builder: (context, child) {
+                    final brightness =
+                        switch (look.chosenBrightness.themeMode) {
+                      ThemeMode.dark => Brightness.dark,
+                      ThemeMode.light => Brightness.light,
+                      ThemeMode.system =>
+                        MediaQuery.platformBrightnessOf(context),
+                    };
+                    final theme = brightness == Brightness.dark
+                        ? _nightTheme
+                        : _paperTheme;
+                    return AppSwitcherCover(
+                      ground: theme.extension<FuzzzyColors>()!.ground,
+                      brightness: brightness,
+                      child: child ?? const SizedBox.shrink(),
+                    );
+                  },
                   routerConfig: AppRouter.router(
                     navigatorKey: navigatorKey,
                     scaffoldMessengerKey: scaffoldMessengerKey,

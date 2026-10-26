@@ -42,48 +42,50 @@ class OpenedTextView extends StatelessWidget {
         qaId: 'opened.done',
         onPressed: onDone,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            whenLine ??
-                (chat == null
-                    ? localizations.openedNotKept
-                    : localizations.openedKeptInHistory(chat.chatName)),
-            style: type.bodyS.copyWith(color: colors.inkMute),
-          ),
-          SizedBox(height: space.m),
-          Container(
-            padding: EdgeInsets.all(space.m),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              border: Border.all(color: colors.line),
-              borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              whenLine ??
+                  (chat == null
+                      ? localizations.openedNotKept
+                      : localizations.openedKeptInHistory(chat.chatName)),
+              style: type.bodyS.copyWith(color: colors.inkMute),
             ),
-            // Plain Text: never selectable, so nothing can be copied out.
-            child: Text(
-              state.openedText ?? '',
-              key: const Key('opened.text.body'),
-              style: type.titleS.copyWith(color: colors.ink),
+            SizedBox(height: space.m),
+            Container(
+              padding: EdgeInsets.all(space.m),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                border: Border.all(color: colors.line),
+                borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
+              ),
+              // Plain Text: never selectable, so nothing can be copied out.
+              child: Text(
+                state.openedText ?? '',
+                key: const Key('opened.text.body'),
+                style: type.titleS.copyWith(color: colors.ink),
+              ),
             ),
-          ),
-          SizedBox(height: space.s),
-          Row(
-            children: [
-              KeyTag(
-                label: localizations.tagNoCopy,
-                icon: Icons.content_copy_outlined,
-                qaId: 'opened.nocopy',
-              ),
-              const Spacer(),
-              const WhyLink(
-                topic: InkInfoTopic.noCopying,
-                qaId: 'opened.why.copy',
-              ),
-            ],
-          ),
-        ],
-      ),
+            SizedBox(height: space.s),
+            Row(
+              children: [
+                KeyTag(
+                  label: localizations.tagNoCopy,
+                  icon: Icons.content_copy_outlined,
+                  qaId: 'opened.nocopy',
+                ),
+                const Spacer(),
+                const WhyLink(
+                  topic: InkInfoTopic.noCopying,
+                  qaId: 'opened.why.copy',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -195,73 +197,75 @@ class OpenedFileView extends StatelessWidget {
         qaId: 'opened.done',
         onPressed: onDone,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            whenLine ??
-                (chat == null
-                    ? localizations.openedNotKept
-                    : localizations.openedKeptInHistory(chat.chatName)),
-            style: type.bodyS.copyWith(color: colors.inkMute),
-          ),
-          SizedBox(height: space.m),
-          FileCard(
-            name: UserFileNames.forDisplay(file.name),
-            size: fileSize,
-            qaId: 'opened.file.card',
-          ),
-          SizedBox(height: space.m),
-          if (!canShow) ...[
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
             Text(
-              localizations.fileNoPreview,
-              key: const Key('opened.file.noPreview'),
+              whenLine ??
+                  (chat == null
+                      ? localizations.openedNotKept
+                      : localizations.openedKeptInHistory(chat.chatName)),
               style: type.bodyS.copyWith(color: colors.inkMute),
             ),
             SizedBox(height: space.m),
-          ],
-          Row(
-            children: [
-              if (canShow) ...[
+            FileCard(
+              name: UserFileNames.forDisplay(file.name),
+              size: fileSize,
+              qaId: 'opened.file.card',
+            ),
+            SizedBox(height: space.m),
+            if (!canShow) ...[
+              Text(
+                localizations.fileNoPreview,
+                key: const Key('opened.file.noPreview'),
+                style: type.bodyS.copyWith(color: colors.inkMute),
+              ),
+              SizedBox(height: space.m),
+            ],
+            Row(
+              children: [
+                if (canShow) ...[
+                  Expanded(
+                    child: FuzzzyButton(
+                      label: localizations.open,
+                      icon: const Icon(Icons.visibility_outlined),
+                      size: FuzzzyButtonSize.l,
+                      qaId: 'opened.file.open',
+                      onPressed: () => _open(context),
+                    ),
+                  ),
+                  SizedBox(width: space.m),
+                ],
                 Expanded(
-                  child: FuzzzyButton(
-                    label: localizations.open,
-                    icon: const Icon(Icons.visibility_outlined),
+                  child: InPlaceConfirmButton(
+                    label: localizations.saveFile,
+                    confirmedLabel: localizations.confirmHandedOver,
+                    icon: const Icon(Icons.save_alt),
+                    variant: canShow
+                        ? FuzzzyButtonVariant.secondary
+                        : FuzzzyButtonVariant.primary,
                     size: FuzzzyButtonSize.l,
-                    qaId: 'opened.file.open',
-                    onPressed: () => _open(context),
+                    hold: InkMotionTiming.handedOverHold,
+                    qaId: 'opened.file.save',
+                    onPressed: () => _save(context),
                   ),
                 ),
-                SizedBox(width: space.m),
               ],
-              Expanded(
-                child: InPlaceConfirmButton(
-                  label: localizations.saveFile,
-                  confirmedLabel: localizations.confirmHandedOver,
-                  icon: const Icon(Icons.save_alt),
-                  variant: canShow
-                      ? FuzzzyButtonVariant.secondary
-                      : FuzzzyButtonVariant.primary,
-                  size: FuzzzyButtonSize.l,
-                  hold: InkMotionTiming.handedOverHold,
-                  qaId: 'opened.file.save',
-                  onPressed: () => _save(context),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: space.m),
-          TipLine(
-            icon: Icons.lock_outline,
-            text: localizations.openedSaveTip,
-            trailing: const WhyLink(
-              topic: InkInfoTopic.files,
-              qaId: 'opened.why.files',
             ),
-            qaId: 'opened.tip.files',
-          ),
-        ],
-      ),
+            SizedBox(height: space.m),
+            TipLine(
+              icon: Icons.lock_outline,
+              text: localizations.openedSaveTip,
+              trailing: const WhyLink(
+                topic: InkInfoTopic.files,
+                qaId: 'opened.why.files',
+              ),
+              qaId: 'opened.tip.files',
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

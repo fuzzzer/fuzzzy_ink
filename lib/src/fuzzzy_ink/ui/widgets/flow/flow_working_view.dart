@@ -47,75 +47,78 @@ class FlowWorkingView extends StatelessWidget {
             : '';
 
     return FlowScaffold(
+      leading: FlowLeading.none,
       qaId: qaId,
       title: title,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          FlowHero(
-            castMoment: FuzzzyCastMoment.working,
-            glyph: HeroGlyph(icon: icon, qaId: '$qaId.glyph'),
-          ),
-          Text(
-            UserFileNames.forDisplay(fileName),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: type.titleS.copyWith(color: colors.ink),
-          ),
-          SizedBox(height: space.m),
-          FuzzzyProgressBar(
-            value: progress <= 0 ? null : progress.clamp(0, 1).toDouble(),
-            qaId: '$qaId.progress',
-          ),
-          SizedBox(height: space.xs),
-          Semantics(
-            liveRegion: true,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    status,
-                    style: type.bodyS.copyWith(color: colors.inkMute),
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FlowHero(
+              castMoment: FuzzzyCastMoment.working,
+              glyph: HeroGlyph(icon: icon, qaId: '$qaId.glyph'),
+            ),
+            Text(
+              UserFileNames.forDisplay(fileName),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: type.titleS.copyWith(color: colors.ink),
+            ),
+            SizedBox(height: space.m),
+            FuzzzyProgressBar(
+              value: progress <= 0 ? null : progress.clamp(0, 1).toDouble(),
+              qaId: '$qaId.progress',
+            ),
+            SizedBox(height: space.xs),
+            Semantics(
+              liveRegion: true,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      status,
+                      style: type.bodyS.copyWith(color: colors.inkMute),
+                    ),
                   ),
-                ),
-                Text(
-                  '$percent%',
-                  key: Key('$qaId.percent'),
-                  style: type.label.copyWith(color: colors.inkMute),
+                  Text(
+                    '$percent%',
+                    key: Key('$qaId.percent'),
+                    style: type.label.copyWith(color: colors.inkMute),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: space.l),
+            Row(
+              children: [
+                if (onPause != null) ...[
+                  Expanded(
+                    child: FuzzzyButton(
+                      label: isPaused
+                          ? localizations.workingGoOn
+                          : localizations.workingPause,
+                      icon: Icon(isPaused ? Icons.play_arrow : Icons.pause),
+                      variant: FuzzzyButtonVariant.secondary,
+                      qaId: isPaused ? '$qaId.resume' : '$qaId.pause',
+                      onPressed: isPaused ? onResume : onPause,
+                    ),
+                  ),
+                  SizedBox(width: space.m),
+                ],
+                Expanded(
+                  child: FuzzzyButton(
+                    label: localizations.cancel,
+                    variant: FuzzzyButtonVariant.secondary,
+                    qaId: '$qaId.cancel',
+                    onPressed: onCancel,
+                  ),
                 ),
               ],
             ),
-          ),
-          SizedBox(height: space.l),
-          Row(
-            children: [
-              if (onPause != null) ...[
-                Expanded(
-                  child: FuzzzyButton(
-                    label: isPaused
-                        ? localizations.workingGoOn
-                        : localizations.workingPause,
-                    icon: Icon(isPaused ? Icons.play_arrow : Icons.pause),
-                    variant: FuzzzyButtonVariant.secondary,
-                    qaId: isPaused ? '$qaId.resume' : '$qaId.pause',
-                    onPressed: isPaused ? onResume : onPause,
-                  ),
-                ),
-                SizedBox(width: space.m),
-              ],
-              Expanded(
-                child: FuzzzyButton(
-                  label: localizations.cancel,
-                  variant: FuzzzyButtonVariant.secondary,
-                  qaId: '$qaId.cancel',
-                  onPressed: onCancel,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }

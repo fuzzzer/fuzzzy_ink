@@ -58,7 +58,9 @@ impl BlobKind {
             0x10 => Ok(Self::WrappedStoreKey),
             0x11 => Ok(Self::RecoveryBox),
             0x20 => Ok(Self::LocalSeal),
-            _ => Err(CoreError::UnsupportedFormat),
+            // Adding a type byte is not a version bump (PROTOCOL.md §12):
+            // one this build does not know was made by a newer app.
+            _ => Err(CoreError::NewerVersion),
         }
     }
 
@@ -155,11 +157,21 @@ fn begin_blob(kind: BlobKind, payload_capacity: usize) -> Vec<u8> {
 }
 
 /// Reads the 6-byte envelope; returns the kind and the payload after it.
+///
+/// A version above [`VERSION`], or a type byte this build does not know, is
+/// `NewerVersion` (made by a newer app); a short envelope, another magic or
+/// an older version is `UnsupportedFormat`.
 pub fn decode_envelope(blob: &[u8]) -> Result<(BlobKind, &[u8]), CoreError> {
     let (header, payload) = blob
         .split_first_chunk::<ENVELOPE_LEN>()
         .ok_or(CoreError::UnsupportedFormat)?;
-    if header[..4] != MAGIC || header[4] != VERSION {
+    if header[..4] != MAGIC {
+        return Err(CoreError::UnsupportedFormat);
+    }
+    if header[4] > VERSION {
+        return Err(CoreError::NewerVersion);
+    }
+    if header[4] != VERSION {
         return Err(CoreError::UnsupportedFormat);
     }
     Ok((BlobKind::from_byte(header[5])?, payload))
@@ -1247,11 +1259,7 @@ mod tests {
         assert_eq!(decode_envelope(&ok).unwrap().0, BlobKind::Message);
         for (case, bytes) in [
             ("magic", hex("46555a78010300")),
-            ("version", hex("46555a5a020300")),
             ("version 0", hex("46555a5a000300")),
-            ("type 0x00", hex("46555a5a010000")),
-            ("type 0x06", hex("46555a5a010600")),
-            ("type 0xff", hex("46555a5a01ff00")),
             ("short", hex("46555a5a01")),
             ("empty", Vec::new()),
         ] {
@@ -1262,16 +1270,39 @@ mod tests {
             );
         }
         assert_eq!(
-            decode_text("Fuzz/RlVaWgIDAA").and_then(|b| decode_envelope(&b).map(|e| e.0)),
-            Err(CoreError::UnsupportedFormat)
-        );
-        assert_eq!(
             decode_text("Fuzz/RlVaeAEDAA").and_then(|b| decode_envelope(&b).map(|e| e.0)),
             Err(CoreError::UnsupportedFormat)
         );
+    }
+
+    #[test]
+    fn envelope_from_a_newer_app_is_newer_version() {
+        for (case, bytes) in [
+            ("version 2", hex("46555a5a020300")),
+            ("version 0xff", hex("46555a5aff0300")),
+            ("version 2, unknown type", hex("46555a5a02ff00")),
+            ("type 0x00", hex("46555a5a010000")),
+            ("type 0x06", hex("46555a5a010600")),
+            ("type 0xff", hex("46555a5a01ff00")),
+        ] {
+            assert_eq!(
+                decode_envelope(&bytes),
+                Err(CoreError::NewerVersion),
+                "{case}"
+            );
+            assert_eq!(
+                decode_pasted(&encode_text(&bytes)),
+                Err(CoreError::NewerVersion),
+                "{case}"
+            );
+        }
+        assert_eq!(
+            decode_text("Fuzz/RlVaWgIDAA").and_then(|b| decode_envelope(&b).map(|e| e.0)),
+            Err(CoreError::NewerVersion)
+        );
         assert_eq!(
             decode_text("Fuzz/RlVaWgEGAA").and_then(|b| decode_envelope(&b).map(|e| e.0)),
-            Err(CoreError::UnsupportedFormat)
+            Err(CoreError::NewerVersion)
         );
     }
 

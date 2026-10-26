@@ -73,44 +73,46 @@ class _OpenChooseViewState extends State<OpenChooseView> {
         qaId: 'open',
         title: localizations.open,
         onLeading: widget.onClose,
-        isClose: true,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                localizations.openWhatYouGot,
-                style: context.fuzzzyTextStyles.titleL.copyWith(
-                  color: context.fuzzzyColors.ink,
+        leading: FlowLeading.close,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Semantics(
+                header: true,
+                child: Text(
+                  localizations.openWhatYouGot,
+                  style: context.fuzzzyTextStyles.titleL.copyWith(
+                    color: context.fuzzzyColors.ink,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: space.m),
-            SheetDoorRow(
-              qaId: 'open.paste',
-              icon: Icons.content_paste,
-              emphasised: true,
-              title: localizations.openPasteIt,
-              hint: localizations.openPasteItHint,
-              onTap: _paste,
-            ),
-            SheetDoorRow(
-              qaId: 'open.file',
-              icon: Icons.insert_drive_file_outlined,
-              title: localizations.openChooseFile,
-              hint: localizations.openChooseFileHint,
-              divider: false,
-              onTap: _isPicking ? null : _choose,
-            ),
-            SizedBox(height: space.m),
-            TipLine(
-              icon: Icons.link,
-              text: localizations.openLinksTip,
-              qaId: 'open.links',
-            ),
-          ],
-        ),
+              SizedBox(height: space.m),
+              SheetDoorRow(
+                qaId: 'open.paste',
+                icon: Icons.content_paste,
+                emphasised: true,
+                title: localizations.openPasteIt,
+                hint: localizations.openPasteItHint,
+                onTap: _paste,
+              ),
+              SheetDoorRow(
+                qaId: 'open.file',
+                icon: Icons.insert_drive_file_outlined,
+                title: localizations.openChooseFile,
+                hint: localizations.openChooseFileHint,
+                divider: false,
+                onTap: _isPicking ? null : _choose,
+              ),
+              SizedBox(height: space.m),
+              TipLine(
+                icon: Icons.link,
+                text: localizations.openLinksTip,
+                qaId: 'open.links',
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -123,25 +125,28 @@ class OpenReadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlowScaffold(
+      leading: FlowLeading.none,
       qaId: 'open.reading',
-      body: Padding(
-        padding: EdgeInsets.only(top: context.fuzzzySpace.xxl),
-        child: Column(
-          children: [
-            const FuzzzyProgressRing(qaId: 'open.reading'),
-            SizedBox(height: context.fuzzzySpace.m),
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                context.fuzzzyInkLocalizations.openReading,
-                style: context.fuzzzyTextStyles.body.copyWith(
-                  color: context.fuzzzyColors.inkMute,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: context.fuzzzySpace.xxl),
+          child: Column(
+            children: [
+              const FuzzzyProgressRing(qaId: 'open.reading'),
+              SizedBox(height: context.fuzzzySpace.m),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  context.fuzzzyInkLocalizations.openReading,
+                  style: context.fuzzzyTextStyles.body.copyWith(
+                    color: context.fuzzzyColors.inkMute,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

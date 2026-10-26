@@ -2,83 +2,164 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// The screen recipe of the Lock and Open flows (DESIGN.md section 6): a
-/// header with back or close, the content scrolling under it, and the main
-/// button anchored at the bottom in the same place on every screen.
+/// What the header's first button does.
+enum FlowLeading {
+  /// The back arrow (the flow goes on behind).
+  back,
+
+  /// A close cross (the flow ends here).
+  close,
+
+  /// No button (a screen that cannot be left while it works).
+  none,
+}
+
+/// The one flow screen of the app (DESIGN.md section 6, "Screen recipe"),
+/// used by Lock, Open, adding a person and the person's own screens: a 56 px
+/// header ([FlowHeader]) with back, close or nothing and an optional title,
+/// the content scrolling between 20 px margins, and the main buttons
+/// anchored at the bottom in the same place on every screen.
 class FlowScaffold extends StatelessWidget {
   const FlowScaffold({
     super.key,
     required this.qaId,
-    required this.body,
-    this.title = '',
+    required this.children,
+    this.title,
+    this.leading = FlowLeading.back,
     this.onLeading,
-    this.isClose = false,
+    this.actions = const [],
     this.footer,
+    this.headerLine = false,
   });
 
   final String qaId;
-  final String title;
+  final List<Widget> children;
 
-  /// Back (or close, with [isClose]); none when null.
+  /// Null leaves the header empty except for its buttons.
+  final String? title;
+  final FlowLeading leading;
+
+  /// Defaults to going back.
   final VoidCallback? onLeading;
-  final bool isClose;
-  final Widget body;
+  final List<Widget> actions;
 
-  /// The main button(s) at the bottom.
+  /// The main buttons, anchored at the bottom.
   final Widget? footer;
+
+  /// A hairline under the header.
+  final bool headerLine;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.fuzzzyColors;
-    final padding = context.fuzzzyDensity.screen;
-    final localizations = context.fuzzzyInkLocalizations;
-    final leading = onLeading;
+    final space = context.fuzzzySpace;
+    final footer = this.footer;
+    final side = space.l + space.xs;
 
     return Scaffold(
+      key: Key('screen.$qaId'),
       backgroundColor: colors.ground,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: padding.left / 2),
-              child: FuzzzyAppBar(
-                title: title,
-                qaId: '$qaId.appbar',
-                leading: leading == null
-                    ? null
-                    : Semantics(
-                        label:
-                            isClose ? localizations.close : localizations.back,
-                        child: Icon(isClose ? Icons.close : Icons.arrow_back),
-                      ),
-                onLeading: leading,
-              ),
+            FlowHeader(
+              qaId: qaId,
+              title: title,
+              leading: leading,
+              onLeading: onLeading,
+              actions: actions,
+              line: headerLine,
             ),
             Expanded(
-              child: SingleChildScrollView(
+              child: ListView(
                 key: Key('$qaId.scroll'),
-                padding: EdgeInsets.fromLTRB(
-                  padding.left,
-                  context.fuzzzySpace.s,
-                  padding.right,
-                  context.fuzzzySpace.l,
-                ),
-                child: body,
+                padding: EdgeInsets.fromLTRB(side, space.xs, side, space.l),
+                children: children,
               ),
             ),
             if (footer != null)
               Padding(
-                padding: EdgeInsets.fromLTRB(
-                  padding.left,
-                  context.fuzzzySpace.s,
-                  padding.right,
-                  context.fuzzzySpace.m,
-                ),
+                padding: EdgeInsets.fromLTRB(side, space.m, side, space.l),
                 child: footer,
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The flows' header: back, close or nothing, a title, and actions on the
+/// right.
+class FlowHeader extends StatelessWidget {
+  const FlowHeader({
+    super.key,
+    required this.qaId,
+    this.title,
+    this.leading = FlowLeading.back,
+    this.avatar,
+    this.onLeading,
+    this.actions = const [],
+    this.line = false,
+  });
+
+  final String qaId;
+  final String? title;
+  final FlowLeading leading;
+
+  /// Shown between the back button and the title (the person's avatar).
+  final Widget? avatar;
+  final VoidCallback? onLeading;
+  final List<Widget> actions;
+  final bool line;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
+    final localizations = context.fuzzzyInkLocalizations;
+    final title = this.title;
+    final avatar = this.avatar;
+    final isClose = leading == FlowLeading.close;
+
+    return Container(
+      constraints: const BoxConstraints(minHeight: 56),
+      padding: EdgeInsets.symmetric(horizontal: space.s + space.xs / 2),
+      decoration: BoxDecoration(
+        color: colors.ground,
+        border: line ? Border(bottom: BorderSide(color: colors.line)) : null,
+      ),
+      child: Row(
+        children: [
+          if (leading != FlowLeading.none) ...[
+            FuzzzyIconButton(
+              icon: Icon(isClose ? Icons.close : Icons.arrow_back),
+              semanticLabel: isClose ? localizations.close : localizations.back,
+              qaId: '$qaId.${isClose ? 'close' : 'back'}',
+              onPressed: onLeading ?? () => Navigator.of(context).maybePop(),
+            ),
+            SizedBox(width: space.s),
+          ] else
+            SizedBox(width: space.s),
+          if (avatar != null) ...[avatar, SizedBox(width: space.s)],
+          Expanded(
+            child: title == null
+                ? const SizedBox.shrink()
+                : Semantics(
+                    header: true,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.fuzzzyTextStyles.titleS.copyWith(
+                        color: colors.ink,
+                      ),
+                    ),
+                  ),
+          ),
+          ...actions,
+        ],
       ),
     );
   }

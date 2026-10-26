@@ -87,7 +87,6 @@ class PersonPage extends StatelessWidget {
       create: (_) => ConnectedChatCubit(
         chatId: chatId,
         messageDataRepository: sl.get<MessageDataRepository>(),
-        cryptoCoreService: sl.get<CryptoCoreService>(),
         messagesPerPage: 30,
       )..loadInitialMessages(),
       child: ProvidedPersonPage(
@@ -279,7 +278,7 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
             ?.firstWhereOrNull((chat) => chat.chatId == widget.chatId);
 
         if (chat == null) {
-          return InkFlowScaffold(
+          return FlowScaffold(
             qaId: 'person',
             headerLine: true,
             children: [
@@ -300,11 +299,11 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                InkFlowHeader(
+                FlowHeader(
                   qaId: 'person',
                   title: chat.chatName,
                   line: true,
-                  leading: ExcludeSemantics(
+                  avatar: ExcludeSemantics(
                     child: FuzzzyAvatar(
                       initials: initial,
                     ),

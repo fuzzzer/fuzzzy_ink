@@ -42,12 +42,6 @@ class MessageDataLocalDataSource {
     });
   }
 
-  Future<void> deleteMessage(int messageId) async {
-    await isar.writeTxn(() async {
-      await isar.storedMessageDatas.delete(messageId);
-    });
-  }
-
   Future<void> deleteAllMessagesForChat(String chatId) async {
     final messages = await getMessagesForChat(chatId);
     await isar.writeTxn(() async {

@@ -15,13 +15,3 @@ class ThemeState {
     );
   }
 }
-
-Brightness getBrightnessFromChosenBrightness(ChosenBrightness brightness) {
-  return brightness.isSystem
-      ? WidgetsBinding.instance.platformDispatcher.platformBrightness.isLight
-          ? Brightness.light
-          : Brightness.dark
-      : brightness.isLight
-          ? Brightness.light
-          : Brightness.dark;
-}

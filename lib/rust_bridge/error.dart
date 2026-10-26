@@ -16,8 +16,14 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// as a `freezed` sealed class, and `freezed` is not a dependency this app carries
 /// (plan §7). The OS message of an `Io` failure therefore stays on the Rust side.
 enum CoreError {
-  /// Unknown magic, version, type byte or text encoding — not a blob this build reads.
+  /// Unknown magic or text encoding, an outdated version, a blob of the
+  /// wrong type for the call or a storage-only type pasted — not a blob
+  /// this build reads.
   unsupportedFormat,
+
+  /// Fuzzzy Ink's envelope with a version above this build's, or a type
+  /// byte this build does not know: made by a newer app (PROTOCOL.md §12).
+  newerVersion,
 
   /// An Ed25519 signature over an invitation or acceptance did not verify.
   invalidSignature,

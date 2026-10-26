@@ -142,6 +142,7 @@ void main() {
     for (final (failure, problem) in [
       (CryptoCoreFailureType.replay, OpenProblem.alreadyOpened),
       (CryptoCoreFailureType.tooOld, OpenProblem.tooOld),
+      (CryptoCoreFailureType.newerVersion, OpenProblem.newerApp),
       (CryptoCoreFailureType.corrupt, OpenProblem.damaged),
       (CryptoCoreFailureType.wrongChat, OpenProblem.damaged),
       (CryptoCoreFailureType.storeLocked, OpenProblem.failed),

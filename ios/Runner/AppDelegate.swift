@@ -95,11 +95,15 @@ extension AppDelegate {
 /// The native side of the screen and copy guard (`screen_guard.dart`,
 /// `copy_guard.dart`).
 ///
+/// - App switcher: on every screen, a cover (the look's ground and the Ink
+///   mark, DESIGN.md section 4.2) hides the window while the app is inactive,
+///   so the app switcher snapshot never shows the content.
+/// - `setCover`: the look the cover takes (ground colour, mark asset); Dart
+///   sends it whenever the look changes. Until then it follows the system.
 /// - `setSecure`: while a sensitive screen is visible the Flutter content is
 ///   drawn inside a secure text field's layer, which iOS leaves out of
 ///   screenshots, screen recordings and mirroring; a blur covers the window
-///   while the app is inactive (the app switcher snapshot) and while the
-///   screen is being recorded or mirrored.
+///   while the screen is being recorded or mirrored.
 /// - `copy`: a sensitive copy stays on this device (no Universal Clipboard);
 ///   every copy expires on its own after the time Dart gives.
 /// - `clearIfOurs`: empties the pasteboard only while it still holds that
@@ -108,10 +112,30 @@ final class InkGuard: NSObject {
   static let channelName = "com.fuzzzycore.ink/guard"
   static let shared = InkGuard()
 
+  /// What covers the window: the brand cover (app switcher) or a blur
+  /// (a sensitive screen being recorded or mirrored).
+  enum Cover: Equatable {
+    case brand
+    case blur
+  }
+
+  /// The cover for a state; the brand cover wins while inactive.
+  static func cover(isInactive: Bool, isSecure: Bool, isCaptured: Bool) -> Cover? {
+    if isInactive { return .brand }
+    if isSecure && isCaptured { return .blur }
+    return nil
+  }
+
+  /// The mark's side on the cover, in points (DESIGN.md section 11).
+  static let coverMarkSize: CGFloat = 64
+
   private var isSecure = false
   private var isInactive = false
   private var secureField: UITextField?
   private var cover: UIView?
+  private var coverKind: Cover?
+  private var coverGround: UIColor?
+  private var coverMarkAsset: String?
   private var ourChangeCount: Int?
 
   private override init() {
@@ -136,6 +160,17 @@ final class InkGuard: NSObject {
     switch call.method {
     case "setSecure":
       setSecure(call.arguments as? Bool ?? false)
+      result(true)
+    case "setCover":
+      guard let arguments = call.arguments as? [String: Any],
+        let ground = arguments["ground"] as? Int,
+        let mark = arguments["mark"] as? String
+      else {
+        result(FlutterError(code: "badArguments", message: "ground or mark is missing", details: nil))
+        return
+      }
+      coverGround = InkGuard.color(argb: ground)
+      coverMarkAsset = mark
       result(true)
     case "copy":
       guard let arguments = call.arguments as? [String: Any],
@@ -204,18 +239,59 @@ final class InkGuard: NSObject {
   }
 
   private func updateCover() {
-    let shouldCover = isSecure && (isInactive || UIScreen.main.isCaptured)
-    if shouldCover {
-      guard cover == nil, let window = window else { return }
-      let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
-      blur.frame = window.bounds
-      blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-      window.addSubview(blur)
-      cover = blur
-    } else {
-      cover?.removeFromSuperview()
-      cover = nil
+    let wanted = InkGuard.cover(
+      isInactive: isInactive, isSecure: isSecure, isCaptured: UIScreen.main.isCaptured)
+    guard wanted != coverKind else { return }
+    cover?.removeFromSuperview()
+    cover = nil
+    coverKind = nil
+    guard let wanted = wanted, let window = window else { return }
+    let view: UIView
+    switch wanted {
+    case .brand:
+      view = brandCover(frame: window.bounds, traits: window.traitCollection)
+    case .blur:
+      view = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+      view.frame = window.bounds
     }
+    view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    window.addSubview(view)
+    cover = view
+    coverKind = wanted
+  }
+
+  /// The look's ground with the Ink mark in the middle.
+  private func brandCover(frame: CGRect, traits: UITraitCollection) -> UIView {
+    let isDark = traits.userInterfaceStyle == .dark
+    let view = UIView(frame: frame)
+    view.backgroundColor =
+      coverGround ?? InkGuard.color(argb: isDark ? 0xFF12_1417 : 0xFFF2_F0E9)
+    let asset =
+      coverMarkAsset
+      ?? (isDark ? "assets/logo/3.0x/ink_mark.png" : "assets/logo/3.0x/ink_mark_paper.png")
+    if let path = Bundle.main.path(
+      forResource: FlutterDartProject.lookupKey(forAsset: asset), ofType: nil),
+      let image = UIImage(contentsOfFile: path)
+    {
+      let mark = UIImageView(image: image)
+      mark.contentMode = .scaleAspectFit
+      mark.frame = CGRect(
+        x: 0, y: 0, width: InkGuard.coverMarkSize, height: InkGuard.coverMarkSize)
+      mark.center = CGPoint(x: frame.midX, y: frame.midY)
+      mark.autoresizingMask = [
+        .flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin,
+      ]
+      view.addSubview(mark)
+    }
+    return view
+  }
+
+  static func color(argb: Int) -> UIColor {
+    UIColor(
+      red: CGFloat((argb >> 16) & 0xFF) / 255,
+      green: CGFloat((argb >> 8) & 0xFF) / 255,
+      blue: CGFloat(argb & 0xFF) / 255,
+      alpha: CGFloat((argb >> 24) & 0xFF) / 255)
   }
 
   private func copy(_ text: String, isSensitive: Bool, expiresInMs: Int) {

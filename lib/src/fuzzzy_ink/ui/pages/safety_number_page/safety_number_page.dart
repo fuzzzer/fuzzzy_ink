@@ -81,7 +81,7 @@ class ProvidedSafetyNumberPage extends StatelessWidget {
         final title = localizations.isItReally(name);
 
         if (number == null) {
-          return InkFlowScaffold(
+          return FlowScaffold(
             qaId: 'safety',
             title: title,
             children: [
@@ -98,7 +98,7 @@ class ProvidedSafetyNumberPage extends StatelessWidget {
           );
         }
 
-        return InkFlowScaffold(
+        return FlowScaffold(
           qaId: 'safety',
           title: title,
           footer: state.isVerified

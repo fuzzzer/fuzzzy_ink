@@ -192,6 +192,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         switch (res.type) {
           CryptoCoreFailureType.replay => OpenProblem.alreadyOpened,
           CryptoCoreFailureType.tooOld => OpenProblem.tooOld,
+          CryptoCoreFailureType.newerVersion => OpenProblem.newerApp,
           CryptoCoreFailureType.storeLocked ||
           CryptoCoreFailureType.io ||
           CryptoCoreFailureType.internal =>
@@ -317,6 +318,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
       FileProcessingFailureType.alreadyUnfuzzed => OpenProblem.alreadyOpened,
       FileProcessingFailureType.tooOld => OpenProblem.tooOld,
       FileProcessingFailureType.stillArriving => OpenProblem.stillArriving,
+      FileProcessingFailureType.newerApp => OpenProblem.newerApp,
       FileProcessingFailureType.cannotOpenAskResend ||
       FileProcessingFailureType.cancelled =>
         OpenProblem.askResend,
@@ -356,7 +358,11 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
           emit(state.copyWith(isBusy: false, isPasswordWrong: true));
           return;
         }
-        return _problem(OpenProblem.damaged);
+        return _problem(
+          res.type == CryptoCoreFailureType.newerVersion
+              ? OpenProblem.newerApp
+              : OpenProblem.damaged,
+        );
       }
       emit(
         OpenFlowState(
@@ -422,7 +428,11 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
           );
           return;
         }
-        return _problem(OpenProblem.damaged);
+        return _problem(
+          error == CryptoCoreFailureType.newerVersion.name
+              ? OpenProblem.newerApp
+              : OpenProblem.damaged,
+        );
       }
       if (event.isComplete) {
         _passwordFileHandler = null;

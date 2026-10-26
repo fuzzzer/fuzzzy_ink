@@ -38,8 +38,11 @@ enum InvitationCheck {
   /// A good invite from someone new.
   good,
 
-  /// Cut off, changed, not an invite, or from a newer Fuzzzy Ink.
+  /// Cut off, changed or not an invite.
   damaged,
+
+  /// Made by a newer Fuzzzy Ink ("Needs a newer Fuzzzy Ink").
+  newerApp,
 
   /// An invite this phone made.
   ownInvitation,

@@ -111,41 +111,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Fuzzzy Ink'**
   String get fuzzzyInk;
 
-  /// No description provided for @failedToLoadChats.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to load chats.'**
-  String get failedToLoadChats;
-
-  /// No description provided for @newChat.
-  ///
-  /// In en, this message translates to:
-  /// **'New Chat'**
-  String get newChat;
-
   /// No description provided for @acceptInvitation.
   ///
   /// In en, this message translates to:
   /// **'Accept Invitation'**
   String get acceptInvitation;
-
-  /// No description provided for @createANewChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a New Chat'**
-  String get createANewChat;
-
-  /// No description provided for @enterChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter Chat Name'**
-  String get enterChatName;
-
-  /// No description provided for @eg.
-  ///
-  /// In en, this message translates to:
-  /// **'e.g.'**
-  String get eg;
 
   /// No description provided for @back.
   ///
@@ -159,65 +129,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Create'**
   String get create;
 
-  /// No description provided for @chatWithAlice.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat with Alice'**
-  String get chatWithAlice;
-
   /// No description provided for @failedToCreateChat.
   ///
   /// In en, this message translates to:
   /// **'Failed to create chat.'**
   String get failedToCreateChat;
-
-  /// No description provided for @pleaseEnterAChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a chat name.'**
-  String get pleaseEnterAChatName;
-
-  /// No description provided for @pleasePasteTheAcceptanceContent.
-  ///
-  /// In en, this message translates to:
-  /// **'Please paste the acceptance content.'**
-  String get pleasePasteTheAcceptanceContent;
-
-  /// No description provided for @failedToCompleteHandshake.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to complete handshake.'**
-  String get failedToCompleteHandshake;
-
-  /// No description provided for @sendInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Invitation'**
-  String get sendInvitation;
-
-  /// No description provided for @copyInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Invitation'**
-  String get copyInvitation;
-
-  /// No description provided for @invitationCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Invitation copied to clipboard.'**
-  String get invitationCopiedToClipboard;
-
-  /// No description provided for @provideAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Provide Acceptance'**
-  String get provideAcceptance;
-
-  /// No description provided for @pasteAcceptanceText.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste Acceptance Text'**
-  String get pasteAcceptanceText;
 
   /// No description provided for @accept.
   ///
@@ -225,108 +141,17 @@ abstract class FuzzzyInkLocalizations {
   /// **'Accept'**
   String get accept;
 
-  /// No description provided for @unexpectedFailureOccuredPleaseContactUs.
-  ///
-  /// In en, this message translates to:
-  /// **'Unexpected failure occurred, please contact us.'**
-  String get unexpectedFailureOccuredPleaseContactUs;
-
-  /// No description provided for @failedToGenerateInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to generate invitation.'**
-  String get failedToGenerateInvitation;
-
-  /// No description provided for @inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages.
-  ///
-  /// In en, this message translates to:
-  /// **'To start a chat with someone, they must first import the invitation and provide the acceptance text generated in their chat. This will allow them to send and unlock messages.'**
-  String
-      get inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages;
-
-  /// No description provided for @theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere.
-  ///
-  /// In en, this message translates to:
-  /// **'The acceptance that you get from the invited person should be pasted here:'**
-  String get theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere;
-
-  /// No description provided for @failedToAcceptInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to accept invitation.'**
-  String get failedToAcceptInvitation;
-
-  /// No description provided for @pleaseProvideInvitationTextAndChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Please provide invitation text and chat name.'**
-  String get pleaseProvideInvitationTextAndChatName;
-
-  /// No description provided for @acceptChatInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept Chat Invitation'**
-  String get acceptChatInvitation;
-
-  /// No description provided for @pasteInvitationText.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste Invitation Text'**
-  String get pasteInvitationText;
-
-  /// No description provided for @failedToGenerateAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to generate acceptance.'**
-  String get failedToGenerateAcceptance;
-
   /// No description provided for @failedToReadAcceptance.
   ///
   /// In en, this message translates to:
   /// **'Failed to read acceptance.'**
   String get failedToReadAcceptance;
 
-  /// No description provided for @goToChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Go to Chat'**
-  String get goToChat;
-
-  /// No description provided for @copyAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Acceptance'**
-  String get copyAcceptance;
-
-  /// No description provided for @yourAcceptanceHasBeenGeneratedSuccessfully.
-  ///
-  /// In en, this message translates to:
-  /// **'Your acceptance has been generated successfully.'**
-  String get yourAcceptanceHasBeenGeneratedSuccessfully;
-
-  /// No description provided for @tapToViewChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to view chat.'**
-  String get tapToViewChat;
-
-  /// No description provided for @waitingForAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting for acceptance.'**
-  String get waitingForAcceptance;
-
   /// No description provided for @deleteChat.
   ///
   /// In en, this message translates to:
   /// **'Delete Chat'**
   String get deleteChat;
-
-  /// No description provided for @areYouSureYouWantToDeleteThisChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete this chat?'**
-  String get areYouSureYouWantToDeleteThisChat;
 
   /// No description provided for @cancel.
   ///
@@ -370,12 +195,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Failed to get acceptance'**
   String get failedToGetAcceptance;
 
-  /// No description provided for @storagePermissionDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Storage permission denied.'**
-  String get storagePermissionDenied;
-
   /// No description provided for @errorPickingFiles.
   ///
   /// In en, this message translates to:
@@ -394,12 +213,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Fuzz'**
   String get fuzz;
 
-  /// No description provided for @defuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Defuzz'**
-  String get defuzz;
-
   /// No description provided for @failedToProcessFiles.
   ///
   /// In en, this message translates to:
@@ -411,12 +224,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Chat with indicated name already exists'**
   String get chatWithIndicatedNameAlreadyExists;
-
-  /// No description provided for @reveal.
-  ///
-  /// In en, this message translates to:
-  /// **'Reveal'**
-  String get reveal;
 
   /// No description provided for @show.
   ///
@@ -435,18 +242,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Drop files here'**
   String get dropFilesHere;
-
-  /// No description provided for @shareInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Share invitation'**
-  String get shareInvitation;
-
-  /// No description provided for @acceptanceText.
-  ///
-  /// In en, this message translates to:
-  /// **'Acceptance Text'**
-  String get acceptanceText;
 
   /// No description provided for @basicEncryption.
   ///
@@ -538,107 +333,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Decryption failed check your key or encrypted text'**
   String get decryptionFailedCheckYourKeyOrEncryptedText;
 
-  /// No description provided for @welcomeToFuzzzyInk.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome to Fuzzzy Ink'**
-  String get welcomeToFuzzzyInk;
-
-  /// No description provided for @offlineEncryptedClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline Encrypted Clipboard'**
-  String get offlineEncryptedClipboard;
-
-  /// No description provided for @yourDataNeverLeavesYourDeviceNoServersNoTracking.
-  ///
-  /// In en, this message translates to:
-  /// **'Your data never leaves your device. No servers, no tracking.'**
-  String get yourDataNeverLeavesYourDeviceNoServersNoTracking;
-
-  /// No description provided for @secureHandshake.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure Handshake'**
-  String get secureHandshake;
-
-  /// No description provided for @connectWithOthersUsingASecureOfflineCodeExchange.
-  ///
-  /// In en, this message translates to:
-  /// **'Connect with others using a secure, offline code exchange.'**
-  String get connectWithOthersUsingASecureOfflineCodeExchange;
-
-  /// No description provided for @getStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Started'**
-  String get getStarted;
-
   /// No description provided for @next.
   ///
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
-
-  /// No description provided for @noOngoingChats.
-  ///
-  /// In en, this message translates to:
-  /// **'No Ongoing Chats'**
-  String get noOngoingChats;
-
-  /// No description provided for @tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap the button below to create a new secure handshake or accept an invitation.'**
-  String get tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation;
-
-  /// No description provided for @stepSendYourInviteCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 1: Send Your Invite Code'**
-  String get stepSendYourInviteCode;
-
-  /// No description provided for @sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Send this code to the person you want to chat with using any secure channel.'**
-  String get sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel;
-
-  /// No description provided for @stepPasteTheirAcceptanceCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 2: Paste Their Acceptance Code'**
-  String get stepPasteTheirAcceptanceCode;
-
-  /// No description provided for @onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow.
-  ///
-  /// In en, this message translates to:
-  /// **'Once they accept your invite, they will send a code back. Paste it below.'**
-  String get onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow;
-
-  /// No description provided for @stepPasteTheirInviteCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 1: Paste Their Invite Code'**
-  String get stepPasteTheirInviteCode;
-
-  /// No description provided for @askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow.
-  ///
-  /// In en, this message translates to:
-  /// **'Ask your contact to share their invite code securely and paste it below.'**
-  String get askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow;
-
-  /// No description provided for @stepNameThisChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 2: Name This Chat'**
-  String get stepNameThisChat;
-
-  /// No description provided for @chooseALocalNameForThisChatThisIsOnlyVisibleToYou.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a local name for this chat. This is only visible to you.'**
-  String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou;
 
   /// No description provided for @settings.
   ///
@@ -646,35 +345,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @shareAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Share acceptance'**
-  String get shareAcceptance;
-
-  /// No description provided for @linkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This link has expired.'**
-  String get linkExpired;
-
-  /// No description provided for @linkShared.
-  ///
-  /// In en, this message translates to:
-  /// **'Link shared.'**
-  String get linkShared;
-
   /// No description provided for @invalidLink.
   ///
   /// In en, this message translates to:
   /// **'This link is invalid or corrupted.'**
   String get invalidLink;
-
-  /// No description provided for @noMatchingChat.
-  ///
-  /// In en, this message translates to:
-  /// **'No matching chat found.'**
-  String get noMatchingChat;
 
   /// No description provided for @alreadyConnected.
   ///
@@ -687,18 +362,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'You can\'t accept your own invitation.'**
   String get cantAcceptOwnInvitation;
-
-  /// No description provided for @connectionComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection established!'**
-  String get connectionComplete;
-
-  /// No description provided for @incomingInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Incoming invitation detected.'**
-  String get incomingInvitation;
 
   /// No description provided for @chatNotFoundForAcceptance.
   ///
@@ -724,54 +387,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Untitled'**
   String get vaultUntitled;
 
-  /// No description provided for @vaultNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New Password'**
-  String get vaultNewPassword;
-
-  /// No description provided for @vaultNewNote.
-  ///
-  /// In en, this message translates to:
-  /// **'New Note'**
-  String get vaultNewNote;
-
-  /// No description provided for @vaultEditItem.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Item'**
-  String get vaultEditItem;
-
-  /// No description provided for @vaultTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Title'**
-  String get vaultTitle;
-
-  /// No description provided for @vaultUsernameEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Username / Email'**
-  String get vaultUsernameEmail;
-
-  /// No description provided for @vaultUrlWebsite.
-  ///
-  /// In en, this message translates to:
-  /// **'URL (Website)'**
-  String get vaultUrlWebsite;
-
-  /// No description provided for @vaultNotesOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'Notes (Optional)'**
-  String get vaultNotesOptional;
-
-  /// No description provided for @vaultSecureNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure Note'**
-  String get vaultSecureNote;
-
   /// No description provided for @vaultSave.
   ///
   /// In en, this message translates to:
@@ -796,12 +411,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Files'**
   String get vaultFiles;
 
-  /// No description provided for @vaultNoFilesYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No files yet'**
-  String get vaultNoFilesYet;
-
   /// No description provided for @vaultFileLabel.
   ///
   /// In en, this message translates to:
@@ -813,60 +422,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get vaultAll;
-
-  /// No description provided for @vaultAddGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Group'**
-  String get vaultAddGroup;
-
-  /// No description provided for @vaultNewGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'New Group'**
-  String get vaultNewGroup;
-
-  /// No description provided for @vaultGroupName.
-  ///
-  /// In en, this message translates to:
-  /// **'Group name'**
-  String get vaultGroupName;
-
-  /// No description provided for @vaultMoveToGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Move to Group'**
-  String get vaultMoveToGroup;
-
-  /// No description provided for @vaultNoOtherGroups.
-  ///
-  /// In en, this message translates to:
-  /// **'No other groups available'**
-  String get vaultNoOtherGroups;
-
-  /// No description provided for @vaultNoResultsFound.
-  ///
-  /// In en, this message translates to:
-  /// **'No results found.'**
-  String get vaultNoResultsFound;
-
-  /// No description provided for @vaultNoPasswordsYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No passwords yet.\nTap + to add one.'**
-  String get vaultNoPasswordsYet;
-
-  /// No description provided for @vaultNoNotesYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No notes yet.\nTap + to add one.'**
-  String get vaultNoNotesYet;
-
-  /// No description provided for @vaultIsEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault is empty.\nAdd a password or note.'**
-  String get vaultIsEmpty;
 
   /// No description provided for @vaultPasswordLabel.
   ///
@@ -880,47 +435,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Note'**
   String get vaultNoteLabel;
 
-  /// No description provided for @vaultFailedToLoadItem.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to load item'**
-  String get vaultFailedToLoadItem;
-
-  /// No description provided for @vaultSearchHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Search passwords & notes'**
-  String get vaultSearchHint;
-
-  /// No description provided for @vaultCreateYourVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Your Vault'**
-  String get vaultCreateYourVault;
-
   /// No description provided for @vaultPassword.
   ///
   /// In en, this message translates to:
   /// **'Vault Password'**
   String get vaultPassword;
-
-  /// No description provided for @vaultCreateVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Vault'**
-  String get vaultCreateVault;
-
-  /// No description provided for @vaultFailedToCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to create vault: {failureType}'**
-  String vaultFailedToCreate(Object failureType);
-
-  /// No description provided for @vaultUnlockVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock Vault'**
-  String get vaultUnlockVault;
 
   /// No description provided for @vaultIncorrectPassword.
   ///
@@ -940,53 +459,17 @@ abstract class FuzzzyInkLocalizations {
   /// **'Forgot password? Your data is encrypted and cannot be recovered.'**
   String get vaultForgotPassword;
 
-  /// No description provided for @vaultUnlockFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock failed: {failureType}'**
-  String vaultUnlockFailed(Object failureType);
-
-  /// No description provided for @fuzzyVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzzy Vault'**
-  String get fuzzyVault;
-
   /// No description provided for @menu.
   ///
   /// In en, this message translates to:
   /// **'Menu'**
   String get menu;
 
-  /// No description provided for @fuzzyUserAuth.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzzy User Auth'**
-  String get fuzzyUserAuth;
-
-  /// No description provided for @authError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error: {errorMessage}'**
-  String authError(Object errorMessage);
-
   /// No description provided for @unknownError.
   ///
   /// In en, this message translates to:
   /// **'Unknown error'**
   String get unknownError;
-
-  /// No description provided for @noDataFoundPleaseSetYourData.
-  ///
-  /// In en, this message translates to:
-  /// **'No data found. Please set your data.'**
-  String get noDataFoundPleaseSetYourData;
-
-  /// No description provided for @lastUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Last Updated:'**
-  String get lastUpdated;
 
   /// No description provided for @keyStrengthWeak.
   ///
@@ -1030,18 +513,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock Fuzzzy Ink'**
   String get chatUnlockTitle;
 
-  /// No description provided for @chatUnlockSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your master password to open the app.'**
-  String get chatUnlockSubtitle;
-
-  /// No description provided for @chatAuthPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get chatAuthPassword;
-
   /// No description provided for @chatAuthIncorrectPassword.
   ///
   /// In en, this message translates to:
@@ -1054,53 +525,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock'**
   String get chatAuthUnlock;
 
-  /// No description provided for @chatAuthSetupDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Set a password to encrypt your chat keys. This adds an extra layer of security to your conversations.'**
-  String get chatAuthSetupDescription;
-
-  /// No description provided for @chatAuthSetPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Password'**
-  String get chatAuthSetPassword;
-
-  /// No description provided for @chatAuthConfirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Password'**
-  String get chatAuthConfirmPassword;
-
-  /// No description provided for @chatAuthPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get chatAuthPasswordsDoNotMatch;
-
-  /// No description provided for @chatAuthProtectionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Your master password protects every key in the app: your chats, your history and, unless it has its own password, the vault. It cannot be switched off.'**
-  String get chatAuthProtectionDescription;
-
   /// No description provided for @chatAuthResecuringKeys.
   ///
   /// In en, this message translates to:
   /// **'Re-securing your keys…'**
   String get chatAuthResecuringKeys;
-
-  /// No description provided for @chatAuthentication.
-  ///
-  /// In en, this message translates to:
-  /// **'Master password'**
-  String get chatAuthentication;
-
-  /// No description provided for @chatAuthenticationDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Password, recovery key and auto-lock'**
-  String get chatAuthenticationDescription;
 
   /// No description provided for @benchmarkFileEncryption.
   ///
@@ -1133,71 +562,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Close'**
   String get close;
 
-  /// No description provided for @chatAuthBiometricUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock with biometrics'**
-  String get chatAuthBiometricUnlock;
-
-  /// No description provided for @chatAuthBiometricEnable.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Biometric Unlock'**
-  String get chatAuthBiometricEnable;
-
-  /// No description provided for @chatAuthBiometricDisable.
-  ///
-  /// In en, this message translates to:
-  /// **'Disable Biometric Unlock'**
-  String get chatAuthBiometricDisable;
-
-  /// No description provided for @chatAuthBiometricEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Unlock Enabled'**
-  String get chatAuthBiometricEnabled;
-
-  /// No description provided for @chatAuthBiometricDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your password to confirm, then unlock with fingerprint or Face ID.'**
-  String get chatAuthBiometricDescription;
-
-  /// No description provided for @chatAuthBiometricUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication is not available on this device.'**
-  String get chatAuthBiometricUnavailable;
-
-  /// No description provided for @chatAuthBiometricFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication failed.'**
-  String get chatAuthBiometricFailed;
-
-  /// No description provided for @chatAuthBiometricInvalidated.
-  ///
-  /// In en, this message translates to:
-  /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
-  String get chatAuthBiometricInvalidated;
-
   /// No description provided for @chatAuthPasswordTooWeak.
   ///
   /// In en, this message translates to:
   /// **'Password is too weak. Use a longer one with letters, numbers and symbols.'**
   String get chatAuthPasswordTooWeak;
-
-  /// No description provided for @chatAuthLockedOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong attempts. Try again in {time}.'**
-  String chatAuthLockedOut(Object time);
-
-  /// No description provided for @chatAuthBiometricReset.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric unlock was turned off by an update that makes it safer. Unlock with your password, then turn it on again in Settings.'**
-  String get chatAuthBiometricReset;
 
   /// No description provided for @biometricNotStrongEnough.
   ///
@@ -1211,101 +580,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Biometric unlock was not turned on.'**
   String get biometricNotTurnedOn;
 
-  /// No description provided for @vaultBiometricUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock with biometrics'**
-  String get vaultBiometricUnlock;
-
-  /// No description provided for @vaultBiometricEnable.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Biometric Unlock'**
-  String get vaultBiometricEnable;
-
-  /// No description provided for @vaultBiometricDisable.
-  ///
-  /// In en, this message translates to:
-  /// **'Disable Biometric Unlock'**
-  String get vaultBiometricDisable;
-
-  /// No description provided for @vaultBiometricEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Unlock Enabled'**
-  String get vaultBiometricEnabled;
-
-  /// No description provided for @vaultBiometricDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm with your master password to enable biometric unlock for this vault.'**
-  String get vaultBiometricDescription;
-
-  /// No description provided for @vaultBiometricUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication is not available on this device.'**
-  String get vaultBiometricUnavailable;
-
-  /// No description provided for @vaultBiometricSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Settings'**
-  String get vaultBiometricSettings;
-
-  /// No description provided for @vaultBiometricInvalidPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect vault password.'**
-  String get vaultBiometricInvalidPassword;
-
   /// No description provided for @vaultBiometricInvalidated.
   ///
   /// In en, this message translates to:
   /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
   String get vaultBiometricInvalidated;
-
-  /// No description provided for @vaultAuthentication.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault Authentication'**
-  String get vaultAuthentication;
-
-  /// No description provided for @vaultAuthenticationDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage vault biometric unlock'**
-  String get vaultAuthenticationDescription;
-
-  /// No description provided for @vaultNotCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a vault first to enable biometric unlock.'**
-  String get vaultNotCreated;
-
-  /// No description provided for @chatAuthCurrentPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Current Password'**
-  String get chatAuthCurrentPassword;
-
-  /// No description provided for @chatAuthNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New Password'**
-  String get chatAuthNewPassword;
-
-  /// No description provided for @chatAuthPasswordChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Password Changed'**
-  String get chatAuthPasswordChanged;
-
-  /// No description provided for @vaultFileSaveWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'⚠️ The original file is NOT auto-deleted. After a successful save, the user\'s source file remains on disk untouched. The app currently doesn\'t warn about this.'**
-  String get vaultFileSaveWarning;
 
   /// No description provided for @invitationAlreadyUsed.
   ///
@@ -1337,12 +616,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'This message was already unfuzzed on this device, or its one-time key is no longer kept.'**
   String get alreadyUnfuzzed;
 
-  /// No description provided for @blobTooOld.
-  ///
-  /// In en, this message translates to:
-  /// **'This message is too old to unfuzz — too many newer messages were unfuzzed first.'**
-  String get blobTooOld;
-
   /// No description provided for @corruptBlob.
   ///
   /// In en, this message translates to:
@@ -1355,35 +628,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Safety number'**
   String get safetyNumberTitle;
 
-  /// No description provided for @safetyNumberExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.'**
-  String get safetyNumberExplanation;
-
   /// No description provided for @safetyNumberVersion.
   ///
   /// In en, this message translates to:
   /// **'Version {version}. If your partner sees another version, or none, update both apps before comparing.'**
   String safetyNumberVersion(int version);
-
-  /// No description provided for @safetyNumberMarkVerified.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as verified'**
-  String get safetyNumberMarkVerified;
-
-  /// No description provided for @safetyNumberUnmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Unmark'**
-  String get safetyNumberUnmark;
-
-  /// No description provided for @safetyNumberVerifiedBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'Verified'**
-  String get safetyNumberVerifiedBadge;
 
   /// No description provided for @wrongPasswordFile.
   ///
@@ -1426,12 +675,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'About encryption'**
   String get aboutEncryptionTitle;
-
-  /// No description provided for @aboutEncryptionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'What single-use unfuzzing means, and how your history is kept'**
-  String get aboutEncryptionDescription;
 
   /// No description provided for @aboutEncryptionHistoryTitle.
   ///
@@ -1553,29 +796,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Could not open file.'**
   String get couldNotOpenFile;
 
-  /// No description provided for @legalAndSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Legal and support'**
-  String get legalAndSupport;
-
-  /// No description provided for @legalAndSupportDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.'**
-  String get legalAndSupportDescription;
-
   /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:
   /// **'Privacy policy'**
   String get privacyPolicy;
-
-  /// No description provided for @privacyPolicyDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'What the app keeps, and where'**
-  String get privacyPolicyDescription;
 
   /// No description provided for @termsOfUse.
   ///
@@ -1583,23 +808,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Terms of use'**
   String get termsOfUse;
 
-  /// No description provided for @termsOfUseDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'The rules for using Fuzzzy Ink'**
-  String get termsOfUseDescription;
-
   /// No description provided for @support.
   ///
   /// In en, this message translates to:
   /// **'Support'**
   String get support;
-
-  /// No description provided for @supportDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Help, questions and reporting a problem'**
-  String get supportDescription;
 
   /// No description provided for @dataDeletion.
   ///
@@ -1607,23 +820,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Deleting your data'**
   String get dataDeletion;
 
-  /// No description provided for @dataDeletionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'How to remove everything the app keeps'**
-  String get dataDeletionDescription;
-
   /// No description provided for @couldNotOpenLink.
   ///
   /// In en, this message translates to:
   /// **'Could not open the link.'**
   String get couldNotOpenLink;
-
-  /// No description provided for @appVersion.
-  ///
-  /// In en, this message translates to:
-  /// **'Version {version} (build {build})'**
-  String appVersion(Object version, Object build);
 
   /// No description provided for @biometricUnlockChats.
   ///
@@ -1667,83 +868,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Only sealed text can be copied.'**
   String get copyRefused;
 
-  /// No description provided for @copyPolicyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Copying'**
-  String get copyPolicyTitle;
-
-  /// No description provided for @copyPolicyDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Only the sealed text you send can be copied out of the app. Decrypted messages, notes and file locations stay inside. Anything copied is removed from the clipboard after a short time.'**
-  String get copyPolicyDescription;
-
-  /// No description provided for @copyPolicyVaultPasswordNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault passwords are the one exception: a copied password is kept out of clipboard history where the system allows it and is removed after {seconds} seconds.'**
-  String copyPolicyVaultPasswordNote(int seconds);
-
   /// No description provided for @vaultCopyPassword.
   ///
   /// In en, this message translates to:
   /// **'Copy password'**
   String get vaultCopyPassword;
-
-  /// No description provided for @vaultPasswordCopiedClearsIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Password copied. It is removed from the clipboard in {seconds} seconds.'**
-  String vaultPasswordCopiedClearsIn(int seconds);
-
-  /// No description provided for @shareAsLinkOption.
-  ///
-  /// In en, this message translates to:
-  /// **'Send as a link'**
-  String get shareAsLinkOption;
-
-  /// No description provided for @shareAsLinkOptionHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Opens straight in Fuzzzy Ink. Without the app, the link shows where to get it.'**
-  String get shareAsLinkOptionHint;
-
-  /// No description provided for @shareAsQrCodeOption.
-  ///
-  /// In en, this message translates to:
-  /// **'Show a QR code'**
-  String get shareAsQrCodeOption;
-
-  /// No description provided for @shareAsQrCodeOptionHint.
-  ///
-  /// In en, this message translates to:
-  /// **'The other phone scans it with its camera.'**
-  String get shareAsQrCodeOptionHint;
-
-  /// No description provided for @shareAsFileOption.
-  ///
-  /// In en, this message translates to:
-  /// **'Send as a file'**
-  String get shareAsFileOption;
-
-  /// No description provided for @shareAsFileOptionHint.
-  ///
-  /// In en, this message translates to:
-  /// **'For e-mail, or a chat that cuts long links.'**
-  String get shareAsFileOptionHint;
-
-  /// No description provided for @qrCodeHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Point the other phone\'s camera at this code. It opens Fuzzzy Ink there, or the download page if the app is missing.'**
-  String get qrCodeHint;
-
-  /// No description provided for @notVerified.
-  ///
-  /// In en, this message translates to:
-  /// **'Not verified'**
-  String get notVerified;
 
   /// No description provided for @saveFile.
   ///
@@ -1787,35 +916,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Master password'**
   String get masterPassword;
 
-  /// No description provided for @masterPasswordSetupTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create your master password'**
-  String get masterPasswordSetupTitle;
-
-  /// No description provided for @masterPasswordSetupDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'One password protects everything in Fuzzzy Ink: your chats, your history and your vault. You will enter it each time you open the app.'**
-  String get masterPasswordSetupDescription;
-
   /// No description provided for @masterPasswordPreviousData.
   ///
   /// In en, this message translates to:
   /// **'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.'**
   String get masterPasswordPreviousData;
-
-  /// No description provided for @masterPasswordCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Create master password'**
-  String get masterPasswordCreate;
-
-  /// No description provided for @masterPasswordCreating.
-  ///
-  /// In en, this message translates to:
-  /// **'Creating your keys…'**
-  String get masterPasswordCreating;
 
   /// No description provided for @masterPasswordFailed.
   ///
@@ -1823,41 +928,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Your keys could not be created. Try again.'**
   String get masterPasswordFailed;
 
-  /// No description provided for @masterPasswordIsOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Master password is on'**
-  String get masterPasswordIsOn;
-
   /// No description provided for @recoveryKeyTitle.
   ///
   /// In en, this message translates to:
   /// **'Recovery key'**
   String get recoveryKeyTitle;
-
-  /// No description provided for @recoveryKeyDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'If you forget your master password, this key lets you set a new one. Write it down or save it, and keep it somewhere safe, away from this device. You see it only now.'**
-  String get recoveryKeyDescription;
-
-  /// No description provided for @recoveryKeyWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'Without your password or this recovery key, nobody — not even us — can get your data back.'**
-  String get recoveryKeyWarning;
-
-  /// No description provided for @recoveryKeySave.
-  ///
-  /// In en, this message translates to:
-  /// **'Save or print…'**
-  String get recoveryKeySave;
-
-  /// No description provided for @recoveryKeySaved.
-  ///
-  /// In en, this message translates to:
-  /// **'Recovery key saved to a file'**
-  String get recoveryKeySaved;
 
   /// No description provided for @recoveryKeySaveFailed.
   ///
@@ -1865,95 +940,17 @@ abstract class FuzzzyInkLocalizations {
   /// **'The recovery key was not saved.'**
   String get recoveryKeySaveFailed;
 
-  /// No description provided for @recoveryKeyConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'I have saved my recovery key'**
-  String get recoveryKeyConfirm;
-
-  /// No description provided for @recoveryKeyContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get recoveryKeyContinue;
-
-  /// No description provided for @recoveryKeySkip.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue without a recovery key'**
-  String get recoveryKeySkip;
-
-  /// No description provided for @recoveryKeySkipTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Go on without a recovery key?'**
-  String get recoveryKeySkipTitle;
-
-  /// No description provided for @recoveryKeySkipMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'If you forget your master password, your chats, history and vault are lost for good. Without your password or this recovery key, nobody — not even us — can get your data back.'**
-  String get recoveryKeySkipMessage;
-
-  /// No description provided for @recoveryKeySkipConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue without it'**
-  String get recoveryKeySkipConfirm;
-
   /// No description provided for @recoveryKeyFileText.
   ///
   /// In en, this message translates to:
   /// **'Fuzzzy Ink recovery key\n\n{key}\n\nIf you forget your master password, this key lets you set a new one. Keep it somewhere safe, away from the device. Without your password or this recovery key, nobody — not even us — can get your data back.\n'**
   String recoveryKeyFileText(String key);
 
-  /// No description provided for @recoveryKeyIsSet.
-  ///
-  /// In en, this message translates to:
-  /// **'A recovery key is set.'**
-  String get recoveryKeyIsSet;
-
-  /// No description provided for @recoveryKeyNotSet.
-  ///
-  /// In en, this message translates to:
-  /// **'No recovery key. If you forget your master password, your data is lost for good.'**
-  String get recoveryKeyNotSet;
-
-  /// No description provided for @recoveryKeyCreateNew.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a new recovery key'**
-  String get recoveryKeyCreateNew;
-
-  /// No description provided for @recoveryKeyCreateNewDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your master password to create a new recovery key. The old one stops working.'**
-  String get recoveryKeyCreateNewDescription;
-
-  /// No description provided for @recoveryTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'New password with your recovery key'**
-  String get recoveryTitle;
-
-  /// No description provided for @recoveryDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter the recovery key you saved when you set up the app, then choose a new master password.'**
-  String get recoveryDescription;
-
   /// No description provided for @recoveryKeyField.
   ///
   /// In en, this message translates to:
   /// **'Recovery key'**
   String get recoveryKeyField;
-
-  /// No description provided for @recoverySubmit.
-  ///
-  /// In en, this message translates to:
-  /// **'Set new password'**
-  String get recoverySubmit;
 
   /// No description provided for @recoveryKeyTypo.
   ///
@@ -1966,18 +963,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'This recovery key does not open this app.'**
   String get recoveryKeyWrong;
-
-  /// No description provided for @chatUnlockForgot.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your password?'**
-  String get chatUnlockForgot;
-
-  /// No description provided for @chatUnlockUseRecoveryKey.
-  ///
-  /// In en, this message translates to:
-  /// **'Use my recovery key'**
-  String get chatUnlockUseRecoveryKey;
 
   /// No description provided for @chatUnlockErase.
   ///
@@ -2021,30 +1006,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Lock Fuzzzy Ink'**
   String get appLockNow;
 
-  /// No description provided for @autoLockTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto-lock'**
-  String get autoLockTitle;
-
-  /// No description provided for @autoLockIdle.
-  ///
-  /// In en, this message translates to:
-  /// **'Lock after no activity for'**
-  String get autoLockIdle;
-
-  /// No description provided for @autoLockBackground.
-  ///
-  /// In en, this message translates to:
-  /// **'Lock after leaving the app'**
-  String get autoLockBackground;
-
-  /// No description provided for @autoLockImmediately.
-  ///
-  /// In en, this message translates to:
-  /// **'At once'**
-  String get autoLockImmediately;
-
   /// No description provided for @autoLockMinutes.
   ///
   /// In en, this message translates to:
@@ -2056,18 +1017,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'The setting was not saved.'**
   String get autoLockSaveFailed;
-
-  /// No description provided for @vaultPasswordModeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault password'**
-  String get vaultPasswordModeTitle;
-
-  /// No description provided for @vaultUsesMasterPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Your master password opens the vault.'**
-  String get vaultUsesMasterPassword;
 
   /// No description provided for @vaultUsesOwnPassword.
   ///
@@ -2087,35 +1036,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Open the vault with the master password'**
   String get vaultUseMasterPassword;
 
-  /// No description provided for @vaultOwnPasswordNote.
-  ///
-  /// In en, this message translates to:
-  /// **'No recovery key is set: without this password the vault is lost for good.'**
-  String get vaultOwnPasswordNote;
-
   /// No description provided for @vaultOwnPasswordRecoveryNote.
   ///
   /// In en, this message translates to:
   /// **'Your recovery key can still open My safe.'**
   String get vaultOwnPasswordRecoveryNote;
-
-  /// No description provided for @vaultUseRecoveryKey.
-  ///
-  /// In en, this message translates to:
-  /// **'Use my recovery key'**
-  String get vaultUseRecoveryKey;
-
-  /// No description provided for @vaultRecoveryTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Open My safe with your recovery key'**
-  String get vaultRecoveryTitle;
-
-  /// No description provided for @vaultRecoveryDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your recovery key, then choose a new password for My safe, or let your master password open it.'**
-  String get vaultRecoveryDescription;
 
   /// No description provided for @vaultRecoveryUseMasterPassword.
   ///
@@ -2128,48 +1053,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Open My safe'**
   String get vaultRecoverySubmit;
-
-  /// No description provided for @recoveryKeyVaultPasswordNote.
-  ///
-  /// In en, this message translates to:
-  /// **'My safe has its own password. Enter it too, so the new key opens My safe as well.'**
-  String get recoveryKeyVaultPasswordNote;
-
-  /// No description provided for @vaultOwnNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New vault password'**
-  String get vaultOwnNewPassword;
-
-  /// No description provided for @vaultCurrentPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Current vault password'**
-  String get vaultCurrentPassword;
-
-  /// No description provided for @vaultPasswordModeChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault password updated'**
-  String get vaultPasswordModeChanged;
-
-  /// No description provided for @vaultCreateWithMasterDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Your vault keeps passwords, notes and files sealed on this device. Your master password opens it; enter it to create the vault.'**
-  String get vaultCreateWithMasterDescription;
-
-  /// No description provided for @vaultForgotMasterPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot your master password? Lock the app and use your recovery key.'**
-  String get vaultForgotMasterPassword;
-
-  /// No description provided for @vaultTooManyAttempts.
-  ///
-  /// In en, this message translates to:
-  /// **'Too many wrong passwords. Wait a moment and try again.'**
-  String get vaultTooManyAttempts;
 
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
@@ -2600,12 +1483,6 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'No screenshots'**
-  String get tagNoScreenshots;
-
-  /// Fuzzzy Ink redesign (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
   /// **'Who\'s it for?'**
   String get lockWhoTitle;
 
@@ -2764,36 +1641,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'It needs to reach Good.'**
   String get lockPasswordNotGood;
-
-  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Strength'**
-  String get lockStrengthLabel;
-
-  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Weak'**
-  String get lockStrengthWeak;
-
-  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Fair'**
-  String get lockStrengthFair;
-
-  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Good'**
-  String get lockStrengthGood;
-
-  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Strong'**
-  String get lockStrengthStrong;
 
   /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
   ///
@@ -3400,12 +2247,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Soft sounds'**
   String get softSounds;
-
-  /// Fuzzzy Ink redesign (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Never on silent'**
-  String get softSoundsLine;
 
   /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
   ///
@@ -4784,12 +3625,6 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'In {name}\'s history now.'**
-  String historyNewRow(String name);
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
   /// **'Waiting for {name}\'s reply'**
   String waitingCardTitle(String name);
 
@@ -5332,6 +4167,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'It\'s really {name}'**
   String checkedTitle(String name);
+
+  /// A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file. Open it again from where it is.'**
+  String get incomingFileUnreadable;
 }
 
 class _FuzzzyInkLocalizationsDelegate

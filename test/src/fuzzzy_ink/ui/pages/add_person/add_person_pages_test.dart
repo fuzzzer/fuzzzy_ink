@@ -364,6 +364,7 @@ void main() {
       (InvitationCheck.ownInvitation, "That's your own invite."),
       (InvitationCheck.alreadyConnected, "You're already connected."),
       (InvitationCheck.damaged, "Can't open this."),
+      (InvitationCheck.newerApp, 'Needs a newer Fuzzzy Ink.'),
     ]) {
       testWidgets('$check stays on step 1 with one fact', (tester) async {
         when(() => cubit.checkInvitation(any())).thenAnswer((_) async => check);

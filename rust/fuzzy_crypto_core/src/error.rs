@@ -9,9 +9,15 @@
 /// (plan §7). The OS message of an `Io` failure therefore stays on the Rust side.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum CoreError {
-    /// Unknown magic, version, type byte or text encoding — not a blob this build reads.
+    /// Unknown magic or text encoding, an outdated version, a blob of the
+    /// wrong type for the call or a storage-only type pasted — not a blob
+    /// this build reads.
     #[error("unsupported format")]
     UnsupportedFormat,
+    /// Fuzzzy Ink's envelope with a version above this build's, or a type
+    /// byte this build does not know: made by a newer app (PROTOCOL.md §12).
+    #[error("newer version")]
+    NewerVersion,
     /// An Ed25519 signature over an invitation or acceptance did not verify.
     #[error("invalid signature")]
     InvalidSignature,

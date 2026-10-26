@@ -1007,6 +1007,7 @@ class CryptoCoreService {
       'wrong password' => CryptoCoreFailureType.wrongPassword,
       'corrupt' => CryptoCoreFailureType.corrupt,
       'unsupported format' => CryptoCoreFailureType.unsupportedFormat,
+      'newer version' => CryptoCoreFailureType.newerVersion,
       'io' => CryptoCoreFailureType.io,
       'store locked' => CryptoCoreFailureType.storeLocked,
       _ => CryptoCoreFailureType.internal,
@@ -1016,6 +1017,7 @@ class CryptoCoreService {
   static CryptoCoreFailureType _failureTypeOf(CoreError error) {
     return switch (error) {
       CoreError.unsupportedFormat => CryptoCoreFailureType.unsupportedFormat,
+      CoreError.newerVersion => CryptoCoreFailureType.newerVersion,
       CoreError.invalidSignature => CryptoCoreFailureType.invalidSignature,
       CoreError.invitationAlreadyUsed =>
         CryptoCoreFailureType.invitationAlreadyUsed,

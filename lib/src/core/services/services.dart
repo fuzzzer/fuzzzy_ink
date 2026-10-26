@@ -4,6 +4,7 @@ export 'backup_exclusion/backup_exclusion.dart';
 export 'directory_assets/directory_assets.dart';
 export 'fuzzy_hub/fuzzy_hub.dart';
 export 'fuzzy_link/fuzzy_link.dart';
+export 'incoming_files/incoming_files.dart';
 export 'password_strength_service/password_strength_service.dart';
 export 'preferences_service/preferences_service.dart';
 export 'screen_guard/screen_guard.dart';
