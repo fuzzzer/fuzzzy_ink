@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,12 +10,15 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 void main() {
   const channel = MethodChannel('test/screen_guard');
   late List<bool> secureCalls;
+  late List<Object?> coverCalls;
 
   setUp(() {
     secureCalls = [];
+    coverCalls = [];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'setSecure') secureCalls.add(call.arguments as bool);
+      if (call.method == 'setCover') coverCalls.add(call.arguments);
       return true;
     });
     ScreenGuard.instance = ScreenGuard(channel: channel);
@@ -114,5 +118,68 @@ void main() {
 
     expect(find.byKey(const Key('sensitive_screen.cover')), findsNothing);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+  });
+
+  group('app-switcher cover', () {
+    test('the cover paints the 3x mark of the look', () {
+      expect(
+        ScreenGuard.coverMarkAsset(Brightness.dark),
+        'assets/logo/3.0x/ink_mark.png',
+      );
+      expect(
+        ScreenGuard.coverMarkAsset(Brightness.light),
+        'assets/logo/3.0x/ink_mark_paper.png',
+      );
+      for (final brightness in Brightness.values) {
+        expect(
+          File(ScreenGuard.coverMarkAsset(brightness)).existsSync(),
+          isTrue,
+        );
+      }
+    });
+
+    testWidgets('iOS: the app tells the cover its look, once per change',
+        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+        (tester) async {
+      final night = FuzzzyTheme.build(inkPack, FuzzzySkin.night);
+      final paper = FuzzzyTheme.build();
+      Widget app(ThemeData theme, Brightness brightness) => AppSwitcherCover(
+            ground: theme.extension<FuzzzyColors>()!.ground,
+            brightness: brightness,
+            child: const SizedBox.shrink(),
+          );
+
+      await tester.pumpWidget(app(night, Brightness.dark));
+      await tester.pumpWidget(app(night, Brightness.dark));
+      await tester.pumpWidget(app(paper, Brightness.light));
+
+      expect(coverCalls, [
+        {
+          'ground': night.extension<FuzzzyColors>()!.ground.toARGB32(),
+          'mark': 'assets/logo/3.0x/ink_mark.png',
+        },
+        {
+          'ground': paper.extension<FuzzzyColors>()!.ground.toARGB32(),
+          'mark': 'assets/logo/3.0x/ink_mark_paper.png',
+        },
+      ]);
+    });
+
+    testWidgets('no other platform has a native cover to tell',
+        variant: const TargetPlatformVariant({
+          TargetPlatform.android,
+          TargetPlatform.macOS,
+          TargetPlatform.windows,
+          TargetPlatform.linux,
+        }), (tester) async {
+      await tester.pumpWidget(
+        const AppSwitcherCover(
+          ground: Color(0xFF121417),
+          brightness: Brightness.dark,
+          child: SizedBox.shrink(),
+        ),
+      );
+      expect(coverCalls, isEmpty);
+    });
   });
 }
