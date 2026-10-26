@@ -161,6 +161,7 @@ class AnywhereHarness {
         return (displayClosed = Completer<void>()).future;
       },
       handOff: handedOff.add,
+      keepSealedCopyAtLock: () => keptAtLock++,
       copySealed: (text, content) async {
         copies.add((text, content));
         return true;
@@ -196,6 +197,9 @@ class AnywhereHarness {
 
   /// What [FuzzAnywhereService.openInApp] handed to the app's Open screen.
   final handedOff = <OpenRequest>[];
+
+  /// How often a relock asked the copy guard to keep the sealed copy.
+  int keptAtLock = 0;
 
   /// What went to the copy guard.
   final copies = <(String, CopyContent)>[];

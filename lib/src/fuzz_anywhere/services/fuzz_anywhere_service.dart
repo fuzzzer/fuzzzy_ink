@@ -35,8 +35,11 @@ class FuzzAnywhereService {
     required this.display,
     required this.handOff,
     Future<bool> Function(String text, CopyContent content)? copySealed,
+    void Function()? keepSealedCopyAtLock,
     DateTime Function()? now,
   })  : _copySealed = copySealed ?? _copyThroughGuard,
+        _keepSealedCopyAtLock =
+            keepSealedCopyAtLock ?? CopyGuard.keepSealedCopyAtNextLock,
         _now = now ?? DateTime.now {
     _wasUnlocked = authStore.state.status.hasAccess;
     _lastSettings = settings.state;
@@ -67,6 +70,7 @@ class FuzzAnywhereService {
   final void Function(OpenRequest request) handOff;
 
   final Future<bool> Function(String text, CopyContent content) _copySealed;
+  final void Function() _keepSealedCopyAtLock;
   final DateTime Function() _now;
 
   final _events = StreamController<AnywhereEvent>.broadcast();
@@ -80,6 +84,10 @@ class FuzzAnywhereService {
   /// This entry point unlocked the app: "Lock again after each use" may
   /// lock it when the use is done.
   bool _unlockedHere = false;
+
+  /// This use copied sealed output: the lock after it keeps that copy, so
+  /// the person can still paste it.
+  bool _copiedHere = false;
 
   /// The one opened message waiting for [show]. Dropped at a lock.
   _PendingDisplay? _pending;
@@ -248,6 +256,7 @@ class FuzzAnywhereService {
           output,
           link != null ? CopyContent.sealedLink : CopyContent.sealedMessage,
         );
+    if (isCopied) _copiedHere = true;
     return AnywhereDone(
       AnywhereLockOutput(
         output: output,
@@ -438,10 +447,13 @@ class FuzzAnywhereService {
   }
 
   Future<bool> _relockAfterUse() async {
+    final copied = _copiedHere;
+    _copiedHere = false;
     if (!_unlockedHere) return false;
     _unlockedHere = false;
     if (!settings.state.settings.locksAgainAfterUse) return false;
     if (!authStore.state.status.hasAccess) return false;
+    if (copied) _keepSealedCopyAtLock();
     await authStore.lock();
     return true;
   }

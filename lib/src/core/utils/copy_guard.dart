@@ -210,6 +210,7 @@ class ClipboardGuard {
   final _cleared = StreamController<ClipboardCopyCleared>.broadcast();
   int _lastCopyId = 0;
   ({int id, CopyContent content})? _pendingCopy;
+  int? _keepAtLockId;
 
   /// Counts the copies made; the id of the latest one.
   int get lastCopyId => _lastCopyId;
@@ -234,6 +235,30 @@ class ClipboardGuard {
     _clearTimer = Timer(clearAfter, () => unawaited(clearNow()));
     _lifecycleListener ??= AppLifecycleListener(onResume: _retryPendingClear);
     return true;
+  }
+
+  /// "Lock from other apps" locks the app again right after a use whose
+  /// sealed output it just copied, before the person can paste it: that one
+  /// copy stays through that one lock, and leaves on its own timer (2
+  /// minutes) or with the next copy. Anything but a sealed message or
+  /// link is cleared as before.
+  void keepSealedCopyAtNextLock() {
+    final pending = _pendingCopy;
+    if (pending == null) return;
+    if (pending.content != CopyContent.sealedMessage &&
+        pending.content != CopyContent.sealedLink) {
+      return;
+    }
+    _keepAtLockId = pending.id;
+  }
+
+  /// The app locks: its last copy leaves the clipboard, unless it is the
+  /// sealed copy [keepSealedCopyAtNextLock] spared for this lock.
+  Future<void> clearAtLock() async {
+    final keep = _keepAtLockId;
+    _keepAtLockId = null;
+    if (keep != null && keep == _pendingCopy?.id) return;
+    await clearNow();
   }
 
   /// Clears the clipboard now if it still holds the app's last copy.
@@ -316,7 +341,11 @@ abstract final class CopyGuard {
 
   /// The app locks: the app's last copy leaves the clipboard now if it is
   /// still there, timer or not (security review 2026-10-26).
-  static Future<void> clearOnLock() => _clipboardGuard.clearNow();
+  static Future<void> clearOnLock() => _clipboardGuard.clearAtLock();
+
+  /// See [ClipboardGuard.keepSealedCopyAtNextLock].
+  static void keepSealedCopyAtNextLock() =>
+      _clipboardGuard.keepSealedCopyAtNextLock();
 
   /// Context menu for a text field that holds plaintext or a secret: an
   /// allow-list (security review 2026-10-26). Paste, Select all, Delete and

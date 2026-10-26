@@ -526,6 +526,21 @@ void main() {
       });
     });
 
+    test('keeps the sealed copy it just made through that lock', () async {
+      await app.boot();
+      await app.service.unlockWithPassword(rightPassword);
+      await app.service.lock(personId: ninoId, text: secretText, copy: true);
+
+      expect(await app.service.relock(), isTrue);
+      expect(app.keptAtLock, 1);
+
+      // The next use copies nothing: its lock clears as usual.
+      await app.service.unlockWithPassword(rightPassword);
+      await app.service.lock(personId: ninoId, text: secretText);
+      expect(await app.service.relock(), isTrue);
+      expect(app.keptAtLock, 1);
+    });
+
     test('leaves the app open when it was already open', () async {
       await app.boot();
       await app.unlockInApp();

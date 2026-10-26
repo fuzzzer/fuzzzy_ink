@@ -65,7 +65,10 @@ Notes, method by method:
   person's history exactly as Lock in the app does. `output` is the message link
   (`https://ink.fuzzzycore.com/message#…`) when it fits one (8 192 payload characters), else the `Fuzz/` text
   (`kind: "text"`). Both are sealed and safe to paste anywhere. With `copy: true` the app's own copy guard copies
-  it (sealed only, marked and cleared after 2 minutes, cleared at lock); `copied` says whether it did. Never
+  it (sealed only, marked and cleared after 2 minutes, cleared at lock); `copied` says whether it did. The one
+  exception to "cleared at lock": when `relock` locks the app right after the use that made this copy, that copy
+  stays through that lock (its 2-minute clear still runs), or "Lock again after each use" would empty the
+  clipboard before the person could paste (found live on the Mac, 2026-10-26). Never
   copy anything yourself. Android: return `output` as `EXTRA_PROCESS_TEXT` when the field is editable; Mac
   Services: write `output` to the service pasteboard.
 - **`peek`.** What `text` is, without opening it or spending anything (the core's peek). `kind` is `message`,
