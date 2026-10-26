@@ -704,9 +704,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ბიომეტრიული განბლოკვისთვის ჯერ შექმენით ვოლტი.';
 
   @override
-  String get vaultLockVault => 'საცავის დაბლოკვა';
-
-  @override
   String get chatAuthCurrentPassword => 'მიმდინარე პაროლი';
 
   @override
@@ -1689,6 +1686,9 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get safeLockedTitle => 'ჩემი სეიფი ჩაკეტილია';
+
+  @override
+  String get safeLockButton => 'ჩემი სეიფის ჩაკეტვა';
 
   @override
   String get safeOpensWithMaster => 'იხსნება მთავარი პაროლით.';

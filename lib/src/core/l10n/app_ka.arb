@@ -460,8 +460,6 @@
   "@vaultAuthenticationDescription": {},
   "vaultNotCreated": "ბიომეტრიული განბლოკვისთვის ჯერ შექმენით ვოლტი.",
   "@vaultNotCreated": {},
-  "vaultLockVault": "საცავის დაბლოკვა",
-  "@vaultLockVault": {},
   "chatAuthCurrentPassword": "მიმდინარე პაროლი",
   "@chatAuthCurrentPassword": {},
   "chatAuthNewPassword": "ახალი პაროლი",
@@ -1486,6 +1484,10 @@
   "safeLockedTitle": "ჩემი სეიფი ჩაკეტილია",
   "@safeLockedTitle": {
     "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeLockButton": "ჩემი სეიფის ჩაკეტვა",
+  "@safeLockButton": {
+    "description": "Georgian draft, needs a native read (integration, 2026-10-26)"
   },
   "safeOpensWithMaster": "იხსნება მთავარი პაროლით.",
   "@safeOpensWithMaster": {

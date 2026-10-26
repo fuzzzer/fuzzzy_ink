@@ -1362,12 +1362,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Create a vault first to enable biometric unlock.'**
   String get vaultNotCreated;
 
-  /// No description provided for @vaultLockVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Lock Vault'**
-  String get vaultLockVault;
-
   /// No description provided for @chatAuthCurrentPassword.
   ///
   /// In en, this message translates to:
@@ -3125,6 +3119,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'My safe is locked'**
   String get safeLockedTitle;
+
+  /// Fuzzzy Ink redesign, My safe header lock button (prototype aria-label, DESIGN.md section 4.11).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock My safe'**
+  String get safeLockButton;
 
   /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
   ///

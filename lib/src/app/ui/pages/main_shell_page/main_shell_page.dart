@@ -152,7 +152,7 @@ class _MySafeFrame extends StatelessWidget {
                   }
                   return FuzzzyIconButton(
                     icon: const Icon(Icons.lock_outline),
-                    semanticLabel: localizations.vaultLockVault,
+                    semanticLabel: localizations.safeLockButton,
                     qaId: 'mySafe.lock',
                     onPressed: () => context.read<VaultAuthCubit>().lock(),
                   );

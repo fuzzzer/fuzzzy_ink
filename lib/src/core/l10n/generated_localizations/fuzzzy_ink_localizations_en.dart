@@ -693,9 +693,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Create a vault first to enable biometric unlock.';
 
   @override
-  String get vaultLockVault => 'Lock Vault';
-
-  @override
   String get chatAuthCurrentPassword => 'Current Password';
 
   @override
@@ -1679,6 +1676,9 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get safeLockedTitle => 'My safe is locked';
+
+  @override
+  String get safeLockButton => 'Lock My safe';
 
   @override
   String get safeOpensWithMaster => 'Opens with your master password.';

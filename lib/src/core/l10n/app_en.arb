@@ -452,8 +452,6 @@
   "@vaultAuthenticationDescription": {},
   "vaultNotCreated": "Create a vault first to enable biometric unlock.",
   "@vaultNotCreated": {},
-  "vaultLockVault": "Lock Vault",
-  "@vaultLockVault": {},
   "chatAuthCurrentPassword": "Current Password",
   "@chatAuthCurrentPassword": {},
   "chatAuthNewPassword": "New Password",
@@ -1419,6 +1417,10 @@
   "safeLockedTitle": "My safe is locked",
   "@safeLockedTitle": {
     "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeLockButton": "Lock My safe",
+  "@safeLockButton": {
+    "description": "Fuzzzy Ink redesign, My safe header lock button (prototype aria-label, DESIGN.md section 4.11)."
   },
   "safeOpensWithMaster": "Opens with your master password.",
   "@safeOpensWithMaster": {
