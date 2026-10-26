@@ -235,11 +235,16 @@ the copy shortcuts do nothing, and the keyboard is asked for no suggestions, no 
 learning (`GuardedTextField`, `CopyGuard.plaintextContextMenuBuilder`; security review 2026-10-26). A keyboard
 that ignores that request, or a third-party keyboard with network access, is outside the model (§7.1).
 Private screens are kept out of screenshots, recordings and the app switcher where the system allows it (§7.2).
-Plaintext shown on screen is still readable by anything that can read or capture the screen. The app never decrypts a blob
-automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
-(`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
-the user picks it. An app link (`https://ink.fuzzzycore.com/…`, below) **prefills** the input field and
-navigates; it decrypts nothing (§7.5).
+Plaintext shown on screen is still readable by anything that can read or capture the screen. The app never
+decrypts a blob automatically: a message is decrypted only when the user pastes it into Open (the paste is the
+action), or taps **Open** on a message that came by link; a file only when the user picks it
+(`lib/src/fuzzzy_ink/bloc/open_flow_cubit/open_flow_cubit.dart`). An app link (`https://ink.fuzzzycore.com/…`,
+below) goes to Open, where the core's peek (`PROTOCOL.md` §7.4: a trial on a throwaway copy of each session,
+nothing spent, nothing kept, nothing shown but the person's name) finds whose it is, and the screen asks "Open the
+message from {name}?"; only the Open tap spends the message key. A reply link for an invite still waiting asks
+"Connect with {name}?" and completes the pairing only on Connect. A second, different reply for a connected chat
+raises the "someone else answered" warning only if the core finds it really answers this chat's invitation
+(`check_acceptance`, `PROTOCOL.md` §4.5); anything else is "not a valid reply" (security review 2026-10-26, §7.5).
 
 ### 2.7 The transport channel — the app has none
 
@@ -249,13 +254,16 @@ e-mail, another messenger, a QR code, paper. The model therefore assumes the str
 **everything on the channel can be read, modified, replayed, reordered, delayed or dropped**, and says
 nothing about the channel's own security. The users' choice of channel is theirs.
 
-App links (`https://ink.fuzzzycore.com/invite#<payload>`, `…/accept#<payload>`, `…/message#<payload>`) are
-an app-layer convenience wrapper around the same blob — base64 JSON with the blob, a version and a type. The
-payload sits only after the `#`, the part of a URL a browser never sends to the web server, so the link page
-never receives it. They are verified Android App Links and iOS/macOS universal links (the domain declares the
-app), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is removed
-on every platform. Links carry no expiry; the core never saw one anyway (`PROTOCOL.md` §4.6). They are
-subject to everything above; see §7.4 for what the message link adds in the clear.
+App links (`https://ink.fuzzzycore.com/invite#<blob>`, `…/accept#<blob>`, `…/message#<blob>`) are an
+app-layer convenience wrapper around the same blob: the `Fuzz/` text without its prefix (base64url, no
+padding), nothing else, at most 8 192 characters. The payload sits only after the `#`, the part of a URL a
+browser never sends to the web server, so the link page never receives it. They are verified Android App Links
+and iPhone universal links (the domain declares the app; the production verification files name the production
+app only), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is
+removed on every platform. macOS has no associated domain: on a Mac, links are pasted into Open. Any app on an
+Android phone can still *send* the app a link (the activity is exported); that is why a link never opens or
+connects anything without the user's tap (§2.6, §7.5). Links carry no expiry; the core never saw one anyway
+(`PROTOCOL.md` §4.6). They are subject to everything above.
 
 ### 2.8 OS and cloud backups
 
@@ -368,7 +376,7 @@ An adversary who controls the victim's OS is not on this list (§7.1).
   from the bytes.
 - **What ADV-1 still gets:** the existence, timing, length and channel metadata of every blob; the pairing
   blobs' public keys and the chat id inside them (`PROTOCOL.md` §6.3–6.4; nothing secret is in a pairing
-  blob); and — if the sender used "Copy as link" — the chat id in the message link (§7.4).
+  blob). Message links carry the blob only (§7.4).
 
 ### 4.2 ADV-2 — active attacker on the channel
 
@@ -726,15 +734,11 @@ database out of platform backups (§2.8, R34; a user's own Linux/Windows profile
 Sealing chat names and vault titles is the same `seal_local` call on more columns —
 a documented follow-up, not this build (R11).
 
-Also in the clear, at the app layer only: a **"Copy as link"** message link
-(`https://ink.fuzzzycore.com/message#<base64 JSON>`, `lib/src/core/services/fuzzy_link/`) carries the
-**chat id** next to the blob so the receiving app can open the right chat. The raw `Fuzz/` blob never does
-(`PROTOCOL.md` §6.5). A user who shares links rather than blobs gives an observer a stable identifier that
-groups every link of one chat (only the device that opens the link sees it: it sits after the `#`). The leak is
-metadata-only: the receiving app uses `c` for a read-only database lookup and navigation, the crate takes
-the chat id from the database record, and a blob under the wrong `c` dies at the Olm MAC with no state
-change; an observer who saw the pairing blobs already knows the chat id. This is a product choice inherited
-from before the hardening; it is recorded as R12 for the owner (decision D-7), with both costs stated there.
+A message link (`https://ink.fuzzzycore.com/message#<blob>`, `lib/src/core/services/fuzzy_link/`) carries the
+blob and nothing else. Until 2026-10-26 it also carried the chat id in the clear, a stable identifier grouping
+every link of one chat; the receiving app now finds the chat with the core's peek (`PROTOCOL.md` §7.4), so the
+chat id is gone from message links (security review 2026-10-26, R12 closed). Pairing links still carry what the
+pairing blobs carry: public keys and the chat id inside them (`PROTOCOL.md` §6.3–6.4).
 
 ### 7.5 The 8-byte Olm v1 MAC — and why no forgery oracle exists here
 
@@ -754,12 +758,17 @@ classic setting is a server that decrypts on arrival. Fuzzzy Ink has none:
    inner header naming this chat, both identity keys, the right direction and a fresh counter, or the
    result is `Corrupt`/`WrongChat` with no state change — indistinguishable from a MAC failure to anyone
    but the user holding the device.
-4. **There is no network to signal anything.** The crate has no network code; the app has no server; a
-   deep link prefills a text field and decrypts nothing (§2.6).
+4. **There is no network to signal anything.** The crate has no network code; the app has no server. A link
+   is recognised by the peek on arrival — a trial on a throwaway copy of each connected session whose only
+   outcome is the person's name on the user's own screen — and is opened only on the user's Open tap (§2.6).
+   Another app on the phone can fire links (the Android activity is exported), but it learns nothing back:
+   the answer is on screen only, and nothing is spent or written.
 
-**The design rule that keeps this true, stated for every future change:** *no code path may ever decrypt
-a message or file automatically on paste, on link open, on clipboard change or on file arrival, and no
-code path may report a decryption outcome to anything outside the device.* Adding either would turn the
+**The design rule that keeps this true, stated for every future change:** *no code path may ever open (spend) a
+message or file automatically on link arrival, on clipboard change or on file arrival — only on the user's own
+paste into Open, Open tap or file pick — and no code path may report a decryption or peek outcome to anything
+outside the device.* The peek is the one read-only trial that runs on arrival (since 2026-10-26, for message
+links); it spends nothing and writes nothing, and its result is shown, never sent. Adding either would turn the
 user-as-oracle argument into a real oracle and would require revisiting this section and, most likely, the
 MAC length (R23). Pairing blobs are not affected by the MAC length at all: they are authenticated by a full
 64-byte Ed25519 signature (`PROTOCOL.md` §4.1).
@@ -909,7 +918,7 @@ Also relevant to this model, as decided on 2026-09-13: **D-2** safety number acc
 **D-6** the Android keystore move to the owner's Codemagic pipeline (a signed macOS build additionally needs the
 `com.apple.security.files.user-selected.read-write` entitlement for the file picker and the archive save panel);
 **D-5** private vulnerability reporting is enabled, the `security@` route and the website's `security.txt` are
-owner/ops items (R29); **D-7** keep the chat id in message links and state it (done in the copy); **D-10** the
+owner/ops items (R29); **D-7** keep the chat id in message links and state it (superseded 2026-10-26: the chat id is gone from message links, R12); **D-10** the
 hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were applied.
 
 ---
@@ -1033,7 +1042,7 @@ studio's flow directory; the review ids below are those records).
 | R9 | **Corrupt or cancelled chat-mode file consumes its message** — terminal for that container. | `PROTOCOL.md` §17.5; F3-2 review §3/N4; F3-3 review N2 | product copy |
 | R10 | **Archive export and trade-off copy — built** (F2-10 `d2a2f15`, F2-11 `57ad6d4` + `f88774b`, 2026-09-13). History leaves the app by the export (R35) or by copying messages; the copy states the single-use rule, the 63-behind window, the new-device rule, the text-only seal and the files-in-the-clear fact (§8). | §8; `PROTOCOL.md` §9.5 | closed |
 | R11 | **`getMessagesForChat` degrades on a locked store**: every text row reads as an empty string with a logged warning. Since F2-10 the row carries `isUnreadable` (set when the seal is absent, malformed, or the core answers `Corrupt` / `UnknownChat` / `StoreLocked`) and the archive export returns `storeLocked` before it touches the file system, so a blank-rows archive cannot be produced; an unreadable row exports as `"unreadable": true`. The UI still renders such a row as an empty message (only the export reads the flag). | F2-8 review §8; F2-10 review §1–3 | closed (residual: the UI shows `''`, not a marker — product) |
-| R12 | **The "Copy as link" message link carries the chat id in the clear**; pairing links carry `exp`. The raw blob does not. Both options have a cost, for D-7: **keep `c`** — a stable per-chat identifier on every message link (metadata only, §7.4); **drop `c`** — link routing disappears, because the blob carries no chat id (`PROTOCOL.md` §6.5) and the only way to route without one would be to trial-decrypt across every chat's session on link open, which the §7.5 rule forbids — a message link could then only prefill the currently open chat or ask the user to pick one. | §7.4; hardening plan §H (internal) rule "no chat id in the clear without a threat-model note" | owner |
+| R12 | **Closed 2026-10-26.** Message links carried the chat id in the clear. They now carry the blob only; the receiving app finds the chat with the read-only peek (`PROTOCOL.md` §7.4) and opens the message only on the user's Open tap (§7.5). Pairing links never carried an expiry any more and carry what the pairing blob carries. | §7.4; security review 2026-10-26 (L5) | — |
 | R13 | **A cancelled chat receive** shows no failure reason, and the next attempt on the same container reads "already unfuzzed". | F3-3 review N2 | product copy |
 | R14 | **Peer-chosen file names are not display-safe** (a Unicode direction override is a valid name). **Mitigated 2026-10-22 (security review item 4):** every shown file name has its direction controls and control characters removed (`UserFileNames.forDisplay`). **Since 2026-10-26** the app never hands a plain file to another app to open: images and text are shown in the app, anything else offers Save only, so the extension denylist and "Show in folder" are gone with the risk they guarded. Remaining: a file the user saves and then opens from their own file manager is theirs to judge; the failed-files snackbar prints the *input* container name unsanitised. | `PROTOCOL.md` §7.3; F3-2 review N1; F3-3 review §1; security review 2026-10-22 | product |
 | R15 | **Output collisions overwrite silently** (`<chat>/<originalName>`), and the name is now peer-chosen. **Mitigated 2026-10-22 (security review item 5):** the app picks the output path before the core runs and never picks an existing name or one with a `.part` beside it — `name (1).ext`, `name (2).ext`, … (`UserFileNames.uniqueOutputPath`, for chat receive and send and both Basics directions); since 2026-10-26 chat files go to the app-private `sealed_files/chats/<safe chat name> (<first 8 of the chat id>)/` and Basics files to `sealed_files/basics/`, and plain copies to a fresh hand-off folder per use, so nothing the app writes can land in a user folder or another chat's. The core is unchanged (its final rename still replaces), so a file another program creates under the chosen name *while* a job runs is replaced. | `PROTOCOL.md` §9.3, §10.5; F3-3 review N3; security review 2026-10-22 | product |
@@ -1101,7 +1110,7 @@ places where a fresh pair of eyes changes the risk.
 7. **Zeroization on the Rust side** — including the exact-size serialisation of pickles (`state.rs`) and
    the wiped Argon2 buffer — and an honest statement of what the Dart side cannot wipe (R19).
 8. **Metadata and what leaves the device (§7.4, §2.8, §7.13, R5, R12, R33, R34, R35, R36)** — whether the plaintext
-   columns, the chat id in message links, the residual backup paths after the opt-out, the absence of any re-key,
+   columns, the residual backup paths after the opt-out, the absence of any re-key,
    the plain hand-off copies while a file is in use and the archive export's working-file residue are acceptable
    for the product's threat population.
 9. **The windows (§7.7)** — whether 40 / 5 / 2000 / 63 match how people will actually use a paste-based

@@ -1213,9 +1213,9 @@
   "@openPasteItHint": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   },
-  "openLinksTip": "ბმულები და QR კოდები აქ თავისით იხსნება.",
+  "openLinksTip": "ბმულები და QR კოდები აქ მოდის. არაფერი გაიხსნება, სანამ „გახსნას“ არ დააჭერთ.",
   "@openLinksTip": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
   },
   "openNothingToPaste": "ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.",
   "@openNothingToPaste": {
@@ -1384,6 +1384,53 @@
   "openReading": "იკითხება…",
   "@openReading": {
     "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openLinkTitle": "გავხსნათ {name}-ის შეტყობინება?",
+  "@openLinkTitle": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openLinkLine": "ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.",
+  "@openLinkLine": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
+  },
+  "openLinkOpen": "გახსნა",
+  "@openLinkOpen": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
+  },
+  "openLinkNotNow": "ახლა არა",
+  "@openLinkNotNow": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
+  },
+  "replyLinkTitle": "დავუკავშირდეთ {name}-ს?",
+  "@replyLinkTitle": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkLine": "დაუკავშირდით მხოლოდ მაშინ, თუ ეს პასუხი {name}-მ გამოგიგზავნათ.",
+  "@replyLinkLine": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkConnect": "დაკავშირება",
+  "@replyLinkConnect": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
+  },
+  "linkWaitsForSafe": "ბმული ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.",
+  "@linkWaitsForSafe": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
   },
   "openedFromName": "გამომგზავნი: {name}",
   "@openedFromName": {

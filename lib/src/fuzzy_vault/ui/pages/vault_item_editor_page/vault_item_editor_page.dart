@@ -53,9 +53,16 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
 
   VaultItem? get _existing => widget.payload.existingItem;
 
+  VoidCallback? _releaseLinks;
+
   @override
   void initState() {
     super.initState();
+    // A link that arrives now waits until the editor closes, so it never
+    // throws away unsaved edits (security review 2026-10-26).
+    if (sl.isRegistered<FuzzyLinkHandler>()) {
+      _releaseLinks = sl.get<FuzzyLinkHandler>().holdLinks();
+    }
     final item = _existing;
     _titleController = TextEditingController(text: item?.metadata.title ?? '');
     _usernameController =
@@ -75,6 +82,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
 
   @override
   void dispose() {
+    _releaseLinks?.call();
     _titleController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();

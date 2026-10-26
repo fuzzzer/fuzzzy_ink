@@ -9,8 +9,9 @@ import 'components/components.dart';
 /// it is exactly the shape `FuzzyLinkGenerator` writes:
 /// - `/invite#<blob>` and `/accept#<blob>`: the blob is the core's `Fuzz/`
 ///   text without its prefix (base64url, no padding);
-/// - `/message#<chat id>.<blob>`: the chat id names the chat to open, since a
-///   message blob carries none.
+/// - `/message#<blob>`: the message alone. The chat it belongs to is found
+///   by the core's peek, which spends nothing (`PROTOCOL.md` §7.4); links no
+///   longer carry the chat id in the clear (security review 2026-10-26).
 ///
 /// Anything else (another host, a port, a user, a query, a trailing slash,
 /// an escaped character outside base64url, padding, an oversized fragment)
@@ -26,8 +27,6 @@ class FuzzyLinkParser {
   static const maxPayloadLength = 8192;
 
   static final _blob = RegExp(r'^[A-Za-z0-9_-]+$');
-  static final _chatId =
-      RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
 
   static FuzzyLinkPayload? parse(Uri uri) {
     final type = FuzzyLinkType.fromPath(uri.path);
@@ -52,7 +51,9 @@ class FuzzyLinkParser {
               rawAcceptanceContent: '$fuzzIdentificator$fragment',
             )
           : null,
-      FuzzyLinkType.message => _parseMessage(fragment),
+      FuzzyLinkType.message => _isBlob(fragment)
+          ? FuzzMessageLinkPayload(encryptedMessage: fragment)
+          : null,
     };
   }
 
@@ -79,15 +80,6 @@ class FuzzyLinkParser {
         '$fuzzIdentificator${payload.encryptedMessage}',
       _ => null,
     };
-  }
-
-  static FuzzyLinkPayload? _parseMessage(String fragment) {
-    final dot = fragment.indexOf('.');
-    if (dot < 0) return null;
-    final chatId = fragment.substring(0, dot);
-    final blob = fragment.substring(dot + 1);
-    if (!_chatId.hasMatch(chatId) || !_isBlob(blob)) return null;
-    return FuzzMessageLinkPayload(chatId: chatId, encryptedMessage: blob);
   }
 
   static bool _isBlob(String text) => _blob.hasMatch(text);

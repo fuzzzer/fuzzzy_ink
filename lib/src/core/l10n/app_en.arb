@@ -1121,7 +1121,7 @@
   "@openPasteItHint": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
-  "openLinksTip": "Links and QR codes open here by themselves.",
+  "openLinksTip": "Links and QR codes come here. Nothing opens until you tap Open.",
   "@openLinksTip": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
@@ -1307,6 +1307,53 @@
   "openReading": "Reading…",
   "@openReading": {
     "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openLinkTitle": "Open the message from {name}?",
+  "@openLinkTitle": {
+    "description": "A message came by link: nothing is opened until the person taps Open (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openLinkLine": "It opens once, then it stays in your history with them.",
+  "@openLinkLine": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "openLinkOpen": "Open",
+  "@openLinkOpen": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "openLinkNotNow": "Not now",
+  "@openLinkNotNow": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "replyLinkTitle": "Connect with {name}?",
+  "@replyLinkTitle": {
+    "description": "A reply to your invite came by link: nothing connects until the person taps Connect (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkLine": "Connect only if {name} sent you this reply.",
+  "@replyLinkLine": {
+    "description": "Security review fixes 2026-10-26.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkConnect": "Connect",
+  "@replyLinkConnect": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "linkWaitsForSafe": "A link is waiting. It opens when you leave this safe item.",
+  "@linkWaitsForSafe": {
+    "description": "A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26)."
   },
   "openedFromName": "From {name}",
   "@openedFromName": {

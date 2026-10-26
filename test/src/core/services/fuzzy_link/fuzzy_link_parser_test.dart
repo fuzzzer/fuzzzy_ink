@@ -32,13 +32,12 @@ void main() {
       expect(typed.rawAcceptanceContent, 'Fuzz/$_acceptanceBody');
     });
 
-    test('a message link gives the chat id and the stored blob back', () {
-      final payload = _parse('$_base/message#$_chatId.$_messageBody');
+    test('a message link gives the stored blob back, and nothing else', () {
+      final payload = _parse('$_base/message#$_messageBody');
 
       expect(payload, isA<FuzzMessageLinkPayload>());
       final typed = payload! as FuzzMessageLinkPayload;
       expect(typed.type, FuzzyLinkType.message);
-      expect(typed.chatId, _chatId);
       expect(typed.encryptedMessage, _messageBody);
     });
 
@@ -98,12 +97,10 @@ void main() {
       'an escaped "+"': '$_base/invite#ab%2Bcd',
       'an escaped space': '$_base/invite#ab%20cd',
       'a dot in a pairing payload': '$_base/accept#$_chatId.$_messageBody',
-      'a message without a chat id': '$_base/message#$_messageBody',
-      'a message with an empty blob': '$_base/message#$_chatId.',
-      'a message with an upper-case chat id':
-          '$_base/message#${_chatId.toUpperCase()}.$_messageBody',
-      'a message with a short chat id': '$_base/message#6f1e9b2c.$_messageBody',
-      'a message with two dots': '$_base/message#$_chatId.$_messageBody.x',
+      // The old shape with a chat id in the clear is gone (security review
+      // 2026-10-26): pre-launch, no link was ever made with it.
+      'a message with a chat id': '$_base/message#$_chatId.$_messageBody',
+      'a message with a dot': '$_base/message#$_messageBody.x',
     };
 
     for (final MapEntry(key: reason, value: link) in refused.entries) {
@@ -127,8 +124,8 @@ void main() {
     });
 
     test('an oversized message link is refused', () {
-      final body = 'A' * FuzzyLinkParser.maxPayloadLength;
-      expect(_parse('$_base/message#$_chatId.$body'), isNull);
+      final body = 'A' * (FuzzyLinkParser.maxPayloadLength + 1);
+      expect(_parse('$_base/message#$body'), isNull);
     });
   });
 
@@ -170,7 +167,7 @@ void main() {
       );
       expect(
         FuzzyLinkParser.blobFromPastedLink(
-          '$_base/message#$_chatId.$_messageBody',
+          '$_base/message#$_messageBody',
           FuzzyLinkType.message,
         ),
         'Fuzz/$_messageBody',

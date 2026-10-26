@@ -26,6 +26,12 @@ class FuzzyLinkHandler {
 
   bool get hasPendingPayload => _pendingPayload != null;
 
+  /// Pages a link must not cover (My safe's editor, whose unsaved edits a
+  /// jump elsewhere would lose) hold links while they are open; a link that
+  /// arrives meanwhile waits and opens when the last hold is released
+  /// (security review 2026-10-26).
+  int _holds = 0;
+
   /// Whether a link waits for the unlock: the lock screen says so ("A link
   /// is waiting. Unlock to open it.").
   ValueListenable<bool> get pendingLink => _pendingLink;
@@ -59,7 +65,21 @@ class FuzzyLinkHandler {
     _subscription = _linkService.onLinkReceived.listen(_handleUri);
   }
 
+  /// Holds links until the returned callback runs (call it once, in
+  /// `dispose`).
+  VoidCallback holdLinks() {
+    _holds++;
+    var isReleased = false;
+    return () {
+      if (isReleased) return;
+      isReleased = true;
+      _holds--;
+      if (_holds == 0 && !_isLocked) processPendingPayload();
+    };
+  }
+
   void processPendingPayload() {
+    if (_holds > 0) return;
     if (_pendingPayload != null) {
       _processPayload(_pendingPayload!);
       _pendingPayload = null;
@@ -79,9 +99,12 @@ class FuzzyLinkHandler {
   }
 
   Future<void> _routePayload(FuzzyLinkPayload payload) async {
-    if (await _isAppLocked()) {
+    if (_isLocked || _holds > 0) {
       _pendingPayload = payload;
       _pendingLink.value = true;
+      if (!_isLocked && navigatorKey.currentContext != null) {
+        _showMessage(_l10n.linkWaitsForSafe);
+      }
       return;
     }
 
@@ -146,18 +169,31 @@ class FuzzyLinkHandler {
         );
         if (isSameAcceptance) {
           _showMessage(_l10n.alreadyConnected);
-        } else {
+          return;
+        }
+        // Only a reply that really answers this chat's invite raises the
+        // alarm; a junk or forged one is just not a valid reply (security
+        // review 2026-10-26).
+        final checkRes = await _cryptoCoreService.checkAcceptance(
+          chatId: chatId,
+          acceptance: payload.rawAcceptanceContent,
+        );
+        if (checkRes is CryptoCoreSuccess<void>) {
           _showPairingWarning(chat);
+        } else {
+          _showMessage(_l10n.failedToProcessAcceptance);
         }
         return;
       }
 
+      // "Connect with {name}?" first: a link alone never connects.
       _navigateCleanly(
         AppRouter.chatInvitation,
         extra: ChatInvitationPagePayload(
           chatName: chat.chatName,
           chatId: chat.chatId,
           prefillAcceptanceContent: payload.rawAcceptanceContent,
+          confirmReply: true,
         ),
       );
     } catch (_) {
@@ -165,16 +201,15 @@ class FuzzyLinkHandler {
     }
   }
 
-  /// A message link opens in Open, which checks the person and opens it
-  /// once (a person not on this phone is "Not from your people").
+  /// A message link goes to Open, which finds its person with the peek
+  /// (nothing spent) and asks "Open the message from {name}?"; it opens only
+  /// on Open (security review 2026-10-26). A person not on this phone is
+  /// "Not from your people".
   void _handleFuzzMessage(FuzzMessageLinkPayload payload) {
     _navigateCleanly(
       AppRouter.open,
       extra: OpenPagePayload(
-        request: OpenMessageLink(
-          chatId: payload.chatId,
-          encryptedMessage: payload.encryptedMessage,
-        ),
+        request: OpenMessageLink(encryptedMessage: payload.encryptedMessage),
       ),
     );
   }
@@ -185,17 +220,15 @@ class FuzzyLinkHandler {
     _navigateCleanly(AppRouter.personAnsweredTwice, extra: chat);
   }
 
+  /// On top of wherever the person is: a link no longer throws away the
+  /// screens below it (security review 2026-10-26).
   void _navigateCleanly(String path, {Object? extra}) {
     final router = AppRouter.routerInstance;
     if (router == null) return;
-    router.go(AppRouter.home);
     router.push(path, extra: extra);
   }
 
-  Future<bool> _isAppLocked() async {
-    final status = _authStore.state.status;
-    return !status.hasAccess;
-  }
+  bool get _isLocked => !_authStore.state.status.hasAccess;
 
   void dispose() {
     _subscription?.cancel();

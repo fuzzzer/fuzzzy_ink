@@ -212,6 +212,17 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 | B pastes A's invitation into a chat that already has state | `Internal` | §4.3. |
 | An acceptance whose handshake header is dishonest (wrong chat, wrong keys, wrong direction, counter ≠ 0, wrong content type) | `Corrupt` | §4.4 step 4; the one-time key survives. |
 
+**Is a second reply a real answer?** (`check_acceptance`, [`api/pairing.rs`](../../rust/fuzzy_crypto_core/src/api/pairing.rs);
+security review 2026-10-26). Before the app warns a connected inviter that "someone else answered your invite", it
+asks the core, read-only: §4.1 steps 1–4 on the reply, then the chat must be the inviter's, and the reply's
+pre-key message must name the one-time key of the invitation this chat made (`last_invitation`) and the identity
+key the reply itself carries (both compared in constant time). Nothing is decrypted, no key is consumed, nothing
+is written. A reply anyone could build from a chat id seen elsewhere, an invitation passed off as a reply, or a
+reply to another invitation fails (`UnsupportedFormat`, `InvalidSignature`, `WrongChat`, `Corrupt`) and the app
+says the reply is not valid instead of raising the alarm. What it does not prove: who answered — anyone who had
+the invitation can build a real answer, which is exactly what the warning is for. Test:
+`api::pairing::tests::only_a_genuine_second_reply_counts_as_an_answer`.
+
 ### 4.6 What the pairing does not do
 
 - It does not authenticate *who* A and B are; it authenticates that whoever produced each blob controls the
@@ -627,7 +638,9 @@ The real open (`decrypt_text`, `prepare_file_receive`) runs the whole of §7.2 a
 
 What this costs: one Olm decrypt per connected chat per peek (AES-CBC + HMAC, no KDF), and a peek reveals to the
 app — never to anyone else — which chat a blob belongs to, which the paste into that chat revealed anyway. The
-wire format is unchanged: still no chat id on a message.
+wire format is unchanged: still no chat id on a message. Since 2026-10-26 message links carry no chat id either
+(`https://ink.fuzzzycore.com/message#<blob>`): the app peeks a link's blob on arrival to name its person, and
+opens it only when the user taps Open (THREAT_MODEL §2.6, §7.5).
 
 ---
 

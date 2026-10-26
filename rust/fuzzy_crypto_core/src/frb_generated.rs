@@ -42,7 +42,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1625369844;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 176937800;
 
 // Section: executor
 
@@ -150,6 +150,61 @@ fn wire__crate__api__core__CryptoCore_chat_status_impl(
                     let api_that_guard = api_that_guard.unwrap();
                     let output_ok =
                         crate::api::core::CryptoCore::chat_status(&*api_that_guard, api_chat_id)?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__core__CryptoCore_check_acceptance_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "CryptoCore_check_acceptance",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CryptoCore>,
+            >>::sse_decode(&mut deserializer);
+            let api_chat_id = <String>::sse_decode(&mut deserializer);
+            let api_acceptance = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::error::CoreError>((move || {
+                    let mut api_that_guard = None;
+                    let decode_indices_ =
+                        flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                            flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                &api_that, 0, false,
+                            ),
+                        ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_that_guard = api_that_guard.unwrap();
+                    let output_ok = crate::api::core::CryptoCore::check_acceptance(
+                        &*api_that_guard,
+                        api_chat_id,
+                        api_acceptance,
+                    )?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -3332,146 +3387,154 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         2 => wire__crate__api__core__CryptoCore_chat_status_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__core__CryptoCore_close_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__core__CryptoCore_complete_handshake_impl(
+        3 => wire__crate__api__core__CryptoCore_check_acceptance_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        5 => wire__crate__api__core__CryptoCore_create_invitation_impl(
+        4 => wire__crate__api__core__CryptoCore_close_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__core__CryptoCore_complete_handshake_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        6 => wire__crate__api__core__CryptoCore_current_acceptance_impl(
+        6 => wire__crate__api__core__CryptoCore_create_invitation_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        7 => wire__crate__api__core__CryptoCore_current_invitation_impl(
+        7 => wire__crate__api__core__CryptoCore_current_acceptance_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        8 => {
+        8 => wire__crate__api__core__CryptoCore_current_invitation_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        9 => {
             wire__crate__api__core__CryptoCore_decrypt_text_impl(port, ptr, rust_vec_len, data_len)
         }
-        9 => wire__crate__api__core__CryptoCore_delete_chat_impl(port, ptr, rust_vec_len, data_len),
         10 => {
-            wire__crate__api__core__CryptoCore_encrypt_text_impl(port, ptr, rust_vec_len, data_len)
+            wire__crate__api__core__CryptoCore_delete_chat_impl(port, ptr, rust_vec_len, data_len)
         }
         11 => {
+            wire__crate__api__core__CryptoCore_encrypt_text_impl(port, ptr, rust_vec_len, data_len)
+        }
+        12 => {
             wire__crate__api__core__CryptoCore_is_verified_impl(port, ptr, rust_vec_len, data_len)
         }
-        12 => wire__crate__api__core__CryptoCore_keep_received_file_impl(
+        13 => wire__crate__api__core__CryptoCore_keep_received_file_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => {
+        14 => {
             wire__crate__api__core__CryptoCore_mark_verified_impl(port, ptr, rust_vec_len, data_len)
         }
-        14 => wire__crate__api__core__CryptoCore_open_local_impl(port, ptr, rust_vec_len, data_len),
-        15 => {
+        15 => wire__crate__api__core__CryptoCore_open_local_impl(port, ptr, rust_vec_len, data_len),
+        16 => {
             wire__crate__api__core__CryptoCore_open_setting_impl(port, ptr, rust_vec_len, data_len)
         }
-        16 => wire__crate__api__core__CryptoCore_peek_file_impl(port, ptr, rust_vec_len, data_len),
-        17 => {
+        17 => wire__crate__api__core__CryptoCore_peek_file_impl(port, ptr, rust_vec_len, data_len),
+        18 => {
             wire__crate__api__core__CryptoCore_peek_pasted_impl(port, ptr, rust_vec_len, data_len)
         }
-        18 => wire__crate__api__core__CryptoCore_prepare_file_receive_impl(
+        19 => wire__crate__api__core__CryptoCore_prepare_file_receive_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__core__CryptoCore_prepare_file_send_impl(
+        20 => wire__crate__api__core__CryptoCore_prepare_file_send_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        20 => wire__crate__api__core__CryptoCore_reopen_kept_file_impl(
+        21 => wire__crate__api__core__CryptoCore_reopen_kept_file_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        21 => {
+        22 => {
             wire__crate__api__core__CryptoCore_safety_number_impl(port, ptr, rust_vec_len, data_len)
         }
-        22 => wire__crate__api__core__CryptoCore_seal_local_impl(port, ptr, rust_vec_len, data_len),
-        23 => {
+        23 => wire__crate__api__core__CryptoCore_seal_local_impl(port, ptr, rust_vec_len, data_len),
+        24 => {
             wire__crate__api__core__CryptoCore_seal_setting_impl(port, ptr, rust_vec_len, data_len)
         }
-        24 => wire__crate__api__core__CryptoCore_store_dir_impl(port, ptr, rust_vec_len, data_len),
-        28 => wire__crate__api__files__FileTicket_original_name_impl(
+        25 => wire__crate__api__core__CryptoCore_store_dir_impl(port, ptr, rust_vec_len, data_len),
+        29 => wire__crate__api__files__FileTicket_original_name_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        29 => wire__crate__api__vault__VaultKey_close_impl(port, ptr, rust_vec_len, data_len),
-        31 => {
+        30 => wire__crate__api__vault__VaultKey_close_impl(port, ptr, rust_vec_len, data_len),
+        32 => {
             wire__crate__api__core__change_master_password_impl(port, ptr, rust_vec_len, data_len)
         }
-        32 => wire__crate__api__health__core_version_impl(port, ptr, rust_vec_len, data_len),
-        33 => wire__crate__api__core__create_master_key_impl(port, ptr, rust_vec_len, data_len),
-        34 => wire__crate__api__files__decrypt_file_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__files__encrypt_file_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__files__new_file_job_impl(port, ptr, rust_vec_len, data_len),
-        37 => wire__crate__api__core__new_recovery_key_impl(port, ptr, rust_vec_len, data_len),
-        38 => wire__crate__api__core__open_store_impl(port, ptr, rust_vec_len, data_len),
-        39 => {
+        33 => wire__crate__api__health__core_version_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__api__core__create_master_key_impl(port, ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__files__decrypt_file_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__files__encrypt_file_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__files__new_file_job_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__core__new_recovery_key_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__api__core__open_store_impl(port, ptr, rust_vec_len, data_len),
+        40 => {
             wire__crate__api__passwords__password_open_bytes_impl(port, ptr, rust_vec_len, data_len)
         }
-        40 => {
+        41 => {
             wire__crate__api__passwords__password_open_text_impl(port, ptr, rust_vec_len, data_len)
         }
-        41 => {
+        42 => {
             wire__crate__api__passwords__password_seal_bytes_impl(port, ptr, rust_vec_len, data_len)
         }
-        42 => {
+        43 => {
             wire__crate__api__passwords__password_seal_text_impl(port, ptr, rust_vec_len, data_len)
         }
-        44 => {
+        45 => {
             wire__crate__api__core__recover_master_password_impl(port, ptr, rust_vec_len, data_len)
         }
-        45 => wire__crate__api__health__round_trip_impl(port, ptr, rust_vec_len, data_len),
-        46 => wire__crate__api__files__run_file_job_impl(port, ptr, rust_vec_len, data_len),
-        47 => {
+        46 => wire__crate__api__health__round_trip_impl(port, ptr, rust_vec_len, data_len),
+        47 => wire__crate__api__files__run_file_job_impl(port, ptr, rust_vec_len, data_len),
+        48 => {
             wire__crate__api__vault__vault_init_with_master_impl(port, ptr, rust_vec_len, data_len)
         }
-        48 => wire__crate__api__vault__vault_open_impl(port, ptr, rust_vec_len, data_len),
-        49 => wire__crate__api__vault__vault_recover_impl(port, ptr, rust_vec_len, data_len),
-        50 => {
+        49 => wire__crate__api__vault__vault_open_impl(port, ptr, rust_vec_len, data_len),
+        50 => wire__crate__api__vault__vault_recover_impl(port, ptr, rust_vec_len, data_len),
+        51 => {
             wire__crate__api__vault__vault_recover_to_master_impl(port, ptr, rust_vec_len, data_len)
         }
-        51 => wire__crate__api__vault__vault_reseal_impl(port, ptr, rust_vec_len, data_len),
-        52 => wire__crate__api__vault__vault_rewrap_impl(port, ptr, rust_vec_len, data_len),
-        53 => wire__crate__api__vault__vault_seal_impl(port, ptr, rust_vec_len, data_len),
-        54 => {
+        52 => wire__crate__api__vault__vault_reseal_impl(port, ptr, rust_vec_len, data_len),
+        53 => wire__crate__api__vault__vault_rewrap_impl(port, ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__vault__vault_seal_impl(port, ptr, rust_vec_len, data_len),
+        55 => {
             wire__crate__api__vault__vault_seal_for_recovery_impl(port, ptr, rust_vec_len, data_len)
         }
-        55 => wire__crate__api__vault__vault_unlock_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__vault__vault_unlock_with_master_impl(
+        56 => wire__crate__api__vault__vault_unlock_impl(port, ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__vault__vault_unlock_with_master_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        57 => wire__crate__api__vault__vault_use_master_password_impl(
+        58 => wire__crate__api__vault__vault_use_master_password_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        58 => {
+        59 => {
             wire__crate__api__vault__vault_use_own_password_impl(port, ptr, rust_vec_len, data_len)
         }
         _ => unreachable!(),
@@ -3486,12 +3549,12 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        25 => wire__crate__api__files__FileJob_cancel_impl(ptr, rust_vec_len, data_len),
-        26 => wire__crate__api__files__FileJob_pause_impl(ptr, rust_vec_len, data_len),
-        27 => wire__crate__api__files__FileJob_resume_impl(ptr, rust_vec_len, data_len),
-        30 => wire__crate__api__formats__blob_type_of_impl(ptr, rust_vec_len, data_len),
-        43 => wire__crate__api__formats__peek_chat_id_impl(ptr, rust_vec_len, data_len),
-        59 => wire__crate__api__vault__vault_uses_own_password_impl(ptr, rust_vec_len, data_len),
+        26 => wire__crate__api__files__FileJob_cancel_impl(ptr, rust_vec_len, data_len),
+        27 => wire__crate__api__files__FileJob_pause_impl(ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__files__FileJob_resume_impl(ptr, rust_vec_len, data_len),
+        31 => wire__crate__api__formats__blob_type_of_impl(ptr, rust_vec_len, data_len),
+        44 => wire__crate__api__formats__peek_chat_id_impl(ptr, rust_vec_len, data_len),
+        60 => wire__crate__api__vault__vault_uses_own_password_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

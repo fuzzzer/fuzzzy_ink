@@ -205,7 +205,6 @@ class _LockedTextView extends StatelessWidget {
     final space = context.fuzzzySpace;
     final message = payload.message;
     final content = SealedShareContent.message(
-      chatId: message.chatId,
       encryptedMessage: message.encryptedMessage,
     );
 

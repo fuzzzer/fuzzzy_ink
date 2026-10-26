@@ -26,10 +26,8 @@ class LockedView extends StatelessWidget {
     final filePath = item.lockedFilePath;
     if (filePath != null) return SealedShareContent.lockedFile(filePath);
     final text = item.lockedText!;
-    final chat = this.chat;
     if (chat == null) return SealedShareContent.passwordText(text);
     return SealedShareContent.message(
-      chatId: chat.chatId,
       encryptedMessage: text.substring(fuzzIdentificator.length),
     );
   }

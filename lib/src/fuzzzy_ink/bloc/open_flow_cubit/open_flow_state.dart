@@ -19,11 +19,10 @@ class OpenChosenFile extends OpenRequest {
   final String filePath;
 }
 
-/// A tapped message link: its chat id rides next to the blob.
+/// A tapped message link: the blob only. It is recognised (nothing spent)
+/// and opened only when the person taps Open (security review 2026-10-26).
 class OpenMessageLink extends OpenRequest {
-  const OpenMessageLink({required this.chatId, required this.encryptedMessage});
-
-  final String chatId;
+  const OpenMessageLink({required this.encryptedMessage});
 
   /// The blob without its `Fuzz/` prefix.
   final String encryptedMessage;
@@ -34,6 +33,10 @@ enum OpenPhase {
   reading,
   working,
   password,
+
+  /// A message that came by link, recognised and waiting for the person's
+  /// Open: "Open the message from {name}?".
+  confirmMessage,
   openedText,
   openedFile,
   problem;
@@ -124,6 +127,7 @@ class OpenFlowState {
     this.pendingPassword,
     this.isPasswordWrong = false,
     this.isBusy = false,
+    this.pendingMessage,
   });
 
   final OpenPhase phase;
@@ -147,6 +151,9 @@ class OpenFlowState {
   final bool isPasswordWrong;
   final bool isBusy;
 
+  /// The `Fuzz/` blob [OpenPhase.confirmMessage] waits to open.
+  final String? pendingMessage;
+
   OpenFlowState copyWith({
     double? progress,
     bool? isPasswordWrong,
@@ -167,6 +174,7 @@ class OpenFlowState {
       pendingPassword: pendingPassword,
       isPasswordWrong: isPasswordWrong ?? this.isPasswordWrong,
       isBusy: isBusy ?? this.isBusy,
+      pendingMessage: pendingMessage,
     );
   }
 

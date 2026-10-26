@@ -172,6 +172,41 @@ pub fn verify_acceptance(chat_id: &str, blob: &[u8]) -> Result<Acceptance, CoreE
     Ok(acceptance)
 }
 
+/// A (inviter), read-only: whether `acceptance` (already verified by
+/// [`verify_acceptance`] for this chat) answers the invitation this chat
+/// made — its pre-key message is built on that invitation's one-time key, by
+/// the identity key the acceptance names. Nothing is decrypted, consumed or
+/// written. The app asks this before it warns that "someone else answered
+/// your invite" (security review 2026-10-26): a junk reply made from a chat id
+/// seen in a message link, an invitation passed off as a reply, or a reply to
+/// another invitation is not an answer, and is `WrongChat`.
+pub fn answers_invitation(state: &ChatState, acceptance: &Acceptance) -> Result<(), CoreError> {
+    if state.role != Role::Inviter {
+        return Err(CoreError::WrongChat);
+    }
+    let invitation = Invitation::decode(
+        state
+            .last_invitation
+            .as_deref()
+            .ok_or(CoreError::WrongChat)?,
+    )?;
+    let prekey =
+        PreKeyMessage::from_bytes(&acceptance.prekey_msg).map_err(|_| CoreError::Corrupt)?;
+    let ours = prekey
+        .one_time_key()
+        .to_bytes()
+        .ct_eq(&invitation.a_one_time_key)
+        & prekey
+            .identity_key()
+            .to_bytes()
+            .ct_eq(&acceptance.b_curve25519);
+    if bool::from(ours) {
+        Ok(())
+    } else {
+        Err(CoreError::WrongChat)
+    }
+}
+
 /// A (inviter): consumes the one-time key by creating the inbound session from
 /// B's pre-key message, checks the handshake's inner header, and only then
 /// writes the session and B's keys into `state`.

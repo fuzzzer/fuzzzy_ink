@@ -1435,7 +1435,8 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get openPasteItHint => 'ჩაკეტილი ტექსტი, მოწვევა ან პასუხი';
 
   @override
-  String get openLinksTip => 'ბმულები და QR კოდები აქ თავისით იხსნება.';
+  String get openLinksTip =>
+      'ბმულები და QR კოდები აქ მოდის. არაფერი გაიხსნება, სანამ „გახსნას“ არ დააჭერთ.';
 
   @override
   String get openNothingToPaste =>
@@ -1569,6 +1570,38 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get openReading => 'იკითხება…';
+
+  @override
+  String openLinkTitle(String name) {
+    return 'გავხსნათ $name-ის შეტყობინება?';
+  }
+
+  @override
+  String get openLinkLine =>
+      'ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.';
+
+  @override
+  String get openLinkOpen => 'გახსნა';
+
+  @override
+  String get openLinkNotNow => 'ახლა არა';
+
+  @override
+  String replyLinkTitle(String name) {
+    return 'დავუკავშირდეთ $name-ს?';
+  }
+
+  @override
+  String replyLinkLine(String name) {
+    return 'დაუკავშირდით მხოლოდ მაშინ, თუ ეს პასუხი $name-მ გამოგიგზავნათ.';
+  }
+
+  @override
+  String get replyLinkConnect => 'დაკავშირება';
+
+  @override
+  String get linkWaitsForSafe =>
+      'ბმული ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.';
 
   @override
   String openedFromName(String name) {

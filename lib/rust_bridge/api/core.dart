@@ -96,6 +96,17 @@ abstract class CryptoCore implements RustOpaqueInterface {
   /// `Connected` once this side holds a session, `Invited` before.
   Future<ChatStatus> chatStatus({required String chatId});
 
+  /// Read-only: `Ok` when `acceptance` is a genuine answer to the invitation
+  /// this chat made — a `0x02` blob for this chat, signed by the key inside
+  /// it, whose pre-key message is built on this invitation's one-time key
+  /// ([`pairing::answers_invitation`]). Nothing is decrypted, consumed or
+  /// written; the chat may be connected already. The app asks this before
+  /// it warns that someone else answered (security review 2026-10-26); any
+  /// failure means "not a valid reply" (`UnsupportedFormat`, `Corrupt`,
+  /// `InvalidSignature`, `WrongChat`, `UnknownChat`).
+  Future<void> checkAcceptance(
+      {required String chatId, required String acceptance});
+
   /// Drops the store key and every cached state (all zeroised on drop).
   Future<void> close();
 

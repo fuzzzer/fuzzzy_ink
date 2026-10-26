@@ -12,9 +12,11 @@ export 'components/components.dart';
 /// waiting notes, Share invite (then Share again, and Done for now becomes
 /// the main button), and "I got Tamar's reply".
 ///
-/// With a reply ([ChatInvitationPagePayload.prefillAcceptanceContent], from a
-/// reply link or "I got the reply") it connects at once ([HandshakeCubit])
-/// and goes on to "Connected with Tamar".
+/// With a reply ([ChatInvitationPagePayload.prefillAcceptanceContent], from
+/// "I got the reply" or a paste) it connects at once ([HandshakeCubit]) and
+/// goes on to "Connected with Tamar". A reply that came by link asks
+/// "Connect with Tamar?" first and connects only on Connect (security review
+/// 2026-10-26).
 class ChatInvitationPage extends StatelessWidget {
   final ChatInvitationPagePayload payload;
 
@@ -56,11 +58,16 @@ class _ProvidedChatInvitationPageState
     extends State<ProvidedChatInvitationPage> {
   bool _isShared = false;
 
+  /// A reply from a link, waiting for Connect.
+  String? _replyToConfirm;
+
   @override
   void initState() {
     super.initState();
     final reply = widget.payload.prefillAcceptanceContent;
-    if (reply != null) {
+    if (reply != null && widget.payload.confirmReply) {
+      _replyToConfirm = reply;
+    } else if (reply != null) {
       _connect(reply);
     } else if (widget.payload.justMade) {
       // Invite made: step 1 fills (micro-interaction 5).
@@ -136,10 +143,51 @@ class _ProvidedChatInvitationPageState
           );
         }
 
+        final reply = _replyToConfirm;
+        if (reply != null) return _confirm(context, reply);
         return BlocBuilder<InvitationReaderCubit, InvitationReaderState>(
           builder: _ready,
         );
       },
+    );
+  }
+
+  /// "Connect with Tamar?": nothing is completed until Connect.
+  Widget _confirm(BuildContext context, String reply) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final name = widget.payload.chatName;
+    return InkFlowScaffold(
+      qaId: 'replyLink',
+      close: true,
+      onLeading: () => context.go(AppRouter.home),
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FuzzzyButton(
+            qaId: 'replyLink.connect',
+            label: localizations.replyLinkConnect,
+            size: FuzzzyButtonSize.l,
+            onPressed: () {
+              setState(() => _replyToConfirm = null);
+              _connect(reply);
+            },
+          ),
+          SizedBox(height: context.fuzzzySpace.s),
+          FuzzzyButton(
+            qaId: 'replyLink.notNow',
+            label: localizations.openLinkNotNow,
+            variant: FuzzzyButtonVariant.ghost,
+            onPressed: () => setState(() => _replyToConfirm = null),
+          ),
+        ],
+      ),
+      children: [
+        SizedBox(height: context.fuzzzySpace.xl),
+        InkScreenTitle(localizations.replyLinkTitle(name)),
+        SizedBox(height: context.fuzzzySpace.s),
+        InkScreenLine(localizations.replyLinkLine(name)),
+      ],
     );
   }
 

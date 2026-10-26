@@ -2654,7 +2654,7 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'Links and QR codes open here by themselves.'**
+  /// **'Links and QR codes come here. Nothing opens until you tap Open.'**
   String get openLinksTip;
 
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
@@ -2908,6 +2908,54 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Reading…'**
   String get openReading;
+
+  /// A message came by link: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the message from {name}?'**
+  String openLinkTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'It opens once, then it stays in your history with them.'**
+  String get openLinkLine;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openLinkOpen;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get openLinkNotNow;
+
+  /// A reply to your invite came by link: nothing connects until the person taps Connect (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with {name}?'**
+  String replyLinkTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect only if {name} sent you this reply.'**
+  String replyLinkLine(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get replyLinkConnect;
+
+  /// A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'A link is waiting. It opens when you leave this safe item.'**
+  String get linkWaitsForSafe;
 
   /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
   ///

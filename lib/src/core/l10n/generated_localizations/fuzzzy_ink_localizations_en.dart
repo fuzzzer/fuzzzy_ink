@@ -1426,7 +1426,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get openPasteItHint => 'Locked text, invite or reply';
 
   @override
-  String get openLinksTip => 'Links and QR codes open here by themselves.';
+  String get openLinksTip =>
+      'Links and QR codes come here. Nothing opens until you tap Open.';
 
   @override
   String get openNothingToPaste =>
@@ -1560,6 +1561,38 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get openReading => 'Reading…';
+
+  @override
+  String openLinkTitle(String name) {
+    return 'Open the message from $name?';
+  }
+
+  @override
+  String get openLinkLine =>
+      'It opens once, then it stays in your history with them.';
+
+  @override
+  String get openLinkOpen => 'Open';
+
+  @override
+  String get openLinkNotNow => 'Not now';
+
+  @override
+  String replyLinkTitle(String name) {
+    return 'Connect with $name?';
+  }
+
+  @override
+  String replyLinkLine(String name) {
+    return 'Connect only if $name sent you this reply.';
+  }
+
+  @override
+  String get replyLinkConnect => 'Connect';
+
+  @override
+  String get linkWaitsForSafe =>
+      'A link is waiting. It opens when you leave this safe item.';
 
   @override
   String openedFromName(String name) {

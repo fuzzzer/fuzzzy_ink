@@ -31,20 +31,22 @@ void main() {
       );
     });
 
-    test('a message link names the chat and round-trips', () {
-      final link = FuzzyLinkGenerator.generateFuzzLink(_chatId, _messageBody);
+    test(
+        'a message link carries the blob only and round-trips (no chat id, '
+        'security review 2026-10-26)', () {
+      final link = FuzzyLinkGenerator.generateFuzzLink(_messageBody);
       final payload = FuzzyLinkParser.parse(Uri.parse(link!));
 
-      expect(link, 'https://ink.fuzzzycore.com/message#$_chatId.$_messageBody');
+      expect(link, 'https://ink.fuzzzycore.com/message#$_messageBody');
+      expect(link, isNot(contains(_chatId)));
       final typed = payload! as FuzzMessageLinkPayload;
-      expect(typed.chatId, _chatId);
       expect(typed.encryptedMessage, _messageBody);
     });
 
     test('a message blob with or without its Fuzz/ prefix gives one link', () {
       expect(
-        FuzzyLinkGenerator.generateFuzzLink(_chatId, 'Fuzz/$_messageBody'),
-        FuzzyLinkGenerator.generateFuzzLink(_chatId, _messageBody),
+        FuzzyLinkGenerator.generateFuzzLink('Fuzz/$_messageBody'),
+        FuzzyLinkGenerator.generateFuzzLink(_messageBody),
       );
     });
 
@@ -59,23 +61,15 @@ void main() {
 
     group('gives no link for', () {
       test('a message longer than the link limit', () {
-        final body = 'A' * FuzzyLinkParser.maxPayloadLength;
-        expect(FuzzyLinkGenerator.generateFuzzLink(_chatId, body), isNull);
+        final body = 'A' * (FuzzyLinkParser.maxPayloadLength + 1);
+        expect(FuzzyLinkGenerator.generateFuzzLink(body), isNull);
       });
 
       test('a file, whose stored "message" is a path', () {
         expect(
           FuzzyLinkGenerator.generateFuzzLink(
-            _chatId,
             'Fuzz//Users/someone/Documents/Bob/photo.jpg.fuzz',
           ),
-          isNull,
-        );
-      });
-
-      test('a chat id that is not a uuid', () {
-        expect(
-          FuzzyLinkGenerator.generateFuzzLink('chat', _messageBody),
           isNull,
         );
       });

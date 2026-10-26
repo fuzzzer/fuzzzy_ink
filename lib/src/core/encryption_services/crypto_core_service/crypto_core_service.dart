@@ -291,6 +291,19 @@ class CryptoCoreService {
     );
   }
 
+  /// Read-only: success when [acceptance] really answers the invitation the
+  /// chat [chatId] made (signed for this chat, built on its one-time key).
+  /// Asked before the "someone else answered" warning; any failure means
+  /// "not a valid reply". Nothing is consumed or written.
+  Future<CryptoCoreResponse<void>> checkAcceptance({
+    required String chatId,
+    required String acceptance,
+  }) {
+    return _withCore(
+      (core) => core.checkAcceptance(chatId: chatId, acceptance: acceptance),
+    );
+  }
+
   /// Zeroises and unlinks the chat's state; a chat the store never had is
   /// not an error.
   Future<CryptoCoreResponse<void>> deleteChat(String chatId) {
