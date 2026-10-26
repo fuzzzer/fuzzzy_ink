@@ -32,6 +32,12 @@ void main() {
       expect(find.text(text, skipOffstage: false), findsOneWidget);
     }
     expect(l10n.aboutEncryptionBodyWindow, contains('63'));
-    expect(l10n.aboutEncryptionBodyLinks, contains('chat’s id'));
+    // What the app does now (security review 2026-10-26): no chat id in a
+    // link, nothing opens by itself, a master password, auto-lock.
+    expect(l10n.aboutEncryptionBodyLinks, isNot(contains('id')));
+    expect(l10n.aboutEncryptionBodyLinks, contains('tap Open'));
+    expect(l10n.aboutEncryptionBodyHistory, contains('master password'));
+    expect(l10n.aboutEncryptionBodyHistory, isNot(contains('app-lock')));
+    expect(l10n.aboutEncryptionBodyHistory, contains('locks itself'));
   });
 }
