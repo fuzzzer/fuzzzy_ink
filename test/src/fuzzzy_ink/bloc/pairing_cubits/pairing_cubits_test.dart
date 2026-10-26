@@ -650,6 +650,8 @@ void main() {
     ChatGeneralDataListCubit build() {
       when(() => mockChatRepo.chatListUpdates)
           .thenAnswer((_) => const Stream.empty());
+      when(() => mockChatRepo.appDataErased)
+          .thenAnswer((_) => const Stream.empty());
       when(() => mockChatRepo.getAllChats()).thenAnswer((_) async => chats);
       when(() => mockService.isVerified(any()))
           .thenAnswer((_) async => const CryptoCoreSuccess(false));
@@ -729,6 +731,8 @@ void main() {
 
     ChatGeneralDataListCubit build() {
       when(() => mockChatRepo.chatListUpdates)
+          .thenAnswer((_) => const Stream.empty());
+      when(() => mockChatRepo.appDataErased)
           .thenAnswer((_) => const Stream.empty());
       return ChatGeneralDataListCubit(
         cryptoCoreService: mockService,
