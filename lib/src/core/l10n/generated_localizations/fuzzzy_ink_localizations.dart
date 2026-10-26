@@ -1816,6 +1816,12 @@ abstract class FuzzzyInkLocalizations {
   /// **'A link is waiting. It opens when you leave this safe item.'**
   String get linkWaitsForSafe;
 
+  /// Toast: a .fuzz file arrived while My safe's editor is open; it opens when the editor closes (the file version of linkWaitsForSafe).
+  ///
+  /// In en, this message translates to:
+  /// **'A file is waiting. It opens when you leave this safe item.'**
+  String get fileWaitsForSafe;
+
   /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
@@ -3093,6 +3099,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'A link is waiting. Unlock to open it.'**
   String get accessLinkWaiting;
+
+  /// Lock screen: a .fuzz file another app handed over waits for the unlock (the file version of accessLinkWaiting).
+  ///
+  /// In en, this message translates to:
+  /// **'A file is waiting. Unlock to open it.'**
+  String get accessFileWaiting;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///

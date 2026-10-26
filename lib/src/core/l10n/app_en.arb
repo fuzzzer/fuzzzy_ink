@@ -938,6 +938,10 @@
   "@linkWaitsForSafe": {
     "description": "A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26)."
   },
+  "fileWaitsForSafe": "A file is waiting. It opens when you leave this safe item.",
+  "@fileWaitsForSafe": {
+    "description": "Toast: a .fuzz file arrived while My safe's editor is open; it opens when the editor closes (the file version of linkWaitsForSafe)."
+  },
   "openedFromName": "From {name}",
   "@openedFromName": {
     "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
@@ -1889,6 +1893,10 @@
   "accessLinkWaiting": "A link is waiting. Unlock to open it.",
   "@accessLinkWaiting": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFileWaiting": "A file is waiting. Unlock to open it.",
+  "@accessFileWaiting": {
+    "description": "Lock screen: a .fuzz file another app handed over waits for the unlock (the file version of accessLinkWaiting)."
   },
   "accessBioChanged": "Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.",
   "@accessBioChanged": {

@@ -12,13 +12,14 @@ import 'package:go_router/go_router.dart';
 /// fingerprint button and "Forgot your password?". A wrong password turns
 /// the field red with one short line and one firm buzz (no shake); after
 /// too many the field waits and the button counts down ("Wait 0:30") over a
-/// truthful bar. A link tapped while locked says it is waiting. A private
-/// screen.
+/// truthful bar. A link tapped, or a `.fuzz` file opened, while locked says
+/// it is waiting. A private screen.
 class ChatUnlockPage extends StatefulWidget {
   const ChatUnlockPage({super.key, this.pendingLink});
 
-  /// Whether a link waits for the unlock; the link handler's when null.
-  final ValueListenable<bool>? pendingLink;
+  /// What waits for the unlock (a link or a file); the link handler's when
+  /// null.
+  final ValueListenable<WaitingArrival?>? pendingLink;
 
   @override
   State<ChatUnlockPage> createState() => _ChatUnlockPageState();
@@ -36,10 +37,11 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
   bool _showBiometricReset = false;
   bool _showBiometricChanged = false;
 
-  late final ValueListenable<bool> _pendingLink = widget.pendingLink ??
-      (sl.isRegistered<FuzzyLinkHandler>()
-          ? sl.get<FuzzyLinkHandler>().pendingLink
-          : ValueNotifier(false));
+  late final ValueListenable<WaitingArrival?> _pendingLink =
+      widget.pendingLink ??
+          (sl.isRegistered<FuzzyLinkHandler>()
+              ? sl.get<FuzzyLinkHandler>().pendingLink
+              : ValueNotifier(null));
 
   @override
   void initState() {
@@ -169,18 +171,27 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
             ),
             SizedBox(height: space.l),
             AccessTitle(localizations.accessLockedTitle),
-            ValueListenableBuilder<bool>(
+            ValueListenableBuilder<WaitingArrival?>(
               valueListenable: _pendingLink,
-              builder: (context, isWaiting, _) => isWaiting
-                  ? Padding(
-                      padding: EdgeInsets.only(top: space.m),
-                      child: TipLine(
-                        icon: Icons.link,
-                        text: localizations.accessLinkWaiting,
-                        qaId: 'unlock.linkWaiting',
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+              builder: (context, waiting, _) => switch (waiting) {
+                null => const SizedBox.shrink(),
+                WaitingArrival.link => Padding(
+                    padding: EdgeInsets.only(top: space.m),
+                    child: TipLine(
+                      icon: Icons.link,
+                      text: localizations.accessLinkWaiting,
+                      qaId: 'unlock.linkWaiting',
+                    ),
+                  ),
+                WaitingArrival.file => Padding(
+                    padding: EdgeInsets.only(top: space.m),
+                    child: TipLine(
+                      icon: Icons.insert_drive_file_outlined,
+                      text: localizations.accessFileWaiting,
+                      qaId: 'unlock.fileWaiting',
+                    ),
+                  ),
+              },
             ),
             if (_showBiometricChanged) ...[
               SizedBox(height: space.m),

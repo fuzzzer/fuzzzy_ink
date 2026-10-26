@@ -935,6 +935,10 @@
   "@linkWaitsForSafe": {
     "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"
   },
+  "fileWaitsForSafe": "ფაილი ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.",
+  "@fileWaitsForSafe": {
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
+  },
   "openedFromName": "გამომგზავნი: {name}",
   "@openedFromName": {
     "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
@@ -1786,6 +1790,10 @@
   "accessLinkWaiting": "ბმული გელოდებათ. გასახსნელად განბლოკეთ.",
   "@accessLinkWaiting": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+  },
+  "accessFileWaiting": "ფაილი გელოდებათ. გასახსნელად განბლოკეთ.",
+  "@accessFileWaiting": {
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessBioChanged": "თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.",
   "@accessBioChanged": {

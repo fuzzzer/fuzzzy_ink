@@ -965,6 +965,10 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ბმული ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.';
 
   @override
+  String get fileWaitsForSafe =>
+      'ფაილი ელოდება. ის გაიხსნება, როცა ამ ჩანაწერს დატოვებთ.';
+
+  @override
   String openedFromName(String name) {
     return 'გამომგზავნი: $name';
   }
@@ -1664,6 +1668,9 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get accessLinkWaiting => 'ბმული გელოდებათ. გასახსნელად განბლოკეთ.';
+
+  @override
+  String get accessFileWaiting => 'ფაილი გელოდებათ. გასახსნელად განბლოკეთ.';
 
   @override
   String get accessBioChanged =>

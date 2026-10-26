@@ -26,7 +26,7 @@ void main() {
     WidgetTester tester,
     FuzzyAuthState state, {
     Stream<FuzzyAuthState> changes = const Stream.empty(),
-    ValueNotifier<bool>? pendingLink,
+    ValueNotifier<WaitingArrival?>? pendingLink,
     FuzzzySkin skin = FuzzzySkin.night,
     bool reduceMotion = false,
     double textScale = 1,
@@ -37,7 +37,7 @@ void main() {
         .thenAnswer((_) async {});
     await harness.pump(
       tester,
-      ChatUnlockPage(pendingLink: pendingLink ?? ValueNotifier(false)),
+      ChatUnlockPage(pendingLink: pendingLink ?? ValueNotifier(null)),
       private: true,
       skin: skin,
       reduceMotion: reduceMotion,
@@ -143,12 +143,27 @@ void main() {
   });
 
   testWidgets('a link tapped while locked says it is waiting', (tester) async {
-    final pending = ValueNotifier(false);
+    final pending = ValueNotifier<WaitingArrival?>(null);
     await pumpPage(tester, locked, pendingLink: pending);
     expect(find.text(l10n.accessLinkWaiting), findsNothing);
-    pending.value = true;
+    pending.value = WaitingArrival.link;
     await tester.pump();
     expect(find.text(l10n.accessLinkWaiting), findsOneWidget);
+    expect(find.text(l10n.accessFileWaiting), findsNothing);
+  });
+
+  testWidgets(
+      'a .fuzz file opened while locked says a file is waiting, not a link '
+      '(final regression 2026-10-26)', (tester) async {
+    final pending = ValueNotifier<WaitingArrival?>(null);
+    await pumpPage(tester, locked, pendingLink: pending);
+    pending.value = WaitingArrival.file;
+    await tester.pump();
+    expect(find.text(l10n.accessFileWaiting), findsOneWidget);
+    expect(find.text(l10n.accessLinkWaiting), findsNothing);
+    pending.value = null;
+    await tester.pump();
+    expect(find.text(l10n.accessFileWaiting), findsNothing);
   });
 
   testWidgets('the fingerprint button asks the device', (tester) async {

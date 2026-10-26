@@ -55,10 +55,11 @@ class FuzzyLinkHandler {
   /// (security review 2026-10-26).
   int _holds = 0;
 
-  /// Whether a link waits for the unlock: the lock screen says so ("A link
-  /// is waiting. Unlock to open it.").
-  ValueListenable<bool> get pendingLink => _pendingLink;
-  final _pendingLink = ValueNotifier<bool>(false);
+  /// What waits for the unlock, null when nothing does: the lock screen
+  /// says so ("A link is waiting. Unlock to open it.", or "A file is
+  /// waiting…" for a `.fuzz` file).
+  ValueListenable<WaitingArrival?> get pendingLink => _pendingLink;
+  final _pendingLink = ValueNotifier<WaitingArrival?>(null);
 
   FuzzzyInkLocalizations get _l10n =>
       FuzzzyInkLocalizations.of(navigatorKey.currentContext!)!;
@@ -114,7 +115,7 @@ class FuzzyLinkHandler {
     _pendingPayload = null;
     _pendingFilePath = null;
     _shownFilePath = null;
-    _pendingLink.value = false;
+    _pendingLink.value = null;
   }
 
   /// The app is locking. A `.fuzz` file Open still holds (on "Open the
@@ -131,7 +132,7 @@ class FuzzyLinkHandler {
     if (!File(filePath).existsSync()) return;
     store.keepForUnlock(filePath);
     _pendingFilePath = filePath;
-    _pendingLink.value = true;
+    _pendingLink.value = WaitingArrival.file;
   }
 
   /// A newer arrival takes the place of a file waiting for the unlock: the
@@ -151,7 +152,7 @@ class FuzzyLinkHandler {
     final filePath = _pendingFilePath;
     _pendingPayload = null;
     _pendingFilePath = null;
-    _pendingLink.value = false;
+    _pendingLink.value = null;
     if (payload != null) _processPayload(payload);
     if (filePath != null) _openFile(filePath);
   }
@@ -175,7 +176,7 @@ class FuzzyLinkHandler {
     if (_isLocked || _holds > 0) {
       _pendingPayload = payload;
       _dropPendingFile();
-      _pendingLink.value = true;
+      _pendingLink.value = WaitingArrival.link;
       if (!_isLocked && navigatorKey.currentContext != null) {
         _showMessage(_l10n.linkWaitsForSafe);
       }
@@ -202,9 +203,9 @@ class FuzzyLinkHandler {
       _dropPendingFile();
       _pendingFilePath = filePath;
       _pendingPayload = null;
-      _pendingLink.value = true;
+      _pendingLink.value = WaitingArrival.file;
       if (!_isLocked && navigatorKey.currentContext != null) {
-        _showMessage(_l10n.linkWaitsForSafe);
+        _showMessage(_l10n.fileWaitsForSafe);
       }
       return;
     }

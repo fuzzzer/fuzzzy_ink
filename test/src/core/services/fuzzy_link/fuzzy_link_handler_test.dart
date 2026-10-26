@@ -256,7 +256,7 @@ void main() {
       FuzzyLinkGenerator.generateAcceptanceLink(_acceptance)!,
     );
     expect(handler.hasPendingPayload, isTrue);
-    expect(handler.pendingLink.value, isTrue);
+    expect(handler.pendingLink.value, WaitingArrival.link);
     verifyNever(() => chatRepository.getChatById(any()));
     await settleMessage(tester);
 
@@ -441,12 +441,12 @@ void main() {
 
       expect(went, isEmpty);
       expect(handler.hasPendingPayload, isTrue);
-      expect(handler.pendingLink.value, isTrue);
+      expect(handler.pendingLink.value, WaitingArrival.file);
 
       handler.processPendingPayload();
       expectOpenedInOpen();
       expect(handler.hasPendingPayload, isFalse);
-      expect(handler.pendingLink.value, isFalse);
+      expect(handler.pendingLink.value, isNull);
       handler.dispose();
     });
 
@@ -460,7 +460,7 @@ void main() {
       handler.keepWaitingFileAtLock();
       verify(() => fileStore.keepForUnlock(copy)).called(1);
       expect(handler.hasPendingPayload, isTrue);
-      expect(handler.pendingLink.value, isTrue);
+      expect(handler.pendingLink.value, WaitingArrival.file);
 
       went.clear();
       handler.processPendingPayload();

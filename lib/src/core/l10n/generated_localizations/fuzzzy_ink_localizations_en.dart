@@ -963,6 +963,10 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'A link is waiting. It opens when you leave this safe item.';
 
   @override
+  String get fileWaitsForSafe =>
+      'A file is waiting. It opens when you leave this safe item.';
+
+  @override
   String openedFromName(String name) {
     return 'From $name';
   }
@@ -1657,6 +1661,9 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get accessLinkWaiting => 'A link is waiting. Unlock to open it.';
+
+  @override
+  String get accessFileWaiting => 'A file is waiting. Unlock to open it.';
 
   @override
   String get accessBioChanged =>
