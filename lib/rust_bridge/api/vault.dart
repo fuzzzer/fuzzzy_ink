@@ -170,6 +170,40 @@ Future<Uint8List> vaultOpen(
     FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultOpen(
         key: key, itemId: itemId, version: version, blob: blob);
 
+/// Seals the list label (a username or file name) of version `version` of the
+/// item `item_id` under the vault key: a 0x20 blob with a fresh nonce, AAD
+/// `vault-label` ‖ u32 BE version ‖ item id, the label padded to one fixed
+/// size (cut to 255 UTF-8 bytes). An empty label is sealed too.
+Future<Uint8List> vaultSealLabel(
+        {required VaultKey key,
+        required String itemId,
+        required int version,
+        required String label}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultSealLabel(
+        key: key, itemId: itemId, version: version, label: label);
+
+/// Inverse of [`vault_seal_label`] for the same item and version; an item
+/// blob, another item's or version's label, or a tampered blob is `Corrupt`.
+Future<String> vaultOpenLabel(
+        {required VaultKey key,
+        required String itemId,
+        required int version,
+        required List<int> blob}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultOpenLabel(
+        key: key, itemId: itemId, version: version, blob: blob);
+
+/// [`vault_reseal`] for a list label: moves it from `from` to `to`, same item
+/// and version; the label stays in Rust and is wiped. A blob that is not this
+/// item's label at this version is `Corrupt`.
+Future<Uint8List> vaultResealLabel(
+        {required VaultKey from,
+        required VaultKey to,
+        required String itemId,
+        required int version,
+        required List<int> blob}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiVaultVaultResealLabel(
+        from: from, to: to, itemId: itemId, version: version, blob: blob);
+
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<VaultKey>>
 abstract class VaultKey implements RustOpaqueInterface {
   /// Drops the vault key (zeroised). Later `vault_seal`/`vault_open` calls

@@ -292,6 +292,44 @@ pub fn vault_open(
     vault::open_item(key.unlocked()?, &item_id, version, &blob)
 }
 
+/// Seals the list label (a username or file name) of version `version` of the
+/// item `item_id` under the vault key: a 0x20 blob with a fresh nonce, AAD
+/// `vault-label` ‖ u32 BE version ‖ item id, the label padded to one fixed
+/// size (cut to 255 UTF-8 bytes). An empty label is sealed too.
+pub fn vault_seal_label(
+    key: &VaultKey,
+    item_id: String,
+    version: u32,
+    label: String,
+) -> Result<Vec<u8>, CoreError> {
+    let label = Zeroizing::new(label);
+    vault::seal_label(key.unlocked()?, &item_id, version, &label)
+}
+
+/// Inverse of [`vault_seal_label`] for the same item and version; an item
+/// blob, another item's or version's label, or a tampered blob is `Corrupt`.
+pub fn vault_open_label(
+    key: &VaultKey,
+    item_id: String,
+    version: u32,
+    blob: Vec<u8>,
+) -> Result<String, CoreError> {
+    vault::open_label(key.unlocked()?, &item_id, version, &blob)
+}
+
+/// [`vault_reseal`] for a list label: moves it from `from` to `to`, same item
+/// and version; the label stays in Rust and is wiped. A blob that is not this
+/// item's label at this version is `Corrupt`.
+pub fn vault_reseal_label(
+    from: &VaultKey,
+    to: &VaultKey,
+    item_id: String,
+    version: u32,
+    blob: Vec<u8>,
+) -> Result<Vec<u8>, CoreError> {
+    vault::reseal_label(from.unlocked()?, to.unlocked()?, &item_id, version, &blob)
+}
+
 impl VaultKey {
     fn unlocked(&self) -> Result<&[u8; 32], CoreError> {
         self.inner.as_deref().ok_or(CoreError::StoreLocked)
@@ -815,6 +853,47 @@ mod tests {
         );
         key.close();
         assert!(key.inner.is_none());
+    }
+
+    /// Labels through the API: their own seal, open and re-seal, a closed
+    /// handle answers `StoreLocked`, and an item never passes as a label.
+    #[test]
+    fn labels_seal_open_and_move_through_the_api() {
+        let (mut key, _) = own_vault("pw");
+        let (next, _) = own_vault("pw2");
+        let label = vault_seal_label(&key, ITEM.into(), 1, "tamar@mail.ge".into()).unwrap();
+        assert_eq!(
+            vault_open_label(&key, ITEM.into(), 1, label.clone()).unwrap(),
+            "tamar@mail.ge"
+        );
+        assert_eq!(
+            vault_open(&key, ITEM.into(), 1, label.clone()).unwrap_err(),
+            CoreError::Corrupt
+        );
+        let item = vault_seal(&key, ITEM.into(), 1, b"x".to_vec()).unwrap();
+        assert_eq!(
+            vault_open_label(&key, ITEM.into(), 1, item).unwrap_err(),
+            CoreError::Corrupt
+        );
+        let moved = vault_reseal_label(&key, &next, ITEM.into(), 1, label.clone()).unwrap();
+        assert_eq!(
+            vault_open_label(&next, ITEM.into(), 1, moved).unwrap(),
+            "tamar@mail.ge"
+        );
+
+        key.close();
+        assert_eq!(
+            vault_seal_label(&key, ITEM.into(), 1, "x".into()).unwrap_err(),
+            CoreError::StoreLocked
+        );
+        assert_eq!(
+            vault_open_label(&key, ITEM.into(), 1, label.clone()).unwrap_err(),
+            CoreError::StoreLocked
+        );
+        assert_eq!(
+            vault_reseal_label(&key, &next, ITEM.into(), 1, label).unwrap_err(),
+            CoreError::StoreLocked
+        );
     }
 
     /// The review item made checkable: nothing in the vault, master-key or

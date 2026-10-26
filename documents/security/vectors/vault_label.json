@@ -1,0 +1,9 @@
+{
+  "aad": "vault-label ‖ 00000003 ‖ 6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "item_id": "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "label": "user",
+  "nonce": "444444444444444444444444444444444444444444444444",
+  "plaintext": "04 ‖ \"user\" ‖ 251 zero bytes (256 bytes)",
+  "vault_key": "3333333333333333333333333333333333333333333333333333333333333333",
+  "version": 3
+}
