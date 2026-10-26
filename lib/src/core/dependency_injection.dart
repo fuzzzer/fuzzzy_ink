@@ -27,6 +27,9 @@ class DependencyInjection {
     sl.safeRegisterSingleton<PackageInfo>(packageInfo);
 
     sl.safeRegisterSingleton<PreferencesService>(PreferencesService(prefs));
+    // Settings → Copy passwords, as the person left it.
+    vaultPasswordCopySetting.value =
+        sl.get<PreferencesService>().vaultPasswordCopy;
 
     sl.safeRegisterSingleton<AppDocumentsDirectory>(
       AppDocumentsDirectory(

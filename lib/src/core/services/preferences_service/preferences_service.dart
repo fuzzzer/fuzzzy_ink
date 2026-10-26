@@ -44,4 +44,12 @@ class PreferencesService {
       _prefs.getInt(_vaultLastSelectedTabIndexKey) ?? 0;
   Future<void> setVaultLastSelectedTabIndex(int index) =>
       _prefs.setInt(_vaultLastSelectedTabIndexKey, index);
+
+  /// Settings → My safe → Copy passwords: on by default (DESIGN.md section
+  /// 14). Off hides every My safe copy button; the copy guard's own rule
+  /// (`allowVaultPasswordCopy`) still comes first.
+  static const _vaultPasswordCopyKey = 'vault_password_copy';
+  bool get vaultPasswordCopy => _prefs.getBool(_vaultPasswordCopyKey) ?? true;
+  Future<void> setVaultPasswordCopy(bool value) =>
+      _prefs.setBool(_vaultPasswordCopyKey, value);
 }

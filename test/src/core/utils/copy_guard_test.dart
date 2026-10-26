@@ -57,6 +57,14 @@ void main() {
       );
     });
 
+    test('with no rule given the policy follows Copy passwords live', () {
+      addTearDown(() => vaultPasswordCopySetting.value = true);
+      vaultPasswordCopySetting.value = false;
+      expect(const CopyPolicy().allows(CopyContent.vaultPassword), isFalse);
+      vaultPasswordCopySetting.value = true;
+      expect(const CopyPolicy().allows(CopyContent.vaultPassword), isTrue);
+    });
+
     test('a vault password follows the switch, sensitive, 30 seconds', () {
       expect(
         const CopyPolicy().allows(CopyContent.vaultPassword),
