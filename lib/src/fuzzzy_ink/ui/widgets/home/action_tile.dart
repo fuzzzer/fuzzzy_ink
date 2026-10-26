@@ -68,12 +68,19 @@ class ActionTile extends StatelessWidget {
                   color: foreground,
                 ),
                 SizedBox(height: context.fuzzzySpace.l),
-                Text(
-                  title,
-                  style: type.titleL.copyWith(
-                    color: foreground,
-                    fontFamily: type.displayL.fontFamily,
-                    fontWeight: type.displayL.fontWeight,
+                // One big word: at the largest text sizes it shrinks to the
+                // tile's width instead of breaking mid-word ("Loc k").
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    style: type.titleL.copyWith(
+                      color: foreground,
+                      fontFamily: type.displayL.fontFamily,
+                      fontWeight: type.displayL.fontWeight,
+                    ),
                   ),
                 ),
                 SizedBox(height: context.fuzzzySpace.xs),

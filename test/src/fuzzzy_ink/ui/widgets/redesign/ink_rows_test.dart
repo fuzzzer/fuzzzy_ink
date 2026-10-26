@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -7,6 +8,50 @@ import '../../../../../helpers/redesign_harness.dart';
 
 void main() {
   group('ActionTile', () {
+    testWidgets(
+        'the largest text: the big word shrinks to the tile instead of '
+        'breaking mid-word', (tester) async {
+      await pumpRedesign(
+        tester,
+        const Row(
+          children: [
+            Expanded(
+              child: ActionTile(
+                qaId: 'lock',
+                icon: Icons.lock_outline,
+                title: 'Lock',
+                subtitle: 'For one person',
+                inverted: true,
+                onTap: null,
+              ),
+            ),
+            Expanded(
+              child: ActionTile(
+                qaId: 'open',
+                icon: Icons.lock_open_outlined,
+                title: 'Open',
+                subtitle: 'What you got',
+                onTap: null,
+              ),
+            ),
+          ],
+        ),
+        textScale: 3.1,
+        surface: const Size(402, 874),
+      );
+      expect(tester.takeException(), isNull);
+      for (final word in ['Lock', 'Open']) {
+        final paragraph = tester.renderObject<RenderParagraph>(find.text(word));
+        final lines = paragraph
+            .getBoxesForSelection(
+              TextSelection(baseOffset: 0, extentOffset: word.length),
+            )
+            .map((box) => box.top.round())
+            .toSet();
+        expect(lines, hasLength(1), reason: '"$word" on one line');
+      }
+    });
+
     for (final skin in redesignSkins) {
       for (final reduced in [false, true]) {
         testWidgets('Lock and Open tiles ($skin, reduced motion $reduced)',
