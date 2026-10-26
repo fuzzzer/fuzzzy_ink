@@ -139,6 +139,7 @@ class SheetViewModelTest {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = true))
         model.choose("nino")
+        model.sawWholeSelection()
         model.lock()
         runCurrent()
 
@@ -157,6 +158,7 @@ class SheetViewModelTest {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = false))
         model.choose("giorgi")
+        model.sawWholeSelection()
         model.lock()
         advanceUntilIdle()
 
@@ -164,6 +166,40 @@ class SheetViewModelTest {
         assertEquals(UiState.Done("Giorgi", Outcome.Copied), model.state.value)
         model.close()
         assertEquals(UiState.Finished(null), model.state.value)
+    }
+
+    @Test
+    fun `selected text locks only after all of it was on screen`() = runTest(dispatcher) {
+        app.unlocked = true
+        val model = sheet(request(SECRET, canReplace = true))
+        model.choose("nino")
+        assertFalse(model.writing.hasSeenSelection)
+        assertFalse(model.writing.canLock)
+        model.lock()
+        advanceUntilIdle()
+        assertTrue("nothing is locked before the end was seen", app.called("lock").isEmpty())
+
+        model.sawWholeSelection()
+        assertTrue(model.writing.canLock)
+        model.lock()
+        advanceUntilIdle()
+        assertEquals(SECRET, app.called("lock").single()["text"])
+    }
+
+    @Test
+    fun `write sealed has nothing to read first`() = runTest(dispatcher) {
+        app.unlocked = true
+        val model = sheet(request(null, canReplace = false))
+        assertTrue(model.writing.hasSeenSelection)
+    }
+
+    @Test
+    fun `selected text shows what would hide or reorder words, and keeps emoji`() {
+        val tricky = "pay Nino\u202Etxet\u200B\uFEFF ok"
+        assertEquals("pay Nino[U+202E]txet[U+200B][U+FEFF] ok", SelectedText.visible(tricky))
+        val family = "\uD83D\uDC69\u200D\uD83D\uDC67 \u2764\uFE0F\nline\tend"
+        assertEquals(family, SelectedText.visible(family))
+        assertEquals(15, SelectedText.length(family))
     }
 
     @Test

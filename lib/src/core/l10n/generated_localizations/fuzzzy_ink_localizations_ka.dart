@@ -2417,6 +2417,21 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get anywhereSheetTileLabel => 'ტექსტის ჩაკეტვა';
 
   @override
+  String anywhereSheetSelectedLength(String count) {
+    return '$count სიმბოლო';
+  }
+
+  @override
+  String get anywhereSheetReadToTheEnd =>
+      'ჯერ ბოლომდე წაიკითხეთ, მერე ჩაკეტეთ.';
+
+  @override
+  String get anywhereSheetShowMore => 'მეტის ჩვენება';
+
+  @override
+  String get anywhereSheetShowLess => 'ნაკლების ჩვენება';
+
+  @override
   String get anywhereNativeLockTitle => 'შეტყობინების ჩაკეტვა';
 
   @override
@@ -2448,4 +2463,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get anywhereNativeShowApp => 'Fuzzzy Ink-ის ჩვენება';
+
+  @override
+  String get anywhereNativeCheck => 'შემოწმება';
 }

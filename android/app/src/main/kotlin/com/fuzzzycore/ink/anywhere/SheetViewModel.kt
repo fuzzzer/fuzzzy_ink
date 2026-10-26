@@ -41,6 +41,7 @@ interface SheetActions {
     fun changePerson() {}
     fun onDraftChange(value: String) {}
     fun dismissDraftNote() {}
+    fun sawWholeSelection() {}
     fun lock() {}
     fun open() {}
     fun openApp() {}
@@ -254,6 +255,13 @@ class SheetViewModel(
         mutableState.value = writing.copy(draft = value, problem = null)
     }
 
+    /** The selected text has been on screen to its end: Lock may take it. */
+    override fun sawWholeSelection() {
+        val writing = mutableState.value as? UiState.Writing ?: return
+        if (writing.hasSeenSelection) return
+        mutableState.value = writing.copy(hasSeenSelection = true)
+    }
+
     override fun dismissDraftNote() {
         val writing = mutableState.value as? UiState.Writing ?: return
         note.markSeen()
@@ -268,7 +276,8 @@ class SheetViewModel(
     override fun lock() {
         val writing = mutableState.value as? UiState.Writing ?: return
         val person = writing.selected ?: return
-        if (writing.isLocking) return
+        // Never words the person could not see (security review 2026-10-26).
+        if (writing.isLocking || !writing.canLock) return
         val text = writing.selectedText ?: writing.draft
         if (text.isBlank()) {
             mutableState.value = writing.copy(problem = LockProblem.EmptyText)

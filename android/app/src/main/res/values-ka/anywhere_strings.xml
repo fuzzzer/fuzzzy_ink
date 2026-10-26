@@ -61,4 +61,8 @@
     <string name="anywhereSheetStarting">Fuzzzy Ink იხსნება…</string>
     <string name="anywhereSheetSelected">არჩეულია</string>
     <string name="anywhereSheetTileLabel">ტექსტის ჩაკეტვა</string>
+    <string name="anywhereSheetSelectedLength">%1$s სიმბოლო</string>
+    <string name="anywhereSheetReadToTheEnd">ჯერ ბოლომდე წაიკითხეთ, მერე ჩაკეტეთ.</string>
+    <string name="anywhereSheetShowMore">მეტის ჩვენება</string>
+    <string name="anywhereSheetShowLess">ნაკლების ჩვენება</string>
 </resources>

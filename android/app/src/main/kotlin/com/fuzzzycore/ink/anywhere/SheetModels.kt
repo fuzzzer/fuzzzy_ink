@@ -37,6 +37,30 @@ data class SheetRequest(
     }
 }
 
+/**
+ * Text another app selected, as the sheet shows it. Another app chooses
+ * this text, so nothing in it may hide or reorder words: bidirectional
+ * controls and invisible characters are shown as their codes ("[U+202E]").
+ * Only the display changes; Lock takes the text as it came.
+ */
+object SelectedText {
+    /**
+     * Controls, direction marks and overrides, and characters that take no
+     * space or look like a space. Joiners and variation selectors stay: emoji
+     * and some scripts need them, and they hide no words.
+     */
+    private val hiding = Regex(
+        "[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F-\\u009F\\u00AD\\u061C\\u115F\\u1160\\u180E" +
+            "\\u200B\\u200E\\u200F\\u202A-\\u202E\\u2060-\\u2064\\u2066-\\u2069\\u3164\\uFEFF\\uFFA0\\uFFF9-\\uFFFB]",
+    )
+
+    fun visible(text: String): String =
+        hiding.replace(text) { match -> "[U+%04X]".format(match.value[0].code) }
+
+    /** The length the person is told: characters as they count them. */
+    fun length(text: String): Int = text.codePointCount(0, text.length)
+}
+
 /** One of the person's connected people. */
 data class Person(
     val id: String,
@@ -90,8 +114,13 @@ sealed interface UiState {
         val showsDraftNote: Boolean,
         val isLocking: Boolean = false,
         val problem: LockProblem? = null,
+        /** All of [selectedText] has been on screen (always true for "Write sealed"). */
+        val hasSeenSelection: Boolean = selectedText == null,
     ) : UiState {
         val selected: Person? get() = people.firstOrNull { it.id == selectedId }
+
+        /** A person is chosen and every word Lock would take has been seen. */
+        val canLock: Boolean get() = selected != null && !isPicking && hasSeenSelection
     }
 
     /** The selected text is already locked: offer Open (or Open in Fuzzzy Ink). */

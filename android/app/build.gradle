@@ -138,7 +138,18 @@ flutter {
 }
 
 // Fails a release build that has no release key, naming what is missing, before anything is built.
+// Also fails a staging or production build that carries "Lock from other apps" (FUZZ_ANYWHERE=true):
+// the experiment is for the development flavour only (security review 2026-10-26).
 gradle.taskGraph.whenReady { graph ->
+    def experimentTasks = graph.allTasks.findAll {
+        it.project == project && it.name ==~ /(assemble|bundle|package)(Staging|Production)\w*/
+    }
+    if (fuzzAnywhereBuild && !experimentTasks.isEmpty()) {
+        throw new GradleException(
+            "FUZZ_ANYWHERE=true is for the development flavour only: \"Lock from other apps\" is an " +
+            "experiment (documents/fuzz_anywhere/CHANNEL.md). Build staging and production without it."
+        )
+    }
     def releaseTasks = graph.allTasks.findAll {
         it.project == project && it.name ==~ /(assemble|bundle|package)\w*Release/
     }

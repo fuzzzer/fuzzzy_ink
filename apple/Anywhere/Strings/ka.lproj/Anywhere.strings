@@ -46,6 +46,8 @@
 "anywhereSheetPutInPlace" = "ის მონიშნული ტექსტის ადგილას ჩაჯდა.";
 "anywhereSheetOpenApp" = "Fuzzzy Ink-ის გახსნა";
 "anywhereSheetSetUpLine" = "აპში შექმენით მთავარი პაროლი და დაბრუნდით.";
+"anywhereSheetSelectedLength" = "%1$@ სიმბოლო";
+"anywhereSheetReadToTheEnd" = "ჯერ ბოლომდე წაიკითხეთ, მერე ჩაკეტეთ.";
 "anywhereNativeLockTitle" = "შეტყობინების ჩაკეტვა";
 "anywhereNativeOpenTitle" = "შეტყობინების გახსნა";
 "anywhereNativeLockIntentDescription" = "დაწერეთ შეტყობინება და ჩაკეტეთ თქვენი ერთ-ერთი ადამიანისთვის.";
@@ -56,3 +58,4 @@
 "anywhereNativeCopiedPressPaste" = "დაკოპირდა. ჩასასმელად დააჭირეთ ⌘V-ს.";
 "anywhereNativeShownInApp" = "Fuzzzy Ink-ში გაიხსნა.";
 "anywhereNativeShowApp" = "Fuzzzy Ink-ის ჩვენება";
+"anywhereNativeCheck" = "შემოწმება";

@@ -64,6 +64,8 @@ const reusedKeys = [
   'anywhereSheetOpenInInkLine',
   'anywhereSheetSetUpLine',
   'anywhereSheetPutInPlace',
+  'anywhereSheetSelectedLength',
+  'anywhereSheetReadToTheEnd',
 ];
 
 const _arbFolder = 'lib/src/core/l10n';

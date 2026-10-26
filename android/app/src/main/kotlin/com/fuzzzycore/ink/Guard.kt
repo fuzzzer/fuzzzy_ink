@@ -34,8 +34,12 @@ import java.util.UUID
  * looper, which runs while the process lives, and it also runs when the
  * activity is destroyed; without focus the clip is cleared with
  * `clearPrimaryClip` (API 28+), which needs no read. The cost: text the user
- * copied in another app within those seconds is cleared too. A killed
- * process clears nothing; Android 13+ then drops the clip after about an hour.
+ * copied in another app within those seconds is cleared too. Sealed output
+ * that "Lock from other apps" copies comes marked sensitive for the same
+ * reason (the person pastes it in another app). A killed process clears
+ * nothing then; its copy is cleared at the app's next start, the first time
+ * the app may look ([clearLeftover]), and Android 13+ drops the clip after
+ * about an hour anyway.
  *
  * The guard belongs to the engine, not to one activity: with "Lock from
  * other apps" the engine outlives [MainActivity] and serves the selection
@@ -52,6 +56,9 @@ class Guard(context: Context) : MethodChannel.MethodCallHandler {
 
         /** `ClipDescription.EXTRA_IS_SENSITIVE`, which keyboards read before API 33 too. */
         private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
+
+        /** Once per process: a copy an earlier run left was looked for. */
+        private var isLeftoverChecked = false
     }
 
     private val appContext = context.applicationContext
@@ -124,6 +131,23 @@ class Guard(context: Context) : MethodChannel.MethodCallHandler {
         handler.removeCallbacks(expire)
         if (isSensitive && expiresInMs != null && expiresInMs > 0) {
             handler.postDelayed(expire, expiresInMs)
+        }
+    }
+
+    /**
+     * The app has focus for the first time in this process: a copy an
+     * earlier run made (its label, never its text, says so) and could not
+     * clear because the process was killed goes now, as at a lock.
+     */
+    fun clearLeftover() {
+        if (isLeftoverChecked) return
+        isLeftoverChecked = true
+        val label = clipboard.primaryClipDescription?.label?.toString() ?: return
+        if (!label.startsWith(LABEL_PREFIX) || label == ourLabel) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            clipboard.clearPrimaryClip()
+        } else {
+            clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
         }
     }
 

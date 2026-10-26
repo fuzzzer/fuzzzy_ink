@@ -66,6 +66,12 @@ class InkTextActivity : FragmentActivity() {
         }
     }
 
+    /** The sheet may be the app's first window this run: an earlier run's copy goes (Guard.clearLeftover). */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) InkEngine.guard?.clearLeftover()
+    }
+
     private fun sheetRequest(): SheetRequest = SheetRequest.of(
         action = intent?.action,
         text = intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT),

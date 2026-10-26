@@ -46,6 +46,8 @@
 "anywhereSheetPutInPlace" = "It's in place of the text you selected.";
 "anywhereSheetOpenApp" = "Open Fuzzzy Ink";
 "anywhereSheetSetUpLine" = "Make a master password in the app, then come back.";
+"anywhereSheetSelectedLength" = "%1$@ characters";
+"anywhereSheetReadToTheEnd" = "Read it to the end first, then lock it.";
 "anywhereNativeLockTitle" = "Lock a message";
 "anywhereNativeOpenTitle" = "Open a message";
 "anywhereNativeLockIntentDescription" = "Write a message and lock it for one of your people.";
@@ -56,3 +58,4 @@
 "anywhereNativeCopiedPressPaste" = "Copied. Press ⌘V to paste it.";
 "anywhereNativeShownInApp" = "It's open in Fuzzzy Ink.";
 "anywhereNativeShowApp" = "Show Fuzzzy Ink";
+"anywhereNativeCheck" = "Check";

@@ -2403,6 +2403,21 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get anywhereSheetTileLabel => 'Lock text';
 
   @override
+  String anywhereSheetSelectedLength(String count) {
+    return '$count characters';
+  }
+
+  @override
+  String get anywhereSheetReadToTheEnd =>
+      'Read it to the end first, then lock it.';
+
+  @override
+  String get anywhereSheetShowMore => 'Show more';
+
+  @override
+  String get anywhereSheetShowLess => 'Show less';
+
+  @override
   String get anywhereNativeLockTitle => 'Lock a message';
 
   @override
@@ -2433,4 +2448,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get anywhereNativeShowApp => 'Show Fuzzzy Ink';
+
+  @override
+  String get anywhereNativeCheck => 'Check';
 }

@@ -80,6 +80,11 @@ class MainActivity: FlutterFragmentActivity() {
         private const val NOT_TAKEN = -1
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) guard?.clearLeftover()
+    }
+
     override fun onDestroy() {
         guard?.onDestroy(this)
         super.onDestroy()

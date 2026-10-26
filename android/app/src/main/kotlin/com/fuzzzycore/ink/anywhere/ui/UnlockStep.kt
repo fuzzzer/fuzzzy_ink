@@ -100,37 +100,40 @@ private fun PasswordField(state: UiState.Locked, actions: SheetActions) {
         state.isBiometricChanged -> stringResource(R.string.accessBioChanged)
         else -> null
     }
-    OutlinedTextField(
-        value = state.password,
-        onValueChange = actions::onPasswordChange,
-        label = { Text(stringResource(R.string.masterPassword)) },
-        singleLine = true,
-        enabled = !state.isBusy && state.waitSeconds == 0,
-        isError = state.isWrong,
-        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(
-            autoCorrectEnabled = false,
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done,
-        ),
-        keyboardActions = KeyboardActions(onDone = { actions.unlockWithPassword() }),
-        trailingIcon = {
-            IconButton(onClick = { isVisible = !isVisible }) {
-                Icon(
-                    painter = painterResource(
-                        if (isVisible) R.drawable.anywhere_visibility_off else R.drawable.anywhere_visibility,
-                    ),
-                    contentDescription = stringResource(
-                        if (isVisible) R.string.safeHidePassword else R.string.accessShowPassword,
-                    ),
-                )
-            }
-        },
-        supportingText = message?.let { { StepErrorText(it, isError = state.isWrong || state.waitSeconds > 0) } },
-        modifier = Modifier
-            .fillMaxWidth()
-            .focusRequester(focus),
-    )
+    // Never copied, shown or hidden (SealedTextInput).
+    SealedTextInput {
+        OutlinedTextField(
+            value = state.password,
+            onValueChange = actions::onPasswordChange,
+            label = { Text(stringResource(R.string.masterPassword)) },
+            singleLine = true,
+            enabled = !state.isBusy && state.waitSeconds == 0,
+            isError = state.isWrong,
+            visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { actions.unlockWithPassword() }),
+            trailingIcon = {
+                IconButton(onClick = { isVisible = !isVisible }) {
+                    Icon(
+                        painter = painterResource(
+                            if (isVisible) R.drawable.anywhere_visibility_off else R.drawable.anywhere_visibility,
+                        ),
+                        contentDescription = stringResource(
+                            if (isVisible) R.string.safeHidePassword else R.string.accessShowPassword,
+                        ),
+                    )
+                }
+            },
+            supportingText = message?.let { { StepErrorText(it, isError = state.isWrong || state.waitSeconds > 0) } },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focus),
+        )
+    }
 }
 
 @Composable

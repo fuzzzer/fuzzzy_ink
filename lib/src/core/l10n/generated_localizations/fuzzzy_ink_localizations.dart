@@ -4420,6 +4420,30 @@ abstract class FuzzzyInkLocalizations {
   /// **'Lock text'**
   String get anywhereSheetTileLabel;
 
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} characters'**
+  String anywhereSheetSelectedLength(String count);
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Read it to the end first, then lock it.'**
+  String get anywhereSheetReadToTheEnd;
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get anywhereSheetShowMore;
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get anywhereSheetShowLess;
+
   /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
   ///
   /// In en, this message translates to:
@@ -4479,6 +4503,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Show Fuzzzy Ink'**
   String get anywhereNativeShowApp;
+
+  /// Lock from other apps, the Mac panel's Open: checks whose message it is before Open spends it (experimental, security fixes 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get anywhereNativeCheck;
 }
 
 class _FuzzzyInkLocalizationsDelegate

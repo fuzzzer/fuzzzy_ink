@@ -2787,6 +2787,27 @@
   "@anywhereSheetTileLabel": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, experimental, 2026-10-26)"
   },
+  "anywhereSheetSelectedLength": "{count} სიმბოლო",
+  "@anywhereSheetSelectedLength": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the selected text another app sent, experimental, security fixes 2026-10-26)",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "anywhereSheetReadToTheEnd": "ჯერ ბოლომდე წაიკითხეთ, მერე ჩაკეტეთ.",
+  "@anywhereSheetReadToTheEnd": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the selected text another app sent, experimental, security fixes 2026-10-26)"
+  },
+  "anywhereSheetShowMore": "მეტის ჩვენება",
+  "@anywhereSheetShowMore": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the selected text another app sent, experimental, security fixes 2026-10-26)"
+  },
+  "anywhereSheetShowLess": "ნაკლების ჩვენება",
+  "@anywhereSheetShowLess": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the selected text another app sent, experimental, security fixes 2026-10-26)"
+  },
   "anywhereNativeLockTitle": "შეტყობინების ჩაკეტვა",
   "@anywhereNativeLockTitle": {
     "description": "Georgian draft, needs a native read (lock from other apps, native sheets, experimental, 2026-10-26)"
@@ -2826,5 +2847,9 @@
   "anywhereNativeShowApp": "Fuzzzy Ink-ის ჩვენება",
   "@anywhereNativeShowApp": {
     "description": "Georgian draft, needs a native read (lock from other apps, native sheets, experimental, 2026-10-26)"
+  },
+  "anywhereNativeCheck": "შემოწმება",
+  "@anywhereNativeCheck": {
+    "description": "Georgian draft, needs a native read (lock from other apps, native sheets, experimental, security fixes 2026-10-26)"
   }
 }

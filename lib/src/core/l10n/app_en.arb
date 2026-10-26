@@ -2906,6 +2906,27 @@
   "@anywhereSheetTileLabel": {
     "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
   },
+  "anywhereSheetSelectedLength": "{count} characters",
+  "@anywhereSheetSelectedLength": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "anywhereSheetReadToTheEnd": "Read it to the end first, then lock it.",
+  "@anywhereSheetReadToTheEnd": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
+  "anywhereSheetShowMore": "Show more",
+  "@anywhereSheetShowMore": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
+  "anywhereSheetShowLess": "Show less",
+  "@anywhereSheetShowLess": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
   "anywhereNativeLockTitle": "Lock a message",
   "@anywhereNativeLockTitle": {
     "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
@@ -2945,5 +2966,9 @@
   "anywhereNativeShowApp": "Show Fuzzzy Ink",
   "@anywhereNativeShowApp": {
     "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeCheck": "Check",
+  "@anywhereNativeCheck": {
+    "description": "Lock from other apps, the Mac panel's Open: checks whose message it is before Open spends it (experimental, security fixes 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   }
 }

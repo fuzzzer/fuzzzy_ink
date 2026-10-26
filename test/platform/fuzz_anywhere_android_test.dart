@@ -109,7 +109,10 @@ void main() {
         'Socket',
         'android.util.Log',
         'println',
-        'ClipboardManager',
+        // The sheet never copies: only the app's copy guard does (Dart).
+        'android.content.ClipboardManager',
+        'CLIPBOARD_SERVICE',
+        'setPrimaryClip',
         'SelectionContainer',
         'putString(',
       ]) {
@@ -159,6 +162,104 @@ void main() {
     expect(activity, contains('channel.send("relock")'));
     final sheet = read('$anywhere/ui/InkSheet.kt');
     expect(sheet, contains('securePolicy = SecureFlagPolicy.SecureOn'));
+  });
+
+  group('security review 2026-10-26', () {
+    test("the sheet's text fields never copy and ask the keyboard not to learn",
+        () {
+      final input = read('$anywhere/ui/SealedTextInput.kt');
+      expect(input, contains('LocalTextToolbar provides toolbar'));
+      expect(input, contains('LocalClipboardManager provides clipboard'));
+      expect(input, contains('system.showMenu(rect, onPasteRequested = '));
+      expect(
+        input,
+        contains(
+          'override fun setText(annotatedString: AnnotatedString) = Unit',
+        ),
+      );
+      expect(input, contains('EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING'));
+      expect(input, contains('InterceptPlatformTextInput('));
+
+      // Every text field in the sheet sits inside SealedTextInput.
+      final ui = Directory('$anywhere/ui')
+          .listSync()
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.kt'));
+      var fields = 0;
+      for (final file in ui) {
+        final source = read(file.path);
+        for (final field
+            in RegExp(r'\bOutlinedTextField\(|\bTextField\(|BasicTextField\(')
+                .allMatches(source)) {
+          fields++;
+          final before = source.substring(0, field.start);
+          expect(
+            before.lastIndexOf('SealedTextInput {'),
+            greaterThan(before.lastIndexOf('\n}')),
+            reason: '${file.path}: a text field outside SealedTextInput',
+          );
+        }
+      }
+      expect(fields, 2, reason: 'the message and the master password');
+      expect(
+        read('$anywhere/ui/WritingStep.kt'),
+        contains('autoCorrectEnabled = false'),
+      );
+      expect(
+        read('$anywhere/ui/UnlockStep.kt'),
+        contains('autoCorrectEnabled = false'),
+      );
+    });
+
+    test('all of the selected text is shown, and Lock waits until it was seen',
+        () {
+      final step = read('$anywhere/ui/WritingStep.kt');
+      expect(step, isNot(contains('maxLines = 5')));
+      expect(step, isNot(contains('TextOverflow.Ellipsis')));
+      expect(step, contains('.verticalScroll(scroll)'));
+      expect(step, contains('onSeenToTheEnd = actions::sawWholeSelection'));
+      expect(step, contains('SelectedText.visible(text)'));
+      expect(step, contains('R.string.anywhereSheetSelectedLength'));
+      expect(step, contains('enabled = state.canLock'));
+      final model = read('$anywhere/SheetViewModel.kt');
+      expect(
+        model,
+        contains('if (writing.isLocking || !writing.canLock) return'),
+      );
+    });
+
+    test("no build gains the emoji helper's start-up step", () {
+      // Compose brings androidx.emoji2's initializer, which asks the font
+      // provider for an emoji font at every start. The merged production
+      // manifest was checked by hand with :app:processProductionReleaseManifest.
+      final main = File('$app/main/AndroidManifest.xml').readAsStringSync();
+      expect(main, contains('xmlns:tools="http://schemas.android.com/tools"'));
+      expect(
+        main,
+        matches(
+          RegExp(
+            r'<provider\s+android:name="androidx\.startup\.InitializationProvider"'
+            r'[^>]*tools:node="merge">\s*<meta-data\s+'
+            r'android:name="androidx\.emoji2\.text\.EmojiCompatInitializer"\s+'
+            r'tools:node="remove"\s*/>',
+          ),
+        ),
+      );
+    });
+
+    test('a staging or production build with the flag fails', () {
+      final gradle = File('android/app/build.gradle').readAsStringSync();
+      expect(
+        gradle,
+        contains(
+          r'it.name ==~ /(assemble|bundle|package)(Staging|Production)\w*/',
+        ),
+      );
+      expect(
+        gradle,
+        contains('if (fuzzAnywhereBuild && !experimentTasks.isEmpty())'),
+      );
+    });
   });
 
   test('the native strings are generated from the .arb files, both languages',
