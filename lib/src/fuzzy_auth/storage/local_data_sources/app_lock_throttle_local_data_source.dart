@@ -5,20 +5,30 @@ import 'package:fuzzzy_ink/src/src.dart';
 /// the count and the wait are written together). Not a secret, but deleting
 /// it there takes more than editing an app preferences file.
 class AppLockThrottleLocalDataSource {
-  AppLockThrottleLocalDataSource({FlutterSecureStorage? secureStorage})
-      : _secureStorage = secureStorage ??
+  AppLockThrottleLocalDataSource({
+    FlutterSecureStorage? secureStorage,
+    this.key = storageKey,
+  }) : _secureStorage = secureStorage ??
             const FlutterSecureStorage(
               iOptions: secureStorageIosOptions,
               mOptions: secureStorageMacOsOptions,
             );
 
+  /// The master password's count (the app lock, and every other form that
+  /// takes the master password).
   static const storageKey = 'app_lock_throttle_v1';
+
+  /// My safe's own password: its own count (security review 2026-10-26).
+  static const vaultPasswordKey = 'vault_password_throttle_v1';
+
+  /// The secure-storage entry this count lives in.
+  final String key;
 
   final FlutterSecureStorage _secureStorage;
 
   /// `<failed attempts>;<locked-until milliseconds since epoch, or empty>`.
   Future<AppLockThrottleData> read() async {
-    final value = await _secureStorage.read(key: storageKey);
+    final value = await _secureStorage.read(key: key);
     if (value == null) return AppLockThrottleData.none;
     final parts = value.split(';');
     final attempts = int.tryParse(parts.first);
@@ -34,10 +44,10 @@ class AppLockThrottleLocalDataSource {
   Future<void> write(AppLockThrottleData data) {
     final untilMs = data.lockedUntil?.millisecondsSinceEpoch;
     return _secureStorage.write(
-      key: storageKey,
+      key: key,
       value: '${data.failedAttempts};${untilMs ?? ''}',
     );
   }
 
-  Future<void> delete() => _secureStorage.delete(key: storageKey);
+  Future<void> delete() => _secureStorage.delete(key: key);
 }

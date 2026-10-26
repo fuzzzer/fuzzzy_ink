@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -109,6 +110,7 @@ class AccessHarness {
     bool canUseBiometrics = true,
   }) async {
     SharedPreferences.setMockInitialValues(preferences);
+    FlutterSecureStorage.setMockInitialValues({});
     sl
       ..safeRegisterSingleton<PreferencesService>(
         PreferencesService(await SharedPreferences.getInstance()),
@@ -118,7 +120,20 @@ class AccessHarness {
       )
       ..safeRegisterSingleton<BiometricAuthRepository>(biometrics)
       ..safeRegisterSingleton<ChatAuthRepository>(chatAuth)
-      ..safeRegisterSingleton<VaultRepository>(vaultRepository);
+      ..safeRegisterSingleton<VaultRepository>(vaultRepository)
+      // The real counts over an empty secure storage: no wait.
+      ..safeRegisterSingleton<AppLockThrottleRepository>(
+        AppLockThrottleRepository(
+          localDataSource: AppLockThrottleLocalDataSource(),
+        ),
+      )
+      ..safeRegisterSingleton<VaultPasswordThrottleRepository>(
+        VaultPasswordThrottleRepository(
+          localDataSource: AppLockThrottleLocalDataSource(
+            key: AppLockThrottleLocalDataSource.vaultPasswordKey,
+          ),
+        ),
+      );
     whenListen(authStore, authChanges, initialState: auth ?? locked);
     whenListen(
       vault,
@@ -142,6 +157,8 @@ class AccessHarness {
       sl.unregister<BiometricAuthRepository>,
       sl.unregister<ChatAuthRepository>,
       sl.unregister<VaultRepository>,
+      sl.unregister<AppLockThrottleRepository>,
+      sl.unregister<VaultPasswordThrottleRepository>,
     ]) {
       await unregister();
     }

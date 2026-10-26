@@ -24,6 +24,9 @@ class SettingsPage extends StatelessWidget {
         fuzzyAuthStore: context.read<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
+        appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
+        vaultPasswordThrottleRepository:
+            sl.get<VaultPasswordThrottleRepository>(),
         vaultRepository: sl.get<VaultRepository>(),
       )..loadRecoveryKeyStatus(),
       child: const SettingsView(),

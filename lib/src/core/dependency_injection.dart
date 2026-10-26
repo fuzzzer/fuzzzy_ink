@@ -103,6 +103,13 @@ class DependencyInjection {
         localDataSource: AppLockThrottleLocalDataSource(),
       ),
     );
+    sl.safeRegisterSingleton<VaultPasswordThrottleRepository>(
+      VaultPasswordThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(
+          key: AppLockThrottleLocalDataSource.vaultPasswordKey,
+        ),
+      ),
+    );
 
     sl.safeRegisterSingleton<AppResetRepository>(
       AppResetRepository(
@@ -221,6 +228,8 @@ class DependencyInjection {
         cryptoRepository: sl.get<VaultCryptoRepository>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
+        vaultPasswordThrottleRepository:
+            sl.get<VaultPasswordThrottleRepository>(),
       ),
     );
 

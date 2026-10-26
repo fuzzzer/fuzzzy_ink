@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:mocktail/mocktail.dart';
@@ -391,6 +392,40 @@ void main() {
       expect(await cubit.lockoutRemaining(), const Duration(seconds: 18));
       cubit.emit(const VaultAuthState(usesOwnPassword: true));
       expect(await cubit.lockoutRemaining(), Duration.zero);
+      await cubit.close();
+    });
+
+    test(
+        "a vault with its own password has its own count and wait (security "
+        "review 2026-10-26)", () async {
+      FlutterSecureStorage.setMockInitialValues({});
+      final wall = DateTime(2026, 10, 26, 12);
+      final ownCount = VaultPasswordThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(
+          key: AppLockThrottleLocalDataSource.vaultPasswordKey,
+        ),
+        now: () => wall,
+      );
+      when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = VaultAuthCubit(
+        cryptoRepository: mockCryptoRepo,
+        vaultRepository: mockVaultRepo,
+        biometricAuthRepository: mockBiometricRepo,
+        appLockThrottleRepository: mockThrottle,
+        vaultPasswordThrottleRepository: ownCount,
+        now: () => wall,
+      )..emit(const VaultAuthState(usesOwnPassword: true));
+      for (var i = 0; i < AppLockThrottleData.freeAttempts; i++) {
+        await cubit.unlock('nope');
+      }
+      expect(await cubit.lockoutRemaining(), const Duration(seconds: 30));
+      await cubit.unlock('nope');
+      expect(cubit.state.failureType, VaultFailureType.tooManyAttempts);
+      verify(() => mockCryptoRepo.unlock('nope', _metadata)).called(5);
+      verifyNever(() => mockThrottle.save(any()));
       await cubit.close();
     });
 
