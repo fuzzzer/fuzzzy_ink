@@ -7,6 +7,7 @@ export 'home/home.dart';
 export 'pairing_warning_dialog.dart';
 export 'pasted_link_unwrapper.dart';
 export 'people/people.dart';
+export 'person/person.dart';
 export 'plain_file/plain_file.dart';
 export 'safety/safety.dart';
 export 'share_sheet/share_sheet.dart';
