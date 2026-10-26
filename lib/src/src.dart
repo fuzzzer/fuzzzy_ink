@@ -1,5 +1,6 @@
 export 'app/app.dart';
 export 'core/core.dart';
+export 'fuzz_anywhere/fuzz_anywhere.dart';
 export 'fuzzy_auth/fuzzy_auth.dart';
 export 'fuzzy_basics/fuzzy_basics.dart';
 export 'fuzzy_vault/fuzzy_vault.dart';

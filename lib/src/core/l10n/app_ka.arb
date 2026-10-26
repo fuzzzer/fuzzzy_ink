@@ -2666,5 +2666,37 @@
   "incomingFileUnreadable": "ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.",
   "@incomingFileUnreadable": {
     "description": "Georgian draft, needs a native read (opening .fuzz files from other apps, 2026-10-26)"
+  },
+  "anywhereSection": "სხვა აპები",
+  "@anywhereSection": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "anywhereLockFromOtherApps": "ჩაკეტვა სხვა აპებიდან",
+  "@anywhereLockFromOtherApps": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "anywhereExperimental": "ექსპერიმენტული",
+  "@anywhereExperimental": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "anywhereLockAgain": "ყოველი გამოყენების შემდეგ ჩაკეტვა",
+  "@anywhereLockAgain": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "infoOtherAppsTitle": "ჩაკეტვა სხვა აპებიდან",
+  "@infoOtherAppsTitle": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "infoOtherAppsLine1": "ჩაკეტეთ ან გახსენით ტექსტი სხვა აპის მენიუდან.",
+  "@infoOtherAppsLine1": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "infoOtherAppsLine2": "რასაც ხსნით, მხოლოდ Fuzzzy Ink-ში ჩანს. უკან არასდროს ბრუნდება.",
+  "@infoOtherAppsLine2": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
+  },
+  "infoOtherAppsLine3": "სხვა აპში აკრეფილი ტექსტი შეიძლება იქ უკვე შენახული ან სინქრონიზებული იყოს. პირადი სიტყვები Fuzzzy Ink-ში დაწერეთ.",
+  "@infoOtherAppsLine3": {
+    "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
   }
 }

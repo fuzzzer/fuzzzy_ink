@@ -2314,4 +2314,31 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get incomingFileUnreadable =>
       'ფაილი ვერ წავიკითხეთ. ხელახლა გახსენით იქიდან, სადაც არის.';
+
+  @override
+  String get anywhereSection => 'სხვა აპები';
+
+  @override
+  String get anywhereLockFromOtherApps => 'ჩაკეტვა სხვა აპებიდან';
+
+  @override
+  String get anywhereExperimental => 'ექსპერიმენტული';
+
+  @override
+  String get anywhereLockAgain => 'ყოველი გამოყენების შემდეგ ჩაკეტვა';
+
+  @override
+  String get infoOtherAppsTitle => 'ჩაკეტვა სხვა აპებიდან';
+
+  @override
+  String get infoOtherAppsLine1 =>
+      'ჩაკეტეთ ან გახსენით ტექსტი სხვა აპის მენიუდან.';
+
+  @override
+  String get infoOtherAppsLine2 =>
+      'რასაც ხსნით, მხოლოდ Fuzzzy Ink-ში ჩანს. უკან არასდროს ბრუნდება.';
+
+  @override
+  String get infoOtherAppsLine3 =>
+      'სხვა აპში აკრეფილი ტექსტი შეიძლება იქ უკვე შენახული ან სინქრონიზებული იყოს. პირადი სიტყვები Fuzzzy Ink-ში დაწერეთ.';
 }

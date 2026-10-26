@@ -2780,5 +2780,37 @@
   "incomingFileUnreadable": "Couldn't read that file. Open it again from where it is.",
   "@incomingFileUnreadable": {
     "description": "A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission)."
+  },
+  "anywhereSection": "Other apps",
+  "@anywhereSection": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereLockFromOtherApps": "Lock from other apps",
+  "@anywhereLockFromOtherApps": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereExperimental": "Experimental",
+  "@anywhereExperimental": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereLockAgain": "Lock again after each use",
+  "@anywhereLockAgain": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsTitle": "Locking from other apps",
+  "@infoOtherAppsTitle": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine1": "Lock or open text from another app's menu.",
+  "@infoOtherAppsLine1": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine2": "What you open shows only in Fuzzzy Ink. It never goes back.",
+  "@infoOtherAppsLine2": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine3": "Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.",
+  "@infoOtherAppsLine3": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
   }
 }

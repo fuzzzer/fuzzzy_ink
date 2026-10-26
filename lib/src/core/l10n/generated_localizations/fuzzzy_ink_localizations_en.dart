@@ -2301,4 +2301,31 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get incomingFileUnreadable =>
       'Couldn\'t read that file. Open it again from where it is.';
+
+  @override
+  String get anywhereSection => 'Other apps';
+
+  @override
+  String get anywhereLockFromOtherApps => 'Lock from other apps';
+
+  @override
+  String get anywhereExperimental => 'Experimental';
+
+  @override
+  String get anywhereLockAgain => 'Lock again after each use';
+
+  @override
+  String get infoOtherAppsTitle => 'Locking from other apps';
+
+  @override
+  String get infoOtherAppsLine1 =>
+      'Lock or open text from another app\'s menu.';
+
+  @override
+  String get infoOtherAppsLine2 =>
+      'What you open shows only in Fuzzzy Ink. It never goes back.';
+
+  @override
+  String get infoOtherAppsLine3 =>
+      'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.';
 }

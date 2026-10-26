@@ -157,6 +157,8 @@ class _SettingsViewState extends State<SettingsView> {
                         SettingsMySafeSection(
                           canUseBiometrics: _canUseBiometrics,
                         ),
+                        // Experimental; nothing without the build flag.
+                        const FuzzAnywhereSettingsSection(),
                         const SettingsFuzzzyCastSection(),
                         const SettingsLookAndLanguageSection(),
                         SettingsSectionLabel(localizations.accessHelp),

@@ -4239,6 +4239,54 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t read that file. Open it again from where it is.'**
   String get incomingFileUnreadable;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Other apps'**
+  String get anywhereSection;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock from other apps'**
+  String get anywhereLockFromOtherApps;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental'**
+  String get anywhereExperimental;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock again after each use'**
+  String get anywhereLockAgain;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking from other apps'**
+  String get infoOtherAppsTitle;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock or open text from another app\'s menu.'**
+  String get infoOtherAppsLine1;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'What you open shows only in Fuzzzy Ink. It never goes back.'**
+  String get infoOtherAppsLine2;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.'**
+  String get infoOtherAppsLine3;
 }
 
 class _FuzzzyInkLocalizationsDelegate
