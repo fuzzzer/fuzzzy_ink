@@ -1,7 +1,8 @@
 name: fuzzzy_ink
 on:
   push:
-    branches: [main, 'agent/**']
+    # dev is the integration branch everything merges into (security review 2026-10-26).
+    branches: [main, dev, 'agent/**']
     tags: ['v*']
   pull_request:
 # Every job states what its token may do; anything not listed is denied. Third-party steps are pinned to a
@@ -48,7 +49,8 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
       - run: cargo build --release --locked --manifest-path $CRATE/Cargo.toml   # for the Dart tests' ExternalLibrary
-      - run: flutter pub get
+      # The lock file, exactly: a changed or missing entry fails instead of resolving anew.
+      - run: flutter pub get --enforce-lockfile
       - run: dart format --set-exit-if-changed --output=none lib test
       - run: flutter analyze --fatal-infos --fatal-warnings
       - run: flutter test
@@ -102,6 +104,7 @@ jobs:
           umask 077
           printf '%s' "$ANDROID_RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
         # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
         # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
@@ -156,6 +159,7 @@ jobs:
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build linux --release -t lib/main_production.dart
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: linux-bundle, path: build/linux/x64/release/bundle }
@@ -177,6 +181,7 @@ jobs:
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build windows --release -t lib/main_production.dart
       - name: Sign the Windows build (release tags only; placeholder until the certificate exists)
         # Placeholder: signs with a code-signing certificate given as a PFX in repository secrets. If the owner
@@ -206,6 +211,7 @@ jobs:
       # The Xcode project only has flavored configurations (Release-production). Xcode signing is off here; on a
       # release tag the next step signs the finished app (Developer ID, hardened runtime, sandbox checked) and
       # notarizes it. Any other run ships nothing and stays an unsigned compile+link proof.
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build macos --release --flavor production -t lib/main_production.dart
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
