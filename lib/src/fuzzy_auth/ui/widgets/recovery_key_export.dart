@@ -9,10 +9,11 @@ import 'package:share_plus/share_plus.dart';
 
 /// Hands a recovery key to the person, off this phone (DESIGN.md section
 /// 13, item 9): "Save as file" through the system save dialog, "Print" as a
-/// one-page sheet through the system print dialog. On iPhone and Mac neither
-/// goes through the share menu, whose Copy put the whole key on the
-/// clipboard (and Universal Clipboard) — QA 2026-10-26; Android still prints
-/// through its share menu. Both go through the app's hand-off folder and the
+/// one-page sheet through the system print dialog (on iPhone the printer
+/// list, then straight to the printer: the print options sheet has its own
+/// share button). On iPhone and Mac neither goes through the share menu,
+/// whose Copy put the whole key on the clipboard (and Universal Clipboard) —
+/// QA 2026-10-26; Android still prints through its share menu. Both go through the app's hand-off folder and the
 /// copy is wiped as soon as the system call returns (security review
 /// 2026-10-26) — on Android, whose share menu returns before the other app
 /// has read the file, when the app is back in front — and in every case when

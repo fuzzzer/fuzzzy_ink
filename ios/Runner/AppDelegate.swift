@@ -401,8 +401,11 @@ extension AppDelegate {
 ///   2026-10-26).
 /// - `biometricKind`: `faceId` or `touchId`, so the app says "Face ID" on a
 ///   Face ID phone (final regression 2026-10-26); `other` when neither.
-/// - `printImage`: the system print dialog for one image (the recovery key
-///   sheet) — no share sheet, so no Copy, Save Image or AirDrop on the way.
+/// - `printImage`: the system printer list, then the image (the recovery key
+///   sheet) goes straight to the printer chosen. Not the print options
+///   sheet: its preview carries a share button (Save to Files, AirDrop,
+///   Copy as a PDF) that iOS offers no way to hide (final regression
+///   2026-10-26). The app shows its own preview before this.
 /// - `exportFile`: the system "Save to Files" dialog for one file (the
 ///   recovery key as text) — again no share sheet and no clipboard.
 final class InkDevice: NSObject, UIDocumentPickerDelegate {
@@ -458,21 +461,46 @@ final class InkDevice: NSObject, UIDocumentPickerDelegate {
     return top
   }
 
+  /// The printer picked last in this run, offered first next time.
+  private var lastPrinter: UIPrinter?
+
   private func printImage(_ image: UIImage, jobName: String, result: @escaping FlutterResult) {
+    let picker = UIPrinterPickerController(initiallySelectedPrinter: lastPrinter)
+    let picked: UIPrinterPickerController.CompletionHandler = { [weak self] picker, didSelect, error in
+      guard error == nil, didSelect, let printer = picker.selectedPrinter else {
+        result(false)
+        return
+      }
+      self?.lastPrinter = printer
+      InkDevice.send(image, jobName: jobName, to: printer, result: result)
+    }
+    if UIDevice.current.userInterfaceIdiom == .pad, let view = topController?.view {
+      let anchor = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 1, height: 1)
+      picker.present(from: anchor, in: view, animated: true, completionHandler: picked)
+    } else {
+      picker.present(animated: true, completionHandler: picked)
+    }
+  }
+
+  /// Prints [image] on [printer] with no further sheet. `true` once queued.
+  private static func send(
+    _ image: UIImage, jobName: String, to printer: UIPrinter, result: @escaping FlutterResult
+  ) {
     let controller = UIPrintInteractionController.shared
     let info = UIPrintInfo(dictionary: nil)
     info.outputType = .general
     info.jobName = jobName
     controller.printInfo = info
     controller.printingItem = image
-    let done: UIPrintInteractionController.CompletionHandler = { _, completed, error in
+    var answered = false
+    let started = controller.print(to: printer) { _, completed, error in
+      guard !answered else { return }
+      answered = true
       result(error == nil && completed)
     }
-    if UIDevice.current.userInterfaceIdiom == .pad, let view = topController?.view {
-      let anchor = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 1, height: 1)
-      controller.present(from: anchor, in: view, animated: true, completionHandler: done)
-    } else {
-      controller.present(animated: true, completionHandler: done)
+    if !started && !answered {
+      answered = true
+      result(false)
     }
   }
 
