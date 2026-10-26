@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -126,7 +127,7 @@ class OpenFlowView extends StatelessWidget {
               child: FlowWorkingView(
                 qaId: 'open.working',
                 title: localizations.workingOpening,
-                icon: Icons.lock_open_outlined,
+                icon: CupertinoIcons.lock_open,
                 fileName: state.workingName ?? '',
                 progress: state.progress,
                 onCancel: cubit.cancel,

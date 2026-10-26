@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -41,7 +42,7 @@ class _OpenPasswordViewState extends State<OpenPasswordView> {
         onLeading: widget.onBack,
         footer: FuzzzyButton(
           label: localizations.open,
-          icon: const Icon(Icons.lock_open_outlined),
+          icon: const Icon(CupertinoIcons.lock_open),
           size: FuzzzyButtonSize.l,
           loading: state.isBusy,
           qaId: 'open.password.open',

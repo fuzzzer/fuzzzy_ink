@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -101,7 +102,7 @@ class HistoryRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
                   ),
                   child: Icon(
-                    locked ? Icons.lock_outline : Icons.lock_open_outlined,
+                    locked ? Icons.lock_outline : CupertinoIcons.lock_open,
                     size: context.fuzzzyIconSize.l,
                     color: locked ? colors.actionPrimaryFg : colors.ink,
                   ),

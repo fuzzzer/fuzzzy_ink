@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -428,7 +429,7 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
                         child: FuzzzyButton(
                           qaId: 'person.open',
                           label: localizations.homeOpenTitle,
-                          icon: const Icon(Icons.lock_open_outlined),
+                          icon: const Icon(CupertinoIcons.lock_open),
                           variant: FuzzzyButtonVariant.secondary,
                           onPressed: _openFrom,
                         ),

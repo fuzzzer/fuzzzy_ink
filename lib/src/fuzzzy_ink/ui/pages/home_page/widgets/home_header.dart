@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -82,7 +83,7 @@ class HomeActionTiles extends StatelessWidget {
             Expanded(
               child: ActionTile(
                 qaId: 'home.open',
-                icon: Icons.lock_open_outlined,
+                icon: CupertinoIcons.lock_open,
                 title: localizations.homeOpenTitle,
                 subtitle: localizations.homeOpenSubtitle,
                 onTap: onOpen,

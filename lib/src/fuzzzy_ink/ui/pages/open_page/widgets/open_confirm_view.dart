@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -35,7 +36,7 @@ class OpenConfirmView extends StatelessWidget {
         children: [
           FuzzzyButton(
             label: l.openLinkOpen,
-            icon: const Icon(Icons.lock_open_outlined),
+            icon: const Icon(CupertinoIcons.lock_open),
             size: FuzzzyButtonSize.l,
             qaId: 'open.confirm.open',
             onPressed: onOpen,

@@ -12,6 +12,9 @@ dependencies:
   archive: 4.0.9
   biometric_storage: ^5.0.1
   bloc: ^8.1.2
+  # The open padlock for Open and opened history (CupertinoIcons.lock_open):
+  # Material's open lock reads as closed at row size (final regression 2026-10-26).
+  cupertino_icons: 1.0.8
   desktop_drop: ^0.6.0
   file_picker: ^8.0.5
   flutter:

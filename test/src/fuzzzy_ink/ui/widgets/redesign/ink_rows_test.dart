@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -261,6 +262,37 @@ void main() {
         });
       }
     }
+
+    testWidgets(
+        'opened rows show an open padlock, locked rows a closed one '
+        '(final regression 2026-10-26)', (tester) async {
+      await pumpRedesign(
+        tester,
+        Column(
+          children: [
+            HistoryRow(
+              qaId: 'locked',
+              direction: HistoryDirection.locked,
+              time: '9:20',
+              onTap: () {},
+            ),
+            HistoryRow(
+              qaId: 'opened',
+              direction: HistoryDirection.opened,
+              time: '9:21',
+              onTap: () {},
+            ),
+          ],
+        ),
+      );
+      Finder iconIn(String qaId, IconData icon) => find.descendant(
+            of: find.byKey(Key('history.$qaId')),
+            matching: find.byIcon(icon),
+          );
+      expect(iconIn('locked', Icons.lock_outline), findsOneWidget);
+      expect(iconIn('opened', CupertinoIcons.lock_open), findsOneWidget);
+      expect(iconIn('opened', Icons.lock_outline), findsNothing);
+    });
   });
 
   group('FileCard and LockedTextPreview', () {

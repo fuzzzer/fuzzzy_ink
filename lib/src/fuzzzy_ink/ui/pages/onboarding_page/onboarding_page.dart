@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -188,7 +189,7 @@ class HowItWorksCards extends StatelessWidget {
     final cards = [
       (Icons.person_add_alt, localizations.accessHowAddPerson, false),
       (Icons.lock_outline, localizations.accessHowLockForThem, true),
-      (Icons.lock_open_outlined, localizations.accessHowTheyOpenOnce, false),
+      (CupertinoIcons.lock_open, localizations.accessHowTheyOpenOnce, false),
     ];
     final stacked = MediaQuery.textScalerOf(context).scale(1) > 1.4;
 

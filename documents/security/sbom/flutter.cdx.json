@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:81e04f2b-11b5-4e97-96f6-632da6e446e4",
+  "serialNumber": "urn:uuid:85e01705-7d56-4832-be35-0839ffe8f9dd",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-25T22:54:10Z",
+    "timestamp": "2026-10-26T04:47:22Z",
     "tools": {
       "components": [
         {
@@ -976,6 +976,43 @@
       "purl": "pkg:pub/crypto@3.0.7",
       "type": "library",
       "bom-ref": "pkg:pub/crypto@3.0.7",
+      "properties": [
+        {
+          "name": "SrcFile",
+          "value": "pubspec.lock"
+        }
+      ],
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 1,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 1,
+                "value": "pubspec.lock"
+              }
+            ],
+            "concludedValue": "pubspec.lock"
+          }
+        ]
+      }
+    },
+    {
+      "group": "",
+      "name": "cupertino_icons",
+      "version": "1.0.8",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6"
+        }
+      ],
+      "purl": "pkg:pub/cupertino_icons@1.0.8",
+      "type": "library",
+      "bom-ref": "pkg:pub/cupertino_icons@1.0.8",
       "properties": [
         {
           "name": "SrcFile",
@@ -7508,6 +7545,7 @@
         "pkg:pub/collection@1.18.0",
         "pkg:pub/convert@3.1.1",
         "pkg:pub/crypto@3.0.3",
+        "pkg:pub/cupertino_icons@1.0.8",
         "pkg:pub/desktop_drop@0.6.1",
         "pkg:pub/ed25519_edwards@0.3.1",
         "pkg:pub/file_picker@8.3.7",
@@ -7570,8 +7608,8 @@
           ]
         }
       },
-      "timestamp": "2026-10-25T22:54:10Z",
-      "text": "This Software Bill-of-Materials (SBOM) document was created on Sunday, October 25, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.4+6'."
+      "timestamp": "2026-10-26T04:47:22Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Monday, October 26, 2026 with cdxgen. The data was captured during the build lifecycle phase. The document describes an application named 'fuzzzy_ink' with version '1.1.4+6'."
     }
   ]
 }
