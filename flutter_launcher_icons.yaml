@@ -1,10 +1,10 @@
-# App icon — production (the company mark: blood red sun crossed by a black ink branch).
-# ANDROID ONLY, on purpose.
+# App icon — production (the Fuzzzy Ink mark: a black ink drop with a straight tip, upright
+# on the blood red sun). ANDROID ONLY, on purpose.
 #
-# Artwork is owner-approved and lives in the brand kit:
-#   /Volumes/Fuzzzity 2/fuzzzy_company/company/brand/logo/fuzzycore/v1/prod/night
-# This app uses the standard company mark, not an app-specific one (owner decision 2026-09-22:
-# the bespoke chat mark read as a plain red blob at icon size).
+# Artwork is owner-approved (2026-10-26) and lives in the brand kit:
+#   /Volumes/Fuzzzity 2/fuzzzy_company/company/brand/logo/ink/v1/prod/night
+# Staging and development use the same kit's staging/night and dev/night folders. This replaces
+# the company mark (sun and branch) the app used before; Fuzzzy Ink now has its own mark.
 # The copies under assets/launcher_icons/ are build inputs only — never edit them by hand and
 # never register them in `flutter: assets:`. To change the mark, re-export from the brand kit.
 #
@@ -26,6 +26,11 @@
 #   3. Copy each regenerated mipmap-anydpi-v26/ic_launcher.xml to ic_launcher_round.xml and each
 #      mipmap-*/ic_launcher.png to ic_launcher_round.png: the manifest declares android:roundIcon
 #      and the package does not fill that slot.
+#   4. python3 scripts/ios_app_icons.py  (iOS, all three icon sets).
+#
+# macOS (AppIcon / AppIcon-stg / AppIcon-dev), Windows (windows/runner/resources/app_icon.ico),
+# Linux (linux/runner/resources/app_icon.png) and web (web/favicon.png, web/icons/) are filled
+# from the same kit folders; the in-app mark is in assets/logo/.
 flutter_launcher_icons:
   android: true
   image_path: "assets/launcher_icons/production/ios/AppIcon-1024.png"
