@@ -90,6 +90,64 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
   });
 
+  testWidgets(
+      'the device clock set back while away locks on return (security '
+      'review 2026-10-26)', (tester) async {
+    final real = AppAutoLock.wallClock;
+    addTearDown(() => AppAutoLock.wallClock = real);
+    var wall = DateTime(2026, 10, 26, 12);
+    AppAutoLock.wallClock = () => wall;
+    await pump(tester, unlocked);
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    wall = wall.subtract(const Duration(hours: 2));
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    verify(() => store.lock()).called(1);
+  });
+
+  test('the longer of the two clocks counts; a negative wall clock locks', () {
+    const minute = Duration(minutes: 1);
+    expect(
+      AppAutoLock.isAwayTooLong(
+        wall: const Duration(seconds: -5),
+        monotonic: Duration.zero,
+        background: minute,
+      ),
+      isTrue,
+    );
+    expect(
+      AppAutoLock.isAwayTooLong(
+        wall: const Duration(seconds: 10),
+        monotonic: const Duration(minutes: 2),
+        background: minute,
+      ),
+      isTrue,
+      reason: 'the clock was set forward… or back by less than the time away',
+    );
+    expect(
+      AppAutoLock.isAwayTooLong(
+        wall: const Duration(minutes: 3),
+        monotonic: const Duration(seconds: 10),
+        background: minute,
+      ),
+      isTrue,
+      reason: 'a phone asleep: the monotonic clock paused',
+    );
+    expect(
+      AppAutoLock.isAwayTooLong(
+        wall: const Duration(seconds: 10),
+        monotonic: const Duration(seconds: 10),
+        background: minute,
+      ),
+      isFalse,
+    );
+  });
+
   testWidgets('"at once" locks as the app leaves', (tester) async {
     whenListen(
       autoLock,

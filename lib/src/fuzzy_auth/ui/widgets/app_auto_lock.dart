@@ -10,10 +10,30 @@ import 'package:fuzzzy_ink/src/src.dart';
 /// been in the background longer than the background time (measured again
 /// on return, since a phone may freeze timers in the background). Locking
 /// closes the store, which wipes its key in the core.
+///
+/// The time away is measured on the wall clock and on a monotonic clock, and
+/// the longer one counts; a wall clock that went backwards locks at once
+/// (security review 2026-10-26). So setting the device clock back, or
+/// forward, never skips the lock on return. (The monotonic clock may pause
+/// while a phone sleeps; the wall clock covers that.)
 class AppAutoLock extends StatefulWidget {
   const AppAutoLock({super.key, required this.child});
 
   final Widget child;
+
+  /// The wall clock; tests set it to move the device clock.
+  @visibleForTesting
+  static DateTime Function() wallClock = DateTime.now;
+
+  /// Whether the time away calls for the lock: negative on the wall clock
+  /// (the clock was set back), or [background] or more on either clock.
+  @visibleForTesting
+  static bool isAwayTooLong({
+    required Duration wall,
+    required Duration monotonic,
+    required Duration background,
+  }) =>
+      wall.isNegative || wall >= background || monotonic >= background;
 
   @override
   State<AppAutoLock> createState() => _AppAutoLockState();
@@ -23,6 +43,7 @@ class _AppAutoLockState extends State<AppAutoLock> with WidgetsBindingObserver {
   Timer? _idleTimer;
   Timer? _backgroundTimer;
   DateTime? _leftAt;
+  final Stopwatch _away = Stopwatch();
 
   FuzzyAuthStore get _authStore => context.read<FuzzyAuthStore>();
   AutoLockSettings get _settings => context.read<AutoLockCubit>().state;
@@ -67,7 +88,10 @@ class _AppAutoLockState extends State<AppAutoLock> with WidgetsBindingObserver {
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
         if (_leftAt != null || !_isUnlocked) return;
-        _leftAt = DateTime.now();
+        _leftAt = AppAutoLock.wallClock();
+        _away
+          ..reset()
+          ..start();
         final background = _settings.background;
         if (background == Duration.zero) {
           _lock();
@@ -78,9 +102,14 @@ class _AppAutoLockState extends State<AppAutoLock> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         final leftAt = _leftAt;
         _leftAt = null;
+        _away.stop();
         _backgroundTimer?.cancel();
         if (leftAt != null &&
-            DateTime.now().difference(leftAt) >= _settings.background) {
+            AppAutoLock.isAwayTooLong(
+              wall: AppAutoLock.wallClock().difference(leftAt),
+              monotonic: _away.elapsed,
+              background: _settings.background,
+            )) {
           _lock();
         } else {
           _restartIdleTimer();

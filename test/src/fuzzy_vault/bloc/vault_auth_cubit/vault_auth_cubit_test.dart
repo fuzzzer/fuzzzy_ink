@@ -396,8 +396,8 @@ void main() {
     });
 
     test(
-        "a vault with its own password has its own count and wait (security "
-        "review 2026-10-26)", () async {
+        'a vault with its own password has its own count and wait (security '
+        'review 2026-10-26)', () async {
       FlutterSecureStorage.setMockInitialValues({});
       final wall = DateTime(2026, 10, 26, 12);
       final ownCount = VaultPasswordThrottleRepository(
