@@ -1,10 +1,15 @@
 export 'about_encryption_page/about_encryption_page.dart';
 export 'acceptance_export_page/acceptance_export_page.dart';
+export 'answered_twice_page/answered_twice_page.dart';
 export 'chat_creation_page/chat_creation_page.dart';
 export 'chat_invitation_page/chat_invitation_page.dart';
 export 'connected_chat_page/connected_chat_page.dart';
+export 'history_item_page/history_item_page.dart';
 export 'home_page/home_page.dart';
 export 'invitation_acceptance_page/invitation_acceptance_page.dart';
 export 'onboarding_page/onboarding_page.dart';
+export 'person_checked_page/person_checked_page.dart';
+export 'person_connected_page/person_connected_page.dart';
+export 'person_page/person_page.dart';
 export 'safety_number_page/safety_number_page.dart';
 export 'settings_page/settings_page.dart';

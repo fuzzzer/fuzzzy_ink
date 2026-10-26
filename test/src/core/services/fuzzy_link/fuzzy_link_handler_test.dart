@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 // ---------------------------------------------------------------------------
@@ -137,13 +138,50 @@ void main() {
   });
 
   testWidgets(
-      'a different acceptance for a connected chat warns that someone else '
-      'may have accepted, never says "connected"', (tester) async {
+      'a different acceptance for a connected chat opens "Someone else may '
+      'have answered", never says "connected"', (tester) async {
     when(() => chatRepository.getChatById(_chatId))
         .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
     when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
         .thenAnswer((_) async => false);
-    final handler = await pumpApp(tester);
+    final router = GoRouter(
+      navigatorKey: navigatorKey,
+      routes: [
+        GoRoute(
+          path: AppRouter.home,
+          builder: (_, __) => const Scaffold(body: Text('chat list')),
+        ),
+        GoRoute(
+          path: AppRouter.personAnsweredTwice,
+          builder: (_, state) => Scaffold(
+            body: Text(
+              'answered twice: ${(state.extra! as ChatGeneralData).chatName}',
+            ),
+          ),
+        ),
+      ],
+    );
+    AppRouter.debugRouterInstance = router;
+    addTearDown(() {
+      AppRouter.debugRouterInstance = null;
+      router.dispose();
+    });
+    await tester.pumpWidget(
+      MaterialApp.router(
+        theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
+        scaffoldMessengerKey: scaffoldMessengerKey,
+        localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+        supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
+    );
+    final handler = FuzzyLinkHandler(
+      linkService: linkService,
+      chatRepository: chatRepository,
+      authStore: authStore,
+      cryptoCoreService: cryptoCoreService,
+    );
+    await handler.initialize();
 
     await receive(
       tester,
@@ -151,21 +189,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Someone else may have accepted your invitation'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('Your chat with Alice'), findsOneWidget);
-    expect(find.text('Verify safety number'), findsOneWidget);
+    expect(find.text('answered twice: Alice'), findsOneWidget);
     expect(find.text('Already connected!'), findsNothing);
     expect(tester.takeException(), isNull);
-
-    await tester.tap(find.text('Close'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Someone else may have accepted your invitation'),
-      findsNothing,
-    );
     handler.dispose();
   });
 

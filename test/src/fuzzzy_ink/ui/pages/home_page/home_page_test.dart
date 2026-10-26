@@ -95,16 +95,9 @@ void main() {
           builder: (_, __) => stub('password flow'),
         ),
         GoRoute(
-          path: AppRouter.chatInvitation,
-          builder: (_, state) => stub(
-            'invite of ${(state.extra! as ChatInvitationPagePayload).chatName}',
-          ),
-        ),
-        GoRoute(
-          path: AppRouter.chatConnected,
-          builder: (_, state) => stub(
-            'chat with ${(state.extra! as ConnectedChatPagePayload).chatGeneralData.chatName}',
-          ),
+          path: AppRouter.person,
+          builder: (_, state) =>
+              stub('page of ${state.uri.queryParameters['chat']}'),
         ),
       ],
     );
@@ -224,16 +217,15 @@ void main() {
       expect(find.byKey(const Key('btn.home.add')), findsOneWidget);
     });
 
-    testWidgets(
-        'a waiting person opens their invite, a connected one their '
-        'page', (tester) async {
+    testWidgets('a waiting person opens their page (with the waiting card)',
+        (tester) async {
       showState(
         ChatGeneralDataListState(status: _loaded, chatList: [_mom, _nino]),
       );
       await pumpHome(tester);
       await tester.tap(find.byKey(const Key('person.mom')));
       await tester.pumpAndSettle();
-      expect(find.text('invite of Mom'), findsOneWidget);
+      expect(find.text('page of ${_mom.chatId}'), findsOneWidget);
     });
 
     testWidgets('a connected person opens their page', (tester) async {
@@ -243,7 +235,7 @@ void main() {
       await pumpHome(tester);
       await tester.tap(find.byKey(const Key('person.nino')));
       await tester.pumpAndSettle();
-      expect(find.text('chat with Nino'), findsOneWidget);
+      expect(find.text('page of ${_nino.chatId}'), findsOneWidget);
     });
   });
 
@@ -273,7 +265,7 @@ void main() {
       expect(find.text('password flow'), findsOneWidget);
     });
 
-    testWidgets('a connected person opens where locking happens',
+    testWidgets('a connected person opens their page, with Lock',
         (tester) async {
       showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
       await pumpHome(tester);
@@ -281,7 +273,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('lockWho.nino')));
       await tester.pumpAndSettle();
-      expect(find.text('chat with Nino'), findsOneWidget);
+      expect(find.text('page of ${_nino.chatId}'), findsOneWidget);
     });
 
     testWidgets('no one connected: "Add a person first" opens Add',
