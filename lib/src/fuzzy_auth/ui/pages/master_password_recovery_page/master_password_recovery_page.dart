@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
-/// "Forgot your password?": the recovery key sets a new master password.
-/// Functional screen in the current kit; the redesign restyles it.
+/// "Forgot your password?" (DESIGN.md section 4.2, prototype `rec-enter`
+/// and `rec-new`): type the recovery key, then a new master password. The
+/// core checks the key only while it sets the new password, so a key that
+/// does not match brings the person back to the key with "That key doesn't
+/// match. Check each group." After it the app opens (it lifts in) with
+/// "New master password saved." The way out for someone with neither the
+/// password nor the key — erase everything — sits here, behind a
+/// confirmation. A private screen.
 class MasterPasswordRecoveryPage extends StatelessWidget {
   const MasterPasswordRecoveryPage({super.key});
 
@@ -17,30 +25,41 @@ class MasterPasswordRecoveryPage extends StatelessWidget {
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
       ),
-      child: const _MasterPasswordRecoveryView(),
+      child: const MasterPasswordRecoveryView(),
     );
   }
 }
 
-class _MasterPasswordRecoveryView extends StatefulWidget {
-  const _MasterPasswordRecoveryView();
+/// The two steps, below a [MasterPasswordRecoveryCubit].
+class MasterPasswordRecoveryView extends StatefulWidget {
+  const MasterPasswordRecoveryView({super.key});
+
+  /// Characters in a recovery key (8 groups of 4), spaces and dashes aside.
+  static const keyLength = 32;
+
+  /// The key as typed, without the spaces and dashes the core ignores.
+  static int lengthOf(String key) =>
+      key.replaceAll(RegExp(r'[\s-]'), '').length;
 
   @override
-  State<_MasterPasswordRecoveryView> createState() =>
+  State<MasterPasswordRecoveryView> createState() =>
       _MasterPasswordRecoveryViewState();
 }
 
 class _MasterPasswordRecoveryViewState
-    extends State<_MasterPasswordRecoveryView> {
-  final _recoveryKeyController = TextEditingController();
+    extends State<MasterPasswordRecoveryView> {
+  final _keyController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+
+  bool _onPasswordStep = false;
+  String? _keyError;
 
   @override
   void initState() {
     super.initState();
     for (final controller in [
-      _recoveryKeyController,
+      _keyController,
       _passwordController,
       _confirmController,
     ]) {
@@ -50,111 +69,218 @@ class _MasterPasswordRecoveryViewState
 
   @override
   void dispose() {
-    _recoveryKeyController.dispose();
-    _passwordController.dispose();
-    _confirmController.dispose();
+    for (final controller in [
+      _keyController,
+      _passwordController,
+      _confirmController,
+    ]) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
-  bool get _isReady =>
-      _recoveryKeyController.text.trim().isNotEmpty &&
-      NewPasswordFields.isReady(
+  void _onKeyContinue() {
+    final localizations = context.fuzzzyInkLocalizations;
+    if (MasterPasswordRecoveryView.lengthOf(_keyController.text) !=
+        MasterPasswordRecoveryView.keyLength) {
+      setState(() => _keyError = localizations.accessKeyTooShort);
+      return;
+    }
+    setState(() {
+      _keyError = null;
+      _onPasswordStep = true;
+    });
+  }
+
+  bool get _isPasswordReady => NewPasswordFields.isReady(
         password: _passwordController.text,
         confirm: _confirmController.text,
       );
 
-  void _onRecover() {
-    if (!_isReady) return;
+  void _onSave() {
+    if (!_isPasswordReady) return;
     context.read<MasterPasswordRecoveryCubit>().recover(
-          recoveryKey: _recoveryKeyController.text,
+          recoveryKey: _keyController.text,
           newPassword: _passwordController.text,
         );
   }
 
-  String? _errorOf(MasterPasswordRecoveryState state) {
+  void _onStateChanged(
+    BuildContext context,
+    MasterPasswordRecoveryState state,
+  ) {
     final localizations = context.fuzzzyInkLocalizations;
-    if (!state.status.isFailed || state.tooWeak) return null;
-    return switch (state.failureType) {
-      CryptoCoreFailureType.corrupt => localizations.recoveryKeyTypo,
-      CryptoCoreFailureType.wrongPassword => localizations.recoveryKeyWrong,
-      _ => localizations.unknownError,
-    };
+    if (state.status.isSuccess) {
+      final message = localizations.accessNewPasswordSaved;
+      unawaited(
+        runOnTopScreen(
+          (topContext) => showInkToast(topContext, message: message),
+        ),
+      );
+      return;
+    }
+    if (!state.status.isFailed || state.tooWeak) return;
+    final failure = state.failureType;
+    if (failure == CryptoCoreFailureType.corrupt ||
+        failure == CryptoCoreFailureType.wrongPassword) {
+      unawaited(InkHaptics.heavy());
+      setState(() {
+        _onPasswordStep = false;
+        _keyError = localizations.accessKeyDoesntMatch;
+      });
+      return;
+    }
+    showInkToast(
+      context,
+      message: localizations.unknownError,
+      kind: FuzzzyToastKind.error,
+    );
+  }
+
+  /// Everything goes, after an explicit confirmation.
+  Future<void> _onErase() async {
+    final localizations = context.fuzzzyInkLocalizations;
+    final erase = await FuzzzyDialog.show<bool>(
+      context,
+      title: localizations.eraseTitle,
+      qaId: 'recover.eraseConfirm',
+      content: Text(
+        localizations.eraseMessage,
+        style: context.fuzzzyTextStyles.body
+            .copyWith(color: context.fuzzzyColors.ink),
+      ),
+      actions: [
+        FuzzzyButton(
+          label: localizations.cancel,
+          variant: FuzzzyButtonVariant.secondary,
+          qaId: 'recover.eraseCancel',
+          onPressed: () =>
+              Navigator.of(context, rootNavigator: true).pop(false),
+        ),
+        FuzzzyButton(
+          label: localizations.eraseConfirm,
+          variant: FuzzzyButtonVariant.destructive,
+          qaId: 'recover.eraseYes',
+          onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
+        ),
+      ],
+    );
+    if (!(erase ?? false) || !mounted) return;
+    final eraseRes = await context.read<FuzzyAuthStore>().eraseEverything();
+    if (eraseRes is CryptoCoreFailure<void> && mounted) {
+      showInkToast(
+        context,
+        message: localizations.unknownError,
+        kind: FuzzzyToastKind.error,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<MasterPasswordRecoveryCubit,
+        MasterPasswordRecoveryState>(
+      listener: _onStateChanged,
+      builder: (context, state) {
+        final isLoading = state.status.isLoading || state.status.isSuccess;
+        return _onPasswordStep
+            ? _passwordStep(context, isLoading)
+            : _keyStep(context, isLoading);
+      },
+    );
+  }
+
+  Widget _keyStep(BuildContext context, bool isLoading) {
     final localizations = context.fuzzzyInkLocalizations;
-    final colors = context.fuzzzyColors;
     final space = context.fuzzzySpace;
 
-    return BlocBuilder<MasterPasswordRecoveryCubit,
-        MasterPasswordRecoveryState>(
-      builder: (context, state) {
-        final isLoading = state.status.isLoading;
-        final error = _errorOf(state);
-
-        return Scaffold(
-          backgroundColor: colors.ground,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(space.l),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: FuzzzyIconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      semanticLabel: localizations.cancel,
-                      qaId: 'recover.back',
-                      onPressed: isLoading
-                          ? null
-                          : () => context.go(AppRouter.chatUnlock),
-                    ),
-                  ),
-                  SizedBox(height: space.l),
-                  Text(
-                    localizations.recoveryTitle,
-                    style: context.fuzzzyTextStyles.titleL
-                        .copyWith(color: colors.ink),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: space.m),
-                  Text(
-                    localizations.recoveryDescription,
-                    style: context.fuzzzyTextStyles.body
-                        .copyWith(color: colors.inkMute),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: space.xl),
-                  FuzzzyTextField(
-                    controller: _recoveryKeyController,
-                    label: localizations.recoveryKeyField,
-                    hint: 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX',
-                    errorText: error,
-                    qaId: 'recover.key',
-                  ),
-                  SizedBox(height: space.l),
-                  NewPasswordFields(
-                    passwordController: _passwordController,
-                    confirmController: _confirmController,
-                    label: localizations.chatAuthNewPassword,
-                    onSubmitted: _onRecover,
-                    qaId: 'recover',
-                  ),
-                  SizedBox(height: space.xl),
-                  FuzzzyButton(
-                    label: localizations.recoverySubmit,
-                    qaId: 'recover.submit',
-                    loading: isLoading,
-                    onPressed: _isReady && !isLoading ? _onRecover : null,
-                  ),
-                ],
-              ),
-            ),
+    return AccessPage(
+      qaId: 'recover.key',
+      title: localizations.accessRecoveryKeyHeader,
+      onBack: isLoading ? null : () => context.go(AppRouter.chatUnlock),
+      bottom: [
+        FuzzzyButton(
+          label: localizations.accessContinue,
+          size: FuzzzyButtonSize.l,
+          qaId: 'recover.continue',
+          onPressed: _keyController.text.trim().isEmpty || isLoading
+              ? null
+              : _onKeyContinue,
+        ),
+      ],
+      children: [
+        AccessTitle(localizations.accessTypeRecoveryKey),
+        SizedBox(height: space.s),
+        AccessLine(localizations.accessSpacesDontMatter),
+        SizedBox(height: space.l),
+        // The key is a secret: no copy or cut out of this field.
+        NoPlaintextCopy(
+          child: FuzzzyTextField(
+            controller: _keyController,
+            label: localizations.recoveryKeyField,
+            hint: 'XXXX XXXX XXXX XXXX …',
+            errorText: _keyError,
+            keyboardType: TextInputType.visiblePassword,
+            onSubmitted: (_) => _onKeyContinue(),
+            qaId: 'recover.keyField',
           ),
-        );
-      },
+        ),
+        SizedBox(height: space.m),
+        TipLine(
+          icon: Icons.warning_amber_rounded,
+          text: localizations.accessNoKeyNothing,
+          trailing: const WhyLink(topic: InkInfoTopic.noReset),
+          qaId: 'recover.noKey',
+        ),
+        SizedBox(height: space.xl),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: FuzzzyButton(
+            label: localizations.chatUnlockErase,
+            variant: FuzzzyButtonVariant.ghost,
+            size: FuzzzyButtonSize.s,
+            qaId: 'recover.erase',
+            onPressed: isLoading ? null : _onErase,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _passwordStep(BuildContext context, bool isLoading) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final space = context.fuzzzySpace;
+
+    return AccessPage(
+      qaId: 'recover.password',
+      title: localizations.accessNewMasterPassword,
+      onBack: isLoading ? null : () => setState(() => _onPasswordStep = false),
+      bottom: [
+        FuzzzyButton(
+          label: isLoading
+              ? localizations.chatAuthResecuringKeys
+              : localizations.accessSaveNewPassword,
+          size: FuzzzyButtonSize.l,
+          loading: isLoading,
+          qaId: 'recover.submit',
+          onPressed: _isPasswordReady && !isLoading ? _onSave : null,
+        ),
+      ],
+      children: [
+        TipLine(
+          icon: Icons.key_outlined,
+          text: localizations.accessKeyCheckedOnSave,
+          qaId: 'recover.checkedOnSave',
+        ),
+        SizedBox(height: space.l),
+        NewPasswordFields(
+          passwordController: _passwordController,
+          confirmController: _confirmController,
+          label: localizations.accessNewMasterPassword,
+          onSubmitted: _onSave,
+          qaId: 'recover',
+        ),
+      ],
     );
   }
 }

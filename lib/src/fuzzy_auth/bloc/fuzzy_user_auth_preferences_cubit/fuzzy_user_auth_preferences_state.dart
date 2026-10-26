@@ -21,6 +21,10 @@ class FuzzyUserAuthPreferencesState {
   /// A new recovery key on screen until it is confirmed saved or skipped.
   final PendingRecoveryKey? pendingRecovery;
 
+  /// The last failure was My safe's own password (a new recovery key), not
+  /// the master password.
+  final bool vaultPasswordWrong;
+
   String? get pendingRecoveryKey => pendingRecovery?.recoveryKey;
 
   const FuzzyUserAuthPreferencesState({
@@ -29,6 +33,7 @@ class FuzzyUserAuthPreferencesState {
     this.lastAction = AuthPreferencesAction.none,
     this.hasRecoveryKey,
     this.pendingRecovery,
+    this.vaultPasswordWrong = false,
   });
 
   FuzzyUserAuthPreferencesState copyWith({
@@ -38,6 +43,7 @@ class FuzzyUserAuthPreferencesState {
     bool? hasRecoveryKey,
     PendingRecoveryKey? pendingRecovery,
     bool clearPendingRecoveryKey = false,
+    bool vaultPasswordWrong = false,
   }) {
     return FuzzyUserAuthPreferencesState(
       activationStatus: activationStatus ?? this.activationStatus,
@@ -47,6 +53,7 @@ class FuzzyUserAuthPreferencesState {
       pendingRecovery: clearPendingRecoveryKey
           ? null
           : pendingRecovery ?? this.pendingRecovery,
+      vaultPasswordWrong: vaultPasswordWrong,
     );
   }
 

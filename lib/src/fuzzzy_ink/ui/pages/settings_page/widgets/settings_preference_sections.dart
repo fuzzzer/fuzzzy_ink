@@ -21,11 +21,11 @@ class SettingsFuzzzyCastSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _SectionLabel(localizations.fuzzzyCast),
+            SettingsSectionLabel(localizations.fuzzzyCast),
             FuzzzyListTile(
               qaId: 'settings.fuzzzyCast',
-              leading: const _RowIcon(Icons.auto_awesome_outlined),
-              title: _RowText(
+              leading: const SettingsRowIcon(Icons.auto_awesome_outlined),
+              title: SettingsRowText(
                 title: localizations.fuzzzyCast,
                 subtitle: localizations.fuzzzyCastLine,
               ),
@@ -49,10 +49,12 @@ class SettingsFuzzzyCastSection extends StatelessWidget {
             if (state.isEnabled)
               FuzzzyListTile(
                 qaId: 'settings.softSounds',
-                leading: const _RowIcon(Icons.volume_down_outlined),
-                title: _RowText(
+                leading: const SettingsRowIcon(Icons.volume_down_outlined),
+                title: SettingsRowText(
                   title: localizations.softSounds,
-                  subtitle: localizations.softSoundsLine,
+                  // Kept as a setting; the sounds come in an update (no
+                  // sound package in the launch build).
+                  subtitle: localizations.accessSoftSoundsSoon,
                 ),
                 trailing: FuzzzyToggle(
                   value: state.softSounds,
@@ -86,11 +88,11 @@ class SettingsLookAndLanguageSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionLabel(localizations.settingsLookAndLanguage),
+        SettingsSectionLabel(localizations.settingsLookAndLanguage),
         FuzzzyListTile(
           qaId: 'settings.look',
-          leading: const _RowIcon(Icons.dark_mode_outlined),
-          title: _RowText(
+          leading: const SettingsRowIcon(Icons.dark_mode_outlined),
+          title: SettingsRowText(
             title: localizations.settingsLook,
             subtitle: lookName(localizations, look),
           ),
@@ -99,14 +101,14 @@ class SettingsLookAndLanguageSection extends StatelessWidget {
         ),
         FuzzzyListTile(
           qaId: 'settings.language',
-          leading: const _RowIcon(Icons.translate),
-          title: _RowText(
+          leading: const SettingsRowIcon(Icons.translate),
+          title: SettingsRowText(
             title: localizations.settingsLanguage,
             subtitle: languageName(localizations, languageChoiceOf(language)),
           ),
           chevron: true,
           divider: false,
-          onTap: () => _showLanguageSheet(context),
+          onTap: () => showLanguageSheet(context),
         ),
       ],
     );
@@ -135,7 +137,7 @@ class SettingsLookAndLanguageSection extends StatelessWidget {
   Future<void> _showLookSheet(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final cubit = context.read<ThemeCubit>();
-    return _showChoiceSheet<ChosenBrightness>(
+    return showSettingsChoiceSheet<ChosenBrightness>(
       context,
       qaId: 'look',
       title: localizations.settingsLook,
@@ -151,28 +153,38 @@ class SettingsLookAndLanguageSection extends StatelessWidget {
       onChosen: cubit.setBrightness,
     );
   }
-
-  Future<void> _showLanguageSheet(BuildContext context) {
-    final localizations = context.fuzzzyInkLocalizations;
-    final cubit = context.read<LocalizationCubit>();
-    return _showChoiceSheet<String>(
-      context,
-      qaId: 'language',
-      title: localizations.settingsLanguage,
-      current: languageChoiceOf(cubit.state),
-      choices: [
-        for (final choice in [_phone, 'en', 'ka'])
-          (choice, languageName(localizations, choice)),
-      ],
-      onChosen: (choice) => choice == _phone
-          ? cubit.followPhone()
-          : cubit.changeLocale(Locale(choice)),
-    );
-  }
 }
 
-Future<void> _showChoiceSheet<T>(
+/// The Language sheet (Like my phone · English · ქართული): Settings and the
+/// welcome's language chip.
+Future<void> showLanguageSheet(BuildContext context) {
+  final localizations = context.fuzzzyInkLocalizations;
+  final cubit = context.read<LocalizationCubit>();
+  const phone = SettingsLookAndLanguageSection._phone;
+  return showSettingsChoiceSheet<String>(
+    context,
+    qaId: 'language',
+    title: localizations.settingsLanguage,
+    current: SettingsLookAndLanguageSection.languageChoiceOf(cubit.state),
+    choices: [
+      for (final choice in [phone, 'en', 'ka'])
+        (
+          choice,
+          SettingsLookAndLanguageSection.languageName(localizations, choice),
+        ),
+    ],
+    onChosen: (choice) => choice == phone
+        ? cubit.followPhone()
+        : cubit.changeLocale(Locale(choice)),
+  );
+}
+
+/// A small radio sheet: [title], then one row per choice, [current] marked.
+/// Picking one closes it and calls [onChosen]. [notes] adds a short grey
+/// word after a choice's label ("recommended").
+Future<void> showSettingsChoiceSheet<T>(
   BuildContext context, {
+  Map<T, String> notes = const {},
   required String qaId,
   required String title,
   required T current,
@@ -206,7 +218,8 @@ Future<void> _showChoiceSheet<T>(
               child: FuzzzyRadio<T>(
                 value: value,
                 groupValue: current,
-                label: label,
+                label:
+                    notes[value] == null ? label : '$label · ${notes[value]}',
                 qaId: '$qaId.$value',
                 onChanged: (choice) {
                   unawaited(InkHaptics.selection());
@@ -221,8 +234,9 @@ Future<void> _showChoiceSheet<T>(
   );
 }
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
+/// A Settings section's label ("KEEPING IT SAFE").
+class SettingsSectionLabel extends StatelessWidget {
+  const SettingsSectionLabel(this.text, {super.key});
 
   final String text;
 
@@ -246,8 +260,9 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _RowIcon extends StatelessWidget {
-  const _RowIcon(this.icon);
+/// A Settings row's leading icon.
+class SettingsRowIcon extends StatelessWidget {
+  const SettingsRowIcon(this.icon, {super.key});
 
   final IconData icon;
 
@@ -259,11 +274,12 @@ class _RowIcon extends StatelessWidget {
       );
 }
 
-class _RowText extends StatelessWidget {
-  const _RowText({required this.title, required this.subtitle});
+/// A Settings row's title, with at most a short subtitle under it.
+class SettingsRowText extends StatelessWidget {
+  const SettingsRowText({super.key, required this.title, this.subtitle});
 
   final String title;
-  final String subtitle;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -272,10 +288,12 @@ class _RowText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title),
-        Text(
-          subtitle,
-          style: context.fuzzzyTextStyles.bodyS.copyWith(color: colors.inkMute),
-        ),
+        if (subtitle case final subtitle?)
+          Text(
+            subtitle,
+            style:
+                context.fuzzzyTextStyles.bodyS.copyWith(color: colors.inkMute),
+          ),
       ],
     );
   }

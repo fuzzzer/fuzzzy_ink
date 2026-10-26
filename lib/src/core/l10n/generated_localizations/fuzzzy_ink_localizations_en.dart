@@ -1890,4 +1890,481 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get safeChooseFileFirst => 'Choose a file first.';
+
+  @override
+  String get accessWelcomeLine => 'Lock it. Only they can open it.';
+
+  @override
+  String get accessWelcomeTag => 'No accounts · nothing goes online';
+
+  @override
+  String get accessStart => 'Start';
+
+  @override
+  String get accessHowItWorks => 'How it works';
+
+  @override
+  String get accessHowAddPerson => 'Add a person';
+
+  @override
+  String get accessHowLockForThem => 'Lock for them';
+
+  @override
+  String get accessHowTheyOpenOnce => 'They open it, once';
+
+  @override
+  String get accessWhyOnce => 'Why once?';
+
+  @override
+  String get accessHowTip =>
+      'One master password guards it all. You make it next.';
+
+  @override
+  String get accessContinue => 'Continue';
+
+  @override
+  String get accessStepPassword => 'Password';
+
+  @override
+  String get accessMakeMasterPassword => 'Make a master password';
+
+  @override
+  String get accessTypeItAgain => 'Type it again';
+
+  @override
+  String get accessNoResetBold => 'No reset.';
+
+  @override
+  String get accessNoResetLine =>
+      'Lose it and your recovery key, and everything is gone.';
+
+  @override
+  String get accessUnderstandNoAccess =>
+      'I understand: no password and no key means no access.';
+
+  @override
+  String get accessPasswordsDontMatch => 'They don\'t match yet.';
+
+  @override
+  String get accessStrengthWeak => 'Weak';
+
+  @override
+  String get accessStrengthFair => 'Fair';
+
+  @override
+  String get accessStrengthGood => 'Good';
+
+  @override
+  String get accessStrengthStrong => 'Strong';
+
+  @override
+  String get accessStrengthHintEmpty => 'Tip: a few random words.';
+
+  @override
+  String get accessStrengthHintWeak => 'Make it longer.';
+
+  @override
+  String get accessStrengthHintFair => 'Add a few more words.';
+
+  @override
+  String get accessStrengthHintGood => 'Hard to guess.';
+
+  @override
+  String get accessStrengthHintStrong => 'Very hard to guess.';
+
+  @override
+  String accessStrengthLabel(String level) {
+    return 'Password strength: $level';
+  }
+
+  @override
+  String get accessShowPassword => 'Show password';
+
+  @override
+  String get accessHidePassword => 'Hide password';
+
+  @override
+  String get accessYourRecoveryKey => 'Your recovery key';
+
+  @override
+  String get accessRecoverySpare => 'Your spare, if you forget the password.';
+
+  @override
+  String get accessPrint => 'Print';
+
+  @override
+  String get accessSaveAsFile => 'Save as file';
+
+  @override
+  String get accessSaved => 'Saved';
+
+  @override
+  String get accessKeepOffPhone =>
+      'Keep it off this phone. Anyone with it can open everything.';
+
+  @override
+  String get accessKeptItSafe => 'I\'ve kept it safe';
+
+  @override
+  String get accessSkipForNow => 'Skip for now';
+
+  @override
+  String get accessSkipKeyTitle => 'Skip the recovery key?';
+
+  @override
+  String get accessSkipKeyMessage =>
+      'Forget your password without it, and everything is lost. You can make one later in Settings.';
+
+  @override
+  String get accessSkipKeyKeep => 'Keep it now';
+
+  @override
+  String get accessSkipKeyAnyway => 'Skip anyway';
+
+  @override
+  String get accessPrintPreview => 'Print preview';
+
+  @override
+  String get accessPrintSheetTitle => 'Fuzzzy Ink · recovery key';
+
+  @override
+  String get accessPrintLine1 =>
+      'Opens Fuzzzy Ink and My safe if you forget your password.';
+
+  @override
+  String get accessPrintLine2 =>
+      'Anyone with this key and your phone can open everything. Keep it away from your phone.';
+
+  @override
+  String get accessPrintLine3 =>
+      'Lose your password and this key, and nothing can be recovered.';
+
+  @override
+  String accessPrintMade(String date) {
+    return 'Made $date. A new key from Settings stops this one.';
+  }
+
+  @override
+  String get accessPrintHint =>
+      'Your phone\'s share menu opens. Choose Print there.';
+
+  @override
+  String get accessPrintFailed =>
+      'The print sheet could not be made. Try Save as file.';
+
+  @override
+  String get accessStepQuickUnlock => 'Quick unlock';
+
+  @override
+  String get accessBioTitle => 'Unlock with your fingerprint?';
+
+  @override
+  String get accessBioLine => 'Your password always works too.';
+
+  @override
+  String get accessBioTip => 'Locks itself after 5 minutes away';
+
+  @override
+  String get accessUseBio => 'Use fingerprint or face';
+
+  @override
+  String get accessNotNow => 'Not now';
+
+  @override
+  String get accessReadyTitle => 'You\'re ready';
+
+  @override
+  String get accessAddFirstPerson => 'Add your first person';
+
+  @override
+  String get accessLookAround => 'Look around first';
+
+  @override
+  String get accessLockedTitle => 'Fuzzzy Ink is locked';
+
+  @override
+  String get accessWrongPassword => 'Not right. Try again.';
+
+  @override
+  String get accessTooManyTries => 'Too many tries.';
+
+  @override
+  String get accessForgotPassword => 'Forgot your password?';
+
+  @override
+  String get accessLinkWaiting => 'A link is waiting. Unlock to open it.';
+
+  @override
+  String get accessBioChanged =>
+      'Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.';
+
+  @override
+  String get accessBioReset =>
+      'An update turned quick unlock off to make it safer. Turn it on again in Settings.';
+
+  @override
+  String get accessRecoveryKeyHeader => 'Recovery key';
+
+  @override
+  String get accessTypeRecoveryKey => 'Type your recovery key';
+
+  @override
+  String get accessSpacesDontMatter => 'Spaces and capitals don\'t matter.';
+
+  @override
+  String get accessNoKeyNothing => 'No key? Then nothing can open it.';
+
+  @override
+  String get accessKeyTooShort => 'A recovery key has 8 groups of 4.';
+
+  @override
+  String get accessKeyDoesntMatch =>
+      'That key doesn\'t match. Check each group.';
+
+  @override
+  String get accessNewMasterPassword => 'New master password';
+
+  @override
+  String get accessKeyCheckedOnSave => 'Your key is checked when you save.';
+
+  @override
+  String get accessSaveNewPassword => 'Save new password';
+
+  @override
+  String get accessNewPasswordSaved => 'New master password saved.';
+
+  @override
+  String get accessSettingsKeepingSafe => 'Keeping it safe';
+
+  @override
+  String get accessChangeIt => 'Change it';
+
+  @override
+  String get accessMakeNewOne => 'Make a new one';
+
+  @override
+  String get accessNoKeyYet => 'None yet';
+
+  @override
+  String get accessFingerprintOrFace => 'Fingerprint or face';
+
+  @override
+  String get accessNotOnThisDevice => 'Not on this device';
+
+  @override
+  String get accessLockTheApp => 'Lock the app';
+
+  @override
+  String accessLockAfter(String time) {
+    return 'After $time';
+  }
+
+  @override
+  String get accessLockNow => 'Lock now';
+
+  @override
+  String get accessLockAfterTitle => 'Lock the app after';
+
+  @override
+  String get accessRightAway => 'Right away';
+
+  @override
+  String get accessOneMinute => '1 minute';
+
+  @override
+  String get accessFiveMinutes => '5 minutes';
+
+  @override
+  String get accessFifteenMinutes => '15 minutes';
+
+  @override
+  String get accessOneHour => '1 hour';
+
+  @override
+  String get accessRecommended => 'recommended';
+
+  @override
+  String get accessOpensWith => 'Opens with';
+
+  @override
+  String get accessItsOwnPassword => 'Its own password';
+
+  @override
+  String get accessCopyPasswords => 'Copy passwords';
+
+  @override
+  String get accessClearsAfter30 => 'Clears after 30 seconds';
+
+  @override
+  String get accessOff => 'Off';
+
+  @override
+  String get accessSoftSoundsSoon => 'Coming in an update';
+
+  @override
+  String get accessHelp => 'Help';
+
+  @override
+  String get accessHowFuzzzyInkWorks => 'How Fuzzzy Ink works';
+
+  @override
+  String get accessPrivacyTermsSupport => 'Privacy, terms and support';
+
+  @override
+  String get accessOpensYourBrowser => 'Opens your browser';
+
+  @override
+  String get accessBrowserTip =>
+      'Opens your browser. The app itself never goes online.';
+
+  @override
+  String get accessDeveloper => 'Developer';
+
+  @override
+  String accessVersionFooter(String version, String build) {
+    return 'Fuzzzy Ink · version $version (build $build)';
+  }
+
+  @override
+  String get accessTurnOnBioTitle => 'Turn on fingerprint or face';
+
+  @override
+  String get accessTurnOnBioLine => 'Type your master password once.';
+
+  @override
+  String get accessTurnOnSafeBioTitle => 'Fingerprint for My safe';
+
+  @override
+  String get accessTurnOnSafeBioLine => 'Type My safe\'s own password once.';
+
+  @override
+  String get accessTurnOn => 'Turn on';
+
+  @override
+  String get accessBioOn => 'Fingerprint or face is on.';
+
+  @override
+  String get accessMySafePassword => 'My safe\'s password';
+
+  @override
+  String get accessChangeMasterPassword => 'Change master password';
+
+  @override
+  String get accessCurrentPassword => 'Current password';
+
+  @override
+  String get accessNewPassword => 'New password';
+
+  @override
+  String get accessRecoveryKeepsWorking => 'Your recovery key keeps working.';
+
+  @override
+  String get accessChangePassword => 'Change password';
+
+  @override
+  String get accessMasterPasswordChanged => 'Master password changed.';
+
+  @override
+  String get accessMakeNewKey => 'Make a new key';
+
+  @override
+  String get accessOldKeyStops => 'The old key stops working.';
+
+  @override
+  String get accessSafePasswordToo =>
+      'My safe has its own password. Type it too, so the new key opens My safe.';
+
+  @override
+  String get accessYourNewKey => 'Your new key';
+
+  @override
+  String get accessNoPasswordNoKey => 'No password and no key means no access.';
+
+  @override
+  String get accessNewKeyKept => 'Your new recovery key is set.';
+
+  @override
+  String get accessSafeOpensWith => 'My safe opens with';
+
+  @override
+  String get accessSimplestRecommended => 'Simplest. Recommended.';
+
+  @override
+  String get accessOneMoreToRemember => 'One more to remember';
+
+  @override
+  String get accessSafePassword => 'Safe password';
+
+  @override
+  String get accessSaveSafePassword => 'Save safe password';
+
+  @override
+  String get accessSafeHasOwnPassword => 'My safe now has its own password.';
+
+  @override
+  String get accessUseMasterPassword => 'Use master password';
+
+  @override
+  String get accessSafeUsesMaster =>
+      'My safe opens with your master password again.';
+
+  @override
+  String get accessSafeNotMadeYet =>
+      'My safe isn\'t made yet. Open it once from its tab.';
+
+  @override
+  String get accessMasterPasswordToConfirm =>
+      'Your master password, to confirm';
+
+  @override
+  String get accessHowOnceTitle => 'Each thing opens once';
+
+  @override
+  String get accessHowOnceBody =>
+      'Opening uses its key up. A copy stays in your history.';
+
+  @override
+  String get accessHowHistoryTitle => 'History stays on this phone';
+
+  @override
+  String get accessHowHistoryBody =>
+      'Locked with your master password. A new phone can\'t read it. Save a person\'s history as a file to keep a copy.';
+
+  @override
+  String get accessHowOrderTitle => 'Open things in order';
+
+  @override
+  String get accessHowOrderBody =>
+      'A very old message may be too old to open. Then ask them to lock it again.';
+
+  @override
+  String get accessHowCheckTitle => 'Checking a person';
+
+  @override
+  String get accessHowCheckBody =>
+      'Same numbers on both phones: nobody got in between. \"Checked\" is your own note.';
+
+  @override
+  String get accessHowLinksTitle => 'Links';
+
+  @override
+  String get accessHowLinksBody =>
+      'What comes after the # never reaches our website.';
+
+  @override
+  String get accessHowFilesTitle => 'Files you save';
+
+  @override
+  String get accessHowFilesBody =>
+      'The app keeps only locked files. A saved copy is yours to protect.';
+
+  @override
+  String get accessHowHoodTitle => 'Under the hood';
+
+  @override
+  String get accessHowHoodBody =>
+      'Messages use the Olm double ratchet (vodozemac, independently audited): a new key for every message. Files are sealed with XChaCha20-Poly1305 in pieces. Passwords go through Argon2id. Keys live in the app\'s native core and are never sent anywhere.';
+
+  @override
+  String get accessMoreAboutEncryption => 'More about encryption';
 }

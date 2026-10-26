@@ -22,12 +22,17 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 /// `flutter_window.cpp` (Windows, screen only). Linux has none.
 const guardChannel = MethodChannel('com.fuzzzycore.ink/guard');
 
-/// Owner question open since 2026-10-26: whether vault passwords keep their
-/// copy button. On keeps the existing vault feature: the copy is marked
-/// sensitive (kept out of clipboard previews and clipboard history where the
-/// system allows it) and clears after [CopyPolicy.vaultPasswordClearAfter].
-/// Off removes every vault password copy button.
-const bool allowVaultPasswordCopy = true;
+/// Settings → My safe → Copy passwords (decided 2026-10-26: kept, on by
+/// default). On keeps the vault feature: the copy is marked sensitive (kept
+/// out of clipboard previews and clipboard history where the system allows
+/// it) and clears after [CopyPolicy.vaultPasswordClearAfter]. Off removes
+/// every vault password copy button, and the guard refuses the copy. The
+/// choice is kept on the device ([PreferencesService.vaultPasswordCopy]) and
+/// loaded into this at start.
+final vaultPasswordCopySetting = ValueNotifier<bool>(true);
+
+/// Whether a vault password may be copied right now.
+bool get allowVaultPasswordCopy => vaultPasswordCopySetting.value;
 
 /// What a piece of text is. The policy decides on this, never on the text.
 enum CopyContent {
@@ -60,11 +65,15 @@ enum CopyContent {
 /// The rules: what may be copied, whether it is sensitive, when it clears.
 @immutable
 class CopyPolicy {
-  const CopyPolicy({
-    this.allowsVaultPasswordCopy = allowVaultPasswordCopy,
-  });
+  /// [allowsVaultPasswordCopy] fixes the vault rule; left out, the policy
+  /// follows the Copy passwords setting at the moment of each copy.
+  const CopyPolicy({bool? allowsVaultPasswordCopy})
+      : _allowsVaultPasswordCopy = allowsVaultPasswordCopy;
 
-  final bool allowsVaultPasswordCopy;
+  final bool? _allowsVaultPasswordCopy;
+
+  bool get allowsVaultPasswordCopy =>
+      _allowsVaultPasswordCopy ?? allowVaultPasswordCopy;
 
   static const vaultPasswordClearAfter = Duration(seconds: 30);
   static const sealedClearAfter = Duration(minutes: 2);

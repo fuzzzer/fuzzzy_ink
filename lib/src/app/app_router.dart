@@ -18,7 +18,11 @@ class AppRouter {
   static const chatVerify = '/chat/verify';
   static const settings = '/settings';
   static const aboutEncryption = '/settings/about-encryption';
-  static const auth = '/auth';
+  static const settingsMasterPassword = '/settings/master-password';
+  static const settingsRecoveryKey = '/settings/recovery-key';
+  static const settingsSafePassword = '/settings/safe-password';
+  static const settingsHowItWorks = '/settings/how-it-works';
+  static const settingsLegal = '/settings/legal';
   static const basics = '/basics';
   static const vaultHome = '/vault';
   static const vaultItemEditor = '/vault/editor';
@@ -139,7 +143,8 @@ class AppRouter {
         ),
         GoRoute(
           path: onboarding,
-          builder: (_, __) => const OnboardingPage(),
+          builder: (_, state) =>
+              OnboardingPage(initialPage: state.extra as int? ?? 0),
         ),
         GoRoute(
           path: chatUnlock,
@@ -147,9 +152,10 @@ class AppRouter {
         ),
         GoRoute(
           path: setup,
-          // The master password is typed and the recovery key is shown here.
-          builder: (_, __) =>
-              const SensitiveScreen(child: MasterPasswordSetupPage()),
+          // Its password and recovery-key steps are private screens (the page
+          // wraps each in a SensitiveScreen); the fingerprint step and
+          // "You're ready" are not, so Fuzzzy Cast can greet there.
+          builder: (_, __) => const MasterPasswordSetupPage(),
         ),
         GoRoute(
           path: recover,
@@ -202,9 +208,27 @@ class AppRouter {
           builder: (_, __) => const AboutEncryptionPage(),
         ),
         GoRoute(
-          path: auth,
-          // Password change and a new recovery key are shown here.
-          builder: (_, __) => const SensitiveScreen(child: FuzzyUserAuthPage()),
+          path: settingsMasterPassword,
+          builder: (_, __) =>
+              const SensitiveScreen(child: ChangeMasterPasswordPage()),
+        ),
+        GoRoute(
+          path: settingsRecoveryKey,
+          // A new recovery key is shown here.
+          builder: (_, __) =>
+              const SensitiveScreen(child: NewRecoveryKeyPage()),
+        ),
+        GoRoute(
+          path: settingsSafePassword,
+          builder: (_, __) => const SensitiveScreen(child: SafeOpensWithPage()),
+        ),
+        GoRoute(
+          path: settingsHowItWorks,
+          builder: (_, __) => const HowItWorksPage(),
+        ),
+        GoRoute(
+          path: settingsLegal,
+          builder: (_, __) => const LegalLinksPage(),
         ),
         GoRoute(
           path: basics,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -24,6 +25,11 @@ class FuzzyLinkHandler {
   bool _isInitialized = false;
 
   bool get hasPendingPayload => _pendingPayload != null;
+
+  /// Whether a link waits for the unlock: the lock screen says so ("A link
+  /// is waiting. Unlock to open it.").
+  ValueListenable<bool> get pendingLink => _pendingLink;
+  final _pendingLink = ValueNotifier<bool>(false);
 
   FuzzzyInkLocalizations get _l10n =>
       FuzzzyInkLocalizations.of(navigatorKey.currentContext!)!;
@@ -57,6 +63,7 @@ class FuzzyLinkHandler {
     if (_pendingPayload != null) {
       _processPayload(_pendingPayload!);
       _pendingPayload = null;
+      _pendingLink.value = false;
     }
   }
 
@@ -84,6 +91,7 @@ class FuzzyLinkHandler {
   Future<void> _routePayload(FuzzyLinkPayload payload) async {
     if (await _isAppLocked()) {
       _pendingPayload = payload;
+      _pendingLink.value = true;
       return;
     }
 

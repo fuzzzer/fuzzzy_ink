@@ -31,4 +31,35 @@ void main() {
     expect(AutoLockSettings.standard.idle, const Duration(minutes: 5));
     expect(AutoLockSettings.standard.background, const Duration(minutes: 1));
   });
+
+  test(
+      '"Lock the app after": five offered choices, the standard third, each '
+      'read back as itself', () {
+    const choices = AutoLockSettings.lockAfterChoices;
+    expect(choices, hasLength(5));
+    expect(choices[0].background, Duration.zero);
+    expect(choices[2], AutoLockSettings.standard);
+    expect(choices.last.idle, const Duration(hours: 1));
+    for (final (index, choice) in choices.indexed) {
+      expect(AutoLockSettings.fromJson(choice.toJson()), choice);
+      expect(choice.lockAfterIndex, index);
+    }
+  });
+
+  test('an older pair reads as the nearest choice', () {
+    expect(
+      const AutoLockSettings(
+        idle: Duration(minutes: 30),
+        background: Duration(minutes: 5),
+      ).lockAfterIndex,
+      3,
+    );
+    expect(
+      const AutoLockSettings(
+        idle: Duration(minutes: 5),
+        background: Duration.zero,
+      ).lockAfterIndex,
+      0,
+    );
+  });
 }

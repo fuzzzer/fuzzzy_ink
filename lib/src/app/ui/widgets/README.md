@@ -24,6 +24,10 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 | `SafetyNumberGrid` | `fuzzzy_ink/ui/widgets/safety/` | The 12 × 5 digits of "Is it really X?". |
 | `showSealedShareSheet`, `SealedQrCodePage` | `fuzzzy_ink/ui/widgets/share_sheet/` | The one Share button; answers what happened (`SealedShareResult.isDone` for "Share again"). |
 | `RecoveryKeyBlock`, `LockoutCountdownBar` | `fuzzy_auth/ui/widgets/` | The recovery key on screen; the truthful lockout bar under Unlock. |
+| `AccessPage`, `AccessTitle`, `AccessLine`, `AccessNote`, `runOnTopScreen`, `leaveAccessPage` | `fuzzy_auth/ui/widgets/access_page.dart` | The flow-screen recipe (header, content, bottom buttons); the red, amber or green note with a trailing "Why?"; a toast or sheet on the screen the app moves to. |
+| `InkPasswordField`, `NewPasswordFields`, `PasswordMeter` | `fuzzy_auth/ui/widgets/` | A password with its eye; a new password, its meter (Weak · Fair · Good · Strong) and "Type it again". |
+| `RecoveryKeyStepView`, `RecoveryKeyExport`, `RecoveryKeyPrintSheet` | `fuzzy_auth/ui/widgets/` | A recovery key shown once with Print and Save as file (through the hand-off folder, wiped after), "I've kept it safe" and the skip dialog. |
+| `SettingsSectionLabel`, `SettingsRowIcon`, `SettingsRowText`, `showSettingsChoiceSheet`, `showPasswordConfirmSheet` | `fuzzzy_ink/ui/pages/settings_page/widgets/` | Settings rows and their small sheets (radio choices; one password, private). |
 
 ## Rules they already keep
 

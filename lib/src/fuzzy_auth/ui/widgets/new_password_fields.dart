@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// A new password and its confirmation, with the vault's strength meter and
-/// why the caller's button stays off: too weak (below "good") or not the
-/// same twice. The caller rebuilds on every keystroke.
-class NewPasswordFields extends StatefulWidget {
+/// A new password and its confirmation in the redesign (DESIGN.md section
+/// 4.1): the field with its eye, the strength meter (Weak · Fair · Good ·
+/// Strong), then "Type it again" with one short line while the two differ.
+/// The caller's button stays off until [isReady]; the caller rebuilds on
+/// every keystroke.
+class NewPasswordFields extends StatelessWidget {
   const NewPasswordFields({
     super.key,
     required this.passwordController,
     required this.confirmController,
     required this.label,
+    this.confirmLabel,
     this.onSubmitted,
     this.qaId = 'newPassword',
   });
@@ -18,10 +21,14 @@ class NewPasswordFields extends StatefulWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmController;
   final String label;
+
+  /// "Type it again" when null.
+  final String? confirmLabel;
   final VoidCallback? onSubmitted;
   final String qaId;
 
-  /// Whether the two fields hold one password that reaches the bar.
+  /// Whether the two fields hold one password that reaches the bar
+  /// ("Good" or better).
   static bool isReady({
     required String password,
     required String confirm,
@@ -31,66 +38,31 @@ class NewPasswordFields extends StatefulWidget {
       sl.get<PasswordStrengthService>().isStrongEnough(password);
 
   @override
-  State<NewPasswordFields> createState() => _NewPasswordFieldsState();
-}
-
-class _NewPasswordFieldsState extends State<NewPasswordFields> {
-  bool _isVisible = false;
-
-  @override
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
-    final password = widget.passwordController.text;
-    final confirm = widget.confirmController.text;
-    final isStrongEnough =
-        sl.get<PasswordStrengthService>().isStrongEnough(password);
+    final space = context.fuzzzySpace;
+    final password = passwordController.text;
+    final confirm = confirmController.text;
+    final mismatch = confirm.isNotEmpty && confirm != password;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FuzzzyTextField(
-          controller: widget.passwordController,
-          label: widget.label,
-          obscure: !_isVisible,
-          qaId: '${widget.qaId}.password',
-          suffix: IconButton(
-            icon: Icon(
-              _isVisible ? Icons.visibility_off : Icons.visibility,
-              color: context.fuzzzyColors.inkMute,
-            ),
-            onPressed: () => setState(() => _isVisible = !_isVisible),
-          ),
+        InkPasswordField(
+          controller: passwordController,
+          label: label,
+          qaId: '$qaId.password',
         ),
-        if (password.isNotEmpty) ...[
-          SizedBox(height: context.fuzzzySpace.m),
-          PasswordStrengthIndicator(password: password),
-          if (!isStrongEnough) ...[
-            SizedBox(height: context.fuzzzySpace.s),
-            Text(
-              localizations.chatAuthPasswordTooWeak,
-              style: context.fuzzzyTextStyles.bodyS.copyWith(
-                color: context.fuzzzyColors.destructiveText,
-              ),
-            ),
-          ],
-        ],
-        SizedBox(height: context.fuzzzySpace.m),
-        FuzzzyTextField(
-          controller: widget.confirmController,
-          label: localizations.chatAuthConfirmPassword,
-          obscure: !_isVisible,
-          qaId: '${widget.qaId}.confirm',
-          onSubmitted: (_) => widget.onSubmitted?.call(),
+        SizedBox(height: space.s),
+        PasswordMeter(password: password, qaId: qaId),
+        SizedBox(height: space.m),
+        InkPasswordField(
+          controller: confirmController,
+          label: confirmLabel ?? localizations.accessTypeItAgain,
+          errorText: mismatch ? localizations.accessPasswordsDontMatch : null,
+          onSubmitted: onSubmitted,
+          qaId: '$qaId.confirm',
         ),
-        if (confirm.isNotEmpty && confirm != password) ...[
-          SizedBox(height: context.fuzzzySpace.s),
-          Text(
-            localizations.chatAuthPasswordsDoNotMatch,
-            style: context.fuzzzyTextStyles.bodyS.copyWith(
-              color: context.fuzzzyColors.destructiveText,
-            ),
-          ),
-        ],
       ],
     );
   }

@@ -47,12 +47,17 @@ class FuzzyUserAuthPreferencesCubit
     }
   }
 
-  void _emitFailed(AuthPreferencesAction action, String message) {
+  void _emitFailed(
+    AuthPreferencesAction action,
+    String message, {
+    bool vaultPasswordWrong = false,
+  }) {
     emit(
       state.copyWith(
         activationStatus: StateStatus.failed,
         lastAction: action,
         activationFailure: DefaultFailure(message: message),
+        vaultPasswordWrong: vaultPasswordWrong,
       ),
     );
   }
@@ -154,7 +159,11 @@ class FuzzyUserAuthPreferencesCubit
     final vaultMetadata = vault.metadata;
     if (vaultMetadata != null &&
         (vaultPassword == null || vaultPassword.isEmpty)) {
-      _emitFailed(action, currentContextLocalization.vaultIncorrectPassword);
+      _emitFailed(
+        action,
+        currentContextLocalization.vaultIncorrectPassword,
+        vaultPasswordWrong: true,
+      );
       return;
     }
     var vaultPasswordWrong = false;
@@ -180,6 +189,7 @@ class FuzzyUserAuthPreferencesCubit
         vaultPasswordWrong
             ? currentContextLocalization.vaultIncorrectPassword
             : _messageOf(createRes.type),
+        vaultPasswordWrong: vaultPasswordWrong,
       );
       return;
     }
