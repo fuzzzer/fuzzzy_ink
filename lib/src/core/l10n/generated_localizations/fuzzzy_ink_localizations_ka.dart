@@ -1686,4 +1686,404 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get softSoundsLine => 'უხმო რეჟიმში არასდროს';
+
+  @override
+  String personMoreFor(String name) {
+    return 'მეტი: $name';
+  }
+
+  @override
+  String get personNotCheckedLead => 'ჯერ არ შეგიმოწმებიათ.';
+
+  @override
+  String get personNotCheckedAction => 'შეამოწმეთ ციფრები.';
+
+  @override
+  String get historyFilterAll => 'ყველა';
+
+  @override
+  String get historyFilterLocked => 'ჩაკეტილი';
+
+  @override
+  String get historyFilterOpened => 'გახსნილი';
+
+  @override
+  String get historyToday => 'დღეს';
+
+  @override
+  String get historyYesterday => 'გუშინ';
+
+  @override
+  String get historyEmpty => 'აქ ჯერ არაფერია.';
+
+  @override
+  String get historyEmptyLocked => 'ჯერ არაფერი ჩაგიკეტავთ.';
+
+  @override
+  String get historyEmptyOpened => 'ჯერ არაფერი გაგიხსნიათ.';
+
+  @override
+  String get historyStaysLocked => 'ისტორია ამ ტელეფონზე ჩაკეტილი რჩება.';
+
+  @override
+  String get historyLoadError => 'ისტორია ვერ ჩაიტვირთა.';
+
+  @override
+  String historyNewRow(String name) {
+    return 'ახლა ისტორიაშია.';
+  }
+
+  @override
+  String waitingCardTitle(String name) {
+    return 'პასუხს ველოდებით: $name';
+  }
+
+  @override
+  String get waitingShareInviteAgain => 'მოწვევის ხელახლა გაზიარება';
+
+  @override
+  String get waitingGotReply => 'პასუხი მივიღე';
+
+  @override
+  String get personMenuCheckNumbers => 'ციფრების შემოწმება';
+
+  @override
+  String get personMenuNotCheckedYet => 'ჯერ არ შემოწმებულა';
+
+  @override
+  String get personMenuSendReplyAgain => 'ჩემი პასუხის ხელახლა გაგზავნა';
+
+  @override
+  String get personMenuSaveHistory => 'ისტორიის ფაილად შენახვა';
+
+  @override
+  String get personMenuSaveHistoryHint => 'პაროლით ჩაკეტილი';
+
+  @override
+  String personMenuRemove(String name) {
+    return 'წაშლა: $name';
+  }
+
+  @override
+  String removePersonTitle(String name) {
+    return 'წავშალოთ $name?';
+  }
+
+  @override
+  String get removePersonBody =>
+      'მისი ისტორია და ფაილები ამ ტელეფონიდან წაიშლება. დაბრუნება შეუძლებელია.';
+
+  @override
+  String get removePersonConfirm => 'წაშლა';
+
+  @override
+  String removePersonDone(String name) {
+    return 'წაიშალა: $name';
+  }
+
+  @override
+  String removePersonFailed(String name) {
+    return 'ვერ წაიშალა: $name. სცადეთ ხელახლა.';
+  }
+
+  @override
+  String exportHistoryTitle(String name) {
+    return 'ისტორიის შენახვა: $name';
+  }
+
+  @override
+  String get exportHistoryLine => 'ერთი ფაილი, ამ პაროლით ჩაკეტილი.';
+
+  @override
+  String get exportHistoryPassword => 'ფაილის პაროლი';
+
+  @override
+  String get exportHistorySave => 'ფაილის შენახვა';
+
+  @override
+  String get exportHistorySaved => 'ისტორია ფაილად შეინახა.';
+
+  @override
+  String get strengthLabel => 'სიძლიერე';
+
+  @override
+  String get strengthHintEmpty => 'რჩევა: რამდენიმე შემთხვევითი სიტყვა.';
+
+  @override
+  String get strengthHintWeak => 'გააგრძელეთ.';
+
+  @override
+  String get strengthHintFair => 'დაამატეთ კიდევ რამდენიმე სიტყვა.';
+
+  @override
+  String get strengthHintGood => 'ძნელად გამოსაცნობია.';
+
+  @override
+  String get strengthHintStrong => 'ძალიან ძნელად გამოსაცნობია.';
+
+  @override
+  String itemForName(String name) {
+    return 'ვისთვის: $name';
+  }
+
+  @override
+  String itemFromName(String name) {
+    return 'ვისგან: $name';
+  }
+
+  @override
+  String itemYouLockedWhen(String day, String time) {
+    return 'ჩაკეტეთ · $day · $time';
+  }
+
+  @override
+  String itemOpenedWhen(String day, String time) {
+    return 'გაიხსნა · $day · $time';
+  }
+
+  @override
+  String get itemShareAgain => 'ხელახლა გაზიარება';
+
+  @override
+  String get itemCopyLocked => 'ჩაკეტილის კოპირება';
+
+  @override
+  String get itemOnlyLockedKept => 'მხოლოდ ჩაკეტილი ასლი ინახება.';
+
+  @override
+  String get itemSave => 'შენახვა';
+
+  @override
+  String get itemOpen => 'გახსნა';
+
+  @override
+  String get itemSaveGivesCopy =>
+      '„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.';
+
+  @override
+  String get itemUnreadable => 'ეს შეტყობინება ამ ტელეფონზე ვერ იკითხება.';
+
+  @override
+  String get itemDone => 'მზადაა';
+
+  @override
+  String get inviteStepName => 'სახელი';
+
+  @override
+  String get inviteStepSend => 'გაგზავნა';
+
+  @override
+  String get inviteWhoFor => 'ვისთვისაა?';
+
+  @override
+  String get inviteTheirName => 'მისი სახელი';
+
+  @override
+  String get inviteNameHint => 'მაგ. თამარი';
+
+  @override
+  String get inviteOnlyYouSee => 'ამას მხოლოდ თქვენ ხედავთ.';
+
+  @override
+  String get inviteMake => 'მოწვევის შექმნა';
+
+  @override
+  String get inviteNameTaken => 'ამ სახელით უკვე გყავთ ადამიანი.';
+
+  @override
+  String get inviteMakeFailed => 'მოწვევა ვერ შეიქმნა. სცადეთ ხელახლა.';
+
+  @override
+  String inviteSendTo(String name) {
+    return 'გაუგზავნეთ: $name';
+  }
+
+  @override
+  String get inviteDoneForNow => 'დანარჩენი მოგვიანებით';
+
+  @override
+  String inviteGotNameReply(String name) {
+    return 'პასუხი მივიღე: $name';
+  }
+
+  @override
+  String get inviteSharedLine => 'გაზიარების მენიუში გაიგზავნა.';
+
+  @override
+  String get inviteConnecting => 'უკავშირდება…';
+
+  @override
+  String get inviteLoadFailed =>
+      'მოწვევა ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.';
+
+  @override
+  String get replyOpenTitle => 'პასუხის გახსნა';
+
+  @override
+  String get pasteItHint => 'დაკოპირებული ტექსტი ან ბმული';
+
+  @override
+  String get chooseFile => 'ფაილის არჩევა';
+
+  @override
+  String get chooseFileHint => 'მის მიერ გამოგზავნილი ფაილი';
+
+  @override
+  String get replyNothingToPaste =>
+      'ჩასასმელი არაფერია. ჯერ პასუხი დააკოპირეთ.';
+
+  @override
+  String get inviteNothingToPaste =>
+      'ჩასასმელი არაფერია. ჯერ მოწვევა დააკოპირეთ.';
+
+  @override
+  String get notAReply => 'ეს პასუხი არ არის. შეამოწმეთ, რა ჩასვით.';
+
+  @override
+  String get couldNotReadFile => 'ფაილი ვერ წავიკითხე.';
+
+  @override
+  String get replyNotConnected =>
+      'ამ პასუხმა ვერ დაგაკავშირათ. ხელახლა სთხოვეთ.';
+
+  @override
+  String get gotStepOpen => 'გახსნა';
+
+  @override
+  String get gotStepReply => 'პასუხი';
+
+  @override
+  String get gotOpenTitle => 'მოწვევის გახსნა';
+
+  @override
+  String get gotInviteGood => 'მოწვევა სწორია.';
+
+  @override
+  String get gotWhoSent => 'ვინ გამოგიგზავნათ?';
+
+  @override
+  String get gotAccept => 'მიღება';
+
+  @override
+  String get gotOwnInviteTitle => 'ეს თქვენი მოწვევაა';
+
+  @override
+  String get gotOwnInviteLine => 'გაუგზავნეთ მეორე ადამიანს.';
+
+  @override
+  String get gotAlreadyTitle => 'უკვე დაკავშირებული ხართ';
+
+  @override
+  String get gotAlreadyLine => 'ეს მოწვევა ამ ტელეფონზე უკვე გახსნილია.';
+
+  @override
+  String get gotDamagedTitle => 'ამის გახსნა ვერ ხერხდება';
+
+  @override
+  String get gotDamagedLine =>
+      'შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+
+  @override
+  String get gotAcceptFailed => 'მოწვევა ვერ მივიღე. სცადეთ ხელახლა.';
+
+  @override
+  String replySendTo(String name) {
+    return 'პასუხი გაუგზავნეთ: $name';
+  }
+
+  @override
+  String get replySameWay => 'იმავე გზით, რითაც მოწვევა მოვიდა.';
+
+  @override
+  String get replyCheckTip => 'მერე ციფრები ერთად შეამოწმეთ.';
+
+  @override
+  String get stepInviteOpened => 'მოწვევა გაიხსნა';
+
+  @override
+  String get stepYouReply => 'თქვენ პასუხობთ';
+
+  @override
+  String connectedWith(String name) {
+    return 'დაკავშირებულია: $name';
+  }
+
+  @override
+  String isItReally(String name) {
+    return 'ნამდვილად $name არის?';
+  }
+
+  @override
+  String get checkTogether => 'ციფრები ერთად შეამოწმეთ.';
+
+  @override
+  String get checkNow => 'ახლავე შემოწმება';
+
+  @override
+  String get checkLater => 'მოგვიანებით';
+
+  @override
+  String get twiceTitle => 'შესაძლოა, სხვამ უპასუხა';
+
+  @override
+  String twiceLine(String name) {
+    return 'მოწვევას ($name) ორი პასუხი მოუვიდა.';
+  }
+
+  @override
+  String twiceNoteLead(String name) {
+    return 'ჯერ არაფერი ჩაკეტოთ ამ ადამიანისთვის.';
+  }
+
+  @override
+  String get twiceNoteRest => 'ჯერ ციფრები შეამოწმეთ.';
+
+  @override
+  String twiceRemove(String name) {
+    return 'წაშლა და ხელახლა მოწვევა';
+  }
+
+  @override
+  String get safetyCompare =>
+      'შეადარეთ ზარით, ან ტელეფონები გვერდიგვერდ დადეთ.';
+
+  @override
+  String get safetySame => 'ციფრები ერთნაირია';
+
+  @override
+  String get safetyDifferent => 'ციფრები განსხვავდება';
+
+  @override
+  String get safetyMarkNotChecked => 'შეუმოწმებლად მონიშვნა';
+
+  @override
+  String safetyCheckedBefore(String name) {
+    return 'უკვე შეამოწმეთ: $name.';
+  }
+
+  @override
+  String safetyNowNotChecked(String name) {
+    return 'ახლა შეუმოწმებელია: $name.';
+  }
+
+  @override
+  String get safetyLoadFailed =>
+      'ციფრები ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.';
+
+  @override
+  String get safetySaveFailed => 'ვერ შეინახა. სცადეთ ხელახლა.';
+
+  @override
+  String mismatchLead(String name) {
+    return 'ჯერ არაფერი გაუგზავნოთ.';
+  }
+
+  @override
+  String get mismatchRest =>
+      'შესაძლოა, შუაში ვიღაც დგას. წაშალეთ და თავიდან დაამატეთ, სჯობს პირისპირ.';
+
+  @override
+  String checkedTitle(String name) {
+    return 'ნამდვილად ის არის: $name';
+  }
 }

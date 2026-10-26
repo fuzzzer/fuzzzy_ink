@@ -1482,5 +1482,587 @@
   "softSoundsLine": "უხმო რეჟიმში არასდროს",
   "@softSoundsLine": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "personMoreFor": "მეტი: {name}",
+  "@personMoreFor": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "personNotCheckedLead": "ჯერ არ შეგიმოწმებიათ.",
+  "@personNotCheckedLead": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personNotCheckedAction": "შეამოწმეთ ციფრები.",
+  "@personNotCheckedAction": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyFilterAll": "ყველა",
+  "@historyFilterAll": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyFilterLocked": "ჩაკეტილი",
+  "@historyFilterLocked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyFilterOpened": "გახსნილი",
+  "@historyFilterOpened": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyToday": "დღეს",
+  "@historyToday": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyYesterday": "გუშინ",
+  "@historyYesterday": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyEmpty": "აქ ჯერ არაფერია.",
+  "@historyEmpty": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyEmptyLocked": "ჯერ არაფერი ჩაგიკეტავთ.",
+  "@historyEmptyLocked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyEmptyOpened": "ჯერ არაფერი გაგიხსნიათ.",
+  "@historyEmptyOpened": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyStaysLocked": "ისტორია ამ ტელეფონზე ჩაკეტილი რჩება.",
+  "@historyStaysLocked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyLoadError": "ისტორია ვერ ჩაიტვირთა.",
+  "@historyLoadError": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "historyNewRow": "ახლა ისტორიაშია.",
+  "@historyNewRow": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingCardTitle": "პასუხს ველოდებით: {name}",
+  "@waitingCardTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingShareInviteAgain": "მოწვევის ხელახლა გაზიარება",
+  "@waitingShareInviteAgain": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "waitingGotReply": "პასუხი მივიღე",
+  "@waitingGotReply": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuCheckNumbers": "ციფრების შემოწმება",
+  "@personMenuCheckNumbers": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuNotCheckedYet": "ჯერ არ შემოწმებულა",
+  "@personMenuNotCheckedYet": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuSendReplyAgain": "ჩემი პასუხის ხელახლა გაგზავნა",
+  "@personMenuSendReplyAgain": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuSaveHistory": "ისტორიის ფაილად შენახვა",
+  "@personMenuSaveHistory": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuSaveHistoryHint": "პაროლით ჩაკეტილი",
+  "@personMenuSaveHistoryHint": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "personMenuRemove": "წაშლა: {name}",
+  "@personMenuRemove": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonTitle": "წავშალოთ {name}?",
+  "@removePersonTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonBody": "მისი ისტორია და ფაილები ამ ტელეფონიდან წაიშლება. დაბრუნება შეუძლებელია.",
+  "@removePersonBody": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "removePersonConfirm": "წაშლა",
+  "@removePersonConfirm": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "removePersonDone": "წაიშალა: {name}",
+  "@removePersonDone": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonFailed": "ვერ წაიშალა: {name}. სცადეთ ხელახლა.",
+  "@removePersonFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryTitle": "ისტორიის შენახვა: {name}",
+  "@exportHistoryTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryLine": "ერთი ფაილი, ამ პაროლით ჩაკეტილი.",
+  "@exportHistoryLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "exportHistoryPassword": "ფაილის პაროლი",
+  "@exportHistoryPassword": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "exportHistorySave": "ფაილის შენახვა",
+  "@exportHistorySave": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "exportHistorySaved": "ისტორია ფაილად შეინახა.",
+  "@exportHistorySaved": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthLabel": "სიძლიერე",
+  "@strengthLabel": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthHintEmpty": "რჩევა: რამდენიმე შემთხვევითი სიტყვა.",
+  "@strengthHintEmpty": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthHintWeak": "გააგრძელეთ.",
+  "@strengthHintWeak": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthHintFair": "დაამატეთ კიდევ რამდენიმე სიტყვა.",
+  "@strengthHintFair": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthHintGood": "ძნელად გამოსაცნობია.",
+  "@strengthHintGood": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "strengthHintStrong": "ძალიან ძნელად გამოსაცნობია.",
+  "@strengthHintStrong": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemForName": "ვისთვის: {name}",
+  "@itemForName": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemFromName": "ვისგან: {name}",
+  "@itemFromName": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemYouLockedWhen": "ჩაკეტეთ · {day} · {time}",
+  "@itemYouLockedWhen": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemOpenedWhen": "გაიხსნა · {day} · {time}",
+  "@itemOpenedWhen": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemShareAgain": "ხელახლა გაზიარება",
+  "@itemShareAgain": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemCopyLocked": "ჩაკეტილის კოპირება",
+  "@itemCopyLocked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemOnlyLockedKept": "მხოლოდ ჩაკეტილი ასლი ინახება.",
+  "@itemOnlyLockedKept": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemSave": "შენახვა",
+  "@itemSave": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemOpen": "გახსნა",
+  "@itemOpen": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemSaveGivesCopy": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
+  "@itemSaveGivesCopy": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemUnreadable": "ეს შეტყობინება ამ ტელეფონზე ვერ იკითხება.",
+  "@itemUnreadable": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "itemDone": "მზადაა",
+  "@itemDone": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteStepName": "სახელი",
+  "@inviteStepName": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteStepSend": "გაგზავნა",
+  "@inviteStepSend": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteWhoFor": "ვისთვისაა?",
+  "@inviteWhoFor": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteTheirName": "მისი სახელი",
+  "@inviteTheirName": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteNameHint": "მაგ. თამარი",
+  "@inviteNameHint": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteOnlyYouSee": "ამას მხოლოდ თქვენ ხედავთ.",
+  "@inviteOnlyYouSee": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteMake": "მოწვევის შექმნა",
+  "@inviteMake": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteNameTaken": "ამ სახელით უკვე გყავთ ადამიანი.",
+  "@inviteNameTaken": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteMakeFailed": "მოწვევა ვერ შეიქმნა. სცადეთ ხელახლა.",
+  "@inviteMakeFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteSendTo": "გაუგზავნეთ: {name}",
+  "@inviteSendTo": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteDoneForNow": "დანარჩენი მოგვიანებით",
+  "@inviteDoneForNow": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteGotNameReply": "პასუხი მივიღე: {name}",
+  "@inviteGotNameReply": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharedLine": "გაზიარების მენიუში გაიგზავნა.",
+  "@inviteSharedLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteConnecting": "უკავშირდება…",
+  "@inviteConnecting": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteLoadFailed": "მოწვევა ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.",
+  "@inviteLoadFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "replyOpenTitle": "პასუხის გახსნა",
+  "@replyOpenTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "pasteItHint": "დაკოპირებული ტექსტი ან ბმული",
+  "@pasteItHint": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "chooseFile": "ფაილის არჩევა",
+  "@chooseFile": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "chooseFileHint": "მის მიერ გამოგზავნილი ფაილი",
+  "@chooseFileHint": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "replyNothingToPaste": "ჩასასმელი არაფერია. ჯერ პასუხი დააკოპირეთ.",
+  "@replyNothingToPaste": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "inviteNothingToPaste": "ჩასასმელი არაფერია. ჯერ მოწვევა დააკოპირეთ.",
+  "@inviteNothingToPaste": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "notAReply": "ეს პასუხი არ არის. შეამოწმეთ, რა ჩასვით.",
+  "@notAReply": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "couldNotReadFile": "ფაილი ვერ წავიკითხე.",
+  "@couldNotReadFile": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "replyNotConnected": "ამ პასუხმა ვერ დაგაკავშირათ. ხელახლა სთხოვეთ.",
+  "@replyNotConnected": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotStepOpen": "გახსნა",
+  "@gotStepOpen": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotStepReply": "პასუხი",
+  "@gotStepReply": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotOpenTitle": "მოწვევის გახსნა",
+  "@gotOpenTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotInviteGood": "მოწვევა სწორია.",
+  "@gotInviteGood": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotWhoSent": "ვინ გამოგიგზავნათ?",
+  "@gotWhoSent": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotAccept": "მიღება",
+  "@gotAccept": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotOwnInviteTitle": "ეს თქვენი მოწვევაა",
+  "@gotOwnInviteTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotOwnInviteLine": "გაუგზავნეთ მეორე ადამიანს.",
+  "@gotOwnInviteLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotAlreadyTitle": "უკვე დაკავშირებული ხართ",
+  "@gotAlreadyTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotAlreadyLine": "ეს მოწვევა ამ ტელეფონზე უკვე გახსნილია.",
+  "@gotAlreadyLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotDamagedTitle": "ამის გახსნა ვერ ხერხდება",
+  "@gotDamagedTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotDamagedLine": "შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
+  "@gotDamagedLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "gotAcceptFailed": "მოწვევა ვერ მივიღე. სცადეთ ხელახლა.",
+  "@gotAcceptFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "replySendTo": "პასუხი გაუგზავნეთ: {name}",
+  "@replySendTo": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replySameWay": "იმავე გზით, რითაც მოწვევა მოვიდა.",
+  "@replySameWay": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "replyCheckTip": "მერე ციფრები ერთად შეამოწმეთ.",
+  "@replyCheckTip": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "stepInviteOpened": "მოწვევა გაიხსნა",
+  "@stepInviteOpened": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "stepYouReply": "თქვენ პასუხობთ",
+  "@stepYouReply": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "connectedWith": "დაკავშირებულია: {name}",
+  "@connectedWith": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "isItReally": "ნამდვილად {name} არის?",
+  "@isItReally": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkTogether": "ციფრები ერთად შეამოწმეთ.",
+  "@checkTogether": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "checkNow": "ახლავე შემოწმება",
+  "@checkNow": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "checkLater": "მოგვიანებით",
+  "@checkLater": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "twiceTitle": "შესაძლოა, სხვამ უპასუხა",
+  "@twiceTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "twiceLine": "მოწვევას ({name}) ორი პასუხი მოუვიდა.",
+  "@twiceLine": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteLead": "ჯერ არაფერი ჩაკეტოთ ამ ადამიანისთვის.",
+  "@twiceNoteLead": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteRest": "ჯერ ციფრები შეამოწმეთ.",
+  "@twiceNoteRest": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "twiceRemove": "წაშლა და ხელახლა მოწვევა",
+  "@twiceRemove": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyCompare": "შეადარეთ ზარით, ან ტელეფონები გვერდიგვერდ დადეთ.",
+  "@safetyCompare": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "safetySame": "ციფრები ერთნაირია",
+  "@safetySame": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "safetyDifferent": "ციფრები განსხვავდება",
+  "@safetyDifferent": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "safetyMarkNotChecked": "შეუმოწმებლად მონიშვნა",
+  "@safetyMarkNotChecked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "safetyCheckedBefore": "უკვე შეამოწმეთ: {name}.",
+  "@safetyCheckedBefore": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyNowNotChecked": "ახლა შეუმოწმებელია: {name}.",
+  "@safetyNowNotChecked": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLoadFailed": "ციფრები ვერ წავიკითხე. დახურეთ და ხელახლა გახსენით.",
+  "@safetyLoadFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "safetySaveFailed": "ვერ შეინახა. სცადეთ ხელახლა.",
+  "@safetySaveFailed": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "mismatchLead": "ჯერ არაფერი გაუგზავნოთ.",
+  "@mismatchLead": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mismatchRest": "შესაძლოა, შუაში ვიღაც დგას. წაშალეთ და თავიდან დაამატეთ, სჯობს პირისპირ.",
+  "@mismatchRest": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
+  },
+  "checkedTitle": "ნამდვილად ის არის: {name}",
+  "@checkedTitle": {
+    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

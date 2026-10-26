@@ -1415,5 +1415,587 @@
   "softSoundsLine": "Never on silent",
   "@softSoundsLine": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "personMoreFor": "More for {name}",
+  "@personMoreFor": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "personNotCheckedLead": "Not checked yet.",
+  "@personNotCheckedLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personNotCheckedAction": "Check numbers.",
+  "@personNotCheckedAction": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterAll": "All",
+  "@historyFilterAll": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterLocked": "Locked",
+  "@historyFilterLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterOpened": "Opened",
+  "@historyFilterOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyToday": "Today",
+  "@historyToday": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyYesterday": "Yesterday",
+  "@historyYesterday": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmpty": "Nothing here yet.",
+  "@historyEmpty": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmptyLocked": "Nothing locked yet.",
+  "@historyEmptyLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmptyOpened": "Nothing opened yet.",
+  "@historyEmptyOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyStaysLocked": "History stays locked on this phone.",
+  "@historyStaysLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyLoadError": "Couldn't load the history.",
+  "@historyLoadError": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyNewRow": "In {name}'s history now.",
+  "@historyNewRow": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingCardTitle": "Waiting for {name}'s reply",
+  "@waitingCardTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingShareInviteAgain": "Share invite again",
+  "@waitingShareInviteAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "waitingGotReply": "I got the reply",
+  "@waitingGotReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuCheckNumbers": "Check numbers",
+  "@personMenuCheckNumbers": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuNotCheckedYet": "Not checked yet",
+  "@personMenuNotCheckedYet": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSendReplyAgain": "Send my reply again",
+  "@personMenuSendReplyAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSaveHistory": "Save history as a file",
+  "@personMenuSaveHistory": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSaveHistoryHint": "Locked with a password",
+  "@personMenuSaveHistoryHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuRemove": "Remove {name}",
+  "@personMenuRemove": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonTitle": "Remove {name}?",
+  "@removePersonTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonBody": "Their history and files leave this phone. No undo.",
+  "@removePersonBody": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "removePersonConfirm": "Remove",
+  "@removePersonConfirm": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "removePersonDone": "{name} was removed.",
+  "@removePersonDone": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonFailed": "Couldn't remove {name}. Try again.",
+  "@removePersonFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryTitle": "Save {name}'s history",
+  "@exportHistoryTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryLine": "One file, locked with this password.",
+  "@exportHistoryLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistoryPassword": "Password for the file",
+  "@exportHistoryPassword": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistorySave": "Save file",
+  "@exportHistorySave": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistorySaved": "History saved as a file.",
+  "@exportHistorySaved": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthLabel": "Strength",
+  "@strengthLabel": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthHintEmpty": "Tip: a few random words.",
+  "@strengthHintEmpty": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthHintWeak": "Make it longer.",
+  "@strengthHintWeak": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthHintFair": "Add a few more words.",
+  "@strengthHintFair": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthHintGood": "Hard to guess.",
+  "@strengthHintGood": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "strengthHintStrong": "Very hard to guess.",
+  "@strengthHintStrong": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemForName": "For {name}",
+  "@itemForName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemFromName": "From {name}",
+  "@itemFromName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemYouLockedWhen": "You locked this · {day} · {time}",
+  "@itemYouLockedWhen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemOpenedWhen": "Opened {day} · {time}",
+  "@itemOpenedWhen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemShareAgain": "Share again",
+  "@itemShareAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemCopyLocked": "Copy locked",
+  "@itemCopyLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemOnlyLockedKept": "Only the locked copy is kept.",
+  "@itemOnlyLockedKept": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemSave": "Save",
+  "@itemSave": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemOpen": "Open",
+  "@itemOpen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemSaveGivesCopy": "Save gives you a normal copy. Then it's yours.",
+  "@itemSaveGivesCopy": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemUnreadable": "This message can't be read on this phone.",
+  "@itemUnreadable": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemDone": "Done",
+  "@itemDone": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteStepName": "Name",
+  "@inviteStepName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteStepSend": "Send",
+  "@inviteStepSend": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteWhoFor": "Who's it for?",
+  "@inviteWhoFor": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteTheirName": "Their name",
+  "@inviteTheirName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNameHint": "e.g. Tamar",
+  "@inviteNameHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteOnlyYouSee": "Only you see it.",
+  "@inviteOnlyYouSee": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteMake": "Make the invite",
+  "@inviteMake": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNameTaken": "You already have someone with this name.",
+  "@inviteNameTaken": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteMakeFailed": "Couldn't make the invite. Try again.",
+  "@inviteMakeFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteSendTo": "Send it to {name}",
+  "@inviteSendTo": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteDoneForNow": "Done for now",
+  "@inviteDoneForNow": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteGotNameReply": "I got {name}'s reply",
+  "@inviteGotNameReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharedLine": "Sent to your share menu.",
+  "@inviteSharedLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteConnecting": "Connecting…",
+  "@inviteConnecting": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteLoadFailed": "Couldn't read the invite. Close and open it again.",
+  "@inviteLoadFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyOpenTitle": "Open the reply",
+  "@replyOpenTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "pasteItHint": "Copied text or link",
+  "@pasteItHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "chooseFile": "Choose a file",
+  "@chooseFile": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "chooseFileHint": "The file they sent",
+  "@chooseFileHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyNothingToPaste": "Nothing to paste. Copy the reply first.",
+  "@replyNothingToPaste": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNothingToPaste": "Nothing to paste. Copy the invite first.",
+  "@inviteNothingToPaste": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "notAReply": "That isn't a reply. Check what you pasted.",
+  "@notAReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "couldNotReadFile": "Couldn't read that file.",
+  "@couldNotReadFile": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyNotConnected": "That reply didn't connect you. Ask for it again.",
+  "@replyNotConnected": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotStepOpen": "Open it",
+  "@gotStepOpen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotStepReply": "Reply",
+  "@gotStepReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOpenTitle": "Open the invite",
+  "@gotOpenTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotInviteGood": "The invite is good.",
+  "@gotInviteGood": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotWhoSent": "Who sent it?",
+  "@gotWhoSent": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAccept": "Accept",
+  "@gotAccept": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOwnInviteTitle": "That's your own invite",
+  "@gotOwnInviteTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOwnInviteLine": "Send it to the other person.",
+  "@gotOwnInviteLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAlreadyTitle": "You're already connected",
+  "@gotAlreadyTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAlreadyLine": "This invite is already open on this phone.",
+  "@gotAlreadyLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotDamagedTitle": "Can't open this",
+  "@gotDamagedTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotDamagedLine": "It may be cut off or for someone else. Ask them to send it again.",
+  "@gotDamagedLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAcceptFailed": "Couldn't accept the invite. Try again.",
+  "@gotAcceptFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replySendTo": "Send your reply to {name}",
+  "@replySendTo": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replySameWay": "The same way the invite came.",
+  "@replySameWay": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyCheckTip": "Then check numbers together.",
+  "@replyCheckTip": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "stepInviteOpened": "Invite opened",
+  "@stepInviteOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "stepYouReply": "You reply",
+  "@stepYouReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "connectedWith": "Connected with {name}",
+  "@connectedWith": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "isItReally": "Is it really {name}?",
+  "@isItReally": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkTogether": "Check numbers together.",
+  "@checkTogether": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkNow": "Check now",
+  "@checkNow": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkLater": "Later",
+  "@checkLater": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceTitle": "Someone else may have answered",
+  "@twiceTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceLine": "Your invite to {name} got two replies.",
+  "@twiceLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteLead": "Don't lock anything for {name} yet.",
+  "@twiceNoteLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteRest": "Check numbers first.",
+  "@twiceNoteRest": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceRemove": "Remove {name}, invite again",
+  "@twiceRemove": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyCompare": "Compare on a call, or side by side.",
+  "@safetyCompare": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetySame": "Same numbers",
+  "@safetySame": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyDifferent": "Different numbers",
+  "@safetyDifferent": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyMarkNotChecked": "Mark as not checked",
+  "@safetyMarkNotChecked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyCheckedBefore": "You checked {name} before.",
+  "@safetyCheckedBefore": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyNowNotChecked": "{name} is now Not checked.",
+  "@safetyNowNotChecked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLoadFailed": "Couldn't read the numbers. Close and open them again.",
+  "@safetyLoadFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetySaveFailed": "Couldn't save that. Try again.",
+  "@safetySaveFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "mismatchLead": "Don't send {name} anything.",
+  "@mismatchLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mismatchRest": "Someone may be in between. Remove and add them again, best in person.",
+  "@mismatchRest": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkedTitle": "It's really {name}",
+  "@checkedTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }
