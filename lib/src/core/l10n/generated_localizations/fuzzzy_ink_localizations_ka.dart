@@ -1577,6 +1577,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
+  String openArrivedFileTitle(String name) {
+    return 'გავხსნათ $name-ის ფაილი?';
+  }
+
+  @override
   String get openLinkLine =>
       'ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.';
 

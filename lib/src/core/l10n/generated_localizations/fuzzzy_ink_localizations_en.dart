@@ -1568,6 +1568,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   }
 
   @override
+  String openArrivedFileTitle(String name) {
+    return 'Open the file from $name?';
+  }
+
+  @override
   String get openLinkLine =>
       'It opens once, then it stays in your history with them.';
 

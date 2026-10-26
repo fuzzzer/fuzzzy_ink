@@ -63,7 +63,7 @@ class OpenFlowView extends StatelessWidget {
       case OpenRouteInvite(:final invitation):
         cubit.routeTaken();
         context.pushReplacement(AppRouter.chatAccept, extra: invitation);
-      case OpenRouteReply(:final chat, :final acceptance):
+      case OpenRouteReply(:final chat, :final acceptance, :final arrived):
         cubit.routeTaken();
         context.pushReplacement(
           AppRouter.chatInvitation,
@@ -71,6 +71,7 @@ class OpenFlowView extends StatelessWidget {
             chatName: chat.chatName,
             chatId: chat.chatId,
             prefillAcceptanceContent: acceptance,
+            confirmReply: arrived,
           ),
         );
       case OpenRouteSecondReply(:final chat):
@@ -140,6 +141,7 @@ class OpenFlowView extends StatelessWidget {
             if (chat == null) return const OpenReadingView();
             return OpenConfirmView(
               chat: chat,
+              isFile: state.pendingFilePath != null,
               onOpen: cubit.confirmOpen,
               onNotNow: context.goBack,
             );

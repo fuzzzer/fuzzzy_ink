@@ -680,4 +680,100 @@ void main() {
     verify(() => store.discardPickedCopy(file)).called(1);
     await cubit.close();
   });
+
+  group('a file another app handed over (security review 2026-10-26)', () {
+    void peekFileAnswers(String file, CryptoCorePeek peek) {
+      when(
+        () => crypto.peekFile(inputPath: file, chatIds: any(named: 'chatIds')),
+      ).thenAnswer((_) async => CryptoCoreSuccess(peek));
+    }
+
+    test('a message waits for Open, then opens once', () async {
+      final file = path.join(dir.path, 'fuzzzy-ink-message.fuzz');
+      File(file).writeAsStringSync('Fuzz/AwEC\n');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.message,
+          chatId: _ninoId,
+          isTextFile: true,
+        ),
+      );
+      decryptAnswers(const CryptoCoreSuccess('from a file'));
+      when(() => messages.addMessage(any(), notifyListeners: true))
+          .thenAnswer((_) async => 5);
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.chat, _nino);
+      verifyNever(
+        () => crypto.decryptText(
+          chatId: any(named: 'chatId'),
+          blob: any(named: 'blob'),
+        ),
+      );
+      await cubit.confirmOpen();
+      verify(() => crypto.decryptText(chatId: _ninoId, blob: 'Fuzz/AwEC'))
+          .called(1);
+      expect(cubit.state.openedText, 'from a file');
+      await cubit.close();
+    });
+
+    test("a person's file waits for Open before it joins the queue", () async {
+      final file = path.join(dir.path, 'photo.jpg.fuzz');
+      File(file).writeAsStringSync('FUZZ');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.chatFile,
+          chatId: _ninoId,
+        ),
+      );
+      when(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      ).thenReturn(null);
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.pendingFilePath, file);
+      verifyNever(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      );
+      await cubit.confirmOpen();
+      verify(
+        () => queue.addFilesToProcess(
+          chatId: _ninoId,
+          chatName: 'Nino',
+          filePaths: [file],
+        ),
+      ).called(1);
+      await cubit.close();
+    });
+
+    test('a reply goes on to "Connect with {name}?"', () async {
+      final file = path.join(dir.path, 'fuzzzy-ink-reply.fuzz');
+      File(file).writeAsStringSync('Fuzz/AgE\n');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.acceptance,
+          chatId: _momId,
+          isTextFile: true,
+        ),
+      );
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      final route = cubit.state.route! as OpenRouteReply;
+      expect(route.arrived, isTrue);
+      await cubit.close();
+    });
+  });
 }

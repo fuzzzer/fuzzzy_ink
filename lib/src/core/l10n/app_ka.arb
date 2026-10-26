@@ -1398,6 +1398,15 @@
       }
     }
   },
+  "openArrivedFileTitle": "გავხსნათ {name}-ის ფაილი?",
+  "@openArrivedFileTitle": {
+    "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "openLinkLine": "ის ერთხელ გაიხსნება და შემდეგ თქვენს საერთო ისტორიაში დარჩება.",
   "@openLinkLine": {
     "description": "Georgian draft, needs a native read (security review fixes, 2026-10-26)"

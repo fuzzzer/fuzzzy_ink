@@ -242,7 +242,8 @@ action), or taps **Open** on a message that came by link; a file only when the u
 below) goes to Open, where the core's peek (`PROTOCOL.md` §7.4: a trial on a throwaway copy of each session,
 nothing spent, nothing kept, nothing shown but the person's name) finds whose it is, and the screen asks "Open the
 message from {name}?"; only the Open tap spends the message key. A reply link for an invite still waiting asks
-"Connect with {name}?" and completes the pairing only on Connect. A second, different reply for a connected chat
+"Connect with {name}?" and completes the pairing only on Connect. A `.fuzz` file another app hands over takes the
+same path (`OpenArrivedFile`): a message or a person's file waits for Open, a reply for Connect. A second, different reply for a connected chat
 raises the "someone else answered" warning only if the core finds it really answers this chat's invitation
 (`check_acceptance`, `PROTOCOL.md` §4.5); anything else is "not a valid reply" (security review 2026-10-26, §7.5).
 

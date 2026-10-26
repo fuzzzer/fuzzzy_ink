@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// A message that came by link (security review 2026-10-26): "Open the
-/// message from {name}?" with Open and Not now. Nothing has been opened or
-/// spent yet; a link alone never opens a message. Not private: only the
+/// A message that came by link, or a message or file another app handed over
+/// (security review 2026-10-26): "Open the message from {name}?" (or "the
+/// file") with Open and Not now. Nothing has been opened or spent yet;
+/// nothing arriving from outside opens by itself. Not private: only the
 /// person's name is on it.
 class OpenConfirmView extends StatelessWidget {
   const OpenConfirmView({
@@ -12,9 +13,11 @@ class OpenConfirmView extends StatelessWidget {
     required this.chat,
     required this.onOpen,
     required this.onNotNow,
+    this.isFile = false,
   });
 
   final ChatGeneralData chat;
+  final bool isFile;
   final VoidCallback onOpen;
   final VoidCallback onNotNow;
 
@@ -56,7 +59,9 @@ class OpenConfirmView extends StatelessWidget {
             ),
           ),
           FlowTitle(
-            title: l.openLinkTitle(chat.chatName),
+            title: isFile
+                ? l.openArrivedFileTitle(chat.chatName)
+                : l.openLinkTitle(chat.chatName),
             line: l.openLinkLine,
           ),
         ],

@@ -2915,6 +2915,12 @@ abstract class FuzzzyInkLocalizations {
   /// **'Open the message from {name}?'**
   String openLinkTitle(String name);
 
+  /// A person's locked file another app handed over: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the file from {name}?'**
+  String openArrivedFileTitle(String name);
+
   /// Security review fixes 2026-10-26.
   ///
   /// In en, this message translates to:

@@ -1317,6 +1317,15 @@
       }
     }
   },
+  "openArrivedFileTitle": "Open the file from {name}?",
+  "@openArrivedFileTitle": {
+    "description": "A person's locked file another app handed over: nothing is opened until the person taps Open (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "openLinkLine": "It opens once, then it stays in your history with them.",
   "@openLinkLine": {
     "description": "Security review fixes 2026-10-26."

@@ -54,6 +54,8 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         await _openText(text.trim());
       case OpenChosenFile(:final filePath):
         await _openFile(filePath);
+      case OpenArrivedFile(:final filePath):
+        await _openFile(filePath, arrived: true);
       case OpenMessageLink(:final encryptedMessage):
         await _recogniseLinkedMessage('$fuzzIdentificator$encryptedMessage');
     }
@@ -94,18 +96,34 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     );
   }
 
-  /// The person tapped Open on a message that came by link: only now is it
-  /// opened (its message key spent).
+  /// The person tapped Open on a message (or a person's file) that came by
+  /// link or from another app: only now is it opened (its key spent).
   Future<void> confirmOpen() async {
     final chat = state.chat;
     final blob = state.pendingMessage;
-    if (state.phase != OpenPhase.confirmMessage ||
-        chat == null ||
-        blob == null) {
-      return;
+    final filePath = state.pendingFilePath;
+    if (state.phase != OpenPhase.confirmMessage || chat == null) return;
+    if (blob != null) {
+      emit(const OpenFlowState(phase: OpenPhase.reading));
+      await _openMessage(chatId: chat.chatId, blob: blob, isFromLink: true);
+    } else if (filePath != null) {
+      emit(const OpenFlowState(phase: OpenPhase.reading));
+      _openChatFile(chat, filePath);
     }
-    emit(const OpenFlowState(phase: OpenPhase.reading));
-    await _openMessage(chatId: chat.chatId, blob: blob, isFromLink: true);
+  }
+
+  /// Something that arrived from outside and belongs to [chat]: "Open the
+  /// message (or file) from {name}?" first.
+  void _askToOpen(ChatGeneralData chat, {String? text, String? filePath}) {
+    if (isClosed) return;
+    emit(
+      OpenFlowState(
+        phase: OpenPhase.confirmMessage,
+        chat: chat,
+        pendingMessage: text,
+        pendingFilePath: filePath,
+      ),
+    );
   }
 
   Future<void> _openText(String pasted) async {
@@ -136,7 +154,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     await _route((res as CryptoCoreSuccess<CryptoCorePeek>).data, text: text);
   }
 
-  Future<void> _openFile(String filePath) async {
+  Future<void> _openFile(String filePath, {bool arrived = false}) async {
     final res = await cryptoCoreService.peekFile(
       inputPath: filePath,
       chatIds: await _connectedChatIds(),
@@ -153,15 +171,16 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         return _problem(OpenProblem.failed);
       }
       await userFileStore.discardPickedCopy(filePath);
-      return _route(peek, text: text);
+      return _route(peek, text: text, arrived: arrived);
     }
-    await _route(peek, filePath: filePath);
+    await _route(peek, filePath: filePath, arrived: arrived);
   }
 
   Future<void> _route(
     CryptoCorePeek peek, {
     String? text,
     String? filePath,
+    bool arrived = false,
   }) async {
     final chatId = peek.chatId;
     switch (peek.kind) {
@@ -182,7 +201,9 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         final chat = await chatRepository.getChatById(chatId);
         if (chat == null) return _problem(OpenProblem.notFromYourPeople);
         if (chat.setupStatus != ChatSetupStatus.connected) {
-          return _leave(OpenRouteReply(chat: chat, acceptance: text));
+          return _leave(
+            OpenRouteReply(chat: chat, acceptance: text, arrived: arrived),
+          );
         }
         // The same reply again is harmless. Another one means someone else
         // answered the invite too — but only if the core finds it really
@@ -201,6 +222,13 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         if (chatId == null || text == null) {
           return _problem(OpenProblem.damaged);
         }
+        if (arrived) {
+          final chat = await chatRepository.getChatById(chatId);
+          if (chat == null || chat.setupStatus != ChatSetupStatus.connected) {
+            return _problem(OpenProblem.notFromYourPeople);
+          }
+          return _askToOpen(chat, text: text);
+        }
         return _openMessage(chatId: chatId, blob: text, isFromLink: false);
       case CryptoCorePeekKind.chatFile:
         if (chatId == null || filePath == null) {
@@ -208,6 +236,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
         }
         final chat = await chatRepository.getChatById(chatId);
         if (chat == null) return _problem(OpenProblem.notFromYourPeople);
+        if (arrived) return _askToOpen(chat, filePath: filePath);
         return _openChatFile(chat, filePath);
       case CryptoCorePeekKind.passwordText:
         if (text == null) return _problem(OpenProblem.damaged);
