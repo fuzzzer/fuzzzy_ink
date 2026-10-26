@@ -42,8 +42,11 @@ void main() {
         'android.accessibilityservice',
         'android.view.InputMethod',
       ]) {
-        expect(manifest, isNot(contains(forbidden)),
-            reason: '$path: $forbidden');
+        expect(
+          manifest,
+          isNot(contains(forbidden)),
+          reason: '$path: $forbidden',
+        );
       }
     }
   });
@@ -74,14 +77,16 @@ void main() {
     final development = read('$app/development/AndroidManifest.xml');
     final switcher = read('$anywhere/AnywhereSwitch.kt');
     final declared = RegExp(
-            r'<(activity|service)\s[^>]*?android:name="(com\.fuzzzycore\.ink\.anywhere\.\w+)"[^>]*>',
-            dotAll: true)
-        .allMatches(development)
-        .toList();
+      r'<(activity|service)\s[^>]*?android:name="(com\.fuzzzycore\.ink\.anywhere\.\w+)"[^>]*>',
+      dotAll: true,
+    ).allMatches(development).toList();
     expect(declared, isNotEmpty);
     for (final entry in declared) {
-      expect(entry.group(0), contains('android:enabled="false"'),
-          reason: entry.group(2));
+      expect(
+        entry.group(0),
+        contains('android:enabled="false"'),
+        reason: entry.group(2),
+      );
       expect(switcher, contains('"${entry.group(2)}"'), reason: entry.group(2));
     }
   });
@@ -108,8 +113,11 @@ void main() {
         'SelectionContainer',
         'putString(',
       ]) {
-        expect(source, isNot(contains(forbidden)),
-            reason: '${file.path}: $forbidden');
+        expect(
+          source,
+          isNot(contains(forbidden)),
+          reason: '${file.path}: $forbidden',
+        );
       }
       expect(source, isNot(contains(RegExp(r'\bLog\.'))), reason: file.path);
     }
@@ -125,24 +133,28 @@ void main() {
     expect(
       activity,
       contains(
-          'setResult(RESULT_OK, Intent().putExtra(Intent.EXTRA_PROCESS_TEXT, returnText))'),
+        'setResult(RESULT_OK, Intent().putExtra(Intent.EXTRA_PROCESS_TEXT, returnText))',
+      ),
     );
     final model = read('$anywhere/SheetViewModel.kt');
     // The only text that ever becomes a return text is `lock`'s output.
     expect(
-        RegExp(r'finish\((\w+)\)')
-            .allMatches(model)
-            .map((m) => m.group(1))
-            .toSet(),
-        {'output'});
+      RegExp(r'finish\((\w+)\)')
+          .allMatches(model)
+          .map((m) => m.group(1))
+          .toSet(),
+      {'output'},
+    );
     expect(model, contains('val output = answer.string("output")'));
     expect(model, contains('finish(done?.returnText)'));
   });
 
   test('the sheet is out of screenshots and hides overlays', () {
     final activity = read('$anywhere/InkTextActivity.kt');
-    expect(activity,
-        contains('window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)'));
+    expect(
+      activity,
+      contains('window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)'),
+    );
     expect(activity, contains('window.setHideOverlayWindows(true)'));
     expect(activity, contains('channel.send("relock")'));
     final sheet = read('$anywhere/ui/InkSheet.kt');
@@ -154,9 +166,11 @@ void main() {
     final expected = native_strings.expectedFiles();
     expect(expected.keys, hasLength(2));
     for (final MapEntry(key: path, value: content) in expected.entries) {
-      expect(File(path).readAsStringSync(), content,
-          reason:
-              '$path is stale: run tools/native_strings/android_strings.dart');
+      expect(
+        File(path).readAsStringSync(),
+        content,
+        reason: '$path is stale: run tools/native_strings/android_strings.dart',
+      );
     }
   });
 }

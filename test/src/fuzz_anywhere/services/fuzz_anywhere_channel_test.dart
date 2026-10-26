@@ -197,8 +197,10 @@ void main() {
       final reply = await _call('openInApp', {'text': invite});
       expect(reply!.value, {'status': 'shown'});
       expect(app.presented, hasLength(1));
-      expect((await _call('openInApp', {'text': blobFromNino}))!.code,
-          'badRequest');
+      expect(
+        (await _call('openInApp', {'text': blobFromNino}))!.code,
+        'badRequest',
+      );
       expect((await _call('openInApp'))!.code, 'badRequest');
     });
 

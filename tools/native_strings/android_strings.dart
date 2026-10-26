@@ -155,7 +155,8 @@ void main(List<String> arguments) {
     if (isCheck) {
       if (!file.existsSync() || file.readAsStringSync() != content) {
         stderr.writeln(
-            '$path is stale: run tools/native_strings/android_strings.dart');
+          '$path is stale: run tools/native_strings/android_strings.dart',
+        );
         isStale = true;
       }
     } else {
