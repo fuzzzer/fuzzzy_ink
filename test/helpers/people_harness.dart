@@ -58,8 +58,6 @@ String stubText(GoRouterState state) {
     final AcceptanceExportPagePayload payload =>
       ' ${payload.chatGeneralData.chatName}',
     final HistoryItemPagePayload payload => ' item ${payload.message.id}',
-    final ConnectedChatPagePayload payload =>
-      ' ${payload.chatGeneralData.chatName}',
     final LockPagePayload payload =>
       ' ${payload.chat?.chatName}${payload.returnsToPerson ? ' back' : ''}',
     final OpenPagePayload payload => payload.returnsToPerson ? ' back' : '',
@@ -97,7 +95,6 @@ Future<GoRouter> pumpPeople(
     AppRouter.chatInvitation,
     AppRouter.chatAcceptanceExport,
     AppRouter.chatCreate,
-    AppRouter.chatConnected,
     ...extraStubs,
   };
 

@@ -92,12 +92,6 @@ void main() {
             'invite of ${(state.extra! as ChatInvitationPagePayload).chatName}',
           ),
         ),
-        GoRoute(
-          path: AppRouter.chatConnected,
-          builder: (_, state) => stub(
-            'chat with ${(state.extra! as ConnectedChatPagePayload).chatGeneralData.chatName}',
-          ),
-        ),
       ],
     );
     addTearDown(router.dispose);

@@ -3,7 +3,6 @@ export 'acceptance_export_page/acceptance_export_page.dart';
 export 'answered_twice_page/answered_twice_page.dart';
 export 'chat_creation_page/chat_creation_page.dart';
 export 'chat_invitation_page/chat_invitation_page.dart';
-export 'connected_chat_page/connected_chat_page.dart';
 export 'history_item_page/history_item_page.dart';
 export 'home_page/home_page.dart';
 export 'how_it_works_page/how_it_works_page.dart';

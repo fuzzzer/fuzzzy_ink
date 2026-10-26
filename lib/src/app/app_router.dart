@@ -14,7 +14,6 @@ class AppRouter {
   static const chatInvitation = '/chat/invitation';
   static const chatAccept = '/chat/accept';
   static const chatAcceptanceExport = '/chat/acceptance-export';
-  static const chatConnected = '/chat/connected';
   static const chatVerify = '/chat/verify';
   static const settings = '/settings';
   static const aboutEncryption = '/settings/about-encryption';
@@ -211,13 +210,6 @@ class AppRouter {
           builder: (_, state) {
             final payload = state.extra! as AcceptanceExportPagePayload;
             return AcceptanceExportPage(payload: payload);
-          },
-        ),
-        GoRoute(
-          path: chatConnected,
-          builder: (_, state) {
-            final payload = state.extra! as ConnectedChatPagePayload;
-            return SensitiveScreen(child: ConnectedChatPage(payload: payload));
           },
         ),
         GoRoute(

@@ -3,3 +3,4 @@ export 'history_row.dart';
 export 'land_on_person.dart';
 export 'locked_text_preview.dart';
 export 'recent_history_row.dart';
+export 'unfuzz_chat_file.dart';

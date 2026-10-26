@@ -98,7 +98,7 @@ void main() {
 
     for (final location in [
       AppRouter.home,
-      AppRouter.chatConnected,
+      AppRouter.person,
       AppRouter.vaultHome,
       AppRouter.settings,
       AppRouter.settingsMasterPassword,
@@ -153,7 +153,7 @@ void main() {
     expect(store.state.status, AuthStateStatus.authenticated);
 
     expect(await redirectFor(tester, AppRouter.home), isNull);
-    expect(await redirectFor(tester, AppRouter.chatConnected), isNull);
+    expect(await redirectFor(tester, AppRouter.person), isNull);
     expect(await redirectFor(tester, AppRouter.chatUnlock), AppRouter.home);
     expect(await redirectFor(tester, AppRouter.recover), AppRouter.home);
     expect(await redirectFor(tester, AppRouter.setup), AppRouter.home);
