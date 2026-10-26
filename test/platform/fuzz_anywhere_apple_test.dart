@@ -45,7 +45,10 @@ void main() {
 
     test('is added for the development configurations only', () {
       expect(servicesScript, contains('*-development) ;;'));
-      expect(servicesScript, contains('*) exit 0 ;;'));
+      expect(
+        servicesScript,
+        matches(RegExp(r'\*\)\n(.*\n)*?    exit 0 ;;\nesac')),
+      );
       expect(servicesScript, contains('Services-development.plist'));
       expect(
         macProject,
@@ -142,6 +145,112 @@ void main() {
       expect(
         read('ios/Runner/Anywhere/LockMessageIntent.swift'),
         startsWith('#if INK_ANYWHERE'),
+      );
+    });
+  });
+
+  group('development builds only (security review 2026-10-26)', () {
+    List<String> macRunnerConfigsWith(String setting) {
+      final configs = RegExp(
+        r'isa = XCBuildConfiguration;\s*baseConfigurationReference = \w+ /\* AppInfo\.xcconfig \*/;(.*?)name = "?([^";]+)"?;',
+        dotAll: true,
+      ).allMatches(macProject);
+      return [
+        for (final config in configs)
+          if (config.group(1)!.contains(setting)) config.group(2)!,
+      ];
+    }
+
+    test(
+        'the Mac shortcut, menu bar item and Services are compiled for '
+        'development only', () {
+      expect(
+        macRunnerConfigsWith('INK_ANYWHERE'),
+        unorderedEquals([
+          'Debug-development',
+          'Profile-development',
+          'Release-development',
+        ]),
+      );
+      final window = read('macos/Runner/MainFlutterWindow.swift');
+      expect(
+        window,
+        matches(
+          RegExp(
+            r'#if INK_ANYWHERE\s*if #available\(macOS 12\.0, \*\) \{\s*'
+            r'InkAnywhereMac\.shared\.register',
+          ),
+        ),
+      );
+      expect(
+        RegExp('InkAnywhereMac').allMatches(window).length,
+        1,
+        reason: 'registered in one place only',
+      );
+    });
+
+    test('a staging or production Mac build with the flag fails', () {
+      expect(servicesScript, contains('FUZZ_ANYWHERE=true'));
+      expect(servicesScript, contains('exit 1'));
+    });
+  });
+
+  group('the message box (security review 2026-10-26)', () {
+    final lockViews = read('apple/Anywhere/InkLockViews.swift');
+    final mac = read('apple/Anywhere/InkSealedTextViewMac.swift');
+    final ios = read('apple/Anywhere/InkSealedTextViewIOS.swift');
+
+    test('is the sealed text box, not a SwiftUI text field', () {
+      expect(lockViews, contains('InkSealedTextBox('));
+      expect(lockViews, isNot(contains('TextField(')));
+      expect(lockViews, isNot(contains('TextEditor(')));
+    });
+
+    test('on the Mac: Paste only, nothing to a pasteboard or a service', () {
+      expect(
+        mac,
+        contains('override func menu(for event: NSEvent) -> NSMenu?'),
+      );
+      expect(mac, contains('menu.allowsContextMenuPlugIns = false'));
+      expect(mac, contains(') -> Any? { nil }'));
+      expect(mac, contains('override func copy(_ sender: Any?) {}'));
+      expect(mac, contains('override func cut(_ sender: Any?) {}'));
+      expect(mac, contains('override var writablePasteboardTypes'));
+      expect(mac, contains('writingToolsBehavior = .none'));
+      expect(mac, contains('inlinePredictionType = .no'));
+      expect(mac, contains('isAutomaticSpellingCorrectionEnabled = false'));
+    });
+
+    test('on the iPhone: an allow-list menu, no drag, no Writing Tools', () {
+      expect(
+        ios,
+        contains('guard InkSealedUITextView.allowed.contains(action) else'),
+      );
+      expect(ios, isNot(contains('copy(_:)),')));
+      expect(ios, contains('textDragInteraction?.isEnabled = false'));
+      expect(ios, contains('writingToolsBehavior = .none'));
+      expect(ios, contains('autocorrectionType = .no'));
+      expect(ios, contains('inlinePredictionType = .no'));
+    });
+
+    test('a person is pre-selected only when remembered or the only one', () {
+      final model = read('apple/Anywhere/InkAnywhereModel.swift');
+      expect(
+        model,
+        contains(
+          r'selectedPersonID = (people.first { $0.isLastUsedHere } ?? people.onlyOne)?.id',
+        ),
+      );
+      expect(model, contains('guard canLock, let person = selectedPerson'));
+    });
+
+    test('a Services request remembers no person', () {
+      final mac = read('macos/Runner/Anywhere/InkAnywhereMac.swift');
+      expect(
+        mac,
+        contains(
+          'self.makeModel(mode: mode, prefill: text, sourceApp: nil, delivery: delivery)',
+        ),
       );
     });
   });

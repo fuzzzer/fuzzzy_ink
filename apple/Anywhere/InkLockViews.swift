@@ -44,7 +44,7 @@ struct InkPersonPicker: View {
         ForEach(model.people) { person in
           let isSelected = person.id == model.selectedPersonID
           Button {
-            model.selectedPersonID = person.id
+            model.choose(person.id)
           } label: {
             Label(person.name, systemImage: isSelected ? "person.crop.circle.fill" : "person.crop.circle")
               .font(.callout.weight(isSelected ? .semibold : .regular))
@@ -83,31 +83,42 @@ struct InkPersonRow: View {
   }
 }
 
-/// The message, typed here (never in the other app). Return locks on a Mac;
-/// Option-Return starts a new line.
+/// The message, typed here (never in the other app), or the text another
+/// app sent, all of it and with its length. Copy, Cut, Services, Look Up,
+/// Translate, Share and Writing Tools never see it ([InkSealedTextBox]).
+/// Return locks on a Mac only after the person picked the name
+/// ([InkAnywhereModel.returnLocks]); otherwise it starts a new line.
 @available(iOS 15.0, macOS 12.0, *)
 struct InkMessageBox: View {
   @ObservedObject var model: InkAnywhereModel
 
   var body: some View {
-    Group {
-      if #available(iOS 16.0, macOS 13.0, *) {
-        TextField(model.strings.messageHint, text: $model.message, axis: .vertical)
-          .lineLimit(3...8)
-        #if os(macOS)
-          .onSubmit { Task { await model.lock() } }
-        #endif
-      } else {
-        TextEditor(text: $model.message).frame(minHeight: 72, maxHeight: 160)
+    VStack(alignment: .leading, spacing: 4) {
+      InkSealedTextBox(
+        text: $model.message, placeholder: model.strings.messageHint,
+        maxHeight: model.cameFromSelection ? 260 : 170,
+        onReturn: returnPressed, onSeenToTheEnd: model.sawWholeMessage
+      )
+      .padding(.horizontal, 6)
+      .padding(.vertical, 4)
+      .background(
+        RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.secondary.opacity(0.1)))
+      if model.cameFromSelection {
+        Text(lengthLine).font(.footnote).foregroundColor(.secondary)
       }
     }
-    .textFieldStyle(.plain)
-    .font(.body)
-    .disableAutocorrection(true)
-    .padding(10)
-    .background(
-      RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.secondary.opacity(0.1)))
-    .accessibilityLabel(model.strings.messageHint)
+  }
+
+  private var lengthLine: String {
+    let count = model.message.unicodeScalars.count
+    let length = model.strings.length(NumberFormatter.localizedString(from: count as NSNumber, number: .decimal))
+    return model.hasSeenWholeMessage ? length : length + " · " + model.strings.readToTheEnd
+  }
+
+  private func returnPressed() -> Bool {
+    guard model.returnLocks else { return false }
+    Task { await model.lock() }
+    return true
   }
 }
 

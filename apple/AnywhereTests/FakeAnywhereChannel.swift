@@ -20,7 +20,10 @@ final class FakeAnywhereChannel: AnywhereCalling {
   }
 
   /// An app that has the feature, is set up and has two people.
-  static func ready(unlocked: Bool = true, language: String? = nil) -> FakeAnywhereChannel {
+  /// [remembered]: Mom is the person last used in the calling app.
+  static func ready(unlocked: Bool = true, language: String? = nil, remembered: Bool = true)
+    -> FakeAnywhereChannel
+  {
     let channel = FakeAnywhereChannel()
     var isUnlocked = unlocked
     channel.answers["status"] = { _ in
@@ -42,7 +45,7 @@ final class FakeAnywhereChannel: AnywhereCalling {
       [
         "people": [
           ["id": "nino", "name": "Nino", "verified": false, "lastUsedHere": false],
-          ["id": "mom", "name": "Mom", "verified": true, "lastUsedHere": true],
+          ["id": "mom", "name": "Mom", "verified": true, "lastUsedHere": remembered],
         ]
       ]
     }

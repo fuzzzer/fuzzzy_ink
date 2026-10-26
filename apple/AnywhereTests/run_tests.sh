@@ -1,8 +1,9 @@
 #!/bin/sh
-# XCTest for the native "Lock from other apps" state owner and the Mac
-# Services provider, without the Flutter engine: the files under test talk to
-# Dart only through AnywhereCalling, which the tests fake. Builds a test
-# bundle with swiftc and runs it with xctest (macOS, Xcode installed).
+# XCTest for the native "Lock from other apps" state owner, the Mac
+# Services provider and the Mac message box, without the Flutter engine:
+# the files under test talk to Dart only through AnywhereCalling, which the
+# tests fake. Builds a test bundle with swiftc and runs it with xctest
+# (macOS, Xcode installed).
 #
 #   apple/AnywhereTests/run_tests.sh [build folder]
 set -eu
@@ -35,8 +36,11 @@ xcrun --sdk macosx swiftc \
   "$root/apple/Anywhere/InkAnywhereContract.swift" \
   "$root/apple/Anywhere/InkAnywhereModel.swift" \
   "$root/apple/Anywhere/InkText.swift" \
+  "$root/apple/Anywhere/InkSealedTextBox.swift" \
+  "$root/apple/Anywhere/InkSealedTextViewMac.swift" \
   "$root/macos/Runner/Anywhere/InkServiceProvider.swift" \
   "$here/FakeAnywhereChannel.swift" \
   "$here/InkAnywhereModelTests.swift" \
-  "$here/InkServiceProviderTests.swift"
+  "$here/InkServiceProviderTests.swift" \
+  "$here/InkSealedTextViewTests.swift"
 xcrun xctest "$bundle"

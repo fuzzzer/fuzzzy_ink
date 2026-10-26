@@ -41,7 +41,8 @@ final class InkServiceProviderTests: XCTestCase {
       shown = model
       Task { @MainActor in
         await model.start()
-        model.selectedPersonID = "nino"
+        model.choose("nino")
+        model.sawWholeMessage()
         await model.lock()
       }
     }

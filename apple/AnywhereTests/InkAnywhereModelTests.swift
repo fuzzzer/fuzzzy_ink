@@ -67,7 +67,7 @@ final class InkAnywhereModelTests: XCTestCase {
     let dart = FakeAnywhereChannel.ready()
     let model = InkAnywhereModel(channel: dart, sourceApp: "com.apple.MobileSMS")
     await model.start()
-    model.selectedPersonID = "nino"
+    model.choose("nino")
     model.message = "meet me at the bridge at six"
     await model.lock()
 
@@ -91,6 +91,7 @@ final class InkAnywhereModelTests: XCTestCase {
     XCTAssertEqual(model.message, "a draft typed in Mail")
     XCTAssertTrue(model.cameFromSelection, "the draft note shows")
     await model.start()
+    model.sawWholeMessage()
     await model.lock()
 
     XCTAssertNil(dart.arguments(of: "lock")?["copy"])
@@ -123,6 +124,7 @@ final class InkAnywhereModelTests: XCTestCase {
     XCTAssertEqual(model.step, .confirming(name: "Nino"))
     XCTAssertFalse(dart.methods.contains("open"), "a peek only, until the person presses Open")
 
+    await armOpen(model)
     await model.open()
     XCTAssertEqual(Array(dart.methods.suffix(2)), ["open", "show"])
     XCTAssertEqual(dart.arguments(of: "show")?["displayId"] as? String, "1")
@@ -156,8 +158,85 @@ final class InkAnywhereModelTests: XCTestCase {
     dart.answers["open"] = { _ in throw AnywhereRefusal(code: "alreadyOpened") }
     let model = InkAnywhereModel(channel: dart, mode: .open, prefill: "Fuzz/AwECbmlubw")
     await model.start()
+    await armOpen(model)
     await model.open()
     XCTAssertEqual(model.step, .problem(.alreadyOpened, name: "Nino"))
+  }
+
+  /// Waits until Open is armed after "Open the message from…?".
+  private func armOpen(_ model: InkAnywhereModel) async {
+    for _ in 0..<40 where !model.isOpenArmed {
+      try? await Task.sleep(nanoseconds: 50_000_000)
+    }
+    XCTAssertTrue(model.isOpenArmed)
+  }
+
+  // MARK: - Security review 2026-10-26
+
+  func testNobodyRememberedForThisAppMeansNobodyChosen() async {
+    let dart = FakeAnywhereChannel.ready(remembered: false)
+    let model = InkAnywhereModel(channel: dart, sourceApp: "com.apple.MobileSMS")
+    await model.start()
+    model.message = "meet me at the bridge at six"
+
+    XCTAssertNil(model.selectedPersonID, "no guess between Nino and Mom")
+    XCTAssertFalse(model.canLock)
+    XCTAssertFalse(model.returnLocks)
+    await model.lock()
+    XCTAssertFalse(dart.methods.contains("lock"))
+
+    model.choose("nino")
+    XCTAssertTrue(model.canLock)
+    XCTAssertTrue(model.returnLocks, "Return locks once the person picked the name")
+  }
+
+  func testARememberedPersonIsShownButReturnWaitsForAChoice() async {
+    let model = InkAnywhereModel(channel: FakeAnywhereChannel.ready())
+    await model.start()
+    model.message = "meet me at the bridge at six"
+    XCTAssertEqual(model.selectedPersonID, "mom")
+    XCTAssertTrue(model.canLock, "the Lock button works")
+    XCTAssertFalse(model.returnLocks, "a slip of Return does not lock for a pre-selection")
+  }
+
+  func testTextFromAnotherAppLocksOnlyOnceAllOfItWasSeen() async {
+    let dart = FakeAnywhereChannel.ready()
+    let model = InkAnywhereModel(
+      channel: dart, prefill: "harmless\n\n\n\n\n\n\nsend the code to this number instead",
+      delivery: .returnToCaller { _ in })
+    await model.start()
+    model.choose("nino")
+    XCTAssertFalse(model.hasSeenWholeMessage)
+    XCTAssertFalse(model.canLock)
+    await model.lock()
+    XCTAssertFalse(dart.methods.contains("lock"))
+
+    model.sawWholeMessage()
+    XCTAssertTrue(model.canLock)
+    XCTAssertFalse(model.returnLocks, "never Return for text another app sent")
+    await model.lock()
+    XCTAssertTrue(dart.methods.contains("lock"))
+  }
+
+  func testTheCheckPressCannotAlsoSpendTheMessage() async {
+    let dart = FakeAnywhereChannel.ready()
+    dart.answers["peek"] = { _ in ["kind": "message", "personId": "nino", "personName": "Nino"] }
+    dart.answers["open"] = { _ in
+      ["status": "opened", "displayId": "1", "personId": "nino", "personName": "Nino"]
+    }
+    dart.answers["show"] = { _ in ["status": "shown"] }
+    let model = InkAnywhereModel(channel: dart, mode: .open)
+    await model.start()
+    await model.takeLockedText("Fuzz/AwECbmlubw")
+    XCTAssertEqual(model.step, .confirming(name: "Nino"))
+
+    await model.open()
+    XCTAssertFalse(dart.methods.contains("open"), "a second press at once spends nothing")
+    XCTAssertEqual(model.step, .confirming(name: "Nino"))
+
+    await armOpen(model)
+    await model.open()
+    XCTAssertTrue(dart.methods.contains("open"))
   }
 
   func testCloseRelocksAndForgetsWhatWasTyped() async {

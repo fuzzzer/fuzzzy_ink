@@ -16,8 +16,10 @@
 		3C3105C470BD09BB63373E74 /* InkGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C81FF3BE56BDF7EDD1605C4 /* InkGlass.swift */; };
 		44DE5D60CE3E383E2F82BF89 /* InkLockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B41199D0B45AE6EC5A88CF /* InkLockViews.swift */; };
 		45EE0F9EF5339B45D400062C /* InkText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0565FE5DABB1966A8290FC /* InkText.swift */; };
+		637990F5F869647672537E37 /* InkSealedTextViewIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D37B12AEA6F19655F234F57 /* InkSealedTextViewIOS.swift */; };
 		6807ED77F1AF663ADE8E5F5D /* InkStatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C9B5E60465F307C48BC622 /* InkStatusViews.swift */; };
 		69F1FD2A0CA1F7B85B881292 /* InkUnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD4DDA670EEAFDE3EE474C3 /* InkUnlockView.swift */; };
+		7372107A9616B2053CA9A2E8 /* InkSealedTextBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CD6801EFCDEA67435B4293 /* InkSealedTextBox.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		74E5FA43258584468D8DBEC1 /* InkAnywhereView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24478096F5160CC71531407B /* InkAnywhereView.swift */; };
 		75619720C80C61FFDBE43FEA /* InkAnywhereIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B580796E69493700A476FD1 /* InkAnywhereIOS.swift */; };
@@ -29,6 +31,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		B59F586395A38C90C41BE64F /* InkSealedTextViewMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FBACBCD94FD319BDCA7D41 /* InkSealedTextViewMac.swift */; };
 		D3900CC9A28070C074A59A5C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FD2B5C6E9987AA7DB85492B /* Pods_Runner.framework */; };
 		DB2A7FE1673602C4A082B55F /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A24A1A92FDF37A696578BE9 /* Pods_RunnerTests.framework */; };
 		F1A2B3C4D5E6F70812345602 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F70812345601 /* PrivacyInfo.xcprivacy */; };
@@ -59,6 +62,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00FBACBCD94FD319BDCA7D41 /* InkSealedTextViewMac.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewMac.swift; sourceTree = "<group>"; };
 		12262C9245BE24C27F046513 /* InkMark.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkMark.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -71,6 +75,7 @@
 		344CC0F8BAC03225B8261950 /* Pods-Runner.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-development.xcconfig"; sourceTree = "<group>"; };
 		36A0F58DBE90F473EC51189E /* LockMessageIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LockMessageIntent.swift; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		3D37B12AEA6F19655F234F57 /* InkSealedTextViewIOS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewIOS.swift; sourceTree = "<group>"; };
 		3F6F7B60A73318FC23E2E407 /* ka */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ka; path = ka.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		49AFFAEFCFE50D0145DF7103 /* Pods-Runner.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		5939E21C731929B7F3EB8EAE /* Pods-RunnerTests.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-development.xcconfig"; sourceTree = "<group>"; };
@@ -87,6 +92,7 @@
 		7B143FF2582A6BE9000804BD /* Pods-RunnerTests.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-production.xcconfig"; sourceTree = "<group>"; };
 		7B7D3087552CCAAE3B650EB9 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		7D0565FE5DABB1966A8290FC /* InkText.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkText.swift; sourceTree = "<group>"; };
+		82CD6801EFCDEA67435B4293 /* InkSealedTextBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextBox.swift; sourceTree = "<group>"; };
 		8322B4BADCDC847E850F7AAE /* InkActionBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkActionBar.swift; sourceTree = "<group>"; };
 		84007A97986360775E8572FE /* InkAnywhereContract.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereContract.swift; sourceTree = "<group>"; };
 		864380DF3B4902D2B2534201 /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
@@ -160,6 +166,9 @@
 				FDD4DDA670EEAFDE3EE474C3 /* InkUnlockView.swift */,
 				15FB23BA7E3F5D934A148133 /* Strings */,
 				84007A97986360775E8572FE /* InkAnywhereContract.swift */,
+				82CD6801EFCDEA67435B4293 /* InkSealedTextBox.swift */,
+				00FBACBCD94FD319BDCA7D41 /* InkSealedTextViewMac.swift */,
+				3D37B12AEA6F19655F234F57 /* InkSealedTextViewIOS.swift */,
 			);
 			name = Anywhere;
 			path = ../apple/Anywhere;
@@ -499,6 +508,9 @@
 				75619720C80C61FFDBE43FEA /* InkAnywhereIOS.swift in Sources */,
 				86243BDC05E56101B54D19A8 /* LockMessageIntent.swift in Sources */,
 				006F135CE545ED3476727507 /* InkAnywhereContract.swift in Sources */,
+				7372107A9616B2053CA9A2E8 /* InkSealedTextBox.swift in Sources */,
+				B59F586395A38C90C41BE64F /* InkSealedTextViewMac.swift in Sources */,
+				637990F5F869647672537E37 /* InkSealedTextViewIOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

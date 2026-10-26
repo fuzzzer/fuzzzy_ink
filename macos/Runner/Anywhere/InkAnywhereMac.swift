@@ -14,7 +14,9 @@ import FlutterMacOS
 /// launch (it shows the panel, which offers only Unlock until the switch is
 /// known) and removed as soon as the switch is known to be off.
 ///
-/// Below macOS 12 none of it exists (MainFlutterWindow does not register it).
+/// Below macOS 12 none of it exists, and none of it is compiled outside the
+/// development flavour (`INK_ANYWHERE`, set only in its three
+/// configurations; MainFlutterWindow does not register it otherwise).
 @available(macOS 12.0, *)
 @MainActor
 final class InkAnywhereMac {
@@ -38,9 +40,11 @@ final class InkAnywhereMac {
     channel.onEvent = { [weak self] event, arguments in self?.handle(event, arguments) }
     self.channel = channel
     if declaresServices {
+      // macOS does not say which app asked for a service (any app can,
+      // with NSPerformService), so a service remembers no person.
       let provider = InkServiceProvider(
         makeModel: { [unowned self] mode, text, delivery in
-          self.makeModel(mode: mode, prefill: text, delivery: delivery)
+          self.makeModel(mode: mode, prefill: text, sourceApp: nil, delivery: delivery)
         },
         present: { [unowned self] model, onClosed in
           let controller = self.present(model, onClosed: onClosed)
@@ -61,7 +65,10 @@ final class InkAnywhereMac {
   /// Opens the panel (the shortcut, the menu bar item).
   func showPanel(mode: AnywhereMode) {
     guard panel == nil else { return }
-    present(makeModel(mode: mode, prefill: nil, delivery: .copy)) {}
+    present(
+      makeModel(
+        mode: mode, prefill: nil, sourceApp: InkAnywhereMac.frontmostApp(), delivery: .copy)
+    ) {}
   }
 
   func showApp() {
@@ -120,11 +127,12 @@ final class InkAnywhereMac {
   // MARK: - Panel
 
   private func makeModel(
-    mode: AnywhereMode, prefill: String?, delivery: InkAnywhereModel.Delivery
+    mode: AnywhereMode, prefill: String?, sourceApp: String?,
+    delivery: InkAnywhereModel.Delivery
   ) -> InkAnywhereModel {
     InkAnywhereModel(
       channel: channel ?? InkUnavailableChannel(), mode: mode, prefill: prefill,
-      sourceApp: InkAnywhereMac.frontmostApp(), delivery: delivery)
+      sourceApp: sourceApp, delivery: delivery)
   }
 
   @discardableResult
@@ -141,8 +149,9 @@ final class InkAnywhereMac {
     return controller
   }
 
-  /// The app the person is in (its bundle id, no permission needed), for
-  /// the person last used there. Never Fuzzzy Ink itself.
+  /// The app the person is in when they press the shortcut or the menu bar
+  /// item (its bundle id, no permission needed), for the person last used
+  /// there. Never Fuzzzy Ink itself. Not used for a service request.
   static func frontmostApp() -> String? {
     guard let id = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
       id != Bundle.main.bundleIdentifier

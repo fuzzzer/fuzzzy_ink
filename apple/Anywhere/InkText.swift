@@ -70,7 +70,11 @@ struct InkText {
   var copiedPressPaste: String { word("anywhereNativeCopiedPressPaste") }
   var replaced: String { word("anywhereSheetPutInPlace") }
   var draftNote: String { word("infoOtherAppsLine3") }
+  var readToTheEnd: String { word("anywhereSheetReadToTheEnd") }
+  /// "312 characters", the number already written for the language.
+  func length(_ count: String) -> String { word("anywhereSheetSelectedLength", count) }
 
+  var check: String { word("anywhereNativeCheck") }
   var paste: String { word("openPasteIt") }
   var pasteHint: String { word("openPasteItHint") }
   func openFrom(_ name: String) -> String { word("openLinkTitle", name) }

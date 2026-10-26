@@ -22,9 +22,11 @@
 
 /* Begin PBXBuildFile section */
 		0252F45C16AF3CEEA49512B9 /* InkServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A64145A79064B5418196657 /* InkServiceProvider.swift */; };
+		0A0FB00B80F91E34133955A3 /* InkSealedTextViewIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */; };
 		1239EBC142B8B1CB013CFAD8 /* InkPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F1E0067AE7686ED2EA9FD5 /* InkPanel.swift */; };
 		1CA24486DB3C08DB58284D61 /* InkAnywhereView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72542263F3576C8CEE4CA70 /* InkAnywhereView.swift */; };
 		22D52931148246E68F1C25A2 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA31840B017CE62B6782217 /* Pods_RunnerTests.framework */; };
+		25735CAC1F19E2EFB0EEEB1A /* InkSealedTextViewMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */; };
 		331C80D8294CF71000263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C80D7294CF71000263BE5 /* RunnerTests.swift */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
@@ -41,6 +43,7 @@
 		9BB5C81D6426CF713ED72CCA /* InkStatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4808B598E18D411E80FD56 /* InkStatusViews.swift */; };
 		A3AB7C212EFC3ACAC5600D6E /* InkText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6B0A8311523775C3B8B42D /* InkText.swift */; };
 		AC22F7F54BBF14A23A899EF8 /* InkAnywhereChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADEFDA881941DA5F294C01A /* InkAnywhereChannel.swift */; };
+		D0BD58D046104F86E467C81E /* InkSealedTextBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */; };
 		D9A827C0798E3E2DEA6CADE8 /* InkLockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AAAAAE6808E46CD8B2A82 /* InkLockViews.swift */; };
 		D9AFEEF74DD35A592BEC8167 /* InkAnywhereMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5885BA0436F2F4A225E7759B /* InkAnywhereMac.swift */; };
 		E263EC9D1DA4829CF488EABB /* Anywhere.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6726757D41F7DEF89B60B374 /* Anywhere.strings */; };
@@ -88,6 +91,7 @@
 		1C68F86C9BA051E5B1C3EA4D /* Services-development.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Services-development.plist"; sourceTree = "<group>"; };
 		24477EF9A6A8666076A10E9A /* Pods-RunnerTests.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-development.xcconfig"; sourceTree = "<group>"; };
 		25FCB1998D2F2F9307886933 /* Pods-Runner.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-production.xcconfig"; sourceTree = "<group>"; };
+		2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextBox.swift; sourceTree = "<group>"; };
 		303866F4F1EEA1C4A91BEF9D /* Pods-RunnerTests.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-staging.xcconfig"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -138,8 +142,10 @@
 		C2AAED7F09DA3D644BCFF17F /* Pods-RunnerTests.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		C2CEAF6326C7109E6F6044A0 /* ka */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ka; path = ka.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		C3613FA5CDD1BBDCA1B32D65 /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
+		CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewIOS.swift; sourceTree = "<group>"; };
 		D712456BD409C6DD5581D909 /* Pods-Runner.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-staging.xcconfig"; sourceTree = "<group>"; };
 		E0F1E0067AE7686ED2EA9FD5 /* InkPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkPanel.swift; sourceTree = "<group>"; };
+		E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewMac.swift; sourceTree = "<group>"; };
 		F1A2B3C4D5E6F70812345611 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Runner/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F213D4CC6B8EEB4129E7FDAA /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
 		F8DF67238A7B0EC65026AF9C /* InkUnlockView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkUnlockView.swift; sourceTree = "<group>"; };
@@ -197,6 +203,9 @@
 				F8DF67238A7B0EC65026AF9C /* InkUnlockView.swift */,
 				C87530944DF573C275F01F5B /* Strings */,
 				6F1C68A5E27B17845A47A324 /* InkAnywhereContract.swift */,
+				2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */,
+				E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */,
+				CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */,
 			);
 			name = Anywhere;
 			path = ../apple/Anywhere;
@@ -598,6 +607,9 @@
 				0252F45C16AF3CEEA49512B9 /* InkServiceProvider.swift in Sources */,
 				43199A399F59FBDFEE753998 /* InkStatusItem.swift in Sources */,
 				47D9F7006E7017762DC16523 /* InkAnywhereContract.swift in Sources */,
+				D0BD58D046104F86E467C81E /* InkSealedTextBox.swift in Sources */,
+				25735CAC1F19E2EFB0EEEB1A /* InkSealedTextViewMac.swift in Sources */,
+				0A0FB00B80F91E34133955A3 /* InkSealedTextViewIOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,6 +1111,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1193,6 +1206,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-development";
@@ -1379,6 +1393,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Profile-development";

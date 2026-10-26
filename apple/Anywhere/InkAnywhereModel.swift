@@ -70,7 +70,10 @@ final class InkAnywhereModel: ObservableObject {
   @Published private(set) var strings = InkText()
   @Published private(set) var canUseBiometrics = false
   @Published private(set) var people: [AnywherePerson] = []
-  @Published var selectedPersonID: String?
+  /// Set by [choose] (or a remembered or only person after `people`).
+  @Published private(set) var selectedPersonID: String?
+  /// The person picked a name in this sheet or panel themselves.
+  @Published private(set) var hasChosenPerson = false
   @Published var message = ""
   @Published var password = ""
   @Published var lockedText = ""
@@ -78,6 +81,12 @@ final class InkAnywhereModel: ObservableObject {
   @Published private(set) var waitUntil: Date?
   /// Text that came from another app's selection: show the draft note.
   @Published private(set) var cameFromSelection = false
+  /// All of the text another app sent has been on screen (the message box
+  /// says when it was scrolled to its end). Always true for typed text.
+  @Published private(set) var hasSeenWholeMessage = true
+  /// Open spends the message: armed a moment after "Open the message from
+  /// Nino?" shows, so the press (or Return) that checked it cannot spend it.
+  @Published private(set) var isOpenArmed = false
   /// Counts successes, for the haptic and the symbol bounce.
   @Published private(set) var successes = 0
 
@@ -104,6 +113,7 @@ final class InkAnywhereModel: ObservableObject {
       if mode == .lock {
         message = prefill
         cameFromSelection = true
+        hasSeenWholeMessage = false
       } else {
         lockedText = prefill
       }
@@ -123,6 +133,18 @@ final class InkAnywhereModel: ObservableObject {
 
   /// The sealed output, once locked.
   var sealedOutput: String? { output }
+
+  /// Lock may run: a person is chosen and every word it would take has been
+  /// on screen (security review 2026-10-26).
+  var canLock: Bool { selectedPerson != nil && hasSeenWholeMessage }
+
+  /// Return locks only after the person picked the name themselves, and
+  /// never for text another app sent: a remembered or only person is a
+  /// hint, and a slip of Return must not lock for them.
+  var returnLocks: Bool { canLock && hasChosenPerson && !cameFromSelection }
+
+  /// How long Open waits after "Open the message from…?" shows.
+  static let openArmDelay: UInt64 = 600_000_000
 
   // MARK: - Intents
 
@@ -174,8 +196,20 @@ final class InkAnywhereModel: ObservableObject {
     await afterUnlock()
   }
 
+  /// The person picked [id] in the list.
+  func choose(_ id: String) {
+    guard people.contains(where: { $0.id == id }) else { return }
+    selectedPersonID = id
+    hasChosenPerson = true
+  }
+
+  /// The message box was scrolled to its end (or all of it fits).
+  func sawWholeMessage() {
+    if !hasSeenWholeMessage { hasSeenWholeMessage = true }
+  }
+
   func lock() async {
-    guard let person = selectedPerson else { return }
+    guard canLock, let person = selectedPerson else { return }
     let text = message
     guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
       note = strings.writeSomethingFirst
@@ -232,7 +266,7 @@ final class InkAnywhereModel: ObservableObject {
       switch kind {
       case .message:
         if let name = answer["personName"] as? String {
-          step = .confirming(name: name)
+          confirm(name)
         } else {
           step = .problem(.notFromYourPeople, name: "")
         }
@@ -256,7 +290,8 @@ final class InkAnywhereModel: ObservableObject {
   /// spent, the text kept in that person's history) and shown on the app's
   /// own private screen. The text never comes here.
   func open() async {
-    guard case .confirming(let name) = step else { return }
+    guard case .confirming(let name) = step, isOpenArmed else { return }
+    isOpenArmed = false
     step = .opening
     do {
       let opened = try await channel.call("open", ["text": lockedText])
@@ -294,6 +329,17 @@ final class InkAnywhereModel: ObservableObject {
       if !handleAccess(refusal) { step = .problem(.failed, name: "") }
     } catch {
       step = .problem(.failed, name: "")
+    }
+  }
+
+  /// "Open the message from {name}?", with Open armed a moment later.
+  private func confirm(_ name: String) {
+    isOpenArmed = false
+    step = .confirming(name: name)
+    Task { [weak self] in
+      try? await Task.sleep(nanoseconds: InkAnywhereModel.openArmDelay)
+      guard let self, case .confirming = self.step else { return }
+      self.isOpenArmed = true
     }
   }
 
@@ -336,6 +382,7 @@ final class InkAnywhereModel: ObservableObject {
     func preview(_ step: AnywhereStep, people: [AnywherePerson] = [], note: String? = nil) {
       self.people = people
       selectedPersonID = people.first?.id
+      isOpenArmed = true
       self.note = note
       if case .lockedFor = step { output = "https://ink.fuzzzycore.com/message#AwEC" }
       self.step = step
@@ -406,7 +453,10 @@ final class InkAnywhereModel: ObservableObject {
       let answer = try await channel.call("people", arguments)
       people = (answer["people"] as? [Any] ?? []).compactMap(AnywherePerson.init)
       if selectedPerson == nil {
-        selectedPersonID = (people.first { $0.isLastUsedHere } ?? people.first)?.id
+        // Only someone remembered for this app, or the only person: never
+        // a guess (security review 2026-10-26). Lock waits for a choice.
+        selectedPersonID = (people.first { $0.isLastUsedHere } ?? people.onlyOne)?.id
+        hasChosenPerson = false
       }
       step = .choosing
     } catch let refusal as AnywhereRefusal {
@@ -439,4 +489,9 @@ final class InkAnywhereModel: ObservableObject {
     }
     return true
   }
+}
+
+extension Array {
+  /// The one element, when there is exactly one.
+  fileprivate var onlyOne: Element? { count == 1 ? first : nil }
 }

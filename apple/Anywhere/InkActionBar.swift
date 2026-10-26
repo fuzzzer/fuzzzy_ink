@@ -3,7 +3,8 @@ import SwiftUI
 /// The step's actions, in one glass group: the main button keeps its glass
 /// id from step to step, so Unlock becomes Lock and Lock becomes Open by
 /// morphing (iOS 26 / macOS 26), not by swapping. Return presses the main
-/// button, Esc closes.
+/// button where that cannot slip: Lock only after the person picked the
+/// name, Open only once armed. Esc closes.
 @available(iOS 15.0, macOS 12.0, *)
 struct InkActionBar: View {
   @ObservedObject var model: InkAnywhereModel
@@ -30,7 +31,7 @@ struct InkActionBar: View {
         }
         .inkProminentButton()
         .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
+        .modifier(DefaultAction(isOn: primary.isDefault))
         .disabled(!primary.isEnabled)
         .inkGlassID(GlassID.primary, in: glass)
       }
@@ -42,7 +43,21 @@ struct InkActionBar: View {
     let title: String
     let symbol: String
     var isEnabled = true
+    /// Return presses it.
+    var isDefault = true
     let action: () -> Void
+  }
+
+  private struct DefaultAction: ViewModifier {
+    let isOn: Bool
+
+    func body(content: Content) -> some View {
+      if isOn {
+        content.keyboardShortcut(.defaultAction)
+      } else {
+        content
+      }
+    }
   }
 
   private var strings: InkText { model.strings }
@@ -60,15 +75,18 @@ struct InkActionBar: View {
         action: run(model.unlockWithPassword))
     case .choosing:
       return Action(
-        title: strings.lock, symbol: "lock.fill", isEnabled: model.selectedPerson != nil,
-        action: run(model.lock))
+        title: strings.lock, symbol: "lock.fill", isEnabled: model.canLock,
+        isDefault: model.returnLocks, action: run(model.lock))
     case .pasting:
+      // Check only: whose it is. It spends nothing, so it is not "Open".
       return Action(
-        title: strings.open, symbol: "lock.open.fill",
+        title: strings.check, symbol: "magnifyingglass",
         isEnabled: !model.lockedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
         action: run { await model.takeLockedText(model.lockedText) })
     case .confirming:
-      return Action(title: strings.open, symbol: "lock.open.fill", action: run(model.open))
+      return Action(
+        title: strings.open, symbol: "lock.open.fill", isEnabled: model.isOpenArmed,
+        action: run(model.open))
     case .lockedFor, .shown:
       return Action(title: strings.close, symbol: "checkmark", action: finish)
     default:
