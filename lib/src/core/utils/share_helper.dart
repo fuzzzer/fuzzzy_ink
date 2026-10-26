@@ -34,14 +34,16 @@ class ShareHelper {
     return result.status == ShareResultStatus.success;
   }
 
-  /// As [share].
+  /// As [share]. [fileNameOverrides] names files made from data.
   static Future<bool> shareXFiles(
     List<XFile> files, {
     required BuildContext context,
+    List<String>? fileNameOverrides,
   }) async {
     final result = await Share.shareXFiles(
       files,
       sharePositionOrigin: _originFromContext(context),
+      fileNameOverrides: fileNameOverrides,
     );
     return result.status == ShareResultStatus.success;
   }
@@ -51,7 +53,9 @@ class ShareHelper {
 
   /// Shares [text] as a file named [fileName] ([mimeType], plain text by
   /// default). share_plus writes it to the app's temporary folder first;
-  /// pass only sealed text.
+  /// pass only sealed text. The name goes as an override: a file made from
+  /// data has no name of its own, so share_plus named it after its type
+  /// (`<random>.so` for a `.fuzz`, which then no longer opened in the app).
   static Future<bool> shareTextAsFile(
     String text, {
     required String fileName,
@@ -67,6 +71,7 @@ class ShareHelper {
         ),
       ],
       context: context,
+      fileNameOverrides: [fileName],
     );
   }
 }
