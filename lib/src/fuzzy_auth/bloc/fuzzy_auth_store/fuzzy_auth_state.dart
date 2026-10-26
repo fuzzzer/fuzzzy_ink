@@ -25,6 +25,10 @@ class FuzzyAuthState {
   /// the next unlock.
   final bool lockedByUser;
 
+  /// Which quick unlock the device has, so the screens name it ("Use Face
+  /// ID"); read at launch.
+  final BiometricKind biometricKind;
+
   const FuzzyAuthState._({
     required this.status,
     this.verificationFailed = false,
@@ -34,6 +38,7 @@ class FuzzyAuthState {
     this.lockoutRemaining = Duration.zero,
     this.previousDataFound = false,
     this.lockedByUser = false,
+    this.biometricKind = BiometricKind.other,
   });
 
   const FuzzyAuthState.initial()
@@ -44,7 +49,8 @@ class FuzzyAuthState {
         biometricReset = false,
         lockoutRemaining = Duration.zero,
         previousDataFound = false,
-        lockedByUser = false;
+        lockedByUser = false,
+        biometricKind = BiometricKind.other;
 
   bool get isLockedOut => lockoutRemaining > Duration.zero;
 
@@ -57,6 +63,7 @@ class FuzzyAuthState {
     Duration? lockoutRemaining,
     bool? previousDataFound,
     bool? lockedByUser,
+    BiometricKind? biometricKind,
   }) {
     return FuzzyAuthState._(
       status: status ?? this.status,
@@ -67,6 +74,7 @@ class FuzzyAuthState {
       lockoutRemaining: lockoutRemaining ?? this.lockoutRemaining,
       previousDataFound: previousDataFound ?? this.previousDataFound,
       lockedByUser: lockedByUser ?? this.lockedByUser,
+      biometricKind: biometricKind ?? this.biometricKind,
     );
   }
 }

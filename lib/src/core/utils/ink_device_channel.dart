@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 /// runners): whether Face ID or Touch ID is enrolled, the system print
 /// dialog for one image, and (iOS) the system "Save to Files" dialog for one
 /// file. Elsewhere [isAvailable] is false and callers keep their own way.
+/// Android answers only [biometricKind] ([hasBiometricKind]).
 class InkDeviceChannel {
   const InkDeviceChannel();
 
@@ -14,6 +15,17 @@ class InkDeviceChannel {
   static bool get isAvailable =>
       defaultTargetPlatform == TargetPlatform.iOS ||
       defaultTargetPlatform == TargetPlatform.macOS;
+
+  /// iOS, macOS and Android say which quick unlock they have.
+  static bool get hasBiometricKind =>
+      isAvailable || defaultTargetPlatform == TargetPlatform.android;
+
+  /// `faceId` or `touchId` (iOS, macOS: the hardware, enrolled or not),
+  /// `fingerprint` or `face` (Android, when it has only that one), else
+  /// `other`.
+  Future<String?> biometricKind() => _channel.invokeMethod<String>(
+        'biometricKind',
+      );
 
   /// Face ID or Touch ID present and enrolled; a passcode alone is not.
   Future<bool> hasStrongBiometrics() async =>

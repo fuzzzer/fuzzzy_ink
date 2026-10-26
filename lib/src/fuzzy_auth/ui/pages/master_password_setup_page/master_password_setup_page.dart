@@ -259,14 +259,17 @@ class _MasterPasswordSetupViewState extends State<MasterPasswordSetupView> {
     final space = context.fuzzzySpace;
     final cubit = context.read<MasterPasswordSetupCubit>();
     final isLoading = state.status.isLoading;
+    final biometricKind = context.select<FuzzyAuthStore, BiometricKind>(
+      (store) => store.state.biometricKind,
+    );
 
     return AccessPage(
       qaId: 'setup.quickUnlock',
       bottom: [
         FuzzzyButton(
-          label: localizations.accessUseBio,
+          label: localizations.accessUseBio(biometricKind.l10nKey),
           size: FuzzzyButtonSize.l,
-          icon: const Icon(Icons.fingerprint),
+          icon: Icon(biometricKind.icon),
           loading: isLoading,
           qaId: 'setup.useBio',
           onPressed: isLoading
@@ -288,11 +291,14 @@ class _MasterPasswordSetupViewState extends State<MasterPasswordSetupView> {
       children: [
         _steps(context, state, 3, localizations.accessStepQuickUnlock),
         SizedBox(height: space.xl),
-        const Center(
-          child: HeroGlyph(icon: Icons.fingerprint, qaId: 'setup.bio'),
+        Center(
+          child: HeroGlyph(icon: biometricKind.icon, qaId: 'setup.bio'),
         ),
         SizedBox(height: space.l),
-        AccessTitle(localizations.accessBioTitle, center: true),
+        AccessTitle(
+          localizations.accessBioTitle(biometricKind.l10nKey),
+          center: true,
+        ),
         SizedBox(height: space.s),
         AccessLine(localizations.accessBioLine, center: true),
         SizedBox(height: space.l),

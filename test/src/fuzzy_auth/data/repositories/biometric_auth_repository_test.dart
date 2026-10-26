@@ -371,4 +371,56 @@ void main() {
       expect(await repository.canUseBiometrics(), isTrue);
     });
   });
+
+  group("the device's quick unlock kind (final regression 2026-10-26)", () {
+    const channel = MethodChannel('com.fuzzzycore.ink/device');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    var asked = 0;
+
+    void answer(Object? Function() reply) {
+      asked = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method != 'biometricKind') return null;
+        asked++;
+        return reply();
+      });
+    }
+
+    tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+    for (final (platform, reply, kind) in [
+      (TargetPlatform.iOS, 'faceId', BiometricKind.faceId),
+      (TargetPlatform.iOS, 'touchId', BiometricKind.touchId),
+      (TargetPlatform.macOS, 'touchId', BiometricKind.touchId),
+      (TargetPlatform.android, 'fingerprint', BiometricKind.fingerprint),
+      (TargetPlatform.android, 'face', BiometricKind.face),
+      (TargetPlatform.android, 'other', BiometricKind.other),
+      (TargetPlatform.iOS, 'opticId', BiometricKind.other),
+    ]) {
+      test('${platform.name} answering "$reply" is $kind, asked once',
+          () async {
+        debugDefaultTargetPlatformOverride = platform;
+        build({});
+        answer(() => reply);
+        expect(await repository.biometricKind(), kind);
+        expect(await repository.biometricKind(), kind);
+        expect(asked, 1);
+      });
+    }
+
+    test('a platform that does not say, or an error, is the generic words',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      build({});
+      answer(() => 'faceId');
+      expect(await repository.biometricKind(), BiometricKind.other);
+      expect(asked, 0);
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      build({});
+      answer(() => throw PlatformException(code: 'boom'));
+      expect(await repository.biometricKind(), BiometricKind.other);
+    });
+  });
 }

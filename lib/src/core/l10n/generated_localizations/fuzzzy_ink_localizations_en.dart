@@ -1255,7 +1255,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get safeOpensWithOwn => 'Opens with your safe password.';
 
   @override
-  String get safeOpenWithFingerprint => 'Open with fingerprint';
+  String safeOpenWithFingerprint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Open with Face ID',
+        'touchId': 'Open with Touch ID',
+        'fingerprint': 'Open with fingerprint',
+        'face': 'Open with face unlock',
+        'other': 'Open with fingerprint or face',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get safeUseMasterPassword => 'Use master password';
@@ -1624,7 +1636,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessStepQuickUnlock => 'Quick unlock';
 
   @override
-  String get accessBioTitle => 'Unlock with your fingerprint?';
+  String accessBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Unlock with Face ID?',
+        'touchId': 'Unlock with Touch ID?',
+        'fingerprint': 'Unlock with your fingerprint?',
+        'face': 'Unlock with your face?',
+        'other': 'Unlock with your fingerprint or face?',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessBioLine => 'Your password always works too.';
@@ -1633,7 +1657,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessBioTip => 'Locks itself after 5 minutes away';
 
   @override
-  String get accessUseBio => 'Use fingerprint or face';
+  String accessUseBio(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Use Face ID',
+        'touchId': 'Use Touch ID',
+        'fingerprint': 'Use fingerprint',
+        'face': 'Use face unlock',
+        'other': 'Use fingerprint or face',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessNotNow => 'Not now';
@@ -1666,8 +1702,24 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessFileWaiting => 'A file is waiting. Unlock to open it.';
 
   @override
-  String get accessBioChanged =>
-      'Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.';
+  String accessBioChanged(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId':
+            'Face ID changed, so quick unlock is off. Turn it on again in Settings.',
+        'touchId':
+            'Touch ID changed, so quick unlock is off. Turn it on again in Settings.',
+        'fingerprint':
+            'Your fingerprints changed, so quick unlock is off. Turn it on again in Settings.',
+        'face':
+            'Your face unlock changed, so quick unlock is off. Turn it on again in Settings.',
+        'other':
+            'Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessBioReset =>
@@ -1717,7 +1769,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessNoKeyYet => 'None yet';
 
   @override
-  String get accessFingerprintOrFace => 'Fingerprint or face';
+  String accessFingerprintOrFace(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID',
+        'touchId': 'Touch ID',
+        'fingerprint': 'Fingerprint',
+        'face': 'Face unlock',
+        'other': 'Fingerprint or face',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessNotOnThisDevice => 'Not on this device';
@@ -1797,13 +1861,37 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get accessTurnOnBioTitle => 'Turn on fingerprint or face';
+  String accessTurnOnBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Turn on Face ID',
+        'touchId': 'Turn on Touch ID',
+        'fingerprint': 'Turn on fingerprint',
+        'face': 'Turn on face unlock',
+        'other': 'Turn on fingerprint or face',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessTurnOnBioLine => 'Type your master password once.';
 
   @override
-  String get accessTurnOnSafeBioTitle => 'Fingerprint for My safe';
+  String accessTurnOnSafeBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID for My safe',
+        'touchId': 'Touch ID for My safe',
+        'fingerprint': 'Fingerprint for My safe',
+        'face': 'Face unlock for My safe',
+        'other': 'Fingerprint or face for My safe',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessTurnOnSafeBioLine => 'Type My safe\'s own password once.';
@@ -1812,7 +1900,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessTurnOn => 'Turn on';
 
   @override
-  String get accessBioOn => 'Fingerprint or face is on.';
+  String accessBioOn(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID is on.',
+        'touchId': 'Touch ID is on.',
+        'fingerprint': 'Fingerprint is on.',
+        'face': 'Face unlock is on.',
+        'other': 'Fingerprint or face is on.',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessMySafePassword => 'My safe\'s password';

@@ -167,6 +167,9 @@ class _VaultUnlockPageState extends State<VaultUnlockPage> {
     final isBusy = state.authState == VaultAuthEnum.unlocking ||
         state.status == StateStatus.loading;
     final hasBiometrics = state.biometricEnabled && !isNew;
+    final biometricKind = context.select<FuzzyAuthStore, BiometricKind>(
+      (store) => store.state.biometricKind,
+    );
     final canRecover = ownPassword && state.recoverable;
 
     final passwordLabel = ownPassword
@@ -209,8 +212,8 @@ class _VaultUnlockPageState extends State<VaultUnlockPage> {
         SizedBox(height: space.xl),
         if (hasBiometrics) ...[
           FuzzzyButton(
-            label: localizations.safeOpenWithFingerprint,
-            icon: const Icon(Icons.fingerprint),
+            label: localizations.safeOpenWithFingerprint(biometricKind.l10nKey),
+            icon: Icon(biometricKind.icon),
             qaId: 'safe.fingerprint',
             onPressed: isBusy
                 ? null

@@ -50,6 +50,8 @@ void main() {
         .thenAnswer((_) async => false);
     when(() => mockBiometricRepo.isEnabled(any()))
         .thenAnswer((_) async => false);
+    when(() => mockBiometricRepo.biometricKind())
+        .thenAnswer((_) async => BiometricKind.other);
     when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
     when(() => mockService.close())
         .thenAnswer((_) async => const CryptoCoreSuccess(null));
@@ -149,6 +151,20 @@ void main() {
             .having((s) => s.status.hasAccess, 'hasAccess', isFalse),
       ],
       verify: (_) => verifyNever(() => mockChatAuth.unlock(any())),
+    );
+
+    blocTest<FuzzyAuthStore, FuzzyAuthState>(
+      "carries the device's quick unlock kind, so the screens can say "
+      '"Face ID" (final regression 2026-10-26)',
+      setUp: () => when(() => mockBiometricRepo.biometricKind())
+          .thenAnswer((_) async => BiometricKind.faceId),
+      build: buildStore,
+      act: (store) => store.checkAuthStatus(),
+      expect: () => [
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.locked)
+            .having((s) => s.biometricKind, 'kind', BiometricKind.faceId),
+      ],
     );
 
     blocTest<FuzzyAuthStore, FuzzyAuthState>(

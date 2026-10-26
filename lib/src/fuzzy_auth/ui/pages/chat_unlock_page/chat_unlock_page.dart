@@ -196,15 +196,16 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
             if (_showBiometricChanged) ...[
               SizedBox(height: space.m),
               TipLine(
-                icon: Icons.fingerprint,
-                text: localizations.accessBioChanged,
+                icon: state.biometricKind.icon,
+                text:
+                    localizations.accessBioChanged(state.biometricKind.l10nKey),
                 qaId: 'unlock.bioChanged',
               ),
             ],
             if (_showBiometricReset) ...[
               SizedBox(height: space.m),
               TipLine(
-                icon: Icons.fingerprint,
+                icon: state.biometricKind.icon,
                 text: localizations.accessBioReset,
                 qaId: 'unlock.bioReset',
               ),
@@ -269,10 +270,11 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
               if (state.biometricEnabled) ...[
                 SizedBox(height: space.s),
                 FuzzzyButton(
-                  label: localizations.accessUseBio,
+                  label:
+                      localizations.accessUseBio(state.biometricKind.l10nKey),
                   variant: FuzzzyButtonVariant.secondary,
                   size: FuzzzyButtonSize.l,
-                  icon: const Icon(Icons.fingerprint),
+                  icon: Icon(state.biometricKind.icon),
                   qaId: 'unlock.bio',
                   onPressed: isLoading
                       ? null

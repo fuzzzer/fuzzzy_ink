@@ -1346,9 +1346,14 @@
   "@safeOpensWithOwn": {
     "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
   },
-  "safeOpenWithFingerprint": "Open with fingerprint",
+  "safeOpenWithFingerprint": "{kind, select, faceId{Open with Face ID} touchId{Open with Touch ID} fingerprint{Open with fingerprint} face{Open with face unlock} other{Open with fingerprint or face}}",
   "@safeOpenWithFingerprint": {
-    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+    "description": "My safe's unlock screen button. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "safeUseMasterPassword": "Use master password",
   "@safeUseMasterPassword": {
@@ -1842,9 +1847,14 @@
   "@accessStepQuickUnlock": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessBioTitle": "Unlock with your fingerprint?",
+  "accessBioTitle": "{kind, select, faceId{Unlock with Face ID?} touchId{Unlock with Touch ID?} fingerprint{Unlock with your fingerprint?} face{Unlock with your face?} other{Unlock with your fingerprint or face?}}",
   "@accessBioTitle": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "First run, quick-unlock step title. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessBioLine": "Your password always works too.",
   "@accessBioLine": {
@@ -1854,9 +1864,14 @@
   "@accessBioTip": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessUseBio": "Use fingerprint or face",
+  "accessUseBio": "{kind, select, faceId{Use Face ID} touchId{Use Touch ID} fingerprint{Use fingerprint} face{Use face unlock} other{Use fingerprint or face}}",
   "@accessUseBio": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Button on the quick-unlock step and the lock screen. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessNotNow": "Not now",
   "@accessNotNow": {
@@ -1898,9 +1913,14 @@
   "@accessFileWaiting": {
     "description": "Lock screen: a .fuzz file another app handed over waits for the unlock (the file version of accessLinkWaiting)."
   },
-  "accessBioChanged": "Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.",
+  "accessBioChanged": "{kind, select, faceId{Face ID changed, so quick unlock is off. Turn it on again in Settings.} touchId{Touch ID changed, so quick unlock is off. Turn it on again in Settings.} fingerprint{Your fingerprints changed, so quick unlock is off. Turn it on again in Settings.} face{Your face unlock changed, so quick unlock is off. Turn it on again in Settings.} other{Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.}}",
   "@accessBioChanged": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Lock screen note: the device's enrolled biometrics changed. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessBioReset": "An update turned quick unlock off to make it safer. Turn it on again in Settings.",
   "@accessBioReset": {
@@ -1960,9 +1980,14 @@
   "@accessNoKeyYet": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessFingerprintOrFace": "Fingerprint or face",
+  "accessFingerprintOrFace": "{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{Fingerprint} face{Face unlock} other{Fingerprint or face}}",
   "@accessFingerprintOrFace": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Settings row title for quick unlock. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessNotOnThisDevice": "Not on this device",
   "@accessNotOnThisDevice": {
@@ -2073,17 +2098,27 @@
       }
     }
   },
-  "accessTurnOnBioTitle": "Turn on fingerprint or face",
+  "accessTurnOnBioTitle": "{kind, select, faceId{Turn on Face ID} touchId{Turn on Touch ID} fingerprint{Turn on fingerprint} face{Turn on face unlock} other{Turn on fingerprint or face}}",
   "@accessTurnOnBioTitle": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Settings sheet title: turn quick unlock on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessTurnOnBioLine": "Type your master password once.",
   "@accessTurnOnBioLine": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessTurnOnSafeBioTitle": "Fingerprint for My safe",
+  "accessTurnOnSafeBioTitle": "{kind, select, faceId{Face ID for My safe} touchId{Touch ID for My safe} fingerprint{Fingerprint for My safe} face{Face unlock for My safe} other{Fingerprint or face for My safe}}",
   "@accessTurnOnSafeBioTitle": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Settings row and sheet title: quick unlock for My safe. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessTurnOnSafeBioLine": "Type My safe's own password once.",
   "@accessTurnOnSafeBioLine": {
@@ -2093,9 +2128,14 @@
   "@accessTurnOn": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessBioOn": "Fingerprint or face is on.",
+  "accessBioOn": "{kind, select, faceId{Face ID is on.} touchId{Touch ID is on.} fingerprint{Fingerprint is on.} face{Face unlock is on.} other{Fingerprint or face is on.}}",
   "@accessBioOn": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+    "description": "Toast after quick unlock was turned on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
   },
   "accessMySafePassword": "My safe's password",
   "@accessMySafePassword": {

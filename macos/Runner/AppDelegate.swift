@@ -62,12 +62,26 @@ final class InkIncoming {
 ///
 /// - `hasStrongBiometrics`: Touch ID is there and enrolled. The biometric
 ///   storage plugin's own check also passes with only the login password.
+/// - `biometricKind`: `touchId` on a Mac with Touch ID, else `other`.
 /// - `printImage`: the system print dialog for one image (the recovery key
 ///   sheet), instead of the share menu.
 /// ("Save as file" already uses the system save panel.)
 final class InkDevice {
   static let channelName = "com.fuzzzycore.ink/device"
   static let shared = InkDevice()
+
+  /// The hardware's kind; `biometryType` is set only once a policy was
+  /// evaluated, enrolled or not.
+  static func biometricKind() -> String {
+    let context = LAContext()
+    var error: NSError?
+    _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+    switch context.biometryType {
+    case .faceID: return "faceId"
+    case .touchID: return "touchId"
+    default: return "other"
+    }
+  }
 
   private weak var window: NSWindow?
 
@@ -86,6 +100,8 @@ final class InkDevice {
       var error: NSError?
       result(
         LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error))
+    case "biometricKind":
+      result(InkDevice.biometricKind())
     case "printImage":
       guard let path = arguments?["path"] as? String,
         let image = NSImage(contentsOfFile: path)

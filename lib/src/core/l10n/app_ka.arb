@@ -1283,9 +1283,9 @@
   "@safeOpensWithOwn": {
     "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
   },
-  "safeOpenWithFingerprint": "თითის ანაბეჭდით გახსნა",
+  "safeOpenWithFingerprint": "{kind, select, faceId{Face ID-ით გახსნა} touchId{Touch ID-ით გახსნა} fingerprint{თითის ანაბეჭდით გახსნა} face{სახით გახსნა} other{თითის ანაბეჭდით ან სახით გახსნა}}",
   "@safeOpenWithFingerprint": {
-    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "safeUseMasterPassword": "მთავარი პაროლის გამოყენება",
   "@safeUseMasterPassword": {
@@ -1739,9 +1739,9 @@
   "@accessStepQuickUnlock": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessBioTitle": "გავხსნათ თითის ანაბეჭდით?",
+  "accessBioTitle": "{kind, select, faceId{გავხსნათ Face ID-ით?} touchId{გავხსნათ Touch ID-ით?} fingerprint{გავხსნათ თითის ანაბეჭდით?} face{გავხსნათ სახით?} other{გავხსნათ თითის ანაბეჭდით ან სახით?}}",
   "@accessBioTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessBioLine": "პაროლიც ყოველთვის იმუშავებს.",
   "@accessBioLine": {
@@ -1751,9 +1751,9 @@
   "@accessBioTip": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessUseBio": "თითის ანაბეჭდი ან სახე",
+  "accessUseBio": "{kind, select, faceId{Face ID-ის გამოყენება} touchId{Touch ID-ის გამოყენება} fingerprint{თითის ანაბეჭდის გამოყენება} face{სახის გამოყენება} other{თითის ანაბეჭდი ან სახე}}",
   "@accessUseBio": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessNotNow": "ახლა არა",
   "@accessNotNow": {
@@ -1795,9 +1795,9 @@
   "@accessFileWaiting": {
     "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
-  "accessBioChanged": "თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.",
+  "accessBioChanged": "{kind, select, faceId{Face ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} touchId{Touch ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} fingerprint{თითის ანაბეჭდები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} face{სახით განბლოკვა შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.} other{თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.}}",
   "@accessBioChanged": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessBioReset": "განახლებამ სწრაფი განბლოკვა უსაფრთხოებისთვის გამორთო. ხელახლა ჩართეთ პარამეტრებში.",
   "@accessBioReset": {
@@ -1859,9 +1859,9 @@
   "@accessNoKeyYet": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessFingerprintOrFace": "თითის ანაბეჭდი ან სახე",
+  "accessFingerprintOrFace": "{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{თითის ანაბეჭდი} face{სახით განბლოკვა} other{თითის ანაბეჭდი ან სახე}}",
   "@accessFingerprintOrFace": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessNotOnThisDevice": "ამ მოწყობილობაზე არ არის",
   "@accessNotOnThisDevice": {
@@ -1959,17 +1959,17 @@
   "@accessVersionFooter": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessTurnOnBioTitle": "თითის ანაბეჭდის ან სახის ჩართვა",
+  "accessTurnOnBioTitle": "{kind, select, faceId{Face ID-ის ჩართვა} touchId{Touch ID-ის ჩართვა} fingerprint{თითის ანაბეჭდის ჩართვა} face{სახით განბლოკვის ჩართვა} other{თითის ანაბეჭდის ან სახის ჩართვა}}",
   "@accessTurnOnBioTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessTurnOnBioLine": "ერთხელ აკრიფეთ მთავარი პაროლი.",
   "@accessTurnOnBioLine": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessTurnOnSafeBioTitle": "თითის ანაბეჭდი ჩემი სეიფისთვის",
+  "accessTurnOnSafeBioTitle": "{kind, select, faceId{Face ID ჩემი სეიფისთვის} touchId{Touch ID ჩემი სეიფისთვის} fingerprint{თითის ანაბეჭდი ჩემი სეიფისთვის} face{სახით განბლოკვა ჩემი სეიფისთვის} other{თითის ანაბეჭდი ან სახე ჩემი სეიფისთვის}}",
   "@accessTurnOnSafeBioTitle": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessTurnOnSafeBioLine": "ერთხელ აკრიფეთ ჩემი სეიფის პაროლი.",
   "@accessTurnOnSafeBioLine": {
@@ -1979,9 +1979,9 @@
   "@accessTurnOn": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessBioOn": "თითის ანაბეჭდი ან სახე ჩართულია.",
+  "accessBioOn": "{kind, select, faceId{Face ID ჩართულია.} touchId{Touch ID ჩართულია.} fingerprint{თითის ანაბეჭდი ჩართულია.} face{სახით განბლოკვა ჩართულია.} other{თითის ანაბეჭდი ან სახე ჩართულია.}}",
   "@accessBioOn": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+    "description": "Georgian draft, needs a native read (polish, 2026-10-26)."
   },
   "accessMySafePassword": "ჩემი სეიფის პაროლი",
   "@accessMySafePassword": {

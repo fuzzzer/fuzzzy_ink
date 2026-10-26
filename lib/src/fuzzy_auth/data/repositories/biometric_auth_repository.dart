@@ -108,6 +108,25 @@ class BiometricAuthRepository {
     }
   }
 
+  BiometricKind? _kind;
+
+  /// Which quick unlock the device has (Face ID, Touch ID, a fingerprint
+  /// reader…), asked once. Never throws: [BiometricKind.other] when the
+  /// platform does not say.
+  Future<BiometricKind> biometricKind() async {
+    final known = _kind;
+    if (known != null) return known;
+    if (!InkDeviceChannel.hasBiometricKind) return _kind = BiometricKind.other;
+    try {
+      return _kind = BiometricKind.fromName(await _device.biometricKind());
+    } on PlatformException catch (e) {
+      logger.w('Biometric kind unknown: ${e.code}');
+    } on MissingPluginException {
+      // An older runner without the call.
+    }
+    return BiometricKind.other;
+  }
+
   /// A copy made before [biometricKeyVersion] is dropped here first, so it
   /// reads as disabled and the user falls back to the password.
   Future<bool> isEnabled(BiometricScope scope) async {

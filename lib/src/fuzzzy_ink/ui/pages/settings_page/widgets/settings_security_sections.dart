@@ -25,6 +25,9 @@ class SettingsKeepingSafeSection extends StatelessWidget {
     final biometricOn = context.select<FuzzyAuthStore, bool>(
       (store) => store.state.biometricEnabled,
     );
+    final biometricKind = context.select<FuzzyAuthStore, BiometricKind>(
+      (store) => store.state.biometricKind,
+    );
     final hasRecoveryKey = context.select<FuzzyUserAuthPreferencesCubit, bool?>(
       (cubit) => cubit.state.hasRecoveryKey,
     );
@@ -68,9 +71,9 @@ class SettingsKeepingSafeSection extends StatelessWidget {
         ),
         FuzzzyListTile(
           qaId: 'settings.biometric',
-          leading: const SettingsRowIcon(Icons.fingerprint),
+          leading: SettingsRowIcon(biometricKind.icon),
           title: SettingsRowText(
-            title: localizations.accessFingerprintOrFace,
+            title: localizations.accessFingerprintOrFace(biometricKind.l10nKey),
             subtitle: canUseBiometrics == false
                 ? localizations.accessNotOnThisDevice
                 : null,
@@ -160,12 +163,13 @@ class SettingsKeepingSafeSection extends StatelessWidget {
   /// the same shortcut while the master password opens it.
   Future<void> _turnOnBiometrics(BuildContext context) async {
     final localizations = context.fuzzzyInkLocalizations;
+    final kind = context.read<FuzzyAuthStore>().state.biometricKind.l10nKey;
     final preferences = context.read<FuzzyUserAuthPreferencesCubit>();
     final vault = context.read<VaultAuthCubit>();
     final turnedOn = await showPasswordConfirmSheet(
       context,
       qaId: 'biometric',
-      title: localizations.accessTurnOnBioTitle,
+      title: localizations.accessTurnOnBioTitle(kind),
       line: localizations.accessTurnOnBioLine,
       label: localizations.masterPassword,
       action: localizations.accessTurnOn,
@@ -187,7 +191,7 @@ class SettingsKeepingSafeSection extends StatelessWidget {
     );
     if (turnedOn && context.mounted) {
       unawaited(InkHaptics.light());
-      showInkToast(context, message: localizations.accessBioOn);
+      showInkToast(context, message: localizations.accessBioOn(kind));
     }
   }
 
@@ -219,6 +223,9 @@ class SettingsMySafeSection extends StatelessWidget {
     final localizations = context.fuzzzyInkLocalizations;
     final vault = context.watch<VaultAuthCubit>().state;
     final usesOwn = hasVault(vault) && vault.usesOwnPassword;
+    final biometricKind = context.select<FuzzyAuthStore, BiometricKind>(
+      (store) => store.state.biometricKind,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -239,9 +246,10 @@ class SettingsMySafeSection extends StatelessWidget {
         if (usesOwn && (canUseBiometrics ?? false))
           FuzzzyListTile(
             qaId: 'settings.safeBiometric',
-            leading: const SettingsRowIcon(Icons.fingerprint),
+            leading: SettingsRowIcon(biometricKind.icon),
             title: SettingsRowText(
-              title: localizations.accessTurnOnSafeBioTitle,
+              title:
+                  localizations.accessTurnOnSafeBioTitle(biometricKind.l10nKey),
             ),
             trailing: FuzzzyToggle(
               value: vault.biometricEnabled,
@@ -287,11 +295,12 @@ class SettingsMySafeSection extends StatelessWidget {
 
   Future<void> _turnOnSafeBiometrics(BuildContext context) async {
     final localizations = context.fuzzzyInkLocalizations;
+    final kind = context.read<FuzzyAuthStore>().state.biometricKind.l10nKey;
     final vault = context.read<VaultAuthCubit>();
     final turnedOn = await showPasswordConfirmSheet(
       context,
       qaId: 'safeBiometric',
-      title: localizations.accessTurnOnSafeBioTitle,
+      title: localizations.accessTurnOnSafeBioTitle(kind),
       line: localizations.accessTurnOnSafeBioLine,
       label: localizations.accessMySafePassword,
       action: localizations.accessTurnOn,
@@ -311,7 +320,7 @@ class SettingsMySafeSection extends StatelessWidget {
     );
     if (turnedOn && context.mounted) {
       unawaited(InkHaptics.light());
-      showInkToast(context, message: localizations.accessBioOn);
+      showInkToast(context, message: localizations.accessBioOn(kind));
     }
   }
 }

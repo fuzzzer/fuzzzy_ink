@@ -236,7 +236,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('toggle.settings.biometric')));
     await tester.pumpAndSettle();
-    expect(find.text(l10n.accessTurnOnBioTitle), findsOneWidget);
+    expect(find.text(l10n.accessTurnOnBioTitle('other')), findsOneWidget);
     expect(
       SensitiveScreen.isIn(tester.element(kitField('biometric.password'))),
       isTrue,
@@ -252,7 +252,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(const Key('btn.biometric.submit')));
     await tester.pumpAndSettle();
-    expect(find.text(l10n.accessTurnOnBioTitle), findsNothing);
+    expect(find.text(l10n.accessTurnOnBioTitle('other')), findsNothing);
     verify(() => harness.biometrics.enable(BiometricScope.chat, 'pw'))
         .called(1);
     verify(() => harness.authStore.setBiometricEnabled(enabled: true))

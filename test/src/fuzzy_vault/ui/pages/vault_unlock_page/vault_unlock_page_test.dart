@@ -13,6 +13,9 @@ import '../../../../../helpers/redesign_harness.dart';
 class MockVaultAuthCubit extends MockCubit<VaultAuthState>
     implements VaultAuthCubit {}
 
+class MockFuzzyAuthStore extends MockCubit<FuzzyAuthState>
+    implements FuzzyAuthStore {}
+
 /// My safe, locked (DESIGN.md section 4.11): what opens it, fingerprint,
 /// the password in place, the shared wrong-password wait, the first open
 /// that makes the safe, and the recovery key for a safe with its own
@@ -53,12 +56,23 @@ void main() {
     Locale locale = const Locale('en'),
     Size? surface,
     double textScale = 1,
+    BiometricKind biometricKind = BiometricKind.other,
   }) async {
     whenListen(cubit, stream, initialState: state);
+    final authStore = MockFuzzyAuthStore();
+    whenListen(
+      authStore,
+      const Stream<FuzzyAuthState>.empty(),
+      initialState:
+          const FuzzyAuthState.initial().copyWith(biometricKind: biometricKind),
+    );
     await pumpRedesign(
       tester,
-      BlocProvider<VaultAuthCubit>.value(
-        value: cubit,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VaultAuthCubit>.value(value: cubit),
+          BlocProvider<FuzzyAuthStore>.value(value: authStore),
+        ],
         child: const VaultUnlockPage(),
       ),
       skin: skin,
@@ -88,7 +102,7 @@ void main() {
       expect(find.text(en.safeLockedTitle), findsOneWidget);
       expect(find.text(en.safeOpensWithMaster), findsOneWidget);
       expect(find.byKey(const Key('field.safe.password')), findsNothing);
-      expect(find.text(en.safeOpenWithFingerprint), findsNothing);
+      expect(find.text(en.safeOpenWithFingerprint('other')), findsNothing);
 
       await typePassword(tester, 'master pw');
       await tester.tap(find.byKey(const Key('btn.safe.open')));

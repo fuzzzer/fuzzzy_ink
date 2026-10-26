@@ -290,10 +290,12 @@ void main() {
     testWidgets('is not private; the buttons turn it on or skip it',
         (tester) async {
       await pumpStep(tester, bioStep);
-      expect(find.text(l10n.accessBioTitle), findsOneWidget);
+      expect(find.text(l10n.accessBioTitle('other')), findsOneWidget);
       expect(find.text(l10n.accessBioTip), findsOneWidget);
       expect(
-        SensitiveScreen.isIn(tester.element(find.text(l10n.accessBioTitle))),
+        SensitiveScreen.isIn(
+          tester.element(find.text(l10n.accessBioTitle('other'))),
+        ),
         isFalse,
       );
 
@@ -304,6 +306,36 @@ void main() {
       await tester.tap(find.byKey(const Key('btn.setup.notNow')));
       verify(() => cubit.skipQuickUnlock()).called(1);
     });
+
+    for (final (kind, title, button) in [
+      (BiometricKind.faceId, 'Unlock with Face ID?', 'Use Face ID'),
+      (BiometricKind.touchId, 'Unlock with Touch ID?', 'Use Touch ID'),
+      (
+        BiometricKind.fingerprint,
+        'Unlock with your fingerprint?',
+        'Use fingerprint',
+      ),
+      (BiometricKind.face, 'Unlock with your face?', 'Use face unlock'),
+    ]) {
+      testWidgets(
+          "names the device's own quick unlock: $kind "
+          '(final regression 2026-10-26)', (tester) async {
+        whenListen(
+          harness.authStore,
+          const Stream<FuzzyAuthState>.empty(),
+          initialState: const FuzzyAuthState.initial().copyWith(
+            status: AuthStateStatus.setupRequired,
+            biometricKind: kind,
+          ),
+        );
+        await pumpStep(tester, bioStep);
+        expect(find.text(title), findsOneWidget);
+        expect(find.text(button), findsOneWidget);
+        if (kind != BiometricKind.fingerprint) {
+          expect(find.textContaining('fingerprint'), findsNothing);
+        }
+      });
+    }
 
     testWidgets('a refusal says why', (tester) async {
       whenListen(

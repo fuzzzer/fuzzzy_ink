@@ -9,6 +9,9 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class MockFuzzyAuthStore extends MockCubit<FuzzyAuthState>
+    implements FuzzyAuthStore {}
+
 class MockVaultAuthCubit extends MockCubit<VaultAuthState>
     implements VaultAuthCubit {}
 
@@ -61,9 +64,18 @@ void main() {
     Stream<VaultAuthState> stream = const Stream.empty(),
   }) async {
     whenListen(cubit, stream, initialState: state);
+    final authStore = MockFuzzyAuthStore();
+    whenListen(
+      authStore,
+      const Stream<FuzzyAuthState>.empty(),
+      initialState: const FuzzyAuthState.initial(),
+    );
     await tester.pumpWidget(
-      BlocProvider<VaultAuthCubit>.value(
-        value: cubit,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VaultAuthCubit>.value(value: cubit),
+          BlocProvider<FuzzyAuthStore>.value(value: authStore),
+        ],
         child: MaterialApp(
           theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
           localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,

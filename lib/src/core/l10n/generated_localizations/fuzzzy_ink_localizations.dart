@@ -2338,11 +2338,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Opens with your safe password.'**
   String get safeOpensWithOwn;
 
-  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  /// My safe's unlock screen button. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Open with fingerprint'**
-  String get safeOpenWithFingerprint;
+  /// **'{kind, select, faceId{Open with Face ID} touchId{Open with Touch ID} fingerprint{Open with fingerprint} face{Open with face unlock} other{Open with fingerprint or face}}'**
+  String safeOpenWithFingerprint(String kind);
 
   /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
   ///
@@ -3022,11 +3022,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Quick unlock'**
   String get accessStepQuickUnlock;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// First run, quick-unlock step title. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Unlock with your fingerprint?'**
-  String get accessBioTitle;
+  /// **'{kind, select, faceId{Unlock with Face ID?} touchId{Unlock with Touch ID?} fingerprint{Unlock with your fingerprint?} face{Unlock with your face?} other{Unlock with your fingerprint or face?}}'**
+  String accessBioTitle(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3040,11 +3040,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Locks itself after 5 minutes away'**
   String get accessBioTip;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Button on the quick-unlock step and the lock screen. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Use fingerprint or face'**
-  String get accessUseBio;
+  /// **'{kind, select, faceId{Use Face ID} touchId{Use Touch ID} fingerprint{Use fingerprint} face{Use face unlock} other{Use fingerprint or face}}'**
+  String accessUseBio(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3106,11 +3106,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'A file is waiting. Unlock to open it.'**
   String get accessFileWaiting;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Lock screen note: the device's enrolled biometrics changed. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.'**
-  String get accessBioChanged;
+  /// **'{kind, select, faceId{Face ID changed, so quick unlock is off. Turn it on again in Settings.} touchId{Touch ID changed, so quick unlock is off. Turn it on again in Settings.} fingerprint{Your fingerprints changed, so quick unlock is off. Turn it on again in Settings.} face{Your face unlock changed, so quick unlock is off. Turn it on again in Settings.} other{Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.}}'**
+  String accessBioChanged(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3202,11 +3202,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'None yet'**
   String get accessNoKeyYet;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Settings row title for quick unlock. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Fingerprint or face'**
-  String get accessFingerprintOrFace;
+  /// **'{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{Fingerprint} face{Face unlock} other{Fingerprint or face}}'**
+  String accessFingerprintOrFace(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3352,11 +3352,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Fuzzzy Ink · version {version} (build {build})'**
   String accessVersionFooter(String version, String build);
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Settings sheet title: turn quick unlock on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Turn on fingerprint or face'**
-  String get accessTurnOnBioTitle;
+  /// **'{kind, select, faceId{Turn on Face ID} touchId{Turn on Touch ID} fingerprint{Turn on fingerprint} face{Turn on face unlock} other{Turn on fingerprint or face}}'**
+  String accessTurnOnBioTitle(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3364,11 +3364,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Type your master password once.'**
   String get accessTurnOnBioLine;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Settings row and sheet title: quick unlock for My safe. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Fingerprint for My safe'**
-  String get accessTurnOnSafeBioTitle;
+  /// **'{kind, select, faceId{Face ID for My safe} touchId{Touch ID for My safe} fingerprint{Fingerprint for My safe} face{Face unlock for My safe} other{Fingerprint or face for My safe}}'**
+  String accessTurnOnSafeBioTitle(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
@@ -3382,11 +3382,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Turn on'**
   String get accessTurnOn;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// Toast after quick unlock was turned on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
   ///
   /// In en, this message translates to:
-  /// **'Fingerprint or face is on.'**
-  String get accessBioOn;
+  /// **'{kind, select, faceId{Face ID is on.} touchId{Touch ID is on.} fingerprint{Fingerprint is on.} face{Face unlock is on.} other{Fingerprint or face is on.}}'**
+  String accessBioOn(String kind);
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///

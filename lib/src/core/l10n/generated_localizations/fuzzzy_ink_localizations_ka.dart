@@ -1258,7 +1258,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get safeOpensWithOwn => 'იხსნება სეიფის პაროლით.';
 
   @override
-  String get safeOpenWithFingerprint => 'თითის ანაბეჭდით გახსნა';
+  String safeOpenWithFingerprint(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID-ით გახსნა',
+        'touchId': 'Touch ID-ით გახსნა',
+        'fingerprint': 'თითის ანაბეჭდით გახსნა',
+        'face': 'სახით გახსნა',
+        'other': 'თითის ანაბეჭდით ან სახით გახსნა',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get safeUseMasterPassword => 'მთავარი პაროლის გამოყენება';
@@ -1631,7 +1643,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessStepQuickUnlock => 'სწრაფი განბლოკვა';
 
   @override
-  String get accessBioTitle => 'გავხსნათ თითის ანაბეჭდით?';
+  String accessBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'გავხსნათ Face ID-ით?',
+        'touchId': 'გავხსნათ Touch ID-ით?',
+        'fingerprint': 'გავხსნათ თითის ანაბეჭდით?',
+        'face': 'გავხსნათ სახით?',
+        'other': 'გავხსნათ თითის ანაბეჭდით ან სახით?',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessBioLine => 'პაროლიც ყოველთვის იმუშავებს.';
@@ -1640,7 +1664,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessBioTip => '5 წუთის უმოქმედობის შემდეგ თავისით იკეტება';
 
   @override
-  String get accessUseBio => 'თითის ანაბეჭდი ან სახე';
+  String accessUseBio(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID-ის გამოყენება',
+        'touchId': 'Touch ID-ის გამოყენება',
+        'fingerprint': 'თითის ანაბეჭდის გამოყენება',
+        'face': 'სახის გამოყენება',
+        'other': 'თითის ანაბეჭდი ან სახე',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessNotNow => 'ახლა არა';
@@ -1673,8 +1709,24 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessFileWaiting => 'ფაილი გელოდებათ. გასახსნელად განბლოკეთ.';
 
   @override
-  String get accessBioChanged =>
-      'თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.';
+  String accessBioChanged(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId':
+            'Face ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+        'touchId':
+            'Touch ID შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+        'fingerprint':
+            'თითის ანაბეჭდები შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+        'face':
+            'სახით განბლოკვა შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+        'other':
+            'თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessBioReset =>
@@ -1726,7 +1778,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessNoKeyYet => 'ჯერ არ არის';
 
   @override
-  String get accessFingerprintOrFace => 'თითის ანაბეჭდი ან სახე';
+  String accessFingerprintOrFace(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID',
+        'touchId': 'Touch ID',
+        'fingerprint': 'თითის ანაბეჭდი',
+        'face': 'სახით განბლოკვა',
+        'other': 'თითის ანაბეჭდი ან სახე',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessNotOnThisDevice => 'ამ მოწყობილობაზე არ არის';
@@ -1807,13 +1871,37 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get accessTurnOnBioTitle => 'თითის ანაბეჭდის ან სახის ჩართვა';
+  String accessTurnOnBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID-ის ჩართვა',
+        'touchId': 'Touch ID-ის ჩართვა',
+        'fingerprint': 'თითის ანაბეჭდის ჩართვა',
+        'face': 'სახით განბლოკვის ჩართვა',
+        'other': 'თითის ანაბეჭდის ან სახის ჩართვა',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessTurnOnBioLine => 'ერთხელ აკრიფეთ მთავარი პაროლი.';
 
   @override
-  String get accessTurnOnSafeBioTitle => 'თითის ანაბეჭდი ჩემი სეიფისთვის';
+  String accessTurnOnSafeBioTitle(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID ჩემი სეიფისთვის',
+        'touchId': 'Touch ID ჩემი სეიფისთვის',
+        'fingerprint': 'თითის ანაბეჭდი ჩემი სეიფისთვის',
+        'face': 'სახით განბლოკვა ჩემი სეიფისთვის',
+        'other': 'თითის ანაბეჭდი ან სახე ჩემი სეიფისთვის',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessTurnOnSafeBioLine => 'ერთხელ აკრიფეთ ჩემი სეიფის პაროლი.';
@@ -1822,7 +1910,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessTurnOn => 'ჩართვა';
 
   @override
-  String get accessBioOn => 'თითის ანაბეჭდი ან სახე ჩართულია.';
+  String accessBioOn(String kind) {
+    String _temp0 = intl.Intl.selectLogic(
+      kind,
+      {
+        'faceId': 'Face ID ჩართულია.',
+        'touchId': 'Touch ID ჩართულია.',
+        'fingerprint': 'თითის ანაბეჭდი ჩართულია.',
+        'face': 'სახით განბლოკვა ჩართულია.',
+        'other': 'თითის ანაბეჭდი ან სახე ჩართულია.',
+      },
+    );
+    return '$_temp0';
+  }
 
   @override
   String get accessMySafePassword => 'ჩემი სეიფის პაროლი';

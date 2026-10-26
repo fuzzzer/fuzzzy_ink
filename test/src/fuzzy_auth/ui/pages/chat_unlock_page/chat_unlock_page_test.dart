@@ -175,6 +175,27 @@ void main() {
   });
 
   testWidgets(
+      'on a Face ID phone the button says Face ID, never fingerprint '
+      '(final regression 2026-10-26)', (tester) async {
+    await pumpPage(
+      tester,
+      locked.copyWith(
+        biometricEnabled: true,
+        biometricKind: BiometricKind.faceId,
+      ),
+    );
+    expect(find.text('Use Face ID'), findsOneWidget);
+    expect(find.textContaining('fingerprint'), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('btn.unlock.bio')),
+        matching: find.byIcon(Icons.face_unlock_outlined),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets(
       'after Lock now the screen waits for the person: no prompt by itself, '
       'the fingerprint button still works', (tester) async {
     await pumpPage(
@@ -211,7 +232,7 @@ void main() {
     );
     await tester.pump();
     expect(find.text(l10n.accessBioReset), findsOneWidget);
-    expect(find.text(l10n.accessBioChanged), findsOneWidget);
+    expect(find.text(l10n.accessBioChanged('other')), findsOneWidget);
   });
 
   testWidgets(

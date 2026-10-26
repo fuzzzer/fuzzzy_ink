@@ -399,6 +399,8 @@ extension AppDelegate {
 ///   biometric storage plugin's own check also passes with only a passcode,
 ///   which offered the fingerprint step on a phone without any (QA
 ///   2026-10-26).
+/// - `biometricKind`: `faceId` or `touchId`, so the app says "Face ID" on a
+///   Face ID phone (final regression 2026-10-26); `other` when neither.
 /// - `printImage`: the system print dialog for one image (the recovery key
 ///   sheet) — no share sheet, so no Copy, Save Image or AirDrop on the way.
 /// - `exportFile`: the system "Save to Files" dialog for one file (the
@@ -406,6 +408,19 @@ extension AppDelegate {
 final class InkDevice: NSObject, UIDocumentPickerDelegate {
   static let channelName = "com.fuzzzycore.ink/device"
   static let shared = InkDevice()
+
+  /// The hardware's kind; `biometryType` is set only once a policy was
+  /// evaluated, enrolled or not.
+  static func biometricKind() -> String {
+    let context = LAContext()
+    var error: NSError?
+    _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+    switch context.biometryType {
+    case .faceID: return "faceId"
+    case .touchID: return "touchId"
+    default: return "other"
+    }
+  }
 
   private var pendingExport: FlutterResult?
 
@@ -416,6 +431,8 @@ final class InkDevice: NSObject, UIDocumentPickerDelegate {
       var error: NSError?
       result(
         LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error))
+    case "biometricKind":
+      result(InkDevice.biometricKind())
     case "printImage":
       guard let path = arguments?["path"] as? String,
         let image = UIImage(contentsOfFile: path)

@@ -55,6 +55,8 @@ void main() {
     when(() => mockBiometric.discardOutdatedCopy(any()))
         .thenAnswer((_) async => false);
     when(() => mockBiometric.isEnabled(any())).thenAnswer((_) async => false);
+    when(() => mockBiometric.biometricKind())
+        .thenAnswer((_) async => BiometricKind.other);
     when(() => mockThrottle.read())
         .thenAnswer((_) async => AppLockThrottleData.none);
     when(() => mockThrottle.clear()).thenAnswer((_) async {});

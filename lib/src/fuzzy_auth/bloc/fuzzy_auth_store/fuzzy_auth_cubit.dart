@@ -38,11 +38,17 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
   /// unlock: there is no state without a password. A secure storage that
   /// cannot be read fails closed (`storageUnavailable`), never open.
   Future<void> checkAuthStatus() async {
+    final biometricKind = await biometricAuthRepository.biometricKind();
     final statusRes = await chatAuthRepository.status();
     if (statusRes is CryptoCoreFailure<MasterKeyStatus>) {
       logger.e('Secure storage unreadable at launch: ${statusRes.type}');
       await cryptoCoreService.close();
-      emit(state.copyWith(status: AuthStateStatus.storageUnavailable));
+      emit(
+        state.copyWith(
+          status: AuthStateStatus.storageUnavailable,
+          biometricKind: biometricKind,
+        ),
+      );
       return;
     }
     switch ((statusRes as CryptoCoreSuccess<MasterKeyStatus>).data) {
@@ -52,6 +58,7 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
           state.copyWith(
             status: AuthStateStatus.setupRequired,
             biometricEnabled: false,
+            biometricKind: biometricKind,
             previousDataFound:
                 legacyRes is CryptoCoreSuccess<bool> && legacyRes.data,
           ),
@@ -67,6 +74,7 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
             status: AuthStateStatus.locked,
             biometricEnabled: biometricEnabled,
             biometricReset: biometricReset,
+            biometricKind: biometricKind,
             lockoutRemaining: _startWait(throttle.remainingAt(_now())),
           ),
         );
