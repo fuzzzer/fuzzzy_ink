@@ -199,7 +199,9 @@ void main() {
       final store = storeOn(TargetPlatform.iOS);
       expect(store.isPickedCopy(picked.path), isTrue);
       expect(
-          storeOn(TargetPlatform.android).isPickedCopy(picked.path), isFalse);
+        storeOn(TargetPlatform.android).isPickedCopy(picked.path),
+        isFalse,
+      );
       await store.discardPickedCopy(picked.path);
       expect(picked.existsSync(), isFalse);
     });

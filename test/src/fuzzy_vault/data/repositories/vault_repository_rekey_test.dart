@@ -103,7 +103,8 @@ void main() {
     expect(committedBefore, isTrue, reason: 'the old items until the commit');
     expect(await files.readItem('a'), [11]);
     expect(await files.readItem('b'), [12]);
-    expect(jsonDecode(await metaText())['verificationToken'], 'CQ==');
+    final meta = jsonDecode(await metaText()) as Map<String, dynamic>;
+    expect(meta['verificationToken'], 'CQ==');
   });
 
   test('an item that does not open stops the move; the old vault stays',
