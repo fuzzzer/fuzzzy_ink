@@ -1275,6 +1275,294 @@
   "@openLockedWithPassword": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   },
+  "lockStepWho": "ვინ",
+  "@lockStepWho": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStepWhat": "რა",
+  "@lockStepWhat": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockForName": "ჩაკეტვა: {name}",
+  "@lockForName": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockKindMessage": "შეტყობინება",
+  "@lockKindMessage": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockKindFile": "ფაილი",
+  "@lockKindFile": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockWriteMessageHint": "დაწერეთ შეტყობინება…",
+  "@lockWriteMessageHint": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockOnlyNameOnce": "{name} — გახსნა მხოლოდ მას შეუძლია, ერთხელ.",
+  "@lockOnlyNameOnce": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockChooseFile": "ფაილის არჩევა",
+  "@lockChooseFile": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockDropHint": "ან კომპიუტერზე აქ ჩააგდეთ",
+  "@lockDropHint": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockChangeFile": "შეცვლა",
+  "@lockChangeFile": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockPasswordLabel": "პაროლი ამისთვის",
+  "@lockPasswordLabel": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockSayPassword": "პაროლი სიტყვით უთხარით. ნუ გაუგზავნით.",
+  "@lockSayPassword": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockAction": "ჩაკეტვა",
+  "@lockAction": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockWriteSomethingFirst": "ჯერ რამე დაწერეთ.",
+  "@lockWriteSomethingFirst": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockChooseFileFirst": "ჯერ ფაილი აირჩიეთ.",
+  "@lockChooseFileFirst": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockPasswordNotGood": "საჭიროა დონე „კარგი“.",
+  "@lockPasswordNotGood": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStrengthLabel": "სიძლიერე",
+  "@lockStrengthLabel": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStrengthWeak": "სუსტი",
+  "@lockStrengthWeak": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStrengthFair": "საშუალო",
+  "@lockStrengthFair": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStrengthGood": "კარგი",
+  "@lockStrengthGood": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStrengthStrong": "ძლიერი",
+  "@lockStrengthStrong": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockFailed": "ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.",
+  "@lockFailed": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockStoppedNothingKept": "შეჩერდა. არაფერი შენახულა.",
+  "@lockStoppedNothingKept": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingLocking": "იკეტება",
+  "@workingLocking": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingOpening": "იხსნება",
+  "@workingOpening": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingStarting": "იწყება…",
+  "@workingStarting": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingPause": "პაუზა",
+  "@workingPause": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingGoOn": "გაგრძელება",
+  "@workingGoOn": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "workingPaused": "შეჩერებულია",
+  "@workingPaused": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedForName": "ჩაიკეტა: {name}",
+  "@lockedForName": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedWithPassword": "ჩაიკეტა პაროლით",
+  "@lockedWithPassword": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedNowSendIt": "ახლა გაუგზავნეთ.",
+  "@lockedNowSendIt": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedSentToShareMenu": "გაზიარების მენიუში გაიგზავნა.",
+  "@lockedSentToShareMenu": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedShareAgain": "ხელახლა გაზიარება",
+  "@lockedShareAgain": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedCopyText": "ჩაკეტილი ტექსტის კოპირება",
+  "@lockedCopyText": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "lockedSaveFile": "ჩაკეტილი ფაილის შენახვა",
+  "@lockedSaveFile": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "flowDone": "მზადაა",
+  "@flowDone": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openChooseFile": "ფაილის არჩევა",
+  "@openChooseFile": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openChooseFileHint": ".fuzz ფაილი",
+  "@openChooseFileHint": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openReading": "იკითხება…",
+  "@openReading": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedFromName": "გამომგზავნი: {name}",
+  "@openedFromName": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedKeptInHistory": "ახლახან · ისტორიაში შეინახა ({name})",
+  "@openedKeptInHistory": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedWithPassword": "გაიხსნა პაროლით",
+  "@openedWithPassword": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedNotKept": "ახლახან · არ ინახება",
+  "@openedNotKept": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedInHistoryNow": "ახლა ისტორიაშია ({name}).",
+  "@openedInHistoryNow": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openedSaveTip": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
+  "@openedSaveTip": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openPasswordTitle": "რა პაროლია?",
+  "@openPasswordTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openPasswordLabel": "პაროლი",
+  "@openPasswordLabel": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openPasswordWrong": "ამით არ იხსნება. შეამოწმეთ და ხელახლა სცადეთ.",
+  "@openPasswordWrong": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorAlreadyTitle": "უკვე გახსნილია",
+  "@openErrorAlreadyTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorAlreadyLine": "ყოველი ჩაკეტილი რამ ერთხელ იხსნება. ის ისტორიაშია ({name}).",
+  "@openErrorAlreadyLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNotYoursTitle": "თქვენი სიიდან არ არის",
+  "@openErrorNotYoursTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNotYoursLine": "ჯერ მოწვევა სთხოვეთ.",
+  "@openErrorNotYoursLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorDamagedTitle": "ამის გახსნა ვერ ხერხდება",
+  "@openErrorDamagedTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorDamagedLine": "შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
+  "@openErrorDamagedLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorOldTitle": "გასახსნელად ძალიან ძველია",
+  "@openErrorOldTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorOldLine": "სთხოვეთ, თავიდან ჩაკეტოს ({name}).",
+  "@openErrorOldLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNewerTitle": "Fuzzzy Ink-ის ახალი ვერსიაა საჭირო",
+  "@openErrorNewerTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNewerLine": "განაახლეთ აპი და ხელახლა სცადეთ.",
+  "@openErrorNewerLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorOwnTitle": "ეს თქვენი მოწვევაა",
+  "@openErrorOwnTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorOwnLine": "გაუგზავნეთ მეორე ადამიანს.",
+  "@openErrorOwnLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorConnectedTitle": "უკვე დაკავშირებულია",
+  "@openErrorConnectedTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorConnectedLine": "უკვე დაკავშირებული ხართ: {name}",
+  "@openErrorConnectedLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNotFuzzzyTitle": "ეს Fuzzzy Ink-ისგან არ არის",
+  "@openErrorNotFuzzzyTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorNotFuzzzyLine": "გახსენით ჩაკეტილი ტექსტი, მოწვევა ან პასუხი.",
+  "@openErrorNotFuzzzyLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorArrivingTitle": "ჯერ კიდევ მოდის",
+  "@openErrorArrivingTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorArrivingLine": "მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და ხელახლა სცადეთ.",
+  "@openErrorArrivingLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorResendTitle": "ეს ფაილი არ გაიხსნა",
+  "@openErrorResendTitle": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorResendLine": "ახლა ამ ტელეფონზე ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნონ.",
+  "@openErrorResendLine": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorGoToName": "გადასვლა: {name}",
+  "@openErrorGoToName": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openErrorOk": "კარგი",
+  "@openErrorOk": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
+  "openFailed": "გახსნა ვერ მოხერხდა. ხელახლა სცადეთ.",
+  "@openFailed": {
+    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
+  },
   "shareTitleInvite": "მოწვევის გაზიარება",
   "@shareTitleInvite": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"

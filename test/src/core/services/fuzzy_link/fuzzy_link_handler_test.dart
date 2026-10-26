@@ -239,6 +239,22 @@ void main() {
     handler.dispose();
   });
 
+  testWidgets(
+      'a message link goes to Open, which checks the person: no message '
+      'here and no chat read', (tester) async {
+    final handler = await pumpApp(tester);
+
+    await receive(
+      tester,
+      FuzzyLinkGenerator.generateFuzzLink(_chatId, 'Fuzz/AwEC')!,
+    );
+
+    expect(find.byType(SnackBar), findsNothing);
+    verifyNever(() => chatRepository.getChatById(any()));
+    expect(tester.takeException(), isNull);
+    handler.dispose();
+  });
+
   testWidgets('an unparsable link shows invalidLink', (tester) async {
     final handler = await pumpApp(tester);
 

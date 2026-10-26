@@ -10,11 +10,7 @@ export 'widgets/widgets.dart';
 /// button, two big tiles (Lock, Open), then the people. Every person comes
 /// from [ChatGeneralDataListCubit]; trust comes from its verified flags.
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.onPastedText});
-
-  /// Opens a pasted Fuzzzy Ink link the way a tapped link opens; answers
-  /// false when the text is not one ([FuzzyLinkHandler.openPastedText]).
-  final bool Function(String text) onPastedText;
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +34,7 @@ class HomePage extends StatelessWidget {
                       people: people,
                       unverifiedChatIds: state.unverifiedChatIds,
                     ),
-                    onOpen: () => showOpenSheet(
-                      context,
-                      onPastedText: onPastedText,
-                    ),
+                    onOpen: () => context.push(AppRouter.open),
                   ),
                 ),
                 SliverToBoxAdapter(

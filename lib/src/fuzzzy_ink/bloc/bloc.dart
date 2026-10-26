@@ -10,4 +10,6 @@ export 'file_processing_cubit/file_processing_cubit.dart';
 export 'handshake_cubit/handshake_cubit.dart';
 export 'invitation_acceptance_cubit/invitation_acceptance_cubit.dart';
 export 'invitation_reader_cubit/invitation_reader_cubit.dart';
+export 'lock_flow_cubit/lock_flow_cubit.dart';
+export 'open_flow_cubit/open_flow_cubit.dart';
 export 'safety_number_cubit/safety_number_cubit.dart';

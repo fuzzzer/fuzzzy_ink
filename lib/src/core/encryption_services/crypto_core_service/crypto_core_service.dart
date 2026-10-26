@@ -187,6 +187,52 @@ class CryptoCoreService {
     return chatIdRes;
   }
 
+  /// Recognises a pasted [text] for Open without spending anything — no
+  /// message key, no one-time key, no state write (`PROTOCOL.md` §7.4). A
+  /// message is matched read-only against [chatIds] (the connected people);
+  /// an invitation or acceptance answers its clear chat id, shape-checked.
+  Future<CryptoCoreResponse<CryptoCorePeek>> peekPasted({
+    required String text,
+    required List<String> chatIds,
+  }) {
+    return _withCore(
+      (core) async =>
+          _peekOf(await core.peekPasted(text: text, chatIds: chatIds)),
+    );
+  }
+
+  /// [peekPasted] for a chosen file at [inputPath]: a chat file is matched
+  /// to its chat, a password file or a `.fuzz` file of locked text is told
+  /// apart. A missing or unreadable file is `io`.
+  Future<CryptoCoreResponse<CryptoCorePeek>> peekFile({
+    required String inputPath,
+    required List<String> chatIds,
+  }) {
+    return _withCore(
+      (core) async =>
+          _peekOf(await core.peekFile(input: inputPath, chatIds: chatIds)),
+    );
+  }
+
+  static CryptoCorePeek _peekOf(rust_formats.Peek peek) {
+    final chatId = peek.chatId;
+    return CryptoCorePeek(
+      kind: switch (peek.kind) {
+        rust_formats.PeekKind.invitation => CryptoCorePeekKind.invitation,
+        rust_formats.PeekKind.acceptance => CryptoCorePeekKind.acceptance,
+        rust_formats.PeekKind.message => CryptoCorePeekKind.message,
+        rust_formats.PeekKind.chatFile => CryptoCorePeekKind.chatFile,
+        rust_formats.PeekKind.passwordText => CryptoCorePeekKind.passwordText,
+        rust_formats.PeekKind.passwordFile => CryptoCorePeekKind.passwordFile,
+        rust_formats.PeekKind.newerVersion => CryptoCorePeekKind.newerVersion,
+        rust_formats.PeekKind.notFuzzzy => CryptoCorePeekKind.notFuzzzy,
+        rust_formats.PeekKind.damaged => CryptoCorePeekKind.damaged,
+      },
+      chatId: chatId != null && _chatIdShape.hasMatch(chatId) ? chatId : null,
+      isTextFile: peek.isTextFile,
+    );
+  }
+
   /// A (inviter): the chat's Olm account and its signed invitation. A
   /// pending chat regenerates; a connected one is `internal`.
   Future<CryptoCoreResponse<CryptoCoreInvitation>> createInvitation(

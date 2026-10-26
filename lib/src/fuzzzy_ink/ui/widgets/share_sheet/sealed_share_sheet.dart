@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// What the person did in the Share sheet.
 enum SealedShareAction { link, qrCode, file, copied }
@@ -54,17 +56,60 @@ Future<SealedShareResult?> showSealedShareSheet(
       if (done) unawaited(InkHaptics.light());
       return SealedShareResult(SealedShareAction.link, isDone: done);
     case _Pick.file:
-      final done = await ShareHelper.shareTextAsFile(
-        content.sealedText,
-        fileName: content.fileName,
-        context: context,
-      );
+      final done = await _shareAsFile(context, content);
       if (done) unawaited(InkHaptics.light());
       return SealedShareResult(SealedShareAction.file, isDone: done);
   }
 }
 
 enum _Pick { link, qrCode, file, copied }
+
+/// Locked text goes as a small `.fuzz` file of that text; a locked file as
+/// itself. Android hands a file over only from the hand-off folder and says
+/// nothing about the result, so there it never counts as done.
+Future<bool> _shareAsFile(
+  BuildContext context,
+  SealedShareContent content,
+) async {
+  final filePath = content.filePath;
+  if (filePath == null) {
+    return ShareHelper.shareTextAsFile(
+      content.sealedText,
+      fileName: content.fileName,
+      mimeType: DeviceFileInteractor.explicitMimeType(content.fileName) ??
+          'text/plain',
+      context: context,
+    );
+  }
+  try {
+    if (Platform.isAndroid) {
+      await DeviceFileInteractor.shareFile(
+        filePath,
+        store: sl.get<UserFileStore>(),
+        context: context,
+      );
+      return false;
+    }
+    return await ShareHelper.shareXFiles(
+      [
+        XFile(
+          filePath,
+          mimeType: DeviceFileInteractor.explicitMimeType(filePath),
+        ),
+      ],
+      context: context,
+    );
+  } catch (error) {
+    logger.w('SHARE: could not share the locked file: $error');
+    if (context.mounted) {
+      FuzzzyToast.show(
+        context,
+        message: context.fuzzzyInkLocalizations.couldNotOpenFile,
+      );
+    }
+    return false;
+  }
+}
 
 class _ShareSheetBody extends StatefulWidget {
   const _ShareSheetBody({required this.content, this.personName});
@@ -124,13 +169,21 @@ class _ShareSheetBodyState extends State<_ShareSheetBody> {
     final title = switch (content.kind) {
       SealedShareKind.invitation => localizations.shareTitleInvite,
       SealedShareKind.acceptance => localizations.shareTitleReply,
-      SealedShareKind.message => localizations.shareTitleMessage,
+      SealedShareKind.message ||
+      SealedShareKind.passwordText =>
+        localizations.shareTitleMessage,
+      SealedShareKind.file => localizations.shareTitleFile,
     };
     final line = switch (content.kind) {
       SealedShareKind.invitation => localizations.shareLineInvite,
       SealedShareKind.acceptance => localizations.shareLineReply,
+      SealedShareKind.passwordText => localizations.shareLinePassword,
       SealedShareKind.message =>
         name == null ? null : localizations.shareLineForName(name),
+      // A file without a person is a password file.
+      SealedShareKind.file => name == null
+          ? localizations.shareLinePassword
+          : localizations.shareLineForName(name),
     };
 
     void pick(_Pick value) => Navigator.of(context).pop(value);
@@ -174,17 +227,18 @@ class _ShareSheetBodyState extends State<_ShareSheetBody> {
             hint: localizations.shareSendFileHint,
             onTap: () => pick(_Pick.file),
           ),
-        _ShareRow(
-          qaId: 'share.copy',
-          icon: _isCopied ? null : Icons.copy_outlined,
-          confirmed: _isCopied,
-          title: _isCopied
-              ? localizations.shareCopiedStaysLocked
-              : localizations.shareCopyText,
-          hint: _isCopied ? null : localizations.shareCopyTextHint,
-          onTap: _isCopied ? () {} : _copy,
-          divider: false,
-        ),
+        if (!content.isFile)
+          _ShareRow(
+            qaId: 'share.copy',
+            icon: _isCopied ? null : Icons.copy_outlined,
+            confirmed: _isCopied,
+            title: _isCopied
+                ? localizations.shareCopiedStaysLocked
+                : localizations.shareCopyText,
+            hint: _isCopied ? null : localizations.shareCopyTextHint,
+            onTap: _isCopied ? () {} : _copy,
+            divider: false,
+          ),
       ],
     );
   }
@@ -336,7 +390,10 @@ class SealedQrCodePage extends StatelessWidget {
     final label = switch (content.kind) {
       SealedShareKind.invitation => localizations.qrLabelInvite,
       SealedShareKind.acceptance => localizations.qrLabelReply,
-      SealedShareKind.message => localizations.qrLabelMessage,
+      SealedShareKind.message ||
+      SealedShareKind.passwordText ||
+      SealedShareKind.file =>
+        localizations.qrLabelMessage,
     };
     final codeSize = codeSizeFor(MediaQuery.sizeOf(context).width);
 

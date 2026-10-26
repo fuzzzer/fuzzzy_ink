@@ -146,6 +146,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   int dco_decode_i_32(dynamic raw);
 
   @protected
+  List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
   @protected
@@ -162,6 +165,12 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  Peek dco_decode_peek(dynamic raw);
+
+  @protected
+  PeekKind dco_decode_peek_kind(dynamic raw);
 
   @protected
   RecoveredStore dco_decode_recovered_store(dynamic raw);
@@ -297,6 +306,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
   @protected
@@ -313,6 +325,12 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
 
   @protected
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  Peek sse_decode_peek(SseDeserializer deserializer);
+
+  @protected
+  PeekKind sse_decode_peek_kind(SseDeserializer deserializer);
 
   @protected
   RecoveredStore sse_decode_recovered_store(SseDeserializer deserializer);
@@ -449,6 +467,9 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
   @protected
@@ -469,6 +490,12 @@ abstract class FuzzyCryptoCoreLibApiImplPlatform
   @protected
   void sse_encode_opt_list_prim_u_8_strict(
       Uint8List? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_peek(Peek self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_peek_kind(PeekKind self, SseSerializer serializer);
 
   @protected
   void sse_encode_recovered_store(

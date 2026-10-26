@@ -23,11 +23,23 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 | `HistoryRow`, `FileCard`, `LockedTextPreview` | `fuzzzy_ink/ui/widgets/history/` | History rows (never the text); a file with its state; the faded locked text. |
 | `SafetyNumberGrid` | `fuzzzy_ink/ui/widgets/safety/` | The 12 × 5 digits of "Is it really X?". |
 | `showSealedShareSheet`, `SealedQrCodePage` | `fuzzzy_ink/ui/widgets/share_sheet/` | The one Share button; answers what happened (`SealedShareResult.isDone` for "Share again"). |
+| `FlowScaffold`, `FlowHero`, `FlowTitle`, `FlowErrorLine`, `FlowWorkingView` | `fuzzzy_ink/ui/widgets/flow/` | A flow screen (header, scrolling body, main button at the bottom); the picture slot with Fuzzz; one title and line; one failure line; Locking / Opening with real progress. |
+| `RecentHistoryRow`, `landOnPerson` | `fuzzzy_ink/ui/widgets/history/` | Lock and Open mark the row they wrote; the person page calls `RecentHistoryRow.take(chatId)` once and tints that row (`RowTint`). `landOnPerson` pops back to the person page (flows opened with `returnsToPerson`) or goes Home and opens the person. |
 | `RecoveryKeyBlock`, `LockoutCountdownBar` | `fuzzy_auth/ui/widgets/` | The recovery key on screen; the truthful lockout bar under Unlock. |
 | `AccessPage`, `AccessTitle`, `AccessLine`, `AccessNote`, `runOnTopScreen`, `leaveAccessPage` | `fuzzy_auth/ui/widgets/access_page.dart` | The flow-screen recipe (header, content, bottom buttons); the red, amber or green note with a trailing "Why?"; a toast or sheet on the screen the app moves to. |
 | `InkPasswordField`, `NewPasswordFields`, `PasswordMeter` | `fuzzy_auth/ui/widgets/` | A password with its eye; a new password, its meter (Weak · Fair · Good · Strong) and "Type it again". |
 | `RecoveryKeyStepView`, `RecoveryKeyExport`, `RecoveryKeyPrintSheet` | `fuzzy_auth/ui/widgets/` | A recovery key shown once with Print and Save as file (through the hand-off folder, wiped after), "I've kept it safe" and the skip dialog. |
 | `SettingsSectionLabel`, `SettingsRowIcon`, `SettingsRowText`, `showSettingsChoiceSheet`, `showPasswordConfirmSheet` | `fuzzzy_ink/ui/pages/settings_page/widgets/` | Settings rows and their small sheets (radio choices; one password, private). |
+
+## Lock and Open, for the screens around them
+
+- Lock for a person: `context.push(AppRouter.lockFor, extra: LockPagePayload(chat: chat, returnsToPerson: true))`
+  from their page (Who's it for is skipped); Home's sheet passes `returnsToPerson: false`. Lock with a password:
+  `AppRouter.lockWithPassword`.
+- Open: `context.push(AppRouter.open, extra: const OpenPagePayload(returnsToPerson: true))` from a person page;
+  a message link opens `OpenPagePayload(request: OpenMessageLink(…))`. Invites go on to `AppRouter.chatAccept`
+  (extra: the invite text) and replies to `AppRouter.chatInvitation` (`prefillAcceptanceContent`); a second reply
+  shows `showPairingWarningDialog`. Point those three at the new add-person screens when they exist.
 
 ## Rules they already keep
 

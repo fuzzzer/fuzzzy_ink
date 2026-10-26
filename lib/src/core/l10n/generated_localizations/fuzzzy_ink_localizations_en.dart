@@ -1508,6 +1508,247 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get openLockedWithPassword => 'Locked with a password';
 
   @override
+  String get lockStepWho => 'Who';
+
+  @override
+  String get lockStepWhat => 'What';
+
+  @override
+  String lockForName(String name) {
+    return 'Lock for $name';
+  }
+
+  @override
+  String get lockKindMessage => 'Message';
+
+  @override
+  String get lockKindFile => 'File';
+
+  @override
+  String get lockWriteMessageHint => 'Write your message…';
+
+  @override
+  String lockOnlyNameOnce(String name) {
+    return 'Only $name can open it, once.';
+  }
+
+  @override
+  String get lockChooseFile => 'Choose a file';
+
+  @override
+  String get lockDropHint => 'Or drop it here on a computer';
+
+  @override
+  String get lockChangeFile => 'Change';
+
+  @override
+  String get lockPasswordLabel => 'Password for this';
+
+  @override
+  String get lockSayPassword => 'Say the password. Don\'t send it.';
+
+  @override
+  String get lockAction => 'Lock';
+
+  @override
+  String get lockWriteSomethingFirst => 'Write something first.';
+
+  @override
+  String get lockChooseFileFirst => 'Choose a file first.';
+
+  @override
+  String get lockPasswordNotGood => 'It needs to reach Good.';
+
+  @override
+  String get lockStrengthLabel => 'Strength';
+
+  @override
+  String get lockStrengthWeak => 'Weak';
+
+  @override
+  String get lockStrengthFair => 'Fair';
+
+  @override
+  String get lockStrengthGood => 'Good';
+
+  @override
+  String get lockStrengthStrong => 'Strong';
+
+  @override
+  String get lockFailed => 'Couldn\'t lock it. Try again.';
+
+  @override
+  String get lockStoppedNothingKept => 'Stopped. Nothing was kept.';
+
+  @override
+  String get workingLocking => 'Locking';
+
+  @override
+  String get workingOpening => 'Opening';
+
+  @override
+  String get workingStarting => 'Starting…';
+
+  @override
+  String get workingPause => 'Pause';
+
+  @override
+  String get workingGoOn => 'Go on';
+
+  @override
+  String get workingPaused => 'Paused';
+
+  @override
+  String lockedForName(String name) {
+    return 'Locked for $name';
+  }
+
+  @override
+  String get lockedWithPassword => 'Locked with a password';
+
+  @override
+  String get lockedNowSendIt => 'Now send it.';
+
+  @override
+  String get lockedSentToShareMenu => 'Sent to your share menu.';
+
+  @override
+  String get lockedShareAgain => 'Share again';
+
+  @override
+  String get lockedCopyText => 'Copy locked text';
+
+  @override
+  String get lockedSaveFile => 'Save locked file';
+
+  @override
+  String get flowDone => 'Done';
+
+  @override
+  String get openChooseFile => 'Choose a file';
+
+  @override
+  String get openChooseFileHint => 'A .fuzz file';
+
+  @override
+  String get openReading => 'Reading…';
+
+  @override
+  String openedFromName(String name) {
+    return 'From $name';
+  }
+
+  @override
+  String openedKeptInHistory(String name) {
+    return 'Just now · kept in $name\'s history';
+  }
+
+  @override
+  String get openedWithPassword => 'Opened with a password';
+
+  @override
+  String get openedNotKept => 'Just now · not kept';
+
+  @override
+  String openedInHistoryNow(String name) {
+    return 'In $name\'s history now.';
+  }
+
+  @override
+  String get openedSaveTip => 'Save gives you a normal copy. Then it\'s yours.';
+
+  @override
+  String get openPasswordTitle => 'What\'s the password?';
+
+  @override
+  String get openPasswordLabel => 'Password';
+
+  @override
+  String get openPasswordWrong =>
+      'That doesn\'t open it. Check it and try again.';
+
+  @override
+  String get openErrorAlreadyTitle => 'Already opened';
+
+  @override
+  String openErrorAlreadyLine(String name) {
+    return 'Each locked thing opens once. It\'s in $name\'s history.';
+  }
+
+  @override
+  String get openErrorNotYoursTitle => 'Not from your people';
+
+  @override
+  String get openErrorNotYoursLine => 'Ask them for an invite first.';
+
+  @override
+  String get openErrorDamagedTitle => 'Can\'t open this';
+
+  @override
+  String get openErrorDamagedLine =>
+      'It may be cut off or for someone else. Ask them to send it again.';
+
+  @override
+  String get openErrorOldTitle => 'Too old to open';
+
+  @override
+  String openErrorOldLine(String name) {
+    return 'Ask $name to lock it again.';
+  }
+
+  @override
+  String get openErrorNewerTitle => 'Needs a newer Fuzzzy Ink';
+
+  @override
+  String get openErrorNewerLine => 'Update the app, then try again.';
+
+  @override
+  String get openErrorOwnTitle => 'That\'s your own invite';
+
+  @override
+  String get openErrorOwnLine => 'Send it to the other person.';
+
+  @override
+  String get openErrorConnectedTitle => 'Already connected';
+
+  @override
+  String openErrorConnectedLine(String name) {
+    return 'You and $name are connected already.';
+  }
+
+  @override
+  String get openErrorNotFuzzzyTitle => 'This isn\'t from Fuzzzy Ink';
+
+  @override
+  String get openErrorNotFuzzzyLine =>
+      'Open locked text, an invite or a reply.';
+
+  @override
+  String get openErrorArrivingTitle => 'Still arriving';
+
+  @override
+  String get openErrorArrivingLine =>
+      'Wait until the file has fully arrived, then try again.';
+
+  @override
+  String get openErrorResendTitle => 'This file didn\'t open';
+
+  @override
+  String get openErrorResendLine =>
+      'It can\'t open on this phone now. Ask them to send it again.';
+
+  @override
+  String openErrorGoToName(String name) {
+    return 'Go to $name';
+  }
+
+  @override
+  String get openErrorOk => 'OK';
+
+  @override
+  String get openFailed => 'Couldn\'t open it. Try again.';
+
+  @override
   String get shareTitleInvite => 'Share invite';
 
   @override

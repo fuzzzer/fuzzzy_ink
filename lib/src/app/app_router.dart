@@ -35,11 +35,15 @@ class AppRouter {
   static const personAnsweredTwice = '/person/answered-twice';
   static const personChecked = '/person/checked';
 
-  /// Lock for one person and Open, with `?chat=<chat id>` (and the chat id
-  /// as `extra`) when started from a person's page. Built by the Lock and
-  /// Open screens; a person's page falls back to the chat screen until they
-  /// are registered.
+  /// Lock for one person: `extra` is a [LockPagePayload] (or the person, or
+  /// their chat id; `?chat=<id>` works too).
   static const lockFor = '/lock/for';
+
+  /// Lock with a password (no person).
+  static const lockWithPassword = '/lock/password';
+
+  /// Open what you got: `extra` is an [OpenPagePayload] (or an
+  /// [OpenRequest]), none for the choice of Paste it / Choose a file.
   static const open = '/open';
 
   /// Reachable without the master password. Everything else — Basics and
@@ -127,9 +131,7 @@ class AppRouter {
           routes: [
             GoRoute(
               path: home,
-              builder: (_, __) => HomePage(
-                onPastedText: sl.get<FuzzyLinkHandler>().openPastedText,
-              ),
+              builder: (_, __) => const HomePage(),
             ),
             GoRoute(
               path: vaultHome,
@@ -224,6 +226,26 @@ class AppRouter {
             final chatGeneralData = state.extra! as ChatGeneralData;
             return SafetyNumberPage(chatGeneralData: chatGeneralData);
           },
+        ),
+        // Each flow marks its own private steps (typing, opened content).
+        GoRoute(
+          path: lockFor,
+          builder: (_, state) => LockPage(
+            payload: LockPagePayload.fromRoute(
+              state.extra,
+              state.uri.queryParameters['chat'],
+            ),
+          ),
+        ),
+        GoRoute(
+          path: lockWithPassword,
+          builder: (_, __) =>
+              const LockPage(payload: LockPagePayload.password()),
+        ),
+        GoRoute(
+          path: open,
+          builder: (_, state) =>
+              OpenPage(payload: OpenPagePayload.fromRoute(state.extra)),
         ),
         GoRoute(
           path: person,
