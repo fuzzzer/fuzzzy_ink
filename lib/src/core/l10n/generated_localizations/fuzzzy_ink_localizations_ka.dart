@@ -582,7 +582,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ადამიანები ვერ ჩაიტვირთა. დახურეთ და ხელახლა გახსენით აპი.';
 
   @override
-  String get stepYouSendInvite => 'თქვენ აგზავნით მოწვევას';
+  String get stepYouSendInvite => 'აგზავნით მოწვევას';
 
   @override
   String get stepTheyReply => 'ის პასუხობს';
@@ -596,7 +596,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String get stepLockForEachOther => 'ერთმანეთისთვის ჩაკეტვა';
+  String get stepLockForEachOther => 'კეტავთ და ხსნით';
 
   @override
   String stepsProgress(int step, int total) {
@@ -1481,8 +1481,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessWelcomeLine => 'ჩაკეტეთ. გახსნის მხოლოდ ის.';
 
   @override
-  String get accessWelcomeTag =>
-      'ანგარიში არ სჭირდება · ინტერნეტში არაფერი გადის';
+  String get accessWelcomeTag => 'ანგარიშის გარეშე · ინტერნეტის გარეშე';
 
   @override
   String get accessStart => 'დაწყება';

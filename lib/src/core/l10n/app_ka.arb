@@ -391,7 +391,7 @@
   "@homeNoOneYet": {},
   "homeLoadError": "ადამიანები ვერ ჩაიტვირთა. დახურეთ და ხელახლა გახსენით აპი.",
   "@homeLoadError": {},
-  "stepYouSendInvite": "თქვენ აგზავნით მოწვევას",
+  "stepYouSendInvite": "აგზავნით მოწვევას",
   "@stepYouSendInvite": {},
   "stepTheyReply": "ის პასუხობს",
   "@stepTheyReply": {},
@@ -399,7 +399,7 @@
   "@stepInviteSent": {},
   "stepNameReplies": "{name} პასუხობს",
   "@stepNameReplies": {},
-  "stepLockForEachOther": "ერთმანეთისთვის ჩაკეტვა",
+  "stepLockForEachOther": "კეტავთ და ხსნით",
   "@stepLockForEachOther": {},
   "stepsProgress": "ნაბიჯი {step} / {total}",
   "@stepsProgress": {},
@@ -966,7 +966,7 @@
   "@accessWelcomeLine": {
     "description": "Needs the owner's native read: welcome slogan: ჩაკეტეთ. გახსნის მხოლოდ ის.."
   },
-  "accessWelcomeTag": "ანგარიში არ სჭირდება · ინტერნეტში არაფერი გადის",
+  "accessWelcomeTag": "ანგარიშის გარეშე · ინტერნეტის გარეშე",
   "@accessWelcomeTag": {},
   "accessStart": "დაწყება",
   "@accessStart": {},
