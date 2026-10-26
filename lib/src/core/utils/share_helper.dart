@@ -49,18 +49,20 @@ class ShareHelper {
   /// share_plus has no file sharing on Linux.
   static bool get canShareFiles => !Platform.isLinux;
 
-  /// Shares [text] as a plain-text file named [fileName]. share_plus writes
-  /// it to the app's temporary folder first; pass only sealed text.
+  /// Shares [text] as a file named [fileName] ([mimeType], plain text by
+  /// default). share_plus writes it to the app's temporary folder first;
+  /// pass only sealed text.
   static Future<bool> shareTextAsFile(
     String text, {
     required String fileName,
     required BuildContext context,
+    String mimeType = 'text/plain',
   }) {
     return shareXFiles(
       [
         XFile.fromData(
           utf8.encode(text),
-          mimeType: 'text/plain',
+          mimeType: mimeType,
           name: fileName,
         ),
       ],
