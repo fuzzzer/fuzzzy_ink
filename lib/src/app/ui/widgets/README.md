@@ -8,7 +8,7 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 
 | Piece | File | Use it for |
 |---|---|---|
-| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark everywhere (header 26, lock screen 56, cover 64, welcome 96). Placeholder sun; the logo swap is one line (`InkMark.logoAsset`). |
+| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark everywhere (header 26, lock screen 56, welcome 96, print sheet 18, QR screen). Paints `assets/logo/ink_mark.png` on the dark look and `ink_mark_paper.png` on the light look. |
 | `StepsIndicator` | `app/ui/widgets/guided/` | The step bar at the top of every flow ("Step 2 of 3 · Recovery key"). |
 | `StepPicture` | `app/ui/widgets/guided/` | The three-dot picture instead of a paragraph. `StepPicture.inviteSteps(context, name:)` is the invite flow's. `justDone` fills a step once. |
 | `WhyLink`, `showInkInfoSheet`, `InkInfoTopic` | `app/ui/widgets/guided/` | "Why?" / "How?" / "More" links and the nine explanation sheets. |

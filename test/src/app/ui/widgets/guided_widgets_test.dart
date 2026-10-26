@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 import '../../../../helpers/redesign_harness.dart';
 
@@ -23,8 +24,30 @@ void main() {
       });
     }
 
-    test('paints the placeholder sun until the logo asset is set', () {
-      expect(InkMark.logoAsset, isNull);
+    testWidgets('paints the night mark on the dark look', (tester) async {
+      await pumpRedesign(
+        tester,
+        const Center(child: InkMark(size: 56)),
+        skin: FuzzzySkin.night,
+      );
+      final image = tester.widget<Image>(find.byType(Image));
+      expect(
+        (image.image as AssetImage).assetName,
+        'assets/logo/ink_mark.png',
+      );
+    });
+
+    testWidgets('paints the paper mark on the light look', (tester) async {
+      await pumpRedesign(
+        tester,
+        const Center(child: InkMark(size: 56)),
+        skin: FuzzzySkin.paper,
+      );
+      final image = tester.widget<Image>(find.byType(Image));
+      expect(
+        (image.image as AssetImage).assetName,
+        'assets/logo/ink_mark_paper.png',
+      );
     });
   });
 
