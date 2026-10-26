@@ -1676,4 +1676,218 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get softSoundsLine => 'Never on silent';
+
+  @override
+  String get safeLockedTitle => 'My safe is locked';
+
+  @override
+  String get safeOpensWithMaster => 'Opens with your master password.';
+
+  @override
+  String get safeOpensWithOwn => 'Opens with your safe password.';
+
+  @override
+  String get safeOpenWithFingerprint => 'Open with fingerprint';
+
+  @override
+  String get safeUseMasterPassword => 'Use master password';
+
+  @override
+  String get safeUseSafePassword => 'Use safe password';
+
+  @override
+  String get safePasswordField => 'Safe password';
+
+  @override
+  String get safeOpenButton => 'Open My safe';
+
+  @override
+  String get safeUseRecoveryKey => 'Use recovery key';
+
+  @override
+  String get safeWrongPassword => 'Not right. Try again.';
+
+  @override
+  String get safeTooManyTries => 'Too many tries.';
+
+  @override
+  String get safeCouldNotOpen => 'Couldn\'t open My safe. Try again.';
+
+  @override
+  String get safeRecoveryTitle => 'Type your recovery key';
+
+  @override
+  String get safeRecoveryLine => 'Spaces and capitals don\'t matter.';
+
+  @override
+  String get safeRecoveryNoKey => 'No key? Then nothing can open it.';
+
+  @override
+  String get safeRecoveryNewPassword => 'New safe password';
+
+  @override
+  String get safeSearch => 'Search';
+
+  @override
+  String get safeAllGroups => 'All groups';
+
+  @override
+  String get safeNewGroup => 'New group';
+
+  @override
+  String get safeEmptyTitle => 'Nothing here yet';
+
+  @override
+  String get safeEmptyLine => 'Tap Add.';
+
+  @override
+  String get safeNothingFound => 'Nothing found';
+
+  @override
+  String get safeTryAnotherWord => 'Try another word.';
+
+  @override
+  String get safeLoadError =>
+      'Couldn\'t load My safe. Lock it and open it again.';
+
+  @override
+  String safeAutoLockTip(int minutes) {
+    return 'Locks itself after $minutes minutes away';
+  }
+
+  @override
+  String get safeAdd => 'Add';
+
+  @override
+  String get safeAddTitle => 'Add to My safe';
+
+  @override
+  String get safeUsername => 'Username or email';
+
+  @override
+  String get safeWebsite => 'Website';
+
+  @override
+  String get safeNotes => 'Notes';
+
+  @override
+  String get safeShowPassword => 'Show password';
+
+  @override
+  String get safeHidePassword => 'Hide password';
+
+  @override
+  String safeCopiedClearsIn(int seconds) {
+    return 'Copied · clears in $seconds s';
+  }
+
+  @override
+  String safeCopyRule(int seconds) {
+    return 'Copied passwords clear after $seconds seconds.';
+  }
+
+  @override
+  String get safeCleared => 'Cleared.';
+
+  @override
+  String get safeCopyOff => 'Copying is off in Settings.';
+
+  @override
+  String get safeGroup => 'Group';
+
+  @override
+  String get safeNoGroup => 'No group';
+
+  @override
+  String get safeMove => 'Move';
+
+  @override
+  String get safeEdit => 'Edit';
+
+  @override
+  String safeMoreFor(String title) {
+    return 'More for $title';
+  }
+
+  @override
+  String get safeSaveTip => 'Save gives you a normal copy. Then it\'s yours.';
+
+  @override
+  String get safeMoveToGroup => 'Move to a group';
+
+  @override
+  String safeDeleteTitle(String title) {
+    return 'Delete $title?';
+  }
+
+  @override
+  String get safeDeleteLine => 'It leaves My safe for good. No undo.';
+
+  @override
+  String get safeDeleted => 'Deleted from My safe.';
+
+  @override
+  String safeMovedTo(String group) {
+    return 'Moved to $group.';
+  }
+
+  @override
+  String get safeMovedOut => 'Removed from its group.';
+
+  @override
+  String get safeSaved => 'Saved in My safe.';
+
+  @override
+  String get safeItemLoadFailed => 'Couldn\'t open this. Try again.';
+
+  @override
+  String get safeSaveFailed => 'Couldn\'t save. Try again.';
+
+  @override
+  String get safeGroupName => 'Group name';
+
+  @override
+  String get safeGroupHint => 'e.g. Family';
+
+  @override
+  String get safeAddGroup => 'Add group';
+
+  @override
+  String get safeNewPasswordTitle => 'New password';
+
+  @override
+  String get safeNewNoteTitle => 'New note';
+
+  @override
+  String get safeNewFileTitle => 'New file';
+
+  @override
+  String get safeTitle => 'Title';
+
+  @override
+  String get safeTitleHintPassword => 'e.g. Bank app';
+
+  @override
+  String get safeTitleHintNote => 'e.g. Passport number';
+
+  @override
+  String get safeTitleHintFile => 'e.g. Home insurance';
+
+  @override
+  String get safeOptional => 'optional';
+
+  @override
+  String get safeNoteHint => 'Anything to keep safe';
+
+  @override
+  String get safeChooseFile => 'Choose a file';
+
+  @override
+  String get safeOriginalStays => 'Your original stays where it is.';
+
+  @override
+  String get safeChangeFile => 'Change';
+
+  @override
+  String get safeChooseFileFirst => 'Choose a file first.';
 }

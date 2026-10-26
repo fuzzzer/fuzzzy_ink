@@ -17,6 +17,11 @@ class VaultPlaintextField extends StatefulWidget {
     this.suffix,
     this.minLines,
     this.maxLines = 1,
+    this.hint,
+    this.autofocus = false,
+    this.onSubmitted,
+    this.keyboardType,
+    this.qaId,
     super.key,
   });
 
@@ -26,6 +31,13 @@ class VaultPlaintextField extends StatefulWidget {
   final Widget? suffix;
   final int? minLines;
   final int? maxLines;
+  final String? hint;
+  final bool autofocus;
+  final VoidCallback? onSubmitted;
+  final TextInputType? keyboardType;
+
+  /// The field is found as `field.<qaId>`.
+  final String? qaId;
 
   @override
   State<VaultPlaintextField> createState() => _VaultPlaintextFieldState();
@@ -91,7 +103,15 @@ class _VaultPlaintextFieldState extends State<VaultPlaintextField> {
               children: [
                 Expanded(
                   child: TextField(
+                    key: widget.qaId == null
+                        ? null
+                        : Key('field.${widget.qaId}'),
                     controller: widget.controller,
+                    autofocus: widget.autofocus,
+                    keyboardType: widget.keyboardType,
+                    onSubmitted: widget.onSubmitted == null
+                        ? null
+                        : (_) => widget.onSubmitted!(),
                     focusNode: _focusNode,
                     obscureText: widget.obscure,
                     minLines: widget.minLines,
@@ -99,7 +119,10 @@ class _VaultPlaintextFieldState extends State<VaultPlaintextField> {
                     contextMenuBuilder: CopyGuard.plaintextContextMenuBuilder,
                     style: inputStyle,
                     cursorColor: colors.fieldText,
-                    decoration: const InputDecoration.collapsed(hintText: null),
+                    decoration: InputDecoration.collapsed(
+                      hintText: widget.hint,
+                      hintStyle: type.body.copyWith(color: colors.hint),
+                    ),
                   ),
                 ),
                 if (widget.suffix != null) ...[

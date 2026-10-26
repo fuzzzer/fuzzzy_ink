@@ -3119,6 +3119,408 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Never on silent'**
   String get softSoundsLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe is locked'**
+  String get safeLockedTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with your master password.'**
+  String get safeOpensWithMaster;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with your safe password.'**
+  String get safeOpensWithOwn;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Open with fingerprint'**
+  String get safeOpenWithFingerprint;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use master password'**
+  String get safeUseMasterPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use safe password'**
+  String get safeUseSafePassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe password'**
+  String get safePasswordField;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe'**
+  String get safeOpenButton;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use recovery key'**
+  String get safeUseRecoveryKey;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Not right. Try again.'**
+  String get safeWrongPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries.'**
+  String get safeTooManyTries;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open My safe. Try again.'**
+  String get safeCouldNotOpen;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your recovery key'**
+  String get safeRecoveryTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and capitals don\'t matter.'**
+  String get safeRecoveryLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'No key? Then nothing can open it.'**
+  String get safeRecoveryNoKey;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New safe password'**
+  String get safeRecoveryNewPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get safeSearch;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'All groups'**
+  String get safeAllGroups;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get safeNewGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get safeEmptyTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add.'**
+  String get safeEmptyLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found'**
+  String get safeNothingFound;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Try another word.'**
+  String get safeTryAnotherWord;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load My safe. Lock it and open it again.'**
+  String get safeLoadError;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Locks itself after {minutes} minutes away'**
+  String safeAutoLockTip(int minutes);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get safeAdd;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My safe'**
+  String get safeAddTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Username or email'**
+  String get safeUsername;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get safeWebsite;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get safeNotes;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get safeShowPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get safeHidePassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied · clears in {seconds} s'**
+  String safeCopiedClearsIn(int seconds);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied passwords clear after {seconds} seconds.'**
+  String safeCopyRule(int seconds);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared.'**
+  String get safeCleared;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copying is off in Settings.'**
+  String get safeCopyOff;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get safeGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'No group'**
+  String get safeNoGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get safeMove;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get safeEdit;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'More for {title}'**
+  String safeMoreFor(String title);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. Then it\'s yours.'**
+  String get safeSaveTip;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a group'**
+  String get safeMoveToGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {title}?'**
+  String safeDeleteTitle(String title);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves My safe for good. No undo.'**
+  String get safeDeleteLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted from My safe.'**
+  String get safeDeleted;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to {group}.'**
+  String safeMovedTo(String group);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from its group.'**
+  String get safeMovedOut;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved in My safe.'**
+  String get safeSaved;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this. Try again.'**
+  String get safeItemLoadFailed;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Try again.'**
+  String get safeSaveFailed;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get safeGroupName;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Family'**
+  String get safeGroupHint;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add group'**
+  String get safeAddGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get safeNewPasswordTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New note'**
+  String get safeNewNoteTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New file'**
+  String get safeNewFileTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get safeTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Bank app'**
+  String get safeTitleHintPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Passport number'**
+  String get safeTitleHintNote;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Home insurance'**
+  String get safeTitleHintFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get safeOptional;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Anything to keep safe'**
+  String get safeNoteHint;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get safeChooseFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Your original stays where it is.'**
+  String get safeOriginalStays;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get safeChangeFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file first.'**
+  String get safeChooseFileFirst;
 }
 
 class _FuzzzyInkLocalizationsDelegate

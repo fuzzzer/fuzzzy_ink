@@ -1686,4 +1686,221 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get softSoundsLine => 'უხმო რეჟიმში არასდროს';
+
+  @override
+  String get safeLockedTitle => 'ჩემი სეიფი ჩაკეტილია';
+
+  @override
+  String get safeOpensWithMaster => 'იხსნება მთავარი პაროლით.';
+
+  @override
+  String get safeOpensWithOwn => 'იხსნება სეიფის პაროლით.';
+
+  @override
+  String get safeOpenWithFingerprint => 'თითის ანაბეჭდით გახსნა';
+
+  @override
+  String get safeUseMasterPassword => 'მთავარი პაროლის გამოყენება';
+
+  @override
+  String get safeUseSafePassword => 'სეიფის პაროლის გამოყენება';
+
+  @override
+  String get safePasswordField => 'სეიფის პაროლი';
+
+  @override
+  String get safeOpenButton => 'ჩემი სეიფის გახსნა';
+
+  @override
+  String get safeUseRecoveryKey => 'აღდგენის გასაღების გამოყენება';
+
+  @override
+  String get safeWrongPassword => 'არასწორია. სცადეთ ხელახლა.';
+
+  @override
+  String get safeTooManyTries => 'ძალიან ბევრი ცდა.';
+
+  @override
+  String get safeCouldNotOpen => 'ჩემი სეიფი ვერ გაიხსნა. სცადეთ ხელახლა.';
+
+  @override
+  String get safeRecoveryTitle => 'შეიყვანეთ აღდგენის გასაღები';
+
+  @override
+  String get safeRecoveryLine => 'ჰარებსა და დიდ ასოებს მნიშვნელობა არ აქვს.';
+
+  @override
+  String get safeRecoveryNoKey =>
+      'გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.';
+
+  @override
+  String get safeRecoveryNewPassword => 'სეიფის ახალი პაროლი';
+
+  @override
+  String get safeSearch => 'ძებნა';
+
+  @override
+  String get safeAllGroups => 'ყველა ჯგუფი';
+
+  @override
+  String get safeNewGroup => 'ახალი ჯგუფი';
+
+  @override
+  String get safeEmptyTitle => 'აქ ჯერ არაფერია';
+
+  @override
+  String get safeEmptyLine => 'დააჭირეთ „დამატებას“.';
+
+  @override
+  String get safeNothingFound => 'ვერაფერი მოიძებნა';
+
+  @override
+  String get safeTryAnotherWord => 'სცადეთ სხვა სიტყვა.';
+
+  @override
+  String get safeLoadError =>
+      'ჩემი სეიფი ვერ ჩაიტვირთა. ჩაკეტეთ და ხელახლა გახსენით.';
+
+  @override
+  String safeAutoLockTip(int minutes) {
+    return '$minutes წუთის უმოქმედობის შემდეგ თავისით იკეტება';
+  }
+
+  @override
+  String get safeAdd => 'დამატება';
+
+  @override
+  String get safeAddTitle => 'ჩემს სეიფში დამატება';
+
+  @override
+  String get safeUsername => 'მომხმარებლის სახელი ან ელფოსტა';
+
+  @override
+  String get safeWebsite => 'ვებსაიტი';
+
+  @override
+  String get safeNotes => 'შენიშვნები';
+
+  @override
+  String get safeShowPassword => 'პაროლის ჩვენება';
+
+  @override
+  String get safeHidePassword => 'პაროლის დამალვა';
+
+  @override
+  String safeCopiedClearsIn(int seconds) {
+    return 'დაკოპირდა · წაიშლება $seconds წამში';
+  }
+
+  @override
+  String safeCopyRule(int seconds) {
+    return 'დაკოპირებული პაროლი $seconds წამში იშლება.';
+  }
+
+  @override
+  String get safeCleared => 'წაიშალა.';
+
+  @override
+  String get safeCopyOff => 'კოპირება პარამეტრებში გამორთულია.';
+
+  @override
+  String get safeGroup => 'ჯგუფი';
+
+  @override
+  String get safeNoGroup => 'ჯგუფის გარეშე';
+
+  @override
+  String get safeMove => 'გადატანა';
+
+  @override
+  String get safeEdit => 'რედაქტირება';
+
+  @override
+  String safeMoreFor(String title) {
+    return 'მეტი: $title';
+  }
+
+  @override
+  String get safeSaveTip =>
+      '„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.';
+
+  @override
+  String get safeMoveToGroup => 'ჯგუფში გადატანა';
+
+  @override
+  String safeDeleteTitle(String title) {
+    return 'წავშალოთ: $title?';
+  }
+
+  @override
+  String get safeDeleteLine =>
+      'ის ჩემი სეიფიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია.';
+
+  @override
+  String get safeDeleted => 'წაიშალა ჩემი სეიფიდან.';
+
+  @override
+  String safeMovedTo(String group) {
+    return 'გადავიდა ჯგუფში: $group.';
+  }
+
+  @override
+  String get safeMovedOut => 'ჯგუფიდან ამოღებულია.';
+
+  @override
+  String get safeSaved => 'შეინახა ჩემს სეიფში.';
+
+  @override
+  String get safeItemLoadFailed => 'ვერ გაიხსნა. სცადეთ ხელახლა.';
+
+  @override
+  String get safeSaveFailed => 'ვერ შეინახა. სცადეთ ხელახლა.';
+
+  @override
+  String get safeGroupName => 'ჯგუფის სახელი';
+
+  @override
+  String get safeGroupHint => 'მაგ. ოჯახი';
+
+  @override
+  String get safeAddGroup => 'ჯგუფის დამატება';
+
+  @override
+  String get safeNewPasswordTitle => 'ახალი პაროლი';
+
+  @override
+  String get safeNewNoteTitle => 'ახალი ჩანაწერი';
+
+  @override
+  String get safeNewFileTitle => 'ახალი ფაილი';
+
+  @override
+  String get safeTitle => 'სათაური';
+
+  @override
+  String get safeTitleHintPassword => 'მაგ. ბანკის აპი';
+
+  @override
+  String get safeTitleHintNote => 'მაგ. პასპორტის ნომერი';
+
+  @override
+  String get safeTitleHintFile => 'მაგ. სახლის დაზღვევა';
+
+  @override
+  String get safeOptional => 'არასავალდებულო';
+
+  @override
+  String get safeNoteHint => 'ყველაფერი, რაც დაცული უნდა იყოს';
+
+  @override
+  String get safeChooseFile => 'ფაილის არჩევა';
+
+  @override
+  String get safeOriginalStays => 'ორიგინალი თავის ადგილზე რჩება.';
+
+  @override
+  String get safeChangeFile => 'შეცვლა';
+
+  @override
+  String get safeChooseFileFirst => 'ჯერ ფაილი აირჩიეთ.';
 }

@@ -39,8 +39,16 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
     );
   }
 
+  /// `null` shows every group again.
   void filterByGroup(String? groupId) {
-    emit(state.copyWith(selectedGroupId: groupId));
+    emit(
+      VaultItemsState(
+        status: state.status,
+        items: state.items,
+        selectedGroupId: groupId,
+        failureType: state.failureType,
+      ),
+    );
   }
 
   Future<VaultResponse<VaultItem>> createItem(

@@ -22,6 +22,7 @@ class AppRouter {
   static const basics = '/basics';
   static const vaultHome = '/vault';
   static const vaultItemEditor = '/vault/editor';
+  static const vaultItem = '/vault/item';
 
   /// Reachable without the master password. Everything else — Basics and
   /// the settings included — sits behind it: there is no "lock off".
@@ -107,9 +108,16 @@ class AppRouter {
             ),
             GoRoute(
               path: vaultHome,
-              builder: (_, __) =>
-                  const SensitiveScreen(child: VaultEntryPage()),
+              // My safe keeps its own private screen across locked and open.
+              builder: (_, __) => const VaultEntryPage(),
               routes: [
+                GoRoute(
+                  path: 'item',
+                  parentNavigatorKey: navigatorKey,
+                  builder: (_, state) => SensitiveScreen(
+                    child: VaultItemPage(item: state.extra! as VaultItem),
+                  ),
+                ),
                 GoRoute(
                   path: 'editor',
                   // A full screen over the tabs.
