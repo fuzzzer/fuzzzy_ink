@@ -40,7 +40,8 @@ void main() {
       const ChatGeneralDataListState(status: StateStatus.success, chatList: []),
     );
     authStore = _MockAuthStore();
-    when(() => authStore.lock()).thenAnswer((_) async {});
+    when(() => authStore.lock(byUser: any(named: 'byUser')))
+        .thenAnswer((_) async {});
   });
 
   Future<GoRouter> pumpShell(
@@ -222,7 +223,7 @@ void main() {
         variant: TargetPlatformVariant.desktop(), (tester) async {
       await pumpShell(tester, size: const Size(1024, 768));
       await press(tester, LogicalKeyboardKey.keyL, shift: true);
-      verify(() => authStore.lock()).called(1);
+      verify(() => authStore.lock(byUser: true)).called(1);
       expect(find.byKey(const Key('sheet.lockWho')), findsNothing);
     });
 

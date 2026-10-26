@@ -105,7 +105,7 @@ class SettingsKeepingSafeSection extends StatelessWidget {
           leading: const SettingsRowIcon(Icons.lock_outline),
           title: SettingsRowText(title: localizations.accessLockNow),
           divider: false,
-          onTap: () => context.read<FuzzyAuthStore>().lock(),
+          onTap: () => context.read<FuzzyAuthStore>().lock(byUser: true),
         ),
       ],
     );

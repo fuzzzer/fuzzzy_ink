@@ -19,6 +19,12 @@ class FuzzyAuthState {
   /// setup explains that it cannot be opened and starts fresh.
   final bool previousDataFound;
 
+  /// The person locked the app themselves (Lock now): the lock screen then
+  /// waits for them and never starts the fingerprint or face prompt on its
+  /// own, or the lock would undo itself at once (QA 2026-10-26). Kept until
+  /// the next unlock.
+  final bool lockedByUser;
+
   const FuzzyAuthState._({
     required this.status,
     this.verificationFailed = false,
@@ -27,6 +33,7 @@ class FuzzyAuthState {
     this.biometricReset = false,
     this.lockoutRemaining = Duration.zero,
     this.previousDataFound = false,
+    this.lockedByUser = false,
   });
 
   const FuzzyAuthState.initial()
@@ -36,7 +43,8 @@ class FuzzyAuthState {
         biometricInvalidated = false,
         biometricReset = false,
         lockoutRemaining = Duration.zero,
-        previousDataFound = false;
+        previousDataFound = false,
+        lockedByUser = false;
 
   bool get isLockedOut => lockoutRemaining > Duration.zero;
 
@@ -48,6 +56,7 @@ class FuzzyAuthState {
     bool? biometricReset,
     Duration? lockoutRemaining,
     bool? previousDataFound,
+    bool? lockedByUser,
   }) {
     return FuzzyAuthState._(
       status: status ?? this.status,
@@ -57,6 +66,7 @@ class FuzzyAuthState {
       biometricReset: biometricReset ?? false,
       lockoutRemaining: lockoutRemaining ?? this.lockoutRemaining,
       previousDataFound: previousDataFound ?? this.previousDataFound,
+      lockedByUser: lockedByUser ?? this.lockedByUser,
     );
   }
 }

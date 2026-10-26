@@ -64,17 +64,36 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
   }
 
   /// Once per page: at mount, or when the boot check resolves to `locked`
-  /// while this page is already the gate.
+  /// while this page is already the gate. Never after Lock now (the person
+  /// chose to lock; the button is there when they want it), and only while
+  /// the app is in front: a lock made in the background prompts when the
+  /// person comes back, not unseen behind the app switcher.
   void _tryAutoBiometricUnlock(FuzzyAuthState state) {
     if (_autoBiometricAttempted) return;
-    if (state.biometricEnabled && state.status.isLocked) {
-      _autoBiometricAttempted = true;
-      context.read<FuzzyAuthStore>().unlockWithBiometrics();
+    if (!state.biometricEnabled ||
+        !state.status.isLocked ||
+        state.lockedByUser) {
+      return;
     }
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    if (lifecycle != null && lifecycle != AppLifecycleState.resumed) {
+      _resumeListener ??= AppLifecycleListener(
+        onResume: () {
+          if (!mounted) return;
+          _tryAutoBiometricUnlock(context.read<FuzzyAuthStore>().state);
+        },
+      );
+      return;
+    }
+    _autoBiometricAttempted = true;
+    context.read<FuzzyAuthStore>().unlockWithBiometrics();
   }
+
+  AppLifecycleListener? _resumeListener;
 
   @override
   void dispose() {
+    _resumeListener?.dispose();
     _passwordController.dispose();
     _focusNode.dispose();
     super.dispose();

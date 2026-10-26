@@ -68,7 +68,7 @@ class MainShellPage extends StatelessWidget {
       onLock: () => _lock(context),
       onOpen: () => context.push(AppRouter.open),
       onSettings: () => _select(context, 2),
-      onLockApp: () => context.read<FuzzyAuthStore>().lock(),
+      onLockApp: () => context.read<FuzzyAuthStore>().lock(byUser: true),
       child: LiftIn(
         child: index == 1 ? _MySafeFrame(child: child) : child,
       ),

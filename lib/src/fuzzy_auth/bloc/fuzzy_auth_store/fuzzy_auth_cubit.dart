@@ -146,6 +146,7 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
         state.copyWith(
           status: AuthStateStatus.authenticated,
           lockoutRemaining: _startWait(Duration.zero),
+          lockedByUser: false,
         ),
       );
     } else if ((unlockRes as CryptoCoreFailure<void>).type ==
@@ -201,11 +202,13 @@ class FuzzyAuthStore extends Cubit<FuzzyAuthState> {
 
   /// Closes the store (its key is wiped in the core) and asks for the
   /// master password again. Only an unlocked app locks; the first run and a
-  /// failed storage keep their own state.
-  Future<void> lock() async {
+  /// failed storage keep their own state. [byUser] is Lock now: the lock
+  /// screen then waits for the person instead of prompting for a
+  /// fingerprint or face by itself.
+  Future<void> lock({bool byUser = false}) async {
     await cryptoCoreService.close();
     if (!state.status.isAuthenticated) return;
-    emit(state.copyWith(status: AuthStateStatus.locked));
+    emit(state.copyWith(status: AuthStateStatus.locked, lockedByUser: byUser));
   }
 
   /// The first run finished (master password set, recovery key saved or
