@@ -1,5 +1,6 @@
-import UIKit
 import Flutter
+import LocalAuthentication
+import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -15,6 +16,7 @@ import Flutter
     excludeAppFoldersFromBackup()
     registerBackupChannel()
     registerGuardChannel()
+    registerDeviceChannel()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -375,5 +377,106 @@ final class SecureCanvasField: UITextField {
     host.frame = CGRect(
       x: -canvasOrigin.x, y: -canvasOrigin.y, width: bounds.width, height: bounds.height)
     CATransaction.commit()
+  }
+}
+
+// MARK: - Device: biometrics, print, save
+
+extension AppDelegate {
+  fileprivate func registerDeviceChannel() {
+    guard let registrar = registrar(forPlugin: "FuzzzyDevice") else { return }
+    let channel = FlutterMethodChannel(
+      name: InkDevice.channelName, binaryMessenger: registrar.messenger())
+    channel.setMethodCallHandler { call, result in
+      InkDevice.shared.handle(call, result: result)
+    }
+  }
+}
+
+/// The native side of `ink_device_channel.dart`.
+///
+/// - `hasStrongBiometrics`: Face ID or Touch ID is there *and enrolled*. The
+///   biometric storage plugin's own check also passes with only a passcode,
+///   which offered the fingerprint step on a phone without any (QA
+///   2026-10-26).
+/// - `printImage`: the system print dialog for one image (the recovery key
+///   sheet) — no share sheet, so no Copy, Save Image or AirDrop on the way.
+/// - `exportFile`: the system "Save to Files" dialog for one file (the
+///   recovery key as text) — again no share sheet and no clipboard.
+final class InkDevice: NSObject, UIDocumentPickerDelegate {
+  static let channelName = "com.fuzzzycore.ink/device"
+  static let shared = InkDevice()
+
+  private var pendingExport: FlutterResult?
+
+  func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    let arguments = call.arguments as? [String: Any]
+    switch call.method {
+    case "hasStrongBiometrics":
+      var error: NSError?
+      result(
+        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error))
+    case "printImage":
+      guard let path = arguments?["path"] as? String,
+        let image = UIImage(contentsOfFile: path)
+      else {
+        result(FlutterError(code: "badArguments", message: "no image", details: nil))
+        return
+      }
+      printImage(image, jobName: arguments?["jobName"] as? String ?? "", result: result)
+    case "exportFile":
+      guard let path = arguments?["path"] as? String else {
+        result(FlutterError(code: "badArguments", message: "path is missing", details: nil))
+        return
+      }
+      exportFile(URL(fileURLWithPath: path), result: result)
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  private var topController: UIViewController? {
+    var top = UIApplication.shared.delegate?.window??.rootViewController
+    while let presented = top?.presentedViewController { top = presented }
+    return top
+  }
+
+  private func printImage(_ image: UIImage, jobName: String, result: @escaping FlutterResult) {
+    let controller = UIPrintInteractionController.shared
+    let info = UIPrintInfo(dictionary: nil)
+    info.outputType = .general
+    info.jobName = jobName
+    controller.printInfo = info
+    controller.printingItem = image
+    let done: UIPrintInteractionController.CompletionHandler = { _, completed, error in
+      result(error == nil && completed)
+    }
+    if UIDevice.current.userInterfaceIdiom == .pad, let view = topController?.view {
+      let anchor = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 1, height: 1)
+      controller.present(from: anchor, in: view, animated: true, completionHandler: done)
+    } else {
+      controller.present(animated: true, completionHandler: done)
+    }
+  }
+
+  private func exportFile(_ url: URL, result: @escaping FlutterResult) {
+    guard pendingExport == nil, let top = topController else {
+      result(FlutterError(code: "busy", message: "a save is already open", details: nil))
+      return
+    }
+    let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+    picker.delegate = self
+    pendingExport = result
+    top.present(picker, animated: true)
+  }
+
+  func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    pendingExport?(!urls.isEmpty)
+    pendingExport = nil
+  }
+
+  func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+    pendingExport?(false)
+    pendingExport = nil
   }
 }

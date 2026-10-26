@@ -4,5 +4,6 @@ export 'device_file_interactor.dart';
 export 'external_links.dart';
 export 'fuzzy_navigator.dart';
 export 'id_generator.dart';
+export 'ink_device_channel.dart';
 export 'logger.dart';
 export 'share_helper.dart';

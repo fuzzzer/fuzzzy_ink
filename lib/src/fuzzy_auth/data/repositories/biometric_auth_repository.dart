@@ -2,6 +2,7 @@
 
 import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -74,20 +75,37 @@ class BiometricAuthRepository {
   BiometricAuthRepository({
     FlutterSecureStorage? secureStorage,
     BiometricStorage? biometricStorage,
+    InkDeviceChannel device = const InkDeviceChannel(),
   })  : _secureStorage = secureStorage ??
             const FlutterSecureStorage(
               iOptions: secureStorageIosOptions,
               mOptions: secureStorageMacOsOptions,
             ),
-        _biometricStorage = biometricStorage ?? BiometricStorage();
+        _biometricStorage = biometricStorage ?? BiometricStorage(),
+        _device = device;
 
   final FlutterSecureStorage _secureStorage;
   final BiometricStorage _biometricStorage;
+  final InkDeviceChannel _device;
 
+  /// Strong biometrics are there and enrolled. On iOS and macOS the
+  /// plugin's own check also passes with only a passcode (it asks for
+  /// "device owner" authentication), which offered the fingerprint step on a
+  /// phone with no face or finger enrolled (QA 2026-10-26), so Face ID /
+  /// Touch ID enrolment is asked natively as well.
   Future<bool> canUseBiometrics() async {
     final response = await _biometricStorage.canAuthenticate();
     logger.i('BiometricStorage.canAuthenticate -> $response');
-    return response == CanAuthenticateResponse.success;
+    if (response != CanAuthenticateResponse.success) return false;
+    if (!InkDeviceChannel.isAvailable) return true;
+    try {
+      return await _device.hasStrongBiometrics();
+    } on PlatformException catch (e) {
+      logger.w('Biometric enrolment unknown: ${e.code}');
+      return false;
+    } on MissingPluginException {
+      return false;
+    }
   }
 
   /// A copy made before [biometricKeyVersion] is dropped here first, so it

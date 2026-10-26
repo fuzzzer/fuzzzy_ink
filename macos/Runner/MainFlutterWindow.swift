@@ -18,6 +18,8 @@ class MainFlutterWindow: NSWindow {
     InkGuard.shared.register(
       window: self, messenger: flutterViewController.engine.binaryMessenger)
     InkIncoming.shared.register(messenger: flutterViewController.engine.binaryMessenger)
+    InkDevice.shared.register(
+      window: self, messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }
