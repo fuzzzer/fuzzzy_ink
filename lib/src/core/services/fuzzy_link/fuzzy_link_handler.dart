@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
 /// Opens what arrives from outside the app: Fuzzzy Ink links, and `.fuzz`
-/// files other apps opened in this one ([IncomingFiles], straight to Open).
-/// While the app is locked, the one that came last waits for the unlock.
+/// files other apps opened in this one ([IncomingFiles], to Open as an
+/// [OpenArrivedFile]). Nothing that arrives opens, connects or spends a key
+/// by itself: Open asks first (security review 2026-10-26). While the app is
+/// locked, the one that came last waits for the unlock.
 class FuzzyLinkHandler {
   FuzzyLinkHandler({
     required FuzzyLinkService linkService,
@@ -150,7 +152,8 @@ class FuzzyLinkHandler {
   }
 
   /// A `.fuzz` file from another app: read once into the hand-off folder,
-  /// then Open (after the unlock when the app is locked).
+  /// then Open (after the unlock when the app is locked), where a message,
+  /// a person's file or a reply waits for the person's Open or Connect.
   Future<void> _handleIncomingFile(Uri uri) async {
     final incomingFiles = _incomingFiles;
     if (incomingFiles == null) return;
@@ -176,7 +179,9 @@ class FuzzyLinkHandler {
   void _openFile(String filePath) {
     _navigateCleanly(
       AppRouter.open,
-      extra: OpenPagePayload(request: OpenChosenFile(filePath)),
+      // Arrived, not chosen: it waits for an explicit Open/Connect tap and
+      // never spends a one-time key on arrival.
+      extra: OpenPagePayload(request: OpenArrivedFile(filePath)),
     );
   }
 

@@ -144,6 +144,27 @@ void main() {
     verify(() => cubit.confirmOpen()).called(1);
   });
 
+  testWidgets(
+      "a person's .fuzz file handed over by another app asks \"Open the "
+      'file from Nino?" and opens only on Open; Not now leaves',
+      (tester) async {
+    when(() => cubit.confirmOpen()).thenAnswer((_) async {});
+    show(
+      OpenFlowState(
+        phase: OpenPhase.confirmMessage,
+        chat: _nino,
+        pendingFilePath: '/support/handoff/1_0/photo.jpg.fuzz',
+      ),
+    );
+    await pumpOpen(tester);
+    expect(find.text('Open the file from Nino?'), findsOneWidget);
+    expect(find.byKey(const Key('btn.open.confirm.notNow')), findsOneWidget);
+    verifyNever(() => cubit.confirmOpen());
+    await tester.tap(find.byKey(const Key('btn.open.confirm.open')));
+    await tester.pump();
+    verify(() => cubit.confirmOpen()).called(1);
+  });
+
   testWidgets('reading says so', (tester) async {
     show(const OpenFlowState(phase: OpenPhase.reading));
     await pumpOpen(tester);

@@ -759,6 +759,83 @@ void main() {
       await cubit.close();
     });
 
+    test(
+        "a person's file left at Open's question (Not now) spends nothing "
+        'and its hand-off copy goes', () async {
+      final file = path.join(dir.path, 'photo.jpg.fuzz');
+      File(file).writeAsStringSync('FUZZ');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.chatFile,
+          chatId: _ninoId,
+        ),
+      );
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      await cubit.close();
+      verifyNever(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      );
+      verify(() => store.discardPickedCopy(file)).called(1);
+    });
+
+    test('a file opened after Open is left to the queue, not wiped on close',
+        () async {
+      final file = path.join(dir.path, 'photo.jpg.fuzz');
+      File(file).writeAsStringSync('FUZZ');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.chatFile,
+          chatId: _ninoId,
+        ),
+      );
+      when(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      ).thenReturn(null);
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      await cubit.confirmOpen();
+      await cubit.close();
+      verifyNever(() => store.discardPickedCopy(file));
+    });
+
+    test('a message as a file is read, its copy goes, and it still waits',
+        () async {
+      final file = path.join(dir.path, 'fuzzzy-ink-message.fuzz');
+      File(file).writeAsStringSync('Fuzz/AwEC\n');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.message,
+          chatId: _ninoId,
+          isTextFile: true,
+        ),
+      );
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.pendingMessage, 'Fuzz/AwEC');
+      verify(() => store.discardPickedCopy(file)).called(1);
+      await cubit.close();
+      verifyNever(
+        () => crypto.decryptText(
+          chatId: any(named: 'chatId'),
+          blob: any(named: 'blob'),
+        ),
+      );
+    });
+
     test('a reply goes on to "Connect with {name}?"', () async {
       final file = path.join(dir.path, 'fuzzzy-ink-reply.fuzz');
       File(file).writeAsStringSync('Fuzz/AgE\n');

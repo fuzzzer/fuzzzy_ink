@@ -592,6 +592,13 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     await _rowSubscription?.cancel();
     await _passwordFileSubscription?.cancel();
     await _dropPlainCopy();
+    // A person's file another app handed over and still waiting for Open
+    // ("Not now", or Open closed): its hand-off copy goes.
+    final waitingFile =
+        state.phase == OpenPhase.confirmMessage ? state.pendingFilePath : null;
+    if (waitingFile != null) {
+      await userFileStore.discardPickedCopy(waitingFile);
+    }
     return super.close();
   }
 }

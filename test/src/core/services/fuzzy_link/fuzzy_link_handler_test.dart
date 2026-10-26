@@ -380,16 +380,21 @@ void main() {
       return handler;
     }
 
+    /// Open gets it as an arrived file, never as a chosen one: a message,
+    /// a person's file or a reply then waits for the person's Open or
+    /// Connect, so no one-time key is spent on arrival (security review
+    /// 2026-10-26).
     void expectOpenedInOpen() {
       expect(went, hasLength(1));
       final (path, extra) = went.single;
       expect(path, AppRouter.open);
       final request = (extra! as OpenPagePayload).request;
-      expect(request, isA<OpenChosenFile>());
-      expect((request! as OpenChosenFile).filePath, copy);
+      expect(request, isA<OpenArrivedFile>());
+      expect(request, isNot(isA<OpenChosenFile>()));
+      expect((request! as OpenArrivedFile).filePath, copy);
     }
 
-    testWidgets('is copied once and opens in Open, never as a link',
+    testWidgets('is copied once and goes to Open, never as a link',
         (tester) async {
       final handler = await pumpWithFiles(tester);
       await receive(tester, fileUri);

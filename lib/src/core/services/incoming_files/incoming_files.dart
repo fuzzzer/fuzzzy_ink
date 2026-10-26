@@ -11,9 +11,12 @@ import 'package:path/path.dart' as path;
 /// `com.fuzzzycore.ink.fuzz`).
 ///
 /// Whatever arrives is only read, once: copied into a new hand-off folder
-/// ([UserFileStore.newHandoffPath]) and handed to Open, which peeks at it
-/// before it spends anything (`PROTOCOL.md` §7.4). The copy is wiped once
-/// Open used it ([UserFileStore.discardPickedCopy]) and at every launch.
+/// ([UserFileStore.newHandoffPath]) and handed to Open as an
+/// [OpenArrivedFile], which peeks at it (`PROTOCOL.md` §7.4) and spends
+/// nothing until the person taps Open (a message or a person's file) or
+/// Connect (a reply). The copy is wiped once Open used it or was left
+/// ([UserFileStore.discardPickedCopy]), when the app locks, and at every
+/// launch.
 /// Nothing is ever run or handed on, and nothing goes on the network.
 ///
 /// - Android: a `content://` (or `file://`) URI, read by the native side
