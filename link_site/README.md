@@ -9,17 +9,20 @@ Not published. Hosting is the owner's step.
 - `.well-known/apple-app-site-association`: lets iPhones open the links in the app.
 - `.well-known/assetlinks.json`: lets Android phones open the links in the app.
 
+Both name the **production app only** (`com.fuzzzycore.ink`). A test build (`.stg`, `.dev`) signed with a weaker
+key must never be able to take over production links (security review 2026-10-26). The test builds' entries live
+in `../link_site_test_builds/.well-known/`; publish those only on a separate test host, never on
+`ink.fuzzzycore.com`. Until a test host exists, test builds open links by pasting them into Open.
+
 ## Before publishing, replace
 
 | Placeholder | Where | What |
 |---|---|---|
-| `REPLACE_WITH_APPLE_TEAM_ID` | `apple-app-site-association` (3×) | the Apple Developer team id that signs the app |
+| `REPLACE_WITH_APPLE_TEAM_ID` | `apple-app-site-association` | the Apple Developer team id that signs the app |
 | `REPLACE_WITH_PRODUCTION_RELEASE_CERT_SHA256_FINGERPRINT` | `assetlinks.json` | SHA-256 of the certificate Google Play signs `com.fuzzzycore.ink` with (Play Console › App integrity › App signing), as `AB:CD:…` |
-| `REPLACE_WITH_STAGING_CERT_SHA256_FINGERPRINT`, `REPLACE_WITH_DEVELOPMENT_CERT_SHA256_FINGERPRINT` | `assetlinks.json` | the same for the test builds (`.stg`, `.dev`), or delete those two entries |
 | `REPLACE_WITH_APP_STORE_ID` | `index.html` | the number in the App Store address |
 | `REPLACE_WITH_DESKTOP_DOWNLOAD_URL` | `index.html` | where the Mac, Windows and Linux builds are downloaded |
 
-Drop the `.stg` / `.dev` app ids from the Apple file too if test builds should not open links.
 
 ## Hosting rules
 
