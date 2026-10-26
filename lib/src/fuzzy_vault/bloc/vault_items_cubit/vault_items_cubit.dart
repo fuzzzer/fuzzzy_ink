@@ -47,8 +47,23 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
     final openKey = _key;
     if (openKey == null) return;
     final labels = await vaultRepository.readLabels(items, openKey);
-    if (isClosed || !identical(state.items, items)) return;
+    // The safe locked (or opened again with another key) meanwhile: what
+    // was opened before the lock is dropped, never shown or kept.
+    if (isClosed ||
+        !identical(state.items, items) ||
+        !identical(_key, openKey)) {
+      return;
+    }
     emit(state.copyWith(labels: labels));
+  }
+
+  /// The safe locked (by itself, by the lock button or with the whole app):
+  /// the rows' labels — usernames, file names — leave memory with the key,
+  /// and a reading still under way is dropped (security review 2026-10-26).
+  void forgetLabels() {
+    _key = null;
+    if (isClosed || state.labels.isEmpty) return;
+    emit(state.copyWith(labels: const {}));
   }
 
   /// `null` shows every group again.

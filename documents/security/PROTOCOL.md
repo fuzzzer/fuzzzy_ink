@@ -470,6 +470,7 @@ under `""` can be made. Never valid on the wire.
 
 Vectors: `local_seal_chat` (history key `55×32`, nonce `44×24`, plaintext `hello`, AAD `local-seal` ‖ chat id ‖ row),
 `vault_item` (vault key `33×32`, nonce `44×24`, plaintext `item`, AAD `vault-item` ‖ `00000003` ‖ item id),
+`vault_label` (the same key, nonce and item id, the label `user` padded to 256 bytes, AAD `vault-label` ‖ `00000003` ‖ item id),
 `store_key_wrap` and `vault_key_wrap` (master key `33×32`, nonce `44×24`, the key `66×32`, AAD `store-key-wrap` /
 `vault-key-wrap`), `state_file` (store key
 `33×32`, nonce `44×24`, AAD `chat-state` ‖ chat id, plaintext `state_file.body.json`).
@@ -884,7 +885,8 @@ flutter_secure_storage  key "auto_lock_settings_v1"                     the auto
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
 <application support directory>/vault/vault.meta                       JSON: the wrapped vault key (field "verificationToken", base64: a 0x20 under the master key, or a 0x10 under the vault's own password); vault id and timestamps in plaintext. No auto-lock value: the vault's timer is a constant of the app
 <application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" ‖ version ‖ item id (optionally wrapped again in a 0x05 under a per-item password)
-<application support directory>/vault/items/<item_id>.label             the item's list label (a password's username, a file's name): a 0x20 blob, AAD "vault-item" ‖ version ‖ "label:" ‖ item id (§10.6); none for a note or an item with its own password
+<application support directory>/vault/items/<item_id>.label             the item's list label (a password's username, a file's name): a 0x20 blob of 302 bytes, AAD "vault-label" ‖ version ‖ item id, the label padded to 256 bytes (§10.6); one for every password and file item, empty without a username; none for a note or an item with its own password
+<application support directory>/vault/items/<item_id>.{vault,label}.rekey  transient: an item's or label's copy under the new key while the vault moves to it (§10.6)
 <application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
 <application support directory>/sealed_files/chats/<safe chat name> (<first 8 of chat id>)/<name>.fuzz
@@ -1070,8 +1072,12 @@ the app, which never throws on a seal it cannot open (`THREAT_MODEL.md` §8) —
 Deliberately, so the reviewer is not misled: the app's Isar database is not encrypted as a whole. Chat names,
 the chat id, timestamps, message ordering, file names and sizes, the `encryptedMessage` column (the `Fuzz/`
 blob text itself — ciphertext, but a record that a message exists), and every other row are plaintext on disk.
-Only the `sealedPlaintext` column, the vault item files and the kept `.fuzz` files (§10.1) are sealed; a vault item's title, tags, group and
-type are plaintext columns in the database. The wrapped store key lives in the platform
+Only the `sealedPlaintext` column, the vault item files and labels and the kept `.fuzz` files (§10.1) are sealed; a vault item's title, tags, group and
+type are plaintext columns in the database. Of a vault item's list label (§10.6) a disk reader sees only what the
+plaintext row already says: a label file exists for every password and file item without a password of its own
+(empty when there is no username), and every label file has the same size (the label is padded to 256 bytes in
+the core, a longer one cut), so neither its presence nor its size tells whether a username exists or how long
+it or a file name is. Like every vault file, its modification time marks each content save. The wrapped store key lives in the platform
 secure storage (Keychain / Keystore / DPAPI / libsecret) as a `0x10` blob.
 
 **Files are kept sealed; plaintext exists only for one use** (2026-10-26, owner: "transfer ownership of
@@ -1151,19 +1157,27 @@ the same item put back, does not open (security review 2026-10-22). A password c
 password or a recovery re-wraps the key and re-encrypts no item; only the switch to its own password moves every
 item to a new key (above). The key is held in an opaque handle (`VaultKey`) that behaves like the store
 handle (`close` → later calls `StoreLocked`). The vault's auto-lock is a constant of the app (5 minutes after
-opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`,
+opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`, `vault_label`,
 `recovery_lock`, `vault_key_recovery`.
 
 **List labels** (2026-10-26). So that My safe's list can show a password's username or a file's name without
-opening any item, each such item also has a small label file, `<item id>.label`: the label's UTF-8 text sealed
-with the same item seal under the vault key, with the item id `label:` ‖ item id and the item's content version.
-Item ids are UUIDs and never begin with `label:`, so a label never opens as an item, as another item's label, or
-the other way round. The app writes it after the item file and before the database row; the list opens it at the
-row's version or one ahead and shows the item's type when it does not open (a stop left it behind). It is opened
-only while the vault is open, holds no password, note or file content, and is deleted with the item. A note and an
-item with a password of its own have none (only that password opens anything of such an item). The switch to the
-vault's own password re-seals each label with its item (`vault_reseal`, staged and committed with the items); a
-label that does not open then is deleted.
+opening any item, each password and file item also has a small label file, `<item id>.label`, sealed by calls of
+its own (`vault_seal_label`, `vault_open_label`, `vault_reseal_label`): a `0x20` under the vault key with AAD
+`vault-label` ‖ u32 BE version ‖ item id, bound to the item and its content version like the item but in its own
+domain, so a label never opens as an item, as another item's label or at another version, and an item never
+opens as a label, whatever the ids. The plaintext is always 256 bytes, padded in the core: one length byte, the
+label's UTF-8 text cut at a character boundary to at most 255 bytes, zeros to the end (any other shape is
+`Corrupt`); every label file is 302 bytes. A password item without a username has an empty label, so neither the
+file's presence nor its size says anything about the label (security review 2026-10-26). The app writes it after
+the item file and before the database row; the list opens it at the row's version or one ahead and shows the
+item's type when it does not open (a stop left it behind) or is empty. It is opened only while the vault is open,
+leaves the app's memory when the vault locks (with the vault or with the whole app), holds no password, note or
+file content, and is deleted with the item. A note and an item with a password of its own have none (only that
+password opens anything of such an item). The switch to the vault's own password re-seals each label with its
+item (`vault_reseal_label`, staged and committed with the items); every label that did not move — it did not
+open, a file step failed, its item file is missing, it has no row — is deleted before the commit, and if that
+delete fails the switch stops and the old vault stays whole, so no label is left under the old key. Vector:
+`vault_label`.
 
 ### 10.7 Sealed app settings
 
@@ -1495,6 +1509,7 @@ and the independent derivation it was checked against.
 | `vault_key_recovery` | §6.10/10.6 | 110 | vault key `33×32` sealed to `recovery_lock`, ephemeral secret `55×32`, nonce `22×24`, AAD `vault-key-recovery` |
 | `local_seal_chat` | §6.9/10.4 | 51 | history key `55×32`, chat id, row `01` ‖ `Fuzz/RlVaWgEDAd6tvu8`, `hello`, nonce `44×24` |
 | `vault_item` | §6.9/10.6 | 50 | `item`, item id, version 3, nonce `44×24` |
+| `vault_label` | §6.9/10.6 | 302 | the label `user` padded to 256 bytes, item id, version 3, nonce `44×24`, AAD `vault-label` |
 | `password_sealed_text` | §6.7 | 76 | `pw`, salt `11×16`, nonce `22×24`, `hello` |
 | `state_file` (+ `.body.json`) | §10.3 | 1662 | A's fixed account, freshly invited, history key `55×32`, nonce `44×24` |
 | `file_header_password` | §6.6 | 55 | prefix `90..a2`, salt `a0..af` |

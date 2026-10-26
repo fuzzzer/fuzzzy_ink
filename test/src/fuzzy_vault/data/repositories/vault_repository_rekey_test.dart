@@ -16,6 +16,29 @@ class MockVaultCryptoRepository extends Mock implements VaultCryptoRepository {}
 
 class MockVaultKey extends Mock implements VaultKey {}
 
+/// The real files, with one step that fails on demand.
+class _FlakyFiles extends VaultFileDataSource {
+  _FlakyFiles({required super.vaultDirectoryPath})
+      : super(backupExclusion: const BackupExclusion(isApplePlatform: false));
+
+  bool failStagingLabel = false;
+  bool failDeletingUnmovedLabels = false;
+
+  @override
+  Future<void> stageRekeyedLabel(String itemId, List<int> bytes) async {
+    if (failStagingLabel) throw const FileSystemException('disk full');
+    await super.stageRekeyedLabel(itemId, bytes);
+  }
+
+  @override
+  Future<void> deleteUnmovedLabels() async {
+    if (failDeletingUnmovedLabels) {
+      throw const FileSystemException('not permitted');
+    }
+    await super.deleteUnmovedLabels();
+  }
+}
+
 StoredVaultItem _item(String id, {bool ownPassword = false}) =>
     StoredVaultItem()
       ..itemId = id
@@ -33,7 +56,7 @@ StoredVaultItem _item(String id, {bool ownPassword = false}) =>
 /// review 2026-10-26): every item is re-sealed before one rename commits.
 void main() {
   late Directory root;
-  late VaultFileDataSource files;
+  late _FlakyFiles files;
   late MockVaultItemLocalDataSource items;
   late MockVaultCryptoRepository crypto;
   late VaultRepository repository;
@@ -53,9 +76,8 @@ void main() {
 
   setUp(() async {
     root = await Directory.systemTemp.createTemp('vault_rekey');
-    files = VaultFileDataSource(
+    files = _FlakyFiles(
       vaultDirectoryPath: VaultFileDataSource.directoryIn(root.path),
-      backupExclusion: const BackupExclusion(isApplePlatform: false),
     );
     items = MockVaultItemLocalDataSource();
     crypto = MockVaultCryptoRepository();
@@ -70,6 +92,18 @@ void main() {
     await files.writeItemAtomic('b', [2]);
     when(
       () => crypto.reseal(
+        from: previous,
+        to: next,
+        itemId: any(named: 'itemId'),
+        version: 1,
+        blob: any(named: 'blob'),
+      ),
+    ).thenAnswer((invocation) async {
+      final blob = invocation.namedArguments[#blob] as Uint8List;
+      return VaultSuccess(Uint8List.fromList([blob.single + 10]));
+    });
+    when(
+      () => crypto.resealLabel(
         from: previous,
         to: next,
         itemId: any(named: 'itemId'),
@@ -115,10 +149,10 @@ void main() {
     await files.writeLabelAtomic('a', [5]);
     await files.writeLabelAtomic('b', [6]);
     when(
-      () => crypto.reseal(
+      () => crypto.resealLabel(
         from: previous,
         to: next,
-        itemId: 'label:b',
+        itemId: 'b',
         version: 1,
         blob: any(named: 'blob'),
       ),
@@ -135,6 +169,92 @@ void main() {
     expect(await files.readItem('a'), [11]);
     expect(await files.readLabel('a'), [15]);
     expect(await files.readLabel('b'), isNull);
+  });
+
+  group('no label stays under the old key (security review 2026-10-26)', () {
+    Future<VaultResponse<void>> move() => repository.rekey(
+          previous: previous,
+          key: next,
+          metadata: metadata,
+        );
+
+    test('when moving it throws', () async {
+      when(items.getAllItems).thenAnswer((_) async => [_item('a'), _item('b')]);
+      await files.writeLabelAtomic('a', [5]);
+      await files.writeLabelAtomic('b', [6]);
+      when(
+        () => crypto.resealLabel(
+          from: previous,
+          to: next,
+          itemId: 'b',
+          version: 1,
+          blob: any(named: 'blob'),
+        ),
+      ).thenThrow(StateError('bridge'));
+
+      expect(await move(), isA<VaultSuccess<void>>());
+      expect(await files.readItem('b'), [12]);
+      expect(await files.readLabel('a'), [15]);
+      expect(await files.readLabel('b'), isNull);
+    });
+
+    test('when writing its moved copy fails', () async {
+      when(items.getAllItems).thenAnswer((_) async => [_item('a')]);
+      await files.writeLabelAtomic('a', [5]);
+      files.failStagingLabel = true;
+
+      expect(await move(), isA<VaultSuccess<void>>());
+      expect(await files.readItem('a'), [11]);
+      expect(await files.readLabel('a'), isNull);
+    });
+
+    test("when its item's file is missing", () async {
+      when(items.getAllItems).thenAnswer((_) async => [_item('a'), _item('c')]);
+      await files.writeLabelAtomic('c', [7]);
+
+      expect(await move(), isA<VaultSuccess<void>>());
+      expect(await files.readLabel('c'), isNull);
+    });
+
+    test('when it has no row (a create that stopped before its row)', () async {
+      when(items.getAllItems).thenAnswer((_) async => [_item('a')]);
+      await files.writeLabelAtomic('a', [5]);
+      await files.writeLabelAtomic('orphan', [8]);
+
+      expect(await move(), isA<VaultSuccess<void>>());
+      expect(await files.readLabel('a'), [15]);
+      expect(await files.readLabel('orphan'), isNull);
+    });
+
+    test(
+        'when such a label cannot be deleted, the move stops before the '
+        'recovery copy is touched and the old vault stays whole', () async {
+      when(items.getAllItems).thenAnswer((_) async => [_item('a')]);
+      await files.writeLabelAtomic('a', [5]);
+      files.failDeletingUnmovedLabels = true;
+      var recoveryCopyTouched = false;
+
+      final res = await repository.rekey(
+        previous: previous,
+        key: next,
+        metadata: metadata,
+        beforeCommit: () async {
+          recoveryCopyTouched = true;
+          return null;
+        },
+      );
+      expect((res as VaultFailure).type, VaultFailureType.storageWriteError);
+      expect(recoveryCopyTouched, isFalse);
+      expect(await metaText(), 'old meta');
+      expect(await files.readItem('a'), [1]);
+      expect(await files.readLabel('a'), [5]);
+      expect(
+        root
+            .listSync(recursive: true)
+            .where((entity) => entity.path.endsWith('.rekey')),
+        isEmpty,
+      );
+    });
   });
 
   test('a move that stops before the commit leaves the labels as they were',

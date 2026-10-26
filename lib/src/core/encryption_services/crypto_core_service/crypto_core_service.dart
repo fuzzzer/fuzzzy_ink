@@ -949,6 +949,63 @@ class CryptoCoreService {
     );
   }
 
+  /// Seals the list label of version [version] of the item [itemId] under
+  /// [key] in its own domain (AAD `vault-label` ‖ version ‖ id), padded in
+  /// the core to one fixed size; an empty [label] is sealed too.
+  Future<CryptoCoreResponse<Uint8List>> vaultSealLabel({
+    required VaultKey key,
+    required String itemId,
+    required int version,
+    required String label,
+  }) {
+    return _guarded(
+      () => rust_vault.vaultSealLabel(
+        key: key,
+        itemId: itemId,
+        version: version,
+        label: label,
+      ),
+    );
+  }
+
+  /// Inverse of [vaultSealLabel] for the same item and version; an item
+  /// blob, another item's or version's label is `corrupt`.
+  Future<CryptoCoreResponse<String>> vaultOpenLabel({
+    required VaultKey key,
+    required String itemId,
+    required int version,
+    required Uint8List blob,
+  }) {
+    return _guarded(
+      () => rust_vault.vaultOpenLabel(
+        key: key,
+        itemId: itemId,
+        version: version,
+        blob: blob,
+      ),
+    );
+  }
+
+  /// [vaultReseal] for a list label: from [from] to [to], same item and
+  /// version; the label never leaves the core.
+  Future<CryptoCoreResponse<Uint8List>> vaultResealLabel({
+    required VaultKey from,
+    required VaultKey to,
+    required String itemId,
+    required int version,
+    required Uint8List blob,
+  }) {
+    return _guarded(
+      () => rust_vault.vaultResealLabel(
+        from: from,
+        to: to,
+        itemId: itemId,
+        version: version,
+        blob: blob,
+      ),
+    );
+  }
+
   /// [passwordSealText] for arbitrary bytes, as the binary 0x05 blob — the
   /// vault's optional custom-password layer over a sealed item.
   Future<CryptoCoreResponse<Uint8List>> passwordSealBytes({

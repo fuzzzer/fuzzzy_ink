@@ -160,7 +160,7 @@ void main() {
       () async {
     await repository.createItem(_password(_bank, 'tamar@mail.ge'), key);
     final sealed = Uint8List.fromList((await files.readLabel(_bank))!);
-    // As the item itself: no.
+    // As the item itself (its own domain in the core): no.
     final asItem = await service.vaultOpen(
       key: key,
       itemId: _bank,
@@ -181,7 +181,8 @@ void main() {
     );
   });
 
-  test('an edit renews the label; an empty username drops it', () async {
+  test('an edit renews the label; an empty username keeps an empty one',
+      () async {
     await repository.createItem(_password(_bank, 'old@mail.ge'), key);
     final created =
         (await repository.getItem(_bank, key) as VaultSuccess<VaultItem>).data;
@@ -205,8 +206,38 @@ void main() {
       ),
       key,
     );
-    expect(await files.readLabel(_bank), isNull);
+    expect(await files.readLabel(_bank), isNotNull);
     expect(await repository.readLabels(await listed(), key), isEmpty);
+  });
+
+  test(
+      "a label file's size and presence say nothing about the username "
+      '(security review 2026-10-26)', () async {
+    await repository.createItem(_password(_bank, 'a'), key);
+    await repository.createItem(_password(_lease, ''), key);
+    await repository.createItem(
+      _password(_diary, 'a-much-longer-username@some-mail-provider.example'),
+      key,
+    );
+    final sizes = {
+      for (final id in [_bank, _lease, _diary])
+        (await files.readLabel(id))!.length,
+    };
+    expect(sizes, {6 + 24 + 256 + 16});
+  });
+
+  test('a very long file name is cut for the list, never mid-letter', () async {
+    final name = '${'ფ' * 120}.pdf';
+    await repository.createItem(
+      VaultItem(
+        metadata: _metadata(_lease, VaultItemType.file),
+        fileContent: VaultFileContent(fileName: name, fileBytes: const [1]),
+      ),
+      key,
+    );
+    expect(await repository.readLabels(await listed(), key), {
+      _lease: 'ფ' * 85,
+    });
   });
 
   test('an item with a password of its own keeps no label', () async {
