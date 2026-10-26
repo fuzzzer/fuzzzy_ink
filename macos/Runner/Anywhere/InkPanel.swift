@@ -47,6 +47,8 @@ final class InkPanel: NSPanel {
 @MainActor
 final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
   static let width: CGFloat = 400
+  /// About the tallest step (people, a message, the draft note).
+  static let roomBelow: CGFloat = 440
 
   let model: InkAnywhereModel
   private let panel = InkPanel()
@@ -54,6 +56,7 @@ final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
   private var topLeft: NSPoint = .zero
   private var isClosing = false
   private var stepWatch: AnyCancellable?
+  private var contentWatch: AnyCancellable?
 
   /// How long "Copied, press ⌘V" stays before the panel steps aside, so ⌘V
   /// reaches the app the person was in.
@@ -68,11 +71,18 @@ final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
       .fixedSize(horizontal: false, vertical: true)
     let hosting = NSHostingView(rootView: content)
     if #available(macOS 13.0, *) {
-      hosting.sizingOptions = [.intrinsicContentSize]
+      // The panel follows the content itself ([fitContent]).
+      hosting.sizingOptions = []
     }
+    hosting.autoresizingMask = [.width, .height]
     panel.contentView = hosting
     panel.delegate = self
     model.host = self
+    // Every change can change the height (a step, a note, the people):
+    // grow or shrink from the top edge once SwiftUI has laid it out.
+    contentWatch = model.objectWillChange.sink { [weak self] _ in
+      DispatchQueue.main.async { self?.fitContent() }
+    }
     stepWatch = model.$step.sink { [weak self] step in
       switch step {
       case .lockedFor(_, .copied), .lockedFor(_, .replaced):
@@ -85,25 +95,37 @@ final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
     }
   }
 
-  /// Near the pointer, kept on the pointer's screen.
+  /// Near the pointer, kept on the pointer's screen, with room below for
+  /// the tallest step (the panel grows downwards).
   func show() {
     let mouse = NSEvent.mouseLocation
     let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
     let size = panel.contentView?.fittingSize ?? panel.frame.size
-    panel.setContentSize(size)
-    var origin = NSPoint(x: mouse.x - 40, y: mouse.y - size.height - 12)
+    panel.setContentSize(NSSize(width: InkPanelController.width, height: size.height))
+    var top = NSPoint(x: mouse.x - 40, y: mouse.y - 12)
     if let visible = screen?.visibleFrame {
-      origin.x = min(max(origin.x, visible.minX + 8), visible.maxX - size.width - 8)
-      origin.y = min(max(origin.y, visible.minY + 8), visible.maxY - size.height - 8)
+      top.x = min(max(top.x, visible.minX + 8), visible.maxX - panel.frame.width - 8)
+      top.y = min(max(top.y, visible.minY + InkPanelController.roomBelow), visible.maxY - 8)
     }
-    panel.setFrameOrigin(origin)
-    topLeft = NSPoint(x: panel.frame.minX, y: panel.frame.maxY)
+    panel.setFrameTopLeftPoint(top)
+    topLeft = top
     panel.makeKeyAndOrderFront(nil)
     Task { await model.start() }
   }
 
   func close() {
     panel.close()
+  }
+
+  /// The panel's height follows the content; its top edge stays put.
+  private func fitContent() {
+    guard panel.isVisible, let content = panel.contentView else { return }
+    content.layoutSubtreeIfNeeded()
+    let size = NSSize(width: InkPanelController.width, height: content.fittingSize.height)
+    guard abs(panel.contentLayoutRect.height - size.height) > 0.5 else { return }
+    var frame = panel.frameRect(forContentRect: NSRect(origin: .zero, size: size))
+    frame.origin = NSPoint(x: topLeft.x, y: topLeft.y - frame.height)
+    panel.setFrame(frame, display: true, animate: false)
   }
 
   // MARK: AnywhereHost
@@ -125,12 +147,6 @@ final class InkPanelController: NSObject, AnywhereHost, NSWindowDelegate {
   func share(_ sealed: String) {}
 
   // MARK: NSWindowDelegate
-
-  /// The content grew or shrank: keep the top edge where it was.
-  func windowDidResize(_ notification: Notification) {
-    guard panel.isVisible else { return }
-    panel.setFrameTopLeftPoint(topLeft)
-  }
 
   func windowDidMove(_ notification: Notification) {
     topLeft = NSPoint(x: panel.frame.minX, y: panel.frame.maxY)

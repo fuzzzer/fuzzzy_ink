@@ -24,6 +24,8 @@ struct InkAnywhereView: View {
     .padding(20)
     .frame(maxWidth: .infinity, alignment: .topLeading)
     .modifier(Surface(isOn: drawsSurface, reduceTransparency: reduceTransparency))
+    // A sheet is taller than its content: keep the content under the grabber.
+    .frame(maxHeight: drawsSurface ? nil : .infinity, alignment: .top)
     .animation(InkGlass.spring(reduceMotion: reduceMotion), value: model.step)
     .animation(InkGlass.spring(reduceMotion: reduceMotion), value: model.mode)
     .inkSuccessFeedback(trigger: model.successes)
