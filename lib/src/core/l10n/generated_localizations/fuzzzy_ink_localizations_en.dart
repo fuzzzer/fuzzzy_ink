@@ -236,11 +236,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get chatAuthResecuringKeys => 'Re-securing your keys…';
 
   @override
-  String get benchmarkFileEncryption => 'Benchmark file encryption (dev)';
+  String get benchmarkFileEncryption => 'Benchmark locking files (dev)';
 
   @override
   String get benchmarkFileEncryptionDescription =>
-      'Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s';
+      'Locks and opens a 64 MiB test file and reports MB/s';
 
   @override
   String get benchmarkResult => 'Benchmark result';
@@ -497,7 +497,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get eraseMessage =>
-      'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.';
+      'Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.';
 
   @override
   String get eraseConfirm => 'Erase everything';

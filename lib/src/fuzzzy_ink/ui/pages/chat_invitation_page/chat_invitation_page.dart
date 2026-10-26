@@ -56,6 +56,10 @@ class _ProvidedChatInvitationPageState
     extends State<ProvidedChatInvitationPage> {
   bool _isShared = false;
 
+  /// The last way out was "Copy as text": the line says it was copied, not
+  /// sent to the share menu.
+  bool _wasCopied = false;
+
   @override
   void initState() {
     super.initState();
@@ -82,7 +86,10 @@ class _ProvidedChatInvitationPageState
       personName: widget.payload.chatName,
     );
     if (!mounted || result == null || !result.isDone) return;
-    setState(() => _isShared = true);
+    setState(() {
+      _isShared = true;
+      _wasCopied = result.action == SealedShareAction.copied;
+    });
   }
 
   Future<void> _gotReply() async {
@@ -224,7 +231,11 @@ class _ProvidedChatInvitationPageState
           ),
         if (_isShared) ...[
           SizedBox(height: space.s),
-          InkScreenLine(localizations.inviteSharedLine),
+          InkScreenLine(
+                _wasCopied
+                    ? localizations.shareCopiedStaysLocked
+                    : localizations.inviteSharedLine,
+              ),
         ],
       ],
     );

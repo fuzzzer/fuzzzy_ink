@@ -41,6 +41,10 @@ class _ProvidedAcceptanceExportPageState
     extends State<ProvidedAcceptanceExportPage> {
   bool _isShared = false;
 
+  /// The last way out was "Copy as text": the line says it was copied, not
+  /// sent to the share menu.
+  bool _wasCopied = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +59,10 @@ class _ProvidedAcceptanceExportPageState
       personName: widget.payload.chatGeneralData.chatName,
     );
     if (!mounted || result == null || !result.isDone) return;
-    setState(() => _isShared = true);
+    setState(() {
+      _isShared = true;
+      _wasCopied = result.action == SealedShareAction.copied;
+    });
   }
 
   void _done() =>
@@ -145,7 +152,11 @@ class _ProvidedAcceptanceExportPageState
               ),
             if (_isShared) ...[
               SizedBox(height: space.s),
-              InkScreenLine(localizations.inviteSharedLine),
+              InkScreenLine(
+                _wasCopied
+                    ? localizations.shareCopiedStaysLocked
+                    : localizations.inviteSharedLine,
+              ),
             ],
             SizedBox(height: space.m),
             TipLine(

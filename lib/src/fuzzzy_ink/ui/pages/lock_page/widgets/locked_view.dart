@@ -19,7 +19,8 @@ class LockedView extends StatelessWidget {
 
   final ChatGeneralData? chat;
   final LockFlowState state;
-  final VoidCallback onShared;
+  /// The system share finished; `copied` when it was "Copy as text".
+  final void Function({bool copied}) onShared;
   final VoidCallback onDone;
 
   SealedShareContent _shareContent(LockedItem item) {
@@ -40,7 +41,9 @@ class LockedView extends StatelessWidget {
       content: _shareContent(item),
       personName: chat?.chatName,
     );
-    if (result != null && result.isDone) onShared();
+    if (result != null && result.isDone) {
+      onShared(copied: result.action == SealedShareAction.copied);
+    }
   }
 
   Future<bool> _copy(LockedItem item) {
@@ -107,9 +110,11 @@ class LockedView extends StatelessWidget {
               title: chat == null
                   ? localizations.lockedWithPassword
                   : localizations.lockedForName(chat.chatName),
-              line: isShared
-                  ? localizations.lockedSentToShareMenu
-                  : localizations.lockedNowSendIt,
+              line: !isShared
+                  ? localizations.lockedNowSendIt
+                  : state.sharedByCopy
+                      ? localizations.shareCopiedStaysLocked
+                      : localizations.lockedSentToShareMenu,
             ),
             SizedBox(height: space.l),
             if (item.isFile)

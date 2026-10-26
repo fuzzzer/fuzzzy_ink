@@ -534,13 +534,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @benchmarkFileEncryption.
   ///
   /// In en, this message translates to:
-  /// **'Benchmark file encryption (dev)'**
+  /// **'Benchmark locking files (dev)'**
   String get benchmarkFileEncryption;
 
   /// No description provided for @benchmarkFileEncryptionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s'**
+  /// **'Locks and opens a 64 MiB test file and reports MB/s'**
   String get benchmarkFileEncryptionDescription;
 
   /// No description provided for @benchmarkResult.
@@ -985,7 +985,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @eraseMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.'**
+  /// **'Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.'**
   String get eraseMessage;
 
   /// No description provided for @eraseConfirm.

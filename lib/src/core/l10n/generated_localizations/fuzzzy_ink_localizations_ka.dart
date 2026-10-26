@@ -238,11 +238,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatAuthResecuringKeys => 'გასაღებების ხელახლა დაცვა…';
 
   @override
-  String get benchmarkFileEncryption => 'ფაილის დაშიფვრის ბენჩმარკი (dev)';
+  String get benchmarkFileEncryption => 'ფაილების ჩაკეტვის ბენჩმარკი (dev)';
 
   @override
   String get benchmarkFileEncryptionDescription =>
-      'ფაზავს და ხსნის 64 MiB დროებით ფაილს და აჩვენებს MB/s-ს';
+      'კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს MB/s-ს';
 
   @override
   String get benchmarkResult => 'ბენჩმარკის შედეგი';
@@ -498,7 +498,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get eraseMessage =>
-      'ჩატები, ისტორია, საცავი და პარამეტრები ამ მოწყობილობიდან წაიშლება და მათ ვეღარ დააბრუნებთ. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
+      'თქვენი ადამიანები, ისტორია, ჩემი სეიფი და პარამეტრები ამ მოწყობილობიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია. შენახული ფაილები ადგილზე რჩება.';
 
   @override
   String get eraseConfirm => 'ყველაფრის წაშლა';

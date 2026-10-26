@@ -299,10 +299,12 @@ class LockFlowCubit extends Cubit<LockFlowState> {
   }
 
   /// After a share the system reported as finished: Share steps back to
-  /// "Share again" and Done becomes the main button.
-  void markShared() {
+  /// "Share again" and Done becomes the main button. [copied] when it went
+  /// out as "Copy as text", so the line says so instead of "Sent to your
+  /// share menu."
+  void markShared({bool copied = false}) {
     if (state.phase != LockPhase.locked) return;
-    emit(state.copyWith(isShared: true));
+    emit(state.copyWith(isShared: true, sharedByCopy: copied));
   }
 
   void _pauseTarget() {
