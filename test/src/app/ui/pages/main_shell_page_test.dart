@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
@@ -13,9 +15,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 class _MockVaultAuthCubit extends MockCubit<VaultAuthState>
     implements VaultAuthCubit {}
 
+class _MockPeople extends MockCubit<ChatGeneralDataListState>
+    implements ChatGeneralDataListCubit {}
+
+class _MockAuthStore extends MockCubit<FuzzyAuthState>
+    implements FuzzyAuthStore {}
+
 void main() {
   late PreferencesService preferences;
   late _MockVaultAuthCubit vault;
+  late _MockPeople people;
+  late _MockAuthStore authStore;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -25,6 +35,12 @@ void main() {
       const VaultAuthState(authState: VaultAuthEnum.unlocked),
     );
     when(() => vault.lock()).thenAnswer((_) async {});
+    people = _MockPeople();
+    when(() => people.state).thenReturn(
+      const ChatGeneralDataListState(status: StateStatus.success, chatList: []),
+    );
+    authStore = _MockAuthStore();
+    when(() => authStore.lock()).thenAnswer((_) async {});
   });
 
   Future<GoRouter> pumpShell(
@@ -62,13 +78,21 @@ void main() {
           path: AppRouter.chatCreate,
           builder: (_, __) => const Text('full screen flow'),
         ),
+        GoRoute(
+          path: AppRouter.open,
+          builder: (_, __) => const Text('open flow'),
+        ),
       ],
     );
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      BlocProvider<VaultAuthCubit>.value(
-        value: vault,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VaultAuthCubit>.value(value: vault),
+          BlocProvider<ChatGeneralDataListCubit>.value(value: people),
+          BlocProvider<FuzzyAuthStore>.value(value: authStore),
+        ],
         child: MaterialApp.router(
           theme: FuzzzyTheme.build(inkPack, skin),
           localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
@@ -153,5 +177,60 @@ void main() {
     expect(MainShellPage.indexOf('/vault'), 1);
     expect(MainShellPage.indexOf('/vault/editor'), 1);
     expect(MainShellPage.indexOf('/settings'), 2);
+  });
+
+  group('computer keys (DESIGN.md section 6)', () {
+    Future<void> press(
+      WidgetTester tester,
+      LogicalKeyboardKey key, {
+      bool shift = false,
+    }) async {
+      final modifier = defaultTargetPlatform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.sendKeyDownEvent(modifier);
+      if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(key);
+      if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('⌘/Ctrl + O opens Open',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyO);
+      expect(find.text('open flow'), findsOneWidget);
+    });
+
+    testWidgets('⌘/Ctrl + , goes to Settings',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.comma);
+      expect(find.text('settings tab'), findsOneWidget);
+      expect(preferences.lastSelectedTab, AppRouter.settings);
+    });
+
+    testWidgets('⌘/Ctrl + L asks who it is for, as the Lock tile does',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyL);
+      expect(find.byKey(const Key('sheet.lockWho')), findsOneWidget);
+    });
+
+    testWidgets('⌘/Ctrl + Shift + L locks the app',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyL, shift: true);
+      verify(() => authStore.lock()).called(1);
+      expect(find.byKey(const Key('sheet.lockWho')), findsNothing);
+    });
+
+    testWidgets('a phone has none', variant: TargetPlatformVariant.mobile(),
+        (tester) async {
+      await pumpShell(tester);
+      await press(tester, LogicalKeyboardKey.keyO);
+      expect(find.text('open flow'), findsNothing);
+    });
   });
 }

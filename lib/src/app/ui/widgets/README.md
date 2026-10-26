@@ -17,6 +17,7 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 | `InPlaceConfirmButton` | `app/ui/widgets/ink_motion/` | "Copied", "Handed over", "Saved": confirm on the pressed button after the real result. |
 | `CheckDraw`, `RowTint`, `ChipSwap`, `LiftIn`, `SettleIn` | `app/ui/widgets/ink_motion/` | Section 10's responses: check draw, new-row glow, chip change, lift after unlock, mark settle. |
 | `InkMotion`, `InkMotionTiming`, `InkHaptics` | `app/ui/widgets/ink_motion/` | Whether something may move here (reduced motion, private screen), the named delays, buzzes. |
+| `DesktopShortcuts` | `app/ui/widgets/desktop_shortcuts/` | The computer keys around the tabs (⌘ on a Mac, Ctrl elsewhere): L Lock, O Open, comma Settings, Shift + L lock the app. Nothing on a phone. |
 | `FuzzzyCastReaction`, `FuzzzyCastMoment`, `showInkToast` | `app/ui/widgets/fuzzzy_cast/` | Fuzzz in the picture slot (pass the glyph as `fallback`) or at the start of a confirmation toast. |
 | `ActionTile` | `fuzzzy_ink/ui/widgets/home/` | The big Lock / Open tiles. |
 | `PersonRow`, `PersonTrustChip`, `WaitNotes` | `fuzzzy_ink/ui/widgets/people/` | A person on Home or in a picker; the trust chip; the two waiting notes. |
