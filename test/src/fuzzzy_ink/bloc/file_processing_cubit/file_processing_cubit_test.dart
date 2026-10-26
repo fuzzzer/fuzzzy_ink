@@ -626,17 +626,23 @@ void main() {
         ..add(FileProcessingProgress.completed());
 
       final state = await finished;
+      // Kept under the name sealed inside it, not its outside name
+      // (security review 2026-10-26).
       expect(
         state,
         processedAs(
           FileProcessingStatus.completed,
-          outputFilePath: stored('anything.fuzz'),
+          outputFilePath: stored('report.pdf.fuzz'),
         ),
       );
       expect(state.processedFiles.single.keptFileKey, base64Encode(keptKey));
       expect(
-        File(path.join(chatFolder(), 'anything.fuzz')).existsSync(),
+        File(path.join(chatFolder(), 'report.pdf.fuzz')).existsSync(),
         isTrue,
+      );
+      expect(
+        File(path.join(chatFolder(), 'anything.fuzz')).existsSync(),
+        isFalse,
       );
       expect(plain.existsSync(), isFalse);
       expect(Directory(handoff).existsSync(), isFalse);
