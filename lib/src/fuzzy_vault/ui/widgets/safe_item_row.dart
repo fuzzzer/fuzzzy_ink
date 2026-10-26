@@ -49,19 +49,25 @@ class SafeIconBox extends StatelessWidget {
   }
 }
 
-/// One My safe item in the list: type icon, title, "type · group", chevron.
-/// Never the secret itself. A long press moves it to a group.
+/// One My safe item in the list: type icon, title, "username · group" (a
+/// file's name; the type when there is no label), chevron. Never the secret
+/// itself. A long press moves it to a group.
 class SafeItemRow extends StatelessWidget {
   const SafeItemRow({
     super.key,
     required this.item,
     required this.onTap,
+    this.label,
     this.groupName,
     this.onLongPress,
     this.busy = false,
   });
 
   final VaultItemMetadata item;
+
+  /// The item's username or file name ([VaultItemsState.labels]); null
+  /// shows its type.
+  final String? label;
 
   /// Null when the item is in no group.
   final String? groupName;
@@ -78,7 +84,7 @@ class SafeItemRow extends StatelessWidget {
     final space = context.fuzzzySpace;
     final qaId = 'safe.item.${item.id}';
     final subtitle = [
-      safeItemTypeLabel(context, item.type),
+      label ?? safeItemTypeLabel(context, item.type),
       if (groupName != null) groupName!,
     ].join(' · ');
 

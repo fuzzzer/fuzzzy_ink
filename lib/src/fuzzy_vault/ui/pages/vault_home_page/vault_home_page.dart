@@ -32,7 +32,9 @@ class _VaultHomePageState extends State<VaultHomePage> {
     _filter = SafeFilter.values[saved.clamp(0, SafeFilter.values.length - 1)];
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.read<VaultItemsCubit>().loadItems();
+      context
+          .read<VaultItemsCubit>()
+          .loadItems(key: context.read<VaultAuthCubit>().state.masterKey);
       context.read<VaultGroupsCubit>().loadGroups();
     });
   }
@@ -251,6 +253,7 @@ class _VaultHomePageState extends State<VaultHomePage> {
                     return SafeItemRow(
                       key: ValueKey(item.id),
                       item: item,
+                      label: itemsState.labels[item.id],
                       groupName: _groupName(groupsState.groups, item.groupId),
                       busy: _openingId == item.id,
                       onTap: () => _openItem(item),

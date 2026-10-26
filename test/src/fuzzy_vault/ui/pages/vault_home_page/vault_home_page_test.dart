@@ -13,6 +13,8 @@ import '../../../../../helpers/redesign_harness.dart';
 
 class MockVaultRepository extends Mock implements VaultRepository {}
 
+class MockVaultKey extends Mock implements VaultKey {}
+
 class MockVaultAuthCubit extends MockCubit<VaultAuthState>
     implements VaultAuthCubit {}
 
@@ -58,6 +60,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(_group('x', 'x'));
+    registerFallbackValue(MockVaultKey());
   });
 
   setUp(() async {
@@ -159,6 +162,31 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets(
+      'with the safe open, rows show the username or file name, sealed '
+      'apart from the item; the type where there is none '
+      '(final regression 2026-10-26)', (tester) async {
+    final key = MockVaultKey();
+    whenListen(
+      auth,
+      const Stream<VaultAuthState>.empty(),
+      initialState: VaultAuthState(
+        status: StateStatus.success,
+        authState: VaultAuthEnum.unlocked,
+        masterKey: key,
+      ),
+    );
+    when(() => repository.readLabels(any(), key)).thenAnswer(
+      (_) async => {'p1': 'tamar@mail.ge', 'f1': 'policy.pdf'},
+    );
+    await pump(tester);
+
+    expect(find.text('tamar@mail.ge · Home'), findsOneWidget);
+    expect(find.text('policy.pdf'), findsOneWidget);
+    expect(find.text('${en.vaultPasswordLabel} · Work'), findsOneWidget);
+    verifyNever(() => repository.getItem(any(), any()));
+  });
 
   testWidgets('All · Passwords · Notes · Files, remembered', (tester) async {
     await pump(tester);

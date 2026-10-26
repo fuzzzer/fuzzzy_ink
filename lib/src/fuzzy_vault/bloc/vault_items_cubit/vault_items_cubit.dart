@@ -17,7 +17,14 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
   late final StreamSubscription<VaultDataUpdated> _updatesSubscription;
   final Debouncer _autoSaveDebouncer = Debouncer(milliseconds: 2000);
 
-  Future<void> loadItems() async {
+  /// The open safe's key, for the rows' labels ([loadItems]); a closed key
+  /// opens nothing and the rows show their types.
+  VaultKey? _key;
+
+  /// Loads the list, then the rows' labels with [key] (kept for the
+  /// reloads after a change).
+  Future<void> loadItems({VaultKey? key}) async {
+    if (key != null) _key = key;
     emit(state.copyWith(status: StateStatus.loading));
     final res = await vaultRepository.getAllItems();
     if (res is VaultFailure) {
@@ -37,6 +44,11 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
         items: items,
       ),
     );
+    final openKey = _key;
+    if (openKey == null) return;
+    final labels = await vaultRepository.readLabels(items, openKey);
+    if (isClosed || !identical(state.items, items)) return;
+    emit(state.copyWith(labels: labels));
   }
 
   /// `null` shows every group again.
@@ -45,6 +57,7 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
       VaultItemsState(
         status: state.status,
         items: state.items,
+        labels: state.labels,
         selectedGroupId: groupId,
         failureType: state.failureType,
       ),

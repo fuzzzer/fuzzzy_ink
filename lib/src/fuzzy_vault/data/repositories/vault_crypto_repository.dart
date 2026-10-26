@@ -411,6 +411,53 @@ class VaultCryptoRepository {
     };
   }
 
+  /// The id an item's list label is sealed under: the item seal binds the
+  /// id, so a label never opens as an item or as another item's label (item
+  /// ids are UUIDs and never start with `label:`).
+  static String labelIdOf(String itemId) => 'label:$itemId';
+
+  /// Seals an item's list label under the vault key, bound to the item and
+  /// its content version like the item itself.
+  Future<VaultResponse<Uint8List>> sealLabel(
+    String label,
+    VaultKey key, {
+    required String itemId,
+    required int version,
+  }) async {
+    final sealRes = await cryptoCoreService.vaultSeal(
+      key: key,
+      itemId: labelIdOf(itemId),
+      version: version,
+      bytes: utf8.encode(label),
+    );
+    if (sealRes is CryptoCoreFailure<Uint8List>) {
+      return VaultFailure(_failureOf(sealRes.type), message: sealRes.type.name);
+    }
+    return VaultSuccess((sealRes as CryptoCoreSuccess<Uint8List>).data);
+  }
+
+  /// Opens a label sealed by [sealLabel] at [version] or one ahead (as
+  /// [decryptContent] accepts); null when it does not open.
+  Future<String?> openLabel(
+    Uint8List blob,
+    VaultKey key, {
+    required String itemId,
+    required int version,
+  }) async {
+    for (final candidate in [version, version + 1]) {
+      final openRes = await cryptoCoreService.vaultOpen(
+        key: key,
+        itemId: labelIdOf(itemId),
+        version: candidate,
+        blob: blob,
+      );
+      if (openRes is CryptoCoreSuccess<Uint8List>) {
+        return utf8.decode(openRes.data, allowMalformed: true);
+      }
+    }
+    return null;
+  }
+
   /// Seals [content] as version [version] of the item [itemId]: the sealed
   /// bytes open only for that item at that version.
   Future<VaultResponse<Uint8List>> encryptContent(

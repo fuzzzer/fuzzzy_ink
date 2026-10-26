@@ -37,6 +37,11 @@ class VaultFileDataSource {
   static const exportTmpFolderName = '.tmp_export';
   static const itemFileExtension = '.vault';
 
+  /// An item's list label (its username or file name), sealed on its own
+  /// beside the item so My safe's list never opens the item itself
+  /// (`VaultRepository.readLabels`).
+  static const labelFileExtension = '.label';
+
   /// A new key's copies while the vault moves to it ([beginRekey]): the new
   /// `vault.meta` beside the old one, each re-sealed item beside its old
   /// file.
@@ -126,6 +131,30 @@ class VaultFileDataSource {
     if (await itemFile.exists()) {
       await itemFile.delete();
     }
+    await deleteLabel(itemId);
+  }
+
+  File _labelFile(String itemId) =>
+      File(path.join(_itemsDir.path, '$itemId$labelFileExtension'));
+
+  Future<void> writeLabelAtomic(String itemId, List<int> bytes) async {
+    await _ensureNotMigrating();
+    await initDirectories();
+    final tmpFile =
+        File(path.join(_tmpDir.path, '$itemId$labelFileExtension.tmp'));
+    await tmpFile.writeAsBytes(bytes, flush: true);
+    await tmpFile.rename(_labelFile(itemId).path);
+  }
+
+  Future<List<int>?> readLabel(String itemId) async {
+    final labelFile = _labelFile(itemId);
+    if (!await labelFile.exists()) return null;
+    return await labelFile.readAsBytes();
+  }
+
+  Future<void> deleteLabel(String itemId) async {
+    final labelFile = _labelFile(itemId);
+    if (await labelFile.exists()) await labelFile.delete();
   }
 
   /// Starts moving the vault to a new key (its own password, security review
@@ -150,6 +179,16 @@ class VaultFileDataSource {
     );
     await tmpFile.writeAsBytes(bytes, flush: true);
     await tmpFile.rename(_stagedItem(itemId).path);
+  }
+
+  /// One item's label re-sealed under the new key, beside its old file.
+  Future<void> stageRekeyedLabel(String itemId, List<int> bytes) async {
+    await _ensureNotMigrating();
+    final tmpFile = File(
+      path.join(_tmpDir.path, '$itemId$labelFileExtension$rekeySuffix.tmp'),
+    );
+    await tmpFile.writeAsBytes(bytes, flush: true);
+    await tmpFile.rename('${_labelFile(itemId).path}$rekeySuffix');
   }
 
   /// The commit: one rename puts the new `vault.meta` in place; then every
@@ -204,7 +243,8 @@ class VaultFileDataSource {
     return [
       await for (final entity in _itemsDir.list())
         if (entity is File &&
-            entity.path.endsWith('$itemFileExtension$rekeySuffix'))
+            (entity.path.endsWith('$itemFileExtension$rekeySuffix') ||
+                entity.path.endsWith('$labelFileExtension$rekeySuffix')))
           entity,
     ];
   }

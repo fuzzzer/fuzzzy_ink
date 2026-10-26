@@ -107,6 +107,56 @@ void main() {
     expect(meta['verificationToken'], 'CQ==');
   });
 
+  test(
+      "the rows' labels move with their items; one that does not open is "
+      'dropped, never stopping the move (final regression 2026-10-26)',
+      () async {
+    when(items.getAllItems).thenAnswer((_) async => [_item('a'), _item('b')]);
+    await files.writeLabelAtomic('a', [5]);
+    await files.writeLabelAtomic('b', [6]);
+    when(
+      () => crypto.reseal(
+        from: previous,
+        to: next,
+        itemId: 'label:b',
+        version: 1,
+        blob: any(named: 'blob'),
+      ),
+    ).thenAnswer(
+      (_) async => const VaultFailure(VaultFailureType.fileCorrupted),
+    );
+
+    final res = await repository.rekey(
+      previous: previous,
+      key: next,
+      metadata: metadata,
+    );
+    expect(res, isA<VaultSuccess<void>>());
+    expect(await files.readItem('a'), [11]);
+    expect(await files.readLabel('a'), [15]);
+    expect(await files.readLabel('b'), isNull);
+  });
+
+  test('a move that stops before the commit leaves the labels as they were',
+      () async {
+    when(items.getAllItems).thenAnswer((_) async => [_item('a')]);
+    await files.writeLabelAtomic('a', [5]);
+    final res = await repository.rekey(
+      previous: previous,
+      key: next,
+      metadata: metadata,
+      beforeCommit: () async => VaultFailureType.storageWriteError,
+    );
+    expect(res, isA<VaultFailure<void>>());
+    expect(await files.readLabel('a'), [5]);
+    expect(
+      root
+          .listSync(recursive: true)
+          .where((entity) => entity.path.endsWith('.rekey')),
+      isEmpty,
+    );
+  });
+
   test('an item that does not open stops the move; the old vault stays',
       () async {
     when(items.getAllItems).thenAnswer((_) async => [_item('a'), _item('b')]);

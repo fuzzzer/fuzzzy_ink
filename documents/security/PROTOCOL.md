@@ -884,6 +884,7 @@ flutter_secure_storage  key "auto_lock_settings_v1"                     the auto
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
 <application support directory>/vault/vault.meta                       JSON: the wrapped vault key (field "verificationToken", base64: a 0x20 under the master key, or a 0x10 under the vault's own password); vault id and timestamps in plaintext. No auto-lock value: the vault's timer is a constant of the app
 <application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" ‖ version ‖ item id (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/items/<item_id>.label             the item's list label (a password's username, a file's name): a 0x20 blob, AAD "vault-item" ‖ version ‖ "label:" ‖ item id (§10.6); none for a note or an item with its own password
 <application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
 <application support directory>/sealed_files/chats/<safe chat name> (<first 8 of chat id>)/<name>.fuzz
@@ -1152,6 +1153,17 @@ item to a new key (above). The key is held in an opaque handle (`VaultKey`) that
 handle (`close` → later calls `StoreLocked`). The vault's auto-lock is a constant of the app (5 minutes after
 opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`,
 `recovery_lock`, `vault_key_recovery`.
+
+**List labels** (2026-10-26). So that My safe's list can show a password's username or a file's name without
+opening any item, each such item also has a small label file, `<item id>.label`: the label's UTF-8 text sealed
+with the same item seal under the vault key, with the item id `label:` ‖ item id and the item's content version.
+Item ids are UUIDs and never begin with `label:`, so a label never opens as an item, as another item's label, or
+the other way round. The app writes it after the item file and before the database row; the list opens it at the
+row's version or one ahead and shows the item's type when it does not open (a stop left it behind). It is opened
+only while the vault is open, holds no password, note or file content, and is deleted with the item. A note and an
+item with a password of its own have none (only that password opens anything of such an item). The switch to the
+vault's own password re-seals each label with its item (`vault_reseal`, staged and committed with the items); a
+label that does not open then is deleted.
 
 ### 10.7 Sealed app settings
 
