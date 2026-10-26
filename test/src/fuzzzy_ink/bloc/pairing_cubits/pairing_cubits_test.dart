@@ -291,6 +291,16 @@ void main() {
           );
         });
       }
+
+      test('an invite from a newer Fuzzzy Ink needs a newer app', () async {
+        when(() => mockService.peekChatId('Fuzz/new')).thenReturn(
+          const CryptoCoreFailure(CryptoCoreFailureType.newerVersion),
+        );
+        expect(
+          await build().checkInvitation('Fuzz/new'),
+          InvitationCheck.newerApp,
+        );
+      });
     });
 
     blocTest<InvitationAcceptanceCubit, InvitationAcceptanceState>(
@@ -378,6 +388,38 @@ void main() {
         verify: (_) => verifyNever(() => mockChatRepo.addChat(any())),
       );
     }
+
+    blocTest<InvitationAcceptanceCubit, InvitationAcceptanceState>(
+      'an invite from a newer Fuzzzy Ink is newerApp, no chat written',
+      setUp: () {
+        when(
+          () => mockService.acceptInvitation(
+            chatId: _chatId,
+            invitation: 'Fuzz/inv',
+          ),
+        ).thenAnswer(
+          (_) async =>
+              const CryptoCoreFailure(CryptoCoreFailureType.newerVersion),
+        );
+      },
+      build: build,
+      act: (cubit) => cubit.acceptInvitation(
+        invitationContent: 'Fuzz/inv',
+        chatName: 'Bob',
+      ),
+      expect: () => [
+        isA<InvitationAcceptanceState>()
+            .having((s) => s.status, 'status', StateStatus.loading),
+        isA<InvitationAcceptanceState>()
+            .having((s) => s.status, 'status', StateStatus.failed)
+            .having(
+              (s) => s.failure?.type,
+              'failure',
+              ChatCreationFailureType.newerApp,
+            ),
+      ],
+      verify: (_) => verifyNever(() => mockChatRepo.addChat(any())),
+    );
 
     blocTest<InvitationAcceptanceCubit, InvitationAcceptanceState>(
       'a blob that names no chat is invalidInvitation before the core',

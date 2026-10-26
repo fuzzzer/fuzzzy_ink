@@ -431,7 +431,8 @@ mod tests {
 
         let blob = a.core.encrypt_text(CHAT_X.into(), "honest".into()).unwrap();
         // Flip a byte inside the Olm body (past the 6-byte envelope + type byte) —
-        // the MAC fails. (Flipping the envelope would be UnsupportedFormat instead.)
+        // the MAC fails. (Flipping the envelope would be UnsupportedFormat or
+        // NewerVersion instead.)
         let tampered = flip_byte(&blob, 16);
         let before = b.state_bytes(CHAT_X);
 
@@ -446,6 +447,32 @@ mod tests {
         );
         // The honest blob still decrypts afterwards.
         assert_eq!(b.core.decrypt_text(CHAT_X.into(), blob).unwrap(), "honest");
+    }
+
+    /// A message from a newer app (a version or a type byte this build does
+    /// not know) is `NewerVersion`, never damaged, and spends nothing.
+    #[test]
+    fn newer_envelope_is_newer_version_without_state_change() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        let blob = a.core.encrypt_text(CHAT_X.into(), "later".into()).unwrap();
+        let before = b.state_bytes(CHAT_X);
+        let mut newer_version = decode_text(&blob).unwrap();
+        newer_version[4] = 0x02;
+        let mut unknown_type = decode_text(&blob).unwrap();
+        unknown_type[5] = 0x06;
+        for newer in [newer_version, unknown_type] {
+            assert_eq!(
+                b.core
+                    .decrypt_text(CHAT_X.into(), crate::formats::encode_text(&newer))
+                    .unwrap_err(),
+                CoreError::NewerVersion
+            );
+        }
+        assert_eq!(b.state_bytes(CHAT_X), before);
+        assert_eq!(b.core.decrypt_text(CHAT_X.into(), blob).unwrap(), "later");
     }
 
     /// The inner-header belt for messages: dishonest headers encrypted by A's

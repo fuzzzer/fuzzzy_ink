@@ -434,6 +434,20 @@ void main() {
         _failureOf(service.peekChatId('not a blob')),
         CryptoCoreFailureType.unsupportedFormat,
       );
+      // `FUZZ`, version 2: made by a newer app, not damaged.
+      expect(
+        _failureOf(service.peekChatId('Fuzz/RlVaWgIBAA')),
+        CryptoCoreFailureType.newerVersion,
+      );
+      expect(
+        _failureOf(
+          await b.acceptInvitation(
+            chatId: _chatId,
+            invitation: 'Fuzz/RlVaWgIBAA',
+          ),
+        ),
+        CryptoCoreFailureType.newerVersion,
+      );
       expect(
         _failureOf(
           await service.completeHandshake(

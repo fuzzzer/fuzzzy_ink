@@ -9,7 +9,7 @@ use crate::error::CoreError;
 use crate::files;
 use crate::formats::{
     self, decode_envelope, decode_text, Acceptance, BlobKind, FileKeyMode, Invitation, Message,
-    OlmType, PasswordSealed, ENVELOPE_LEN, MAGIC, TEXT_PREFIX, VERSION,
+    OlmType, PasswordSealed, ENVELOPE_LEN, MAGIC, TEXT_PREFIX,
 };
 use crate::messages;
 use crate::store::validate_chat_id;
@@ -117,24 +117,13 @@ enum Envelope {
 }
 
 fn envelope_of(blob: &[u8]) -> Envelope {
-    let Some(header) = blob.first_chunk::<ENVELOPE_LEN>() else {
-        return Envelope::Damaged;
-    };
-    if header[..4] != MAGIC {
-        return Envelope::Damaged;
-    }
-    if header[4] > VERSION {
-        return Envelope::Newer;
-    }
-    if header[4] != VERSION {
-        return Envelope::Damaged;
-    }
     match decode_envelope(blob) {
         Ok((kind, _)) if kind.is_wire() => Envelope::Kind(kind),
-        Ok(_) => Envelope::Damaged,
-        // A type byte this build does not know: added by a newer version
+        // A version above this build's, or a type byte it does not know
         // (PROTOCOL.md §12, "adding a type byte is not a bump").
-        Err(_) => Envelope::Newer,
+        Err(CoreError::NewerVersion) => Envelope::Newer,
+        // An older version, or a storage-only kind.
+        _ => Envelope::Damaged,
     }
 }
 

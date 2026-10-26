@@ -121,6 +121,9 @@ class _ProvidedInvitationAcceptancePageState
         case ChatCreationFailureType.invalidInvitation:
           _invitation = null;
           _problem = InvitationCheck.damaged;
+        case ChatCreationFailureType.newerApp:
+          _invitation = null;
+          _problem = InvitationCheck.newerApp;
         case ChatCreationFailureType.invalidAcceptance ||
               ChatCreationFailureType.invitationAlreadyUsed ||
               ChatCreationFailureType.wrongChat ||
@@ -305,6 +308,10 @@ class _ProblemNotice extends StatelessWidget {
       InvitationCheck.alreadyConnected => (
           localizations.gotAlreadyTitle,
           localizations.gotAlreadyLine,
+        ),
+      InvitationCheck.newerApp => (
+          localizations.openErrorNewerTitle,
+          localizations.openErrorNewerLine,
         ),
       InvitationCheck.damaged || InvitationCheck.good => (
           localizations.gotDamagedTitle,

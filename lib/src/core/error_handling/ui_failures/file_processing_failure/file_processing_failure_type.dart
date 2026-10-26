@@ -14,6 +14,9 @@ enum FileProcessingFailureType {
   stillArriving,
   cannotOpenAskResend,
   cancelled,
+
+  /// Made by a newer Fuzzzy Ink.
+  newerApp,
   unknown;
 
   String toUiMessage(
@@ -33,6 +36,7 @@ enum FileProcessingFailureType {
       FileProcessingFailureType.cannotOpenAskResend =>
         localizations.fileCannotBeOpenedAskToResend,
       FileProcessingFailureType.cancelled => localizations.fileCancelled,
+      FileProcessingFailureType.newerApp => localizations.openErrorNewerTitle,
       FileProcessingFailureType.unknown =>
         customUnknownMessage ?? localizations.unknownError,
     };

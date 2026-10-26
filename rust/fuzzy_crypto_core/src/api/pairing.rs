@@ -367,14 +367,25 @@ mod tests {
             );
             assert_no_state(&b_file);
         }
-        // Header bytes: magic, version, type.
-        for offset in [0, 3, 4, 5] {
+        // Header bytes: magic, version (0x01 → 0x00, older than this build).
+        for offset in [0, 3, 4] {
             assert_eq!(
                 b.core
                     .accept_invitation(CHAT_X.into(), flipped(&invitation, offset))
                     .unwrap_err(),
                 CoreError::UnsupportedFormat,
                 "offset {offset}"
+            );
+            assert_no_state(&b_file);
+        }
+        // A type byte this build does not know (0x01 → 0x00), or a newer
+        // version: made by a newer app, never read as damaged.
+        let mut newer = decode_text(&invitation).unwrap();
+        newer[4] = 0x02;
+        for blob in [flipped(&invitation, 5), encode_text(&newer)] {
+            assert_eq!(
+                b.core.accept_invitation(CHAT_X.into(), blob).unwrap_err(),
+                CoreError::NewerVersion
             );
             assert_no_state(&b_file);
         }

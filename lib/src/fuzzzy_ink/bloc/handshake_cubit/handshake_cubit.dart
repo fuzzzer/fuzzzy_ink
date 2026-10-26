@@ -75,6 +75,7 @@ class HandshakeCubit extends Cubit<HandshakeState> {
       CryptoCoreFailureType.invitationAlreadyUsed =>
         ChatCreationFailureType.invitationAlreadyUsed,
       CryptoCoreFailureType.wrongChat => ChatCreationFailureType.wrongChat,
+      CryptoCoreFailureType.newerVersion => ChatCreationFailureType.newerApp,
       CryptoCoreFailureType.unsupportedFormat ||
       CryptoCoreFailureType.invalidSignature ||
       CryptoCoreFailureType.corrupt =>

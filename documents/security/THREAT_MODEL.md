@@ -61,7 +61,7 @@ Drawn exactly as `PROTOCOL.md` §13 describes it, and the single most important 
   function), wrapped `0x10` blobs, `Fuzz/` texts and container paths (attacker-controlled input), chat ids
   (shape-validated on entry), plaintext the user typed, output paths, the verified flag.
 - **Crosses back to Dart:** ciphertext (`Fuzz/` texts, `0x10`/`0x20`/`0x05` blobs), the plaintext the user
-  asked to see, the safety-number string, status enums, progress events, file names, and thirteen
+  asked to see, the safety-number string, status enums, progress events, file names, and fourteen
   payload-free error variants (`PROTOCOL.md` Appendix B) — never a key, a path, a digit of a secret or OS
   error text.
 - **Never crosses:** the master key, the store key, KEK, history keys, the vault key, file keys, Olm accounts, sessions,

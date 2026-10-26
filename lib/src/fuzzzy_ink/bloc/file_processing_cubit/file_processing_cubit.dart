@@ -350,6 +350,7 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
       CryptoCoreFailureType.replay => FileProcessingFailureType.alreadyUnfuzzed,
       CryptoCoreFailureType.wrongChat => FileProcessingFailureType.wrongChat,
       CryptoCoreFailureType.tooOld => FileProcessingFailureType.tooOld,
+      CryptoCoreFailureType.newerVersion => FileProcessingFailureType.newerApp,
       CryptoCoreFailureType.corrupt ||
       CryptoCoreFailureType.unsupportedFormat =>
         FileProcessingFailureType.corrupt,
