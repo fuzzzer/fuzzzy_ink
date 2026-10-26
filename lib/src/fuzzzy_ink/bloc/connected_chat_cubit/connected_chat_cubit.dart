@@ -61,6 +61,28 @@ class ConnectedChatCubit extends Cubit<ConnectedChatState> {
     await loadCurrentMessagesPage();
   }
 
+  /// Reads the pages loaded so far again, from the newest row: a person's
+  /// page coming back after Lock or Open added a row there. The list is
+  /// replaced, never appended to.
+  Future<void> reloadMessages() async {
+    final pages = currentPage + 1;
+    emit(
+      state.copyWith(
+        status: StateStatus.loading,
+        messages: const [],
+        hasFetchedAllMessages: false,
+      ),
+    );
+    currentPage = 0;
+    await loadCurrentMessagesPage();
+    while (currentPage + 1 < pages &&
+        state.status.isSuccess &&
+        !state.hasFetchedAllMessages) {
+      currentPage++;
+      await loadCurrentMessagesPage();
+    }
+  }
+
   Future<void> loadOlderMessages() async {
     if (state.status.isLoading || state.hasFetchedAllMessages) return;
     currentPage++;

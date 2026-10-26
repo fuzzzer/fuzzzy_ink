@@ -28,6 +28,20 @@ class AppRouter {
   static const vaultItemEditor = '/vault/editor';
   static const vaultItem = '/vault/item';
 
+  /// A person's page: `?chat=<chat id>` (see `PersonPage.location`).
+  static const person = '/person';
+  static const personItem = '/person/item';
+  static const personConnected = '/person/connected';
+  static const personAnsweredTwice = '/person/answered-twice';
+  static const personChecked = '/person/checked';
+
+  /// Lock for one person and Open, with `?chat=<chat id>` (and the chat id
+  /// as `extra`) when started from a person's page. Built by the Lock and
+  /// Open screens; a person's page falls back to the chat screen until they
+  /// are registered.
+  static const lockFor = '/lock/for';
+  static const open = '/open';
+
   /// Reachable without the master password. Everything else — Basics and
   /// the settings included — sits behind it: there is no "lock off".
   static const _unprotectedRoutes = {
@@ -41,6 +55,13 @@ class AppRouter {
   static GoRouter? _routerInstance;
 
   static GoRouter? get routerInstance => _routerInstance;
+
+  /// Lets a test stand its own router in for [routerInstance].
+  @visibleForTesting
+  static GoRouter? get debugRouterInstance => _routerInstance;
+
+  @visibleForTesting
+  static set debugRouterInstance(GoRouter? router) => _routerInstance = router;
 
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -164,7 +185,8 @@ class AppRouter {
         ),
         GoRoute(
           path: chatCreate,
-          builder: (_, __) => const ChatCreationPage(),
+          builder: (_, state) =>
+              ChatCreationPage(prefillName: state.extra as String?),
         ),
         GoRoute(
           path: chatInvitation,
@@ -202,6 +224,32 @@ class AppRouter {
             final chatGeneralData = state.extra! as ChatGeneralData;
             return SafetyNumberPage(chatGeneralData: chatGeneralData);
           },
+        ),
+        GoRoute(
+          path: person,
+          builder: (_, state) => PersonPage.fromState(state),
+        ),
+        GoRoute(
+          path: personItem,
+          // Private items wrap themselves in a SensitiveScreen.
+          builder: (_, state) => HistoryItemPage(
+            payload: state.extra! as HistoryItemPagePayload,
+          ),
+        ),
+        GoRoute(
+          path: personConnected,
+          builder: (_, state) =>
+              PersonConnectedPage(chat: state.extra! as ChatGeneralData),
+        ),
+        GoRoute(
+          path: personAnsweredTwice,
+          builder: (_, state) =>
+              AnsweredTwicePage(chat: state.extra! as ChatGeneralData),
+        ),
+        GoRoute(
+          path: personChecked,
+          builder: (_, state) =>
+              PersonCheckedPage(chat: state.extra! as ChatGeneralData),
         ),
         GoRoute(
           path: aboutEncryption,

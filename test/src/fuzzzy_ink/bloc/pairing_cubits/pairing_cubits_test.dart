@@ -244,6 +244,55 @@ void main() {
           .thenAnswer((_) async => const CryptoCoreSuccess(null));
     });
 
+    group('checkInvitation reads an invite without accepting it', () {
+      test('a good invite from someone new', () async {
+        expect(await build().checkInvitation('Fuzz/inv'), InvitationCheck.good);
+        verifyNever(
+          () => mockService.acceptInvitation(
+            chatId: any(named: 'chatId'),
+            invitation: any(named: 'invitation'),
+          ),
+        );
+        verifyNever(() => mockChatRepo.addChat(any()));
+      });
+
+      test('an invite this phone made is its own', () async {
+        when(() => mockChatRepo.getChatById(_chatId))
+            .thenAnswer((_) async => _invitedChat);
+        expect(
+          await build().checkInvitation('Fuzz/inv'),
+          InvitationCheck.ownInvitation,
+        );
+      });
+
+      test('an invite this phone accepted is already connected', () async {
+        when(() => mockChatRepo.getChatById(_chatId)).thenAnswer(
+          (_) async => _invitedChat.copyWith(
+            setupStatus: ChatSetupStatus.connected,
+            didAcceptInvitation: true,
+          ),
+        );
+        expect(
+          await build().checkInvitation('Fuzz/inv'),
+          InvitationCheck.alreadyConnected,
+        );
+      });
+
+      for (final type in [
+        CryptoCoreFailureType.unsupportedFormat,
+        CryptoCoreFailureType.corrupt,
+      ]) {
+        test('an unreadable invite ($type) is damaged', () async {
+          when(() => mockService.peekChatId('Fuzz/bad'))
+              .thenReturn(CryptoCoreFailure(type));
+          expect(
+            await build().checkInvitation('Fuzz/bad'),
+            InvitationCheck.damaged,
+          );
+        });
+      }
+    });
+
     blocTest<InvitationAcceptanceCubit, InvitationAcceptanceState>(
       'peeks the chat id, accepts on the core, then writes a connected chat',
       setUp: () {

@@ -4409,6 +4409,690 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'More about encryption'**
   String get accessMoreAboutEncryption;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More for {name}'**
+  String personMoreFor(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet.'**
+  String get personNotCheckedLead;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers.'**
+  String get personNotCheckedAction;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get historyFilterAll;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get historyFilterLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get historyFilterOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get historyToday;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get historyYesterday;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet.'**
+  String get historyEmpty;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing locked yet.'**
+  String get historyEmptyLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing opened yet.'**
+  String get historyEmptyOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History stays locked on this phone.'**
+  String get historyStaysLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the history.'**
+  String get historyLoadError;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'In {name}\'s history now.'**
+  String historyNewRow(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {name}\'s reply'**
+  String waitingCardTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite again'**
+  String get waitingShareInviteAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got the reply'**
+  String get waitingGotReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers'**
+  String get personMenuCheckNumbers;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet'**
+  String get personMenuNotCheckedYet;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send my reply again'**
+  String get personMenuSendReplyAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save history as a file'**
+  String get personMenuSaveHistory;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get personMenuSaveHistoryHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}'**
+  String personMenuRemove(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String removePersonTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Their history and files leave this phone. No undo.'**
+  String get removePersonBody;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removePersonConfirm;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed.'**
+  String removePersonDone(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t remove {name}. Try again.'**
+  String removePersonFailed(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save {name}\'s history'**
+  String exportHistoryTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One file, locked with this password.'**
+  String get exportHistoryLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password for the file'**
+  String get exportHistoryPassword;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save file'**
+  String get exportHistorySave;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History saved as a file.'**
+  String get exportHistorySaved;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get strengthLabel;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: a few random words.'**
+  String get strengthHintEmpty;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make it longer.'**
+  String get strengthHintWeak;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few more words.'**
+  String get strengthHintFair;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Hard to guess.'**
+  String get strengthHintGood;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Very hard to guess.'**
+  String get strengthHintStrong;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'For {name}'**
+  String itemForName(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'From {name}'**
+  String itemFromName(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked this · {day} · {time}'**
+  String itemYouLockedWhen(String day, String time);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened {day} · {time}'**
+  String itemOpenedWhen(String day, String time);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share again'**
+  String get itemShareAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy locked'**
+  String get itemCopyLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only the locked copy is kept.'**
+  String get itemOnlyLockedKept;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get itemSave;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get itemOpen;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. Then it\'s yours.'**
+  String get itemSaveGivesCopy;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This message can\'t be read on this phone.'**
+  String get itemUnreadable;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get itemDone;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get inviteStepName;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get inviteStepSend;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s it for?'**
+  String get inviteWhoFor;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Their name'**
+  String get inviteTheirName;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Tamar'**
+  String get inviteNameHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only you see it.'**
+  String get inviteOnlyYouSee;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make the invite'**
+  String get inviteMake;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You already have someone with this name.'**
+  String get inviteNameTaken;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t make the invite. Try again.'**
+  String get inviteMakeFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to {name}'**
+  String inviteSendTo(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done for now'**
+  String get inviteDoneForNow;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got {name}\'s reply'**
+  String inviteGotNameReply(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to your share menu.'**
+  String get inviteSharedLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get inviteConnecting;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the invite. Close and open it again.'**
+  String get inviteLoadFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the reply'**
+  String get replyOpenTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied text or link'**
+  String get pasteItHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get chooseFile;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The file they sent'**
+  String get chooseFileHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the reply first.'**
+  String get replyNothingToPaste;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the invite first.'**
+  String get inviteNothingToPaste;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a reply. Check what you pasted.'**
+  String get notAReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file.'**
+  String get couldNotReadFile;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That reply didn\'t connect you. Ask for it again.'**
+  String get replyNotConnected;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open it'**
+  String get gotStepOpen;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get gotStepReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the invite'**
+  String get gotOpenTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The invite is good.'**
+  String get gotInviteGood;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who sent it?'**
+  String get gotWhoSent;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get gotAccept;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s your own invite'**
+  String get gotOwnInviteTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to the other person.'**
+  String get gotOwnInviteLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already connected'**
+  String get gotAlreadyTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This invite is already open on this phone.'**
+  String get gotAlreadyLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t open this'**
+  String get gotDamagedTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It may be cut off or for someone else. Ask them to send it again.'**
+  String get gotDamagedLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t accept the invite. Try again.'**
+  String get gotAcceptFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send your reply to {name}'**
+  String replySendTo(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The same way the invite came.'**
+  String get replySameWay;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then check numbers together.'**
+  String get replyCheckTip;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Invite opened'**
+  String get stepInviteOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You reply'**
+  String get stepYouReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Connected with {name}'**
+  String connectedWith(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Is it really {name}?'**
+  String isItReally(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers together.'**
+  String get checkTogether;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get checkNow;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get checkLater;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else may have answered'**
+  String get twiceTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite to {name} got two replies.'**
+  String twiceLine(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t lock anything for {name} yet.'**
+  String twiceNoteLead(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers first.'**
+  String get twiceNoteRest;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}, invite again'**
+  String twiceRemove(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Compare on a call, or side by side.'**
+  String get safetyCompare;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers'**
+  String get safetySame;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Different numbers'**
+  String get safetyDifferent;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as not checked'**
+  String get safetyMarkNotChecked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You checked {name} before.'**
+  String safetyCheckedBefore(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is now Not checked.'**
+  String safetyNowNotChecked(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the numbers. Close and open them again.'**
+  String get safetyLoadFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save that. Try again.'**
+  String get safetySaveFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t send {name} anything.'**
+  String mismatchLead(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone may be in between. Remove and add them again, best in person.'**
+  String get mismatchRest;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s really {name}'**
+  String checkedTitle(String name);
 }
 
 class _FuzzzyInkLocalizationsDelegate

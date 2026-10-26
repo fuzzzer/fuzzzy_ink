@@ -129,23 +129,9 @@ class HomePage extends StatelessWidget {
         : PersonTrust.checked;
   }
 
-  /// A person's page. Until the person page of the next phase exists, a
-  /// waiting person opens their invite and a connected one their chat (where
-  /// locking, opening and history live today).
+  /// A person's page: waiting for their reply, or connected with their
+  /// history.
   static void openPerson(BuildContext context, ChatGeneralData chat) {
-    if (chat.setupStatus == ChatSetupStatus.invited) {
-      context.push(
-        AppRouter.chatInvitation,
-        extra: ChatInvitationPagePayload(
-          chatName: chat.chatName,
-          chatId: chat.chatId,
-        ),
-      );
-      return;
-    }
-    context.push(
-      AppRouter.chatConnected,
-      extra: ConnectedChatPagePayload(chatGeneralData: chat),
-    );
+    context.push(PersonPage.location(chat.chatId));
   }
 }

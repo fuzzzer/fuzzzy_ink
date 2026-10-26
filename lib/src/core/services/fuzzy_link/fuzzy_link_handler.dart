@@ -196,15 +196,10 @@ class FuzzyLinkHandler {
     }
   }
 
+  /// "Someone else may have answered": its own screen, with Check numbers
+  /// and Remove (DESIGN.md section 4.3).
   void _showPairingWarning(ChatGeneralData chat) {
-    final context = navigatorKey.currentContext;
-    if (context == null) return;
-    showPairingWarningDialog(
-      context,
-      chatName: chat.chatName,
-      onCheckSafetyNumber: () =>
-          AppRouter.routerInstance?.push(AppRouter.chatVerify, extra: chat),
-    );
+    _navigateCleanly(AppRouter.personAnsweredTwice, extra: chat);
   }
 
   void _navigateCleanly(String path, {Object? extra}) {

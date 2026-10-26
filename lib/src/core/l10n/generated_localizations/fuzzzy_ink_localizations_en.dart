@@ -2367,4 +2367,401 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get accessMoreAboutEncryption => 'More about encryption';
+
+  @override
+  String personMoreFor(String name) {
+    return 'More for $name';
+  }
+
+  @override
+  String get personNotCheckedLead => 'Not checked yet.';
+
+  @override
+  String get personNotCheckedAction => 'Check numbers.';
+
+  @override
+  String get historyFilterAll => 'All';
+
+  @override
+  String get historyFilterLocked => 'Locked';
+
+  @override
+  String get historyFilterOpened => 'Opened';
+
+  @override
+  String get historyToday => 'Today';
+
+  @override
+  String get historyYesterday => 'Yesterday';
+
+  @override
+  String get historyEmpty => 'Nothing here yet.';
+
+  @override
+  String get historyEmptyLocked => 'Nothing locked yet.';
+
+  @override
+  String get historyEmptyOpened => 'Nothing opened yet.';
+
+  @override
+  String get historyStaysLocked => 'History stays locked on this phone.';
+
+  @override
+  String get historyLoadError => 'Couldn\'t load the history.';
+
+  @override
+  String historyNewRow(String name) {
+    return 'In $name\'s history now.';
+  }
+
+  @override
+  String waitingCardTitle(String name) {
+    return 'Waiting for $name\'s reply';
+  }
+
+  @override
+  String get waitingShareInviteAgain => 'Share invite again';
+
+  @override
+  String get waitingGotReply => 'I got the reply';
+
+  @override
+  String get personMenuCheckNumbers => 'Check numbers';
+
+  @override
+  String get personMenuNotCheckedYet => 'Not checked yet';
+
+  @override
+  String get personMenuSendReplyAgain => 'Send my reply again';
+
+  @override
+  String get personMenuSaveHistory => 'Save history as a file';
+
+  @override
+  String get personMenuSaveHistoryHint => 'Locked with a password';
+
+  @override
+  String personMenuRemove(String name) {
+    return 'Remove $name';
+  }
+
+  @override
+  String removePersonTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get removePersonBody =>
+      'Their history and files leave this phone. No undo.';
+
+  @override
+  String get removePersonConfirm => 'Remove';
+
+  @override
+  String removePersonDone(String name) {
+    return '$name was removed.';
+  }
+
+  @override
+  String removePersonFailed(String name) {
+    return 'Couldn\'t remove $name. Try again.';
+  }
+
+  @override
+  String exportHistoryTitle(String name) {
+    return 'Save $name\'s history';
+  }
+
+  @override
+  String get exportHistoryLine => 'One file, locked with this password.';
+
+  @override
+  String get exportHistoryPassword => 'Password for the file';
+
+  @override
+  String get exportHistorySave => 'Save file';
+
+  @override
+  String get exportHistorySaved => 'History saved as a file.';
+
+  @override
+  String get strengthLabel => 'Strength';
+
+  @override
+  String get strengthHintEmpty => 'Tip: a few random words.';
+
+  @override
+  String get strengthHintWeak => 'Make it longer.';
+
+  @override
+  String get strengthHintFair => 'Add a few more words.';
+
+  @override
+  String get strengthHintGood => 'Hard to guess.';
+
+  @override
+  String get strengthHintStrong => 'Very hard to guess.';
+
+  @override
+  String itemForName(String name) {
+    return 'For $name';
+  }
+
+  @override
+  String itemFromName(String name) {
+    return 'From $name';
+  }
+
+  @override
+  String itemYouLockedWhen(String day, String time) {
+    return 'You locked this · $day · $time';
+  }
+
+  @override
+  String itemOpenedWhen(String day, String time) {
+    return 'Opened $day · $time';
+  }
+
+  @override
+  String get itemShareAgain => 'Share again';
+
+  @override
+  String get itemCopyLocked => 'Copy locked';
+
+  @override
+  String get itemOnlyLockedKept => 'Only the locked copy is kept.';
+
+  @override
+  String get itemSave => 'Save';
+
+  @override
+  String get itemOpen => 'Open';
+
+  @override
+  String get itemSaveGivesCopy =>
+      'Save gives you a normal copy. Then it\'s yours.';
+
+  @override
+  String get itemUnreadable => 'This message can\'t be read on this phone.';
+
+  @override
+  String get itemDone => 'Done';
+
+  @override
+  String get inviteStepName => 'Name';
+
+  @override
+  String get inviteStepSend => 'Send';
+
+  @override
+  String get inviteWhoFor => 'Who\'s it for?';
+
+  @override
+  String get inviteTheirName => 'Their name';
+
+  @override
+  String get inviteNameHint => 'e.g. Tamar';
+
+  @override
+  String get inviteOnlyYouSee => 'Only you see it.';
+
+  @override
+  String get inviteMake => 'Make the invite';
+
+  @override
+  String get inviteNameTaken => 'You already have someone with this name.';
+
+  @override
+  String get inviteMakeFailed => 'Couldn\'t make the invite. Try again.';
+
+  @override
+  String inviteSendTo(String name) {
+    return 'Send it to $name';
+  }
+
+  @override
+  String get inviteDoneForNow => 'Done for now';
+
+  @override
+  String inviteGotNameReply(String name) {
+    return 'I got $name\'s reply';
+  }
+
+  @override
+  String get inviteSharedLine => 'Sent to your share menu.';
+
+  @override
+  String get inviteConnecting => 'Connecting…';
+
+  @override
+  String get inviteLoadFailed =>
+      'Couldn\'t read the invite. Close and open it again.';
+
+  @override
+  String get replyOpenTitle => 'Open the reply';
+
+  @override
+  String get pasteItHint => 'Copied text or link';
+
+  @override
+  String get chooseFile => 'Choose a file';
+
+  @override
+  String get chooseFileHint => 'The file they sent';
+
+  @override
+  String get replyNothingToPaste => 'Nothing to paste. Copy the reply first.';
+
+  @override
+  String get inviteNothingToPaste => 'Nothing to paste. Copy the invite first.';
+
+  @override
+  String get notAReply => 'That isn\'t a reply. Check what you pasted.';
+
+  @override
+  String get couldNotReadFile => 'Couldn\'t read that file.';
+
+  @override
+  String get replyNotConnected =>
+      'That reply didn\'t connect you. Ask for it again.';
+
+  @override
+  String get gotStepOpen => 'Open it';
+
+  @override
+  String get gotStepReply => 'Reply';
+
+  @override
+  String get gotOpenTitle => 'Open the invite';
+
+  @override
+  String get gotInviteGood => 'The invite is good.';
+
+  @override
+  String get gotWhoSent => 'Who sent it?';
+
+  @override
+  String get gotAccept => 'Accept';
+
+  @override
+  String get gotOwnInviteTitle => 'That\'s your own invite';
+
+  @override
+  String get gotOwnInviteLine => 'Send it to the other person.';
+
+  @override
+  String get gotAlreadyTitle => 'You\'re already connected';
+
+  @override
+  String get gotAlreadyLine => 'This invite is already open on this phone.';
+
+  @override
+  String get gotDamagedTitle => 'Can\'t open this';
+
+  @override
+  String get gotDamagedLine =>
+      'It may be cut off or for someone else. Ask them to send it again.';
+
+  @override
+  String get gotAcceptFailed => 'Couldn\'t accept the invite. Try again.';
+
+  @override
+  String replySendTo(String name) {
+    return 'Send your reply to $name';
+  }
+
+  @override
+  String get replySameWay => 'The same way the invite came.';
+
+  @override
+  String get replyCheckTip => 'Then check numbers together.';
+
+  @override
+  String get stepInviteOpened => 'Invite opened';
+
+  @override
+  String get stepYouReply => 'You reply';
+
+  @override
+  String connectedWith(String name) {
+    return 'Connected with $name';
+  }
+
+  @override
+  String isItReally(String name) {
+    return 'Is it really $name?';
+  }
+
+  @override
+  String get checkTogether => 'Check numbers together.';
+
+  @override
+  String get checkNow => 'Check now';
+
+  @override
+  String get checkLater => 'Later';
+
+  @override
+  String get twiceTitle => 'Someone else may have answered';
+
+  @override
+  String twiceLine(String name) {
+    return 'Your invite to $name got two replies.';
+  }
+
+  @override
+  String twiceNoteLead(String name) {
+    return 'Don\'t lock anything for $name yet.';
+  }
+
+  @override
+  String get twiceNoteRest => 'Check numbers first.';
+
+  @override
+  String twiceRemove(String name) {
+    return 'Remove $name, invite again';
+  }
+
+  @override
+  String get safetyCompare => 'Compare on a call, or side by side.';
+
+  @override
+  String get safetySame => 'Same numbers';
+
+  @override
+  String get safetyDifferent => 'Different numbers';
+
+  @override
+  String get safetyMarkNotChecked => 'Mark as not checked';
+
+  @override
+  String safetyCheckedBefore(String name) {
+    return 'You checked $name before.';
+  }
+
+  @override
+  String safetyNowNotChecked(String name) {
+    return '$name is now Not checked.';
+  }
+
+  @override
+  String get safetyLoadFailed =>
+      'Couldn\'t read the numbers. Close and open them again.';
+
+  @override
+  String get safetySaveFailed => 'Couldn\'t save that. Try again.';
+
+  @override
+  String mismatchLead(String name) {
+    return 'Don\'t send $name anything.';
+  }
+
+  @override
+  String get mismatchRest =>
+      'Someone may be in between. Remove and add them again, best in person.';
+
+  @override
+  String checkedTitle(String name) {
+    return 'It\'s really $name';
+  }
 }
