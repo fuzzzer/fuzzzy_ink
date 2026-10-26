@@ -122,10 +122,11 @@ class GlobalBlocListeners extends StatelessWidget {
           listenWhen: (previous, current) =>
               previous.status.hasAccess && !current.status.hasAccess,
           // The whole app locks: the vault's key is wiped with the store's,
-          // and every plain hand-off or picker copy goes (security review
-          // 2026-10-26).
+          // the app's copy leaves the clipboard and every plain hand-off or
+          // picker copy goes (security review 2026-10-26).
           listener: (context, __) {
             context.read<VaultAuthCubit>().lock();
+            unawaited(CopyGuard.clearOnLock());
             if (sl.isRegistered<UserFileStore>()) {
               unawaited(sl.get<UserFileStore>().wipeAtLock());
             }

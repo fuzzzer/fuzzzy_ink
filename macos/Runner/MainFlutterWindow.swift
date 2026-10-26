@@ -109,6 +109,7 @@ final class InkGuard {
   private weak var window: NSWindow?
   private var channel: FlutterMethodChannel?
   private var ourChangeCount: Int?
+  private var ourCopyIsSensitive = false
 
   func register(window: NSWindow, messenger: FlutterBinaryMessenger) {
     self.window = window
@@ -118,6 +119,11 @@ final class InkGuard {
       self?.handle(call, result: result)
     }
     self.channel = channel
+    NotificationCenter.default.addObserver(
+      forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+    ) { [weak self] _ in
+      self?.clearSensitiveCopy()
+    }
   }
 
   private func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -155,12 +161,20 @@ final class InkGuard {
       pasteboard.setData(Data(), forType: InkGuard.transientType)
     }
     ourChangeCount = pasteboard.changeCount
+    ourCopyIsSensitive = isSensitive
+  }
+
+  /// The app is quitting: a sensitive copy (a safe password) does not
+  /// outlive it, timer or not (security review 2026-10-26).
+  func clearSensitiveCopy() {
+    if ourCopyIsSensitive { _ = clearIfOurs() }
   }
 
   /// Answers `cleared` or `notOurs` (see `ClipboardClearResult`).
   private func clearIfOurs() -> String {
     guard let count = ourChangeCount else { return "notOurs" }
     ourChangeCount = nil
+    ourCopyIsSensitive = false
     guard NSPasteboard.general.changeCount == count else { return "notOurs" }
     NSPasteboard.general.clearContents()
     return "cleared"

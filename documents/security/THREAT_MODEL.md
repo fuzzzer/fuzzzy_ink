@@ -681,9 +681,26 @@ that read the widget tree — out of scope. The app sets no secure-window flag.
 
 ### 7.3 Clipboard sniffing
 
-A blob on the clipboard is readable by any app the OS allows. That is ciphertext (harmless to ADV-1 beyond
-metadata), but a *decrypted* message the user copies is plaintext on the clipboard. The app does not clear
-or time out the clipboard.
+Only sealed output (a `Fuzz/` text or a link carrying one, which is ciphertext — harmless to ADV-1 beyond
+metadata) and, while Settings → My safe → Copy passwords is on, a safe password can be copied
+(`lib/src/core/utils/copy_guard.dart`); no decrypted message, file path or other plaintext can, and plaintext
+fields offer no Copy, Cut, Share, Look Up, Search or other apps' text actions (§2.6). While a copy is on the
+clipboard any app the OS allows can read it. Every copy clears itself — sealed output after 2 minutes, a safe
+password after 30 seconds — and when the app locks, but only while the clipboard still holds the app's copy. What
+holds per system for a safe password (security review 2026-10-26; needs a device check):
+- **Android:** marked sensitive (out of the clipboard preview and keyboards' clipboard history); its expiry is
+  timed natively and runs in the background, where a background app cannot look at the clipboard, so it is cleared
+  blind with `clearPrimaryClip` (API 28+) — text the user copied in another app within those 30 seconds is cleared
+  too. Also cleared when the activity is destroyed. A killed process clears nothing; Android 13+ drops the clip
+  after about an hour. Sealed output is cleared only once the app can see it is still its own (on return).
+- **iPhone:** local only (no Universal Clipboard) with the system's own expiry.
+- **macOS:** concealed and transient types (clipboard managers that honour them skip it); cleared after its time
+  and when the app quits; a force-quit clears nothing.
+- **Windows:** written natively with `ExcludeClipboardContentFromMonitorProcessing`,
+  `CanIncludeInClipboardHistory = 0` and `CanUploadToCloudClipboard = 0`, so Win+V history, the cloud clipboard
+  and well-behaved clipboard monitors leave it out; cleared after its time and when the window closes. A third-party
+  clipboard manager that ignores these formats keeps it.
+- **Linux:** the Flutter clipboard only; a clipboard manager may keep a copy.
 
 ### 7.4 Metadata
 

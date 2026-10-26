@@ -19,7 +19,20 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 /// The native side of the copy guard and the screen guard: `Guard.kt`
 /// (Android), `AppDelegate.swift` (iOS), `MainFlutterWindow.swift` (macOS),
-/// `flutter_window.cpp` (Windows, screen only). Linux has none.
+/// `flutter_window.cpp` (Windows). Linux has none.
+///
+/// What a sensitive copy (a safe password) gets on each system (security
+/// review 2026-10-26):
+/// - Android: marked sensitive; cleared after its time even in the
+///   background (blind `clearPrimaryClip`, API 28+) and when the activity
+///   is destroyed. A killed process clears nothing.
+/// - iPhone: local only, with the system's own expiry.
+/// - macOS: concealed and transient (clipboard managers skip it); cleared
+///   after its time and when the app quits.
+/// - Windows: kept out of clipboard history (Win+V), the cloud clipboard and
+///   clipboard monitors; cleared after its time and when the window closes.
+/// - Linux: the Flutter clipboard; a clipboard manager may keep a copy.
+/// Every copy is cleared when the app locks, if it is still the app's.
 const guardChannel = MethodChannel('com.fuzzzycore.ink/guard');
 
 /// Settings → My safe → Copy passwords (decided 2026-10-26: kept, on by
@@ -116,8 +129,8 @@ enum ClipboardClearResult {
 /// Writes to the system clipboard through the guard channel, which marks a
 /// sensitive copy and can tell whether the clipboard still holds the app's
 /// copy without reading anyone else's text. Where the platform has no native
-/// side (Linux, Windows clipboard) it falls back to Flutter's [Clipboard] and
-/// compares the text itself.
+/// side (Linux) it falls back to Flutter's [Clipboard] and compares the text
+/// itself.
 class SecureClipboard {
   SecureClipboard({MethodChannel channel = guardChannel}) : _channel = channel;
 
@@ -300,6 +313,10 @@ abstract final class CopyGuard {
 
   /// When a copy has really left the clipboard ([ClipboardGuard.cleared]).
   static Stream<ClipboardCopyCleared> get cleared => _clipboardGuard.cleared;
+
+  /// The app locks: the app's last copy leaves the clipboard now if it is
+  /// still there, timer or not (security review 2026-10-26).
+  static Future<void> clearOnLock() => _clipboardGuard.clearNow();
 
   /// Context menu for a text field that holds plaintext: paste and select
   /// stay, everything that sends the selection out of the app goes.
