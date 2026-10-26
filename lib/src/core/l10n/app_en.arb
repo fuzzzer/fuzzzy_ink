@@ -1415,5 +1415,303 @@
   "softSoundsLine": "Never on silent",
   "@softSoundsLine": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "safeLockedTitle": "My safe is locked",
+  "@safeLockedTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpensWithMaster": "Opens with your master password.",
+  "@safeOpensWithMaster": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpensWithOwn": "Opens with your safe password.",
+  "@safeOpensWithOwn": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpenWithFingerprint": "Open with fingerprint",
+  "@safeOpenWithFingerprint": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUseMasterPassword": "Use master password",
+  "@safeUseMasterPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUseSafePassword": "Use safe password",
+  "@safeUseSafePassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safePasswordField": "Safe password",
+  "@safePasswordField": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpenButton": "Open My safe",
+  "@safeOpenButton": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUseRecoveryKey": "Use recovery key",
+  "@safeUseRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeWrongPassword": "Not right. Try again.",
+  "@safeWrongPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTooManyTries": "Too many tries.",
+  "@safeTooManyTries": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCouldNotOpen": "Couldn't open My safe. Try again.",
+  "@safeCouldNotOpen": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryTitle": "Type your recovery key",
+  "@safeRecoveryTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryLine": "Spaces and capitals don't matter.",
+  "@safeRecoveryLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryNoKey": "No key? Then nothing can open it.",
+  "@safeRecoveryNoKey": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryNewPassword": "New safe password",
+  "@safeRecoveryNewPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSearch": "Search",
+  "@safeSearch": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAllGroups": "All groups",
+  "@safeAllGroups": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewGroup": "New group",
+  "@safeNewGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEmptyTitle": "Nothing here yet",
+  "@safeEmptyTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEmptyLine": "Tap Add.",
+  "@safeEmptyLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNothingFound": "Nothing found",
+  "@safeNothingFound": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTryAnotherWord": "Try another word.",
+  "@safeTryAnotherWord": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeLoadError": "Couldn't load My safe. Lock it and open it again.",
+  "@safeLoadError": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAutoLockTip": "Locks itself after {minutes} minutes away",
+  "@safeAutoLockTip": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "safeAdd": "Add",
+  "@safeAdd": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAddTitle": "Add to My safe",
+  "@safeAddTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUsername": "Username or email",
+  "@safeUsername": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeWebsite": "Website",
+  "@safeWebsite": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNotes": "Notes",
+  "@safeNotes": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeShowPassword": "Show password",
+  "@safeShowPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeHidePassword": "Hide password",
+  "@safeHidePassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCopiedClearsIn": "Copied · clears in {seconds} s",
+  "@safeCopiedClearsIn": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "safeCopyRule": "Copied passwords clear after {seconds} seconds.",
+  "@safeCopyRule": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "safeCleared": "Cleared.",
+  "@safeCleared": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCopyOff": "Copying is off in Settings.",
+  "@safeCopyOff": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroup": "Group",
+  "@safeGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNoGroup": "No group",
+  "@safeNoGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMove": "Move",
+  "@safeMove": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEdit": "Edit",
+  "@safeEdit": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMoreFor": "More for {title}",
+  "@safeMoreFor": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "safeSaveTip": "Save gives you a normal copy. Then it's yours.",
+  "@safeSaveTip": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMoveToGroup": "Move to a group",
+  "@safeMoveToGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeDeleteTitle": "Delete {title}?",
+  "@safeDeleteTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "safeDeleteLine": "It leaves My safe for good. No undo.",
+  "@safeDeleteLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeDeleted": "Deleted from My safe.",
+  "@safeDeleted": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMovedTo": "Moved to {group}.",
+  "@safeMovedTo": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "safeMovedOut": "Removed from its group.",
+  "@safeMovedOut": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSaved": "Saved in My safe.",
+  "@safeSaved": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeItemLoadFailed": "Couldn't open this. Try again.",
+  "@safeItemLoadFailed": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSaveFailed": "Couldn't save. Try again.",
+  "@safeSaveFailed": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroupName": "Group name",
+  "@safeGroupName": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroupHint": "e.g. Family",
+  "@safeGroupHint": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAddGroup": "Add group",
+  "@safeAddGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewPasswordTitle": "New password",
+  "@safeNewPasswordTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewNoteTitle": "New note",
+  "@safeNewNoteTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewFileTitle": "New file",
+  "@safeNewFileTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitle": "Title",
+  "@safeTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintPassword": "e.g. Bank app",
+  "@safeTitleHintPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintNote": "e.g. Passport number",
+  "@safeTitleHintNote": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintFile": "e.g. Home insurance",
+  "@safeTitleHintFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOptional": "optional",
+  "@safeOptional": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNoteHint": "Anything to keep safe",
+  "@safeNoteHint": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChooseFile": "Choose a file",
+  "@safeChooseFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOriginalStays": "Your original stays where it is.",
+  "@safeOriginalStays": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChangeFile": "Change",
+  "@safeChangeFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChooseFileFirst": "Choose a file first.",
+  "@safeChooseFileFirst": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
   }
 }

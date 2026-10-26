@@ -1482,5 +1482,273 @@
   "softSoundsLine": "უხმო რეჟიმში არასდროს",
   "@softSoundsLine": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
+  },
+  "safeLockedTitle": "ჩემი სეიფი ჩაკეტილია",
+  "@safeLockedTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOpensWithMaster": "იხსნება მთავარი პაროლით.",
+  "@safeOpensWithMaster": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOpensWithOwn": "იხსნება სეიფის პაროლით.",
+  "@safeOpensWithOwn": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOpenWithFingerprint": "თითის ანაბეჭდით გახსნა",
+  "@safeOpenWithFingerprint": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeUseMasterPassword": "მთავარი პაროლის გამოყენება",
+  "@safeUseMasterPassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeUseSafePassword": "სეიფის პაროლის გამოყენება",
+  "@safeUseSafePassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safePasswordField": "სეიფის პაროლი",
+  "@safePasswordField": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOpenButton": "ჩემი სეიფის გახსნა",
+  "@safeOpenButton": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
+  "@safeUseRecoveryKey": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeWrongPassword": "არასწორია. სცადეთ ხელახლა.",
+  "@safeWrongPassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTooManyTries": "ძალიან ბევრი ცდა.",
+  "@safeTooManyTries": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeCouldNotOpen": "ჩემი სეიფი ვერ გაიხსნა. სცადეთ ხელახლა.",
+  "@safeCouldNotOpen": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeRecoveryTitle": "შეიყვანეთ აღდგენის გასაღები",
+  "@safeRecoveryTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeRecoveryLine": "ჰარებსა და დიდ ასოებს მნიშვნელობა არ აქვს.",
+  "@safeRecoveryLine": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeRecoveryNoKey": "გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.",
+  "@safeRecoveryNoKey": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeRecoveryNewPassword": "სეიფის ახალი პაროლი",
+  "@safeRecoveryNewPassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeSearch": "ძებნა",
+  "@safeSearch": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeAllGroups": "ყველა ჯგუფი",
+  "@safeAllGroups": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNewGroup": "ახალი ჯგუფი",
+  "@safeNewGroup": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeEmptyTitle": "აქ ჯერ არაფერია",
+  "@safeEmptyTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeEmptyLine": "დააჭირეთ „დამატებას“.",
+  "@safeEmptyLine": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNothingFound": "ვერაფერი მოიძებნა",
+  "@safeNothingFound": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTryAnotherWord": "სცადეთ სხვა სიტყვა.",
+  "@safeTryAnotherWord": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeLoadError": "ჩემი სეიფი ვერ ჩაიტვირთა. ჩაკეტეთ და ხელახლა გახსენით.",
+  "@safeLoadError": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeAutoLockTip": "{minutes} წუთის უმოქმედობის შემდეგ თავისით იკეტება",
+  "@safeAutoLockTip": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeAdd": "დამატება",
+  "@safeAdd": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeAddTitle": "ჩემს სეიფში დამატება",
+  "@safeAddTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeUsername": "მომხმარებლის სახელი ან ელფოსტა",
+  "@safeUsername": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeWebsite": "ვებსაიტი",
+  "@safeWebsite": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNotes": "შენიშვნები",
+  "@safeNotes": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeShowPassword": "პაროლის ჩვენება",
+  "@safeShowPassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeHidePassword": "პაროლის დამალვა",
+  "@safeHidePassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeCopiedClearsIn": "დაკოპირდა · წაიშლება {seconds} წამში",
+  "@safeCopiedClearsIn": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeCopyRule": "დაკოპირებული პაროლი {seconds} წამში იშლება.",
+  "@safeCopyRule": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeCleared": "წაიშალა.",
+  "@safeCleared": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeCopyOff": "კოპირება პარამეტრებში გამორთულია.",
+  "@safeCopyOff": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeGroup": "ჯგუფი",
+  "@safeGroup": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNoGroup": "ჯგუფის გარეშე",
+  "@safeNoGroup": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeMove": "გადატანა",
+  "@safeMove": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeEdit": "რედაქტირება",
+  "@safeEdit": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeMoreFor": "მეტი: {title}",
+  "@safeMoreFor": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeSaveTip": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
+  "@safeSaveTip": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeMoveToGroup": "ჯგუფში გადატანა",
+  "@safeMoveToGroup": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeDeleteTitle": "წავშალოთ: {title}?",
+  "@safeDeleteTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeDeleteLine": "ის ჩემი სეიფიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია.",
+  "@safeDeleteLine": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeDeleted": "წაიშალა ჩემი სეიფიდან.",
+  "@safeDeleted": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeMovedTo": "გადავიდა ჯგუფში: {group}.",
+  "@safeMovedTo": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeMovedOut": "ჯგუფიდან ამოღებულია.",
+  "@safeMovedOut": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeSaved": "შეინახა ჩემს სეიფში.",
+  "@safeSaved": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeItemLoadFailed": "ვერ გაიხსნა. სცადეთ ხელახლა.",
+  "@safeItemLoadFailed": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeSaveFailed": "ვერ შეინახა. სცადეთ ხელახლა.",
+  "@safeSaveFailed": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeGroupName": "ჯგუფის სახელი",
+  "@safeGroupName": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeGroupHint": "მაგ. ოჯახი",
+  "@safeGroupHint": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeAddGroup": "ჯგუფის დამატება",
+  "@safeAddGroup": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNewPasswordTitle": "ახალი პაროლი",
+  "@safeNewPasswordTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNewNoteTitle": "ახალი ჩანაწერი",
+  "@safeNewNoteTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNewFileTitle": "ახალი ფაილი",
+  "@safeNewFileTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTitle": "სათაური",
+  "@safeTitle": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTitleHintPassword": "მაგ. ბანკის აპი",
+  "@safeTitleHintPassword": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTitleHintNote": "მაგ. პასპორტის ნომერი",
+  "@safeTitleHintNote": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeTitleHintFile": "მაგ. სახლის დაზღვევა",
+  "@safeTitleHintFile": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOptional": "არასავალდებულო",
+  "@safeOptional": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeNoteHint": "ყველაფერი, რაც დაცული უნდა იყოს",
+  "@safeNoteHint": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeChooseFile": "ფაილის არჩევა",
+  "@safeChooseFile": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeOriginalStays": "ორიგინალი თავის ადგილზე რჩება.",
+  "@safeOriginalStays": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeChangeFile": "შეცვლა",
+  "@safeChangeFile": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
+  },
+  "safeChooseFileFirst": "ჯერ ფაილი აირჩიეთ.",
+  "@safeChooseFileFirst": {
+    "description": "Georgian draft, needs a native read (My safe screens, 2026-10-26)"
   }
 }
