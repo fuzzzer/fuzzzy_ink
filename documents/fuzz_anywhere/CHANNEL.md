@@ -1,7 +1,9 @@
 # Lock from other apps: the channel contract (version 1)
 
-**Status:** experimental, 2026-10-26. Built only with `--dart-define=FUZZ_ANYWHERE=true`; the person also turns
-on Settings → Other apps → Lock from other apps (off by default). The threat model's draft section "Locking from
+**Status:** experimental, 2026-10-26. Built only with `--dart-define=FUZZ_ANYWHERE=true`, in the development
+flavour only (the Android declarations, the Mac shortcut, menu bar item and Services, the iPhone App Shortcut; a
+staging or production build that carries the flag fails in Gradle and in the Mac build script); the person also
+turns on Settings → Other apps → Lock from other apps (off by default). The threat model's draft section "Locking from
 other apps" (`documents/security/THREAT_MODEL.md` §2.9) says what this is allowed to do and why.
 
 **Who reads this:** whoever builds the native pieces (the Android selection menu and tile, the Mac Services menu,
@@ -56,16 +58,26 @@ Notes, method by method:
 - **If the switch turns out to be off at an unlock,** the app locks again at once and answers `disabled`.
 - **`people`.** Connected people only. `verified` false means show "Not verified" next to the name before Lock.
   `lastUsedHere` marks the person last locked for from `sourceApp` (a hint for the pre-selection; always show
-  the name before Lock).
+  the name before Lock). Pre-select only that person, or the only person there is; with several and none
+  remembered, nobody is selected and Lock waits for the person's choice. Return (a default button) must not
+  lock a pre-selection or text another app sent: only a name the person picked in the sheet (security review
+  2026-10-26).
 - **`sourceApp`** is the calling app's identity as the platform gives it, without asking any permission: the
-  Android calling package, the Mac frontmost app's bundle id. 1 to 200 characters, no control characters;
-  anything else is ignored. The memory of "this app → this person" is sealed under the store key (never in
+  Android calling package (none when the caller did not wait for a result), or on the Mac the app in front when
+  the person pressed the shortcut or the menu bar item. A Mac Services request sends none: macOS does not say
+  which app asked (any app can call a service with `NSPerformService`), so no person is remembered or
+  pre-selected for it. 1 to 200 characters, no control characters; anything else is ignored. The memory of "this app → this person" is sealed under the store key (never in
   `SharedPreferences`/`UserDefaults`), keeps at most 32 apps, and is forgotten when the switch is turned off.
 - **`lock`.** Locks `text` for `personId` through the app's own Lock flow, which writes the sent message to that
   person's history exactly as Lock in the app does. `output` is the message link
   (`https://ink.fuzzzycore.com/message#…`) when it fits one (8 192 payload characters), else the `Fuzz/` text
   (`kind: "text"`). Both are sealed and safe to paste anywhere. With `copy: true` the app's own copy guard copies
-  it (sealed only, marked and cleared after 2 minutes, cleared at lock); `copied` says whether it did. The one
+  it; `copied` says whether it did. The copy is sealed only and marked sensitive, which still pastes everywhere:
+  Android keeps it out of the clipboard preview and keyboards' clipboard history, the iPhone keeps it on this
+  device and lets it expire, the Mac marks it concealed and transient for clipboard managers. It is cleared after
+  2 minutes and at lock. On Android that clear works while Fuzzzy Ink is not in front only blind, so it also
+  clears anything copied in another app after it within those 2 minutes; a copy a killed process left behind
+  is cleared at the app's next start (security review 2026-10-26). The one
   exception to "cleared at lock": when `relock` locks the app right after the use that made this copy, that copy
   stays through that lock (its 2-minute clear still runs), or "Lock again after each use" would empty the
   clipboard before the person could paste (found live on the Mac, 2026-10-26). Never
@@ -96,6 +108,8 @@ Notes, method by method:
   does nothing: closing that screen locks instead. The app's own auto-lock (idle and background times) applies on
   top in every case. One exception (the Android sheet): when the person chose to go on in the app itself ("Open
   Fuzzzy Ink", Open with `show`, "Open in Fuzzzy Ink"), the app is in front and the sheet does not call it.
+  Dart then keeps its mark that this entry unlocked the app until the app locks, so the next outside use's
+  `relock` may lock the app while the person is using it (it errs toward locking).
 
 ## 3. Events (Dart calls native)
 
@@ -104,10 +118,12 @@ Dart calls these on the same channel. Each carries `v: 1`. If native has no hand
 | Method | Arguments | When |
 |---|---|---|
 | `lockChanged` | `unlocked` (bool) | the app locked or unlocked, any way (Lock now, auto-lock, an unlock, `relock`) |
-| `settingsChanged` | `enabled`, `lockAgainAfterUse` (bools) | the switches changed, or were read after an unlock |
+| `settingsChanged` | `enabled`, `lockAgainAfterUse` (bools) | the switches changed; the first read of a run (after the first unlock), even when it reads as before; and `enabled: false` whenever there is no master password (a new install, "Erase everything") |
 | `shownClosed` | `displayId` | the private screen `show` opened was closed (or dropped by a lock) |
 
-On `settingsChanged` with `enabled: false`: switch the entry points off (Android: disable the selection activity
+The first read of a run and the no-password case are sent even though nothing changed in this run: "off"
+looks like the starting state, and the native side must still switch off what an earlier run or setup left on
+(security review 2026-10-26). On `settingsChanged` with `enabled: false`: switch the entry points off (Android: disable the selection activity
 and the tile component; Mac: unregister the services provider and the hot key; iPhone: hide the shortcuts). On
 `enabled: true`, switch them on. On `lockChanged` with `unlocked: false`: drop any person list or name you show.
 
@@ -151,19 +167,32 @@ copy text by hand.
    `setHideOverlayWindows(true)` (Android), `sharingType = .none` (Mac), the secure-field technique (iPhone).
 6. **One state owner per sheet**, small views, previews for each state (locked, unlocking, choosing, locking,
    done, error); call `relock` when it goes away.
-7. **Always show the person's name and the "Not verified" mark before Lock**, even when pre-selected.
+7. **Always show the person's name and the "Not verified" mark before Lock**, even when pre-selected. Pre-select
+   only a remembered person or the only one; Return never locks a pre-selection or text another app sent.
+8. **The sheet's own text fields keep what is typed** (the message, the master password, shown or hidden): their
+   menu offers Paste (iPhone also Select and Select All) and nothing that sends text out (Copy, Cut, Share, Look
+   Up, Translate, Services, Writing Tools, another app's text action); the copy shortcuts do nothing; the text
+   cannot be dragged out; no autocorrection, spelling, inline prediction or keyboard learning (Android
+   `IME_FLAG_NO_PERSONALIZED_LEARNING`). Android: `SealedTextInput.kt`; Mac and iPhone: `InkSealedTextBox`.
+9. **Text another app sent is shown whole before Lock takes it.** Another app chooses that text, so the person
+   must be able to see every word their name goes on: all of it, scrollable (and larger on request), with its
+   length, characters that hide or reorder words shown as their codes (Android), and Lock enabled only once the
+   end has been on screen.
+10. **Open is two separate presses that cannot be one.** The press that checks whose message it is ("Check" on
+    the Mac) spends nothing; Open, which spends it, is armed only a moment (0.6 s) after "Open the message from
+    Nino?" shows.
 
 ## 6. A whole use, step by step
 
 **Write sealed (the main flow):** `status` → (`unlock` or `unlockWithPassword`) → `people(sourceApp)` → the
 person picks and types → `lock(personId, text, sourceApp, copy: true)` → paste or return `output` → `relock`.
 
-**Lock selected text (Android selection, Mac Services):** as above with the selected text as `text`; show the
-one-time note "This app may already have saved what you typed. For private words, write them in Fuzzzy Ink
+**Lock selected text (Android selection, Mac Services):** as above with the selected text as `text`, shown
+whole and locked only after its end was on screen (rule 9); show the one-time note "This app may already have saved what you typed. For private words, write them in Fuzzzy Ink
 first." (it is the "Why?" line in Settings → Other apps).
 
-**Open:** the person selects or pastes a sealed text → `peek(text)` ("Open the message from Nino?") → the person
-presses Open → `open(text)` → bring the app forward → `show(displayId)` → `shownClosed` → (the app locks again
+**Open:** the person selects or pastes a sealed text → `peek(text)` ("Open the message from Nino?") → a moment
+later the person presses Open (rule 10) → `open(text)` → bring the app forward → `show(displayId)` → `shownClosed` → (the app locks again
 by itself when this entry unlocked it).
 
 ## 7. Changing the contract

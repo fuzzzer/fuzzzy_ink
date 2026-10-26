@@ -242,6 +242,11 @@ Share, Look Up, Search or another app's text action (Android's "Translate" and t
 the copy shortcuts do nothing, and the keyboard is asked for no suggestions, no autocorrect and no personalised
 learning (`GuardedTextField`, `CopyGuard.plaintextContextMenuBuilder`; security review 2026-10-26). A keyboard
 that ignores that request, or a third-party keyboard with network access, is outside the model (§7.1).
+The same holds for the native text fields of "Lock from other apps" (§2.9, development builds only): the
+Android sheet's message and master password fields, and the Mac and iPhone message box, offer Paste and nothing
+that sends text out, and ask the keyboard not to learn. In those builds two more ways in exist: another app's
+text selection (Android's text menu, the Mac Services menu) and the panel or sheet the person opens. Neither
+decrypts by itself: a selection is only peeked, and a message opens only on the person's Open press (§2.9).
 Private screens are kept out of screenshots, recordings and the app switcher where the system allows it (§7.2).
 Plaintext shown on screen is still readable by anything that can read or capture the screen. The app never
 decrypts a blob automatically: a message is decrypted only when the user pastes it into Open (the paste is the
@@ -349,10 +354,16 @@ a return to OS backups.
 
 ### 2.9 Locking from other apps — DRAFT, experimental builds only
 
-**Status: draft for review (2026-10-26).** Nothing here ships: the code exists only in a build made with
-`--dart-define=FUZZ_ANYWHERE=true`, and even there the person must turn on Settings → Other apps → Lock from other
-apps (off by default). The native entry points (Android selection menu and tile, Mac Services menu and panel,
-iPhone quick sheet) are not built yet; this section states the rules they are built to. The contract is
+**Status: draft, reviewed (security review 2026-10-26, its findings fixed).** Nothing here ships: the code
+exists only in a development build made with `--dart-define=FUZZ_ANYWHERE=true`, and even there the person must
+turn on Settings → Other apps → Lock from other apps (off by default). The native entry points are built, in the
+development flavour only: the Android selection menu item and Quick Settings tile (declared off in
+`src/development`, switched on only with the setting), the Mac Services menu, shortcut (⌃⌥⌘L), menu bar item and
+panel (compiled only under `INK_ANYWHERE`, set in the three development configurations), and the iPhone "Lock a
+message" sheet (App Shortcut, also under `INK_ANYWHERE`). A staging or production build that carries the flag
+fails (Gradle; the Mac build script). Production builds gain no start-up component either: the emoji helper
+Compose brings (`androidx.emoji2`, which asks the system font provider for a font at every start) is removed from
+the merged manifest. The contract is
 [`documents/fuzz_anywhere/CHANNEL.md`](../fuzz_anywhere/CHANNEL.md); the Dart side is `lib/src/fuzz_anywhere/`
 (tests: `test/src/fuzz_anywhere/`).
 
@@ -388,12 +399,32 @@ the Rust core is unchanged. Native code does no cryptography and holds no key.
 4. *Single read and history (§7.6 holds).* `lock` and `open` run the app's own Lock and Open flows, which write
    the sent or opened message into the person's sealed history before answering, exactly as in the app.
 5. *Copy policy holds.* With `copy`, the sealed output goes through the app's copy guard (sealed kinds only,
-   cleared after 2 minutes and at lock). Native code never copies.
+   cleared after 2 minutes and at lock), marked sensitive because the person pastes it in another app: on Android
+   that keeps it out of the clipboard preview and keyboards' history and lets it be cleared blind while Fuzzzy
+   Ink is not in front (which also clears anything copied after it within the 2 minutes); a copy a killed
+   process left is cleared at the next start. Native code never copies. The one exception to "cleared at lock":
+   the lock that "Lock again after each use" makes right after the use that copied it spares that one sealed
+   copy (its 2-minute clear still runs).
 6. *Store lifetime.* Outside use never resets the idle timer (it is not a touch). "Lock again after each use"
    (on by default) locks the app when the use that unlocked it ends (`relock`, or the shown message's screen
    closing); an app the person had already unlocked is left as it was. The whole-app auto-lock applies on top.
 7. *Metadata.* Which app was last used with which person is sealed under the store key (`anywhere-apps`), keeps
-   at most 32 apps and is deleted when the switch is turned off.
+   at most 32 apps and is deleted when the switch is turned off. Both sealed settings are removed by "Erase
+   everything", also when a development Mac refuses the keychain's wildcard delete.
+8. *Native text fields keep what is typed.* The Android sheet's fields sit in `SealedTextInput` (a Paste-only
+   selection toolbar, a clipboard that cannot be written, `IME_FLAG_NO_PERSONALIZED_LEARNING`, no autocorrect);
+   the Mac and iPhone message box is `InkSealedTextBox` (an `NSTextView`/`UITextView` whose menu is Paste only,
+   which writes no pasteboard, gives no service its text, cannot be dragged out and has Writing Tools, spelling
+   and inline prediction off). The master password field is never copyable, shown or hidden.
+9. *What another app sent is seen whole.* Text from a selection is shown in full (scrollable, larger on request,
+   with its length; on Android, characters that hide or reorder words are shown as their codes), and Lock works
+   only once its end has been on screen: the person's name never goes on words they could not see.
+10. *No slip of a key.* A person is pre-selected only when remembered for the app or the only one; Return locks
+    only for a name the person picked, never for text another app sent. On the Mac the press that checks a
+    message ("Check") and the press that spends it (Open) are separate, and Open is armed a moment later.
+11. *The entry points follow the switch.* Dart tells native code the switch at its first read of every run and
+    `off` whenever there is no master password (a new install, "Erase everything"), so an Android menu item an
+    earlier run switched on does not stay on.
 
 **Not defended (additions to §4.5 and §7).**
 - *What the other app already has.* "Lock selected text" takes text the person typed in another app; that app
@@ -401,16 +432,32 @@ the Rust core is unchanged. Native code does no cryptography and holds no key.
   Settings → Other apps) and offers "Write sealed" in its own field as the main flow (§7.11).
 - *Any code in the app's process* can call the channel; that is the same trust as the app itself (§4.5).
   Another app cannot call it: the channel is in-process. The Android selection activity is exported by
-  necessity, so any app can *start* it with text; it answers only what the person then does on screen.
+  necessity, so any app can *start* it with text; it answers only what the person then does on screen, and only
+  after the person has seen all of that text. Likewise any Mac app can call the Services entries
+  (`NSPerformService`) with text it chose: the panel shows it whole, Open only peeks until the person presses
+  Open, and Lock needs the person's press. macOS does not say which app asked a service, so a Services request
+  remembers no person. Such a caller learns from a peek only what the person sees on screen; nothing is answered
+  back but sealed output the person chose to lock (no oracle).
+- *Which app the person is in* is the platform's word: Android's calling package, or on the Mac the app in front
+  when the shortcut or menu bar item is pressed. It only picks a hint, shown by name before Lock.
 - *A wrong pre-selection.* The person last used per app is a hint; the name and the "Not verified" mark are always
   shown before Lock.
 - *Screen and keyboard.* Native sheets use the platform's screen protection (`FLAG_SECURE`, overlay hiding,
   `sharingType = .none`); a keyboard that ignores the no-learning request is §7.1, as in the app.
 
-**Open for the security review before any release:** the native pieces themselves; whether the Android selection
-activity should refuse callers without a calling package; whether the Mac panel's nested run loop (in-place
-replacement through Services) keeps the auto-lock timers running; whether `sourceApp` should be stored hashed
-instead of sealed.
+**Answered by the security review (2026-10-26):**
+- *Refuse Android callers without a calling package?* No: such a caller gets nothing but what the person does on
+  screen, and no person is remembered for it. Showing the whole text before Lock (control 9) matters more.
+- *Does the Mac panel's nested run loop keep the auto-lock timers running?* Yes: it runs the main run loop in the
+  default mode, so channel answers and main-queue work go on, and Dart's idle timer does not depend on it. The
+  loop ends after 115 seconds, then the panel closes and `relock` runs. Still to check once on a device with the
+  idle time set to 1 minute.
+- *Store `sourceApp` hashed instead of sealed?* No: app ids are few and guessable, so a hash adds nothing over the
+  sealed blob.
+
+Still open before any release: a device check of the Android sheet and tile and of the iPhone App Shortcut
+(signed build), whether a password `SecureField` in the Mac's non-activating panel turns on secure keyboard
+input, and keyboards that ignore the no-learning request (§7.1).
 
 ---
 
@@ -1205,10 +1252,14 @@ places where a fresh pair of eyes changes the risk.
    columns, the residual backup paths after the opt-out, the absence of any re-key,
    the plain hand-off copies while a file is in use and the archive export's working-file residue are acceptable
    for the product's threat population.
-9. **The windows (§7.7)** — whether 40 / 5 / 2000 / 63 match how people will actually use a paste-based
+9. **Lock from other apps (§2.9, development builds only)** — confirm that no path from a text selection, a
+   Services request, the panel or a sheet opens a message without the person's Open press; that native code
+   never receives opened text; that the native text fields (Android `SealedTextInput`, Apple
+   `InkSealedTextBox`) let nothing out; and that no staging or production build can carry the entry points.
+10. **The windows (§7.7)** — whether 40 / 5 / 2000 / 63 match how people will actually use a paste-based
    product, and whether `TooOld` and `Replay` are surfaced clearly enough that a user does not mistake a
    window limit for tampering.
-10. **The supply chain (§9)** — reproduce the Rust core hash from the published procedure, verify one
+11. **The supply chain (§9)** — reproduce the Rust core hash from the published procedure, verify one
     attestation, diff the SBOMs against the lockfiles, and check no workflow ever sets `--cfg fuzzing`.
 
 What an audit should **not** spend time on: the byte layouts (pinned by vectors and re-derived
