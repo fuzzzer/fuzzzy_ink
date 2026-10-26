@@ -36,11 +36,11 @@ extension View {
   @ViewBuilder func inkChip(isSelected: Bool, reduceTransparency: Bool) -> some View {
     if #available(iOS 26.0, macOS 26.0, *), !reduceTransparency {
       glassEffect(
-        isSelected ? .regular.tint(.accentColor.opacity(0.45)).interactive() : .regular.interactive(),
+        isSelected ? .regular.tint(InkMark.red.opacity(0.55)).interactive() : .regular.interactive(),
         in: .capsule)
     } else {
       background(
-        Capsule().fill(isSelected ? Color.accentColor.opacity(0.25) : Color.secondary.opacity(0.12)))
+        Capsule().fill(isSelected ? InkMark.red.opacity(0.25) : Color.secondary.opacity(0.12)))
     }
   }
 

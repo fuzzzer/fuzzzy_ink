@@ -7,7 +7,7 @@ import Cocoa
 ///
 /// Lock replaces the selection in place: the service returns plain text, so
 /// macOS waits (up to `NSTimeout`, 120 s) while the panel runs in a nested
-/// run loop; the sealed output is written back on the same pasteboard and
+/// event loop; the sealed output is written back on the same pasteboard and
 /// the other app puts it where the selection was. If the person closes the
 /// panel, nothing is written and the selection stays as it was.
 ///
@@ -69,9 +69,17 @@ final class InkServiceProvider: NSObject {
     let model = makeModel(.lock, text, .returnToCaller { sealed = $0 })
     present(model) { isClosed = true }
 
+    // A nested event loop: the panel's clicks and keys, Flutter's channel
+    // answers and Swift's main-actor work all go on while macOS waits.
+    // (A bare run loop would draw the panel but never hand it an event.)
+    let app = NSApplication.shared
     let deadline = Date().addingTimeInterval(timeout)
     while sealed == nil && !isClosed && Date() < deadline {
-      _ = RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.05))
+      if let event = app.nextEvent(
+        matching: .any, until: Date().addingTimeInterval(0.05), inMode: .default, dequeue: true)
+      {
+        app.sendEvent(event)
+      }
     }
     guard let sealed else { return "Nothing was locked." }
     InkServiceProvider.write(sealed, to: pasteboard)
