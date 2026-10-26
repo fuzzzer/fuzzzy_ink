@@ -39,5 +39,5 @@ class AppLockThrottleLocalDataSource {
     );
   }
 
-  Future<void> delete() => _secureStorage.delete(key: storageKey);
+  Future<void> delete() => _secureStorage.deleteIfPresent(storageKey);
 }

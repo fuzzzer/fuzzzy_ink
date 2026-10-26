@@ -141,7 +141,7 @@ class BiometricAuthRepository {
       logger.i('Biometric copy predates biometric-only keys: scope=$scope');
       // Noted before the flag goes, so the clean-up is never forgotten.
       await _secureStorage.write(key: scope._legacyCleanupKey, value: 'true');
-      await _secureStorage.delete(key: scope._flagKey);
+      await _secureStorage.deleteIfPresent(scope._flagKey);
     } catch (e) {
       logger.w('Outdated biometric copy not checked: scope=$scope, $e');
       return false;
@@ -173,7 +173,7 @@ class BiometricAuthRepository {
         options: storageOptions,
       );
       await legacy.delete();
-      await _secureStorage.delete(key: scope._legacyCleanupKey);
+      await _secureStorage.deleteIfPresent(scope._legacyCleanupKey);
     } catch (e) {
       logger.w('Outdated biometric copy not deleted: scope=$scope, $e');
     }
@@ -241,7 +241,7 @@ class BiometricAuthRepository {
   }
 
   Future<void> disable(BiometricScope scope) async {
-    await _secureStorage.delete(key: scope._flagKey);
+    await _secureStorage.deleteIfPresent(scope._flagKey);
     try {
       final storage = await _openStorage(scope);
       await storage.delete();

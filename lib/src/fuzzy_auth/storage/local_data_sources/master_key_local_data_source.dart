@@ -35,10 +35,11 @@ class MasterKeyLocalDataSource {
   /// before the master password kept it (the lock could be off then).
   static const legacyStoreKeyKey = 'crypto_store_key_v1';
 
-  /// Every name an earlier build kept under the plugin's shared default
-  /// keychain service (before `secureStorageService`): looked for as
-  /// leftovers and removed one by one, never with a wildcard — in the macOS
-  /// login keychain that service is shared with other apps.
+  /// Every name this app keeps in the keychain, and so every name an
+  /// earlier build kept under the plugin's shared default service (before
+  /// `secureStorageService`): those are looked for as leftovers and removed
+  /// one by one, never with a wildcard — in the macOS login keychain that
+  /// service is shared with other apps.
   static const legacyNamespaceKeys = [
     legacyStoreKeyKey,
     passwordWrapKey,
@@ -118,7 +119,7 @@ class MasterKeyLocalDataSource {
     if (vaultRecovery != null) {
       await _writeBytes(vaultRecoveryKey, vaultRecovery);
     } else {
-      await _secureStorage.delete(key: vaultRecoveryKey);
+      await _secureStorage.deleteIfPresent(vaultRecoveryKey);
     }
     await _writeBytes(recoveryLockKey, recoveryLock);
     await _writeBytes(recoveryWrapKey, recoveryWrap);
@@ -127,16 +128,16 @@ class MasterKeyLocalDataSource {
   /// Ends the recovery key: its wrap first (the master key's path), then the
   /// vault copy and the lock.
   Future<void> deleteRecovery() async {
-    await _secureStorage.delete(key: recoveryWrapKey);
-    await _secureStorage.delete(key: vaultRecoveryKey);
-    await _secureStorage.delete(key: recoveryLockKey);
+    await _secureStorage.deleteIfPresent(recoveryWrapKey);
+    await _secureStorage.deleteIfPresent(vaultRecoveryKey);
+    await _secureStorage.deleteIfPresent(recoveryLockKey);
   }
 
   Future<void> writeVaultRecovery(Uint8List recovery) =>
       _writeBytes(vaultRecoveryKey, recovery);
 
   Future<void> deleteVaultRecovery() =>
-      _secureStorage.delete(key: vaultRecoveryKey);
+      _secureStorage.deleteIfPresent(vaultRecoveryKey);
 
   /// Every entry this app keeps in the secure storage: the key blobs, the
   /// legacy key, the biometric flags, the attempt counter and the sealed
@@ -146,10 +147,19 @@ class MasterKeyLocalDataSource {
   /// earlier, differently signed build made) cannot be read by this build
   /// either, so it does not stop a fresh start.
   Future<void> deleteAll() async {
-    await _secureStorage.deleteAll();
+    try {
+      await _secureStorage.deleteAll();
+    } on PlatformException catch (ex) {
+      // A development Mac refuses the plugin's iCloud half of the wildcard
+      // delete (see `deleteIfPresent`): each entry this app keeps, then.
+      logger.w('Keychain wildcard delete refused: ${_describe(ex)}');
+      for (final key in legacyNamespaceKeys) {
+        await _secureStorage.deleteIfPresent(key);
+      }
+    }
     for (final key in legacyNamespaceKeys) {
       try {
-        await _legacyStorage.delete(key: key);
+        await _legacyStorage.deleteIfPresent(key);
       } catch (ex) {
         logger.w('Leftover keychain entry not removed: ${_describe(ex)}');
       }
