@@ -18,8 +18,10 @@ void main() {
     WidgetTester tester, {
     required bool returnsToPerson,
     int? row,
+    String? toast,
   }) async {
     final router = GoRouter(
+      navigatorKey: navigatorKey,
       routes: [
         GoRoute(path: '/', builder: (_, __) => const Text('home')),
         GoRoute(
@@ -38,6 +40,7 @@ void main() {
               chat: _nino,
               returnsToPerson: returnsToPerson,
               historyRowId: row,
+              toast: toast,
             ),
             child: const Text('done'),
           ),
@@ -84,4 +87,37 @@ void main() {
     expect(find.text('person Nino'), findsOneWidget);
     expect(RecentHistoryRow.peek(_nino.chatId), isNull);
   });
+
+  for (final returnsToPerson in [false, true]) {
+    testWidgets(
+        'the "In X\'s history now." card shows at the top once landed '
+        '(${returnsToPerson ? 'from the person page' : 'from Home'})',
+        (tester) async {
+      final router = await pumpRouted(
+        tester,
+        returnsToPerson: returnsToPerson,
+        row: 3,
+        toast: 'In Nino\'s history now.',
+      );
+      if (returnsToPerson) {
+        unawaited(router.push(PersonPage.location(_nino.chatId)));
+      }
+      unawaited(router.push(AppRouter.lockFor));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('done'));
+      await tester.pump();
+      await tester.pump();
+
+      final card = find.text('In Nino\'s history now.');
+      expect(card, findsOneWidget);
+      final screen = tester.getSize(find.byType(MaterialApp));
+      expect(
+        tester.getCenter(card).dy,
+        lessThan(screen.height / 3),
+        reason: 'a small card at the top (DESIGN.md section 5)',
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      expect(card, findsNothing);
+    });
+  }
 }
