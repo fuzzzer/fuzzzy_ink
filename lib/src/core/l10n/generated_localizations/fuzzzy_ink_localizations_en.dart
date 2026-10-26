@@ -458,7 +458,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get masterPasswordPreviousData =>
-      'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.';
+      'This version uses a master password. People, history and My safe from the earlier test version can\'t be opened with it, so they will be removed. Files you saved stay where they are.';
+
+  @override
+  String get accessSetupInterrupted =>
+      'Setup didn\'t finish last time. A recovery key you saw then won\'t work. You\'ll get a new one.';
 
   @override
   String get masterPasswordFailed =>

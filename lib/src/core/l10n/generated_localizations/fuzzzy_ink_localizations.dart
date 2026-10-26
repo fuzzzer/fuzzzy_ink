@@ -919,8 +919,14 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @masterPasswordPreviousData.
   ///
   /// In en, this message translates to:
-  /// **'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.'**
+  /// **'This version uses a master password. People, history and My safe from the earlier test version can\'t be opened with it, so they will be removed. Files you saved stay where they are.'**
   String get masterPasswordPreviousData;
+
+  /// No description provided for @accessSetupInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup didn\'t finish last time. A recovery key you saw then won\'t work. You\'ll get a new one.'**
+  String get accessSetupInterrupted;
 
   /// No description provided for @masterPasswordFailed.
   ///

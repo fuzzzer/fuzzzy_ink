@@ -54,7 +54,7 @@ void main() {
     export = FakeRecoveryKeyExport();
     when(() => cubit.create(any())).thenAnswer((_) async {});
     when(() => cubit.confirmRecoveryKeySaved()).thenAnswer((_) async {});
-    when(() => cubit.skipRecoveryKey()).thenReturn(null);
+    when(() => cubit.skipRecoveryKey()).thenAnswer((_) async {});
     when(() => cubit.enableQuickUnlock(any())).thenAnswer((_) async {});
     when(() => cubit.skipQuickUnlock()).thenReturn(null);
     when(() => cubit.finish()).thenAnswer((_) async {});
@@ -172,6 +172,16 @@ void main() {
       );
       await pumpStep(tester, passwordStep);
       expect(find.text(l10n.masterPasswordPreviousData), findsOneWidget);
+    });
+
+    testWidgets(
+        'a first run closed on the key step says its key never worked '
+        '(and a new one comes)', (tester) async {
+      await pumpStep(
+        tester,
+        const MasterPasswordSetupState(interruptedBefore: true),
+      );
+      expect(find.text(l10n.accessSetupInterrupted), findsOneWidget);
     });
 
     testWidgets('without strong biometrics the steps count to two',

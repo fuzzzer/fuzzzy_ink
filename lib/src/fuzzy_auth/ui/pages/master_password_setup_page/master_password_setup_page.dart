@@ -27,6 +27,7 @@ class MasterPasswordSetupPage extends StatelessWidget {
         fuzzyAuthStore: sl.get<FuzzyAuthStore>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        preferencesService: sl.get<PreferencesService>(),
       )..checkQuickUnlock(),
       child: MasterPasswordSetupView(export: export),
     );
@@ -188,7 +189,14 @@ class _MasterPasswordSetupViewState extends State<MasterPasswordSetupView> {
         _steps(context, state, 1, localizations.accessStepPassword),
         SizedBox(height: space.l),
         AccessTitle(localizations.accessMakeMasterPassword),
-        if (previousDataFound) ...[
+        if (state.interruptedBefore) ...[
+          SizedBox(height: space.m),
+          AccessNote(
+            tone: AccessNoteTone.warning,
+            text: localizations.accessSetupInterrupted,
+            qaId: 'setup.interrupted',
+          ),
+        ] else if (previousDataFound) ...[
           SizedBox(height: space.m),
           AccessNote(
             tone: AccessNoteTone.warning,

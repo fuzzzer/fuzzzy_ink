@@ -10,6 +10,11 @@ part 'master_password_setup_state.dart';
 /// shortcut where the device has strong biometrics, then "You're ready".
 /// The app opens only at [finish]. Nothing from an earlier build survives:
 /// its data cannot be opened without the old key.
+///
+/// The keys are drawn at [create] but kept only when the recovery-key step
+/// ends ([confirmRecoveryKeySaved] or [skipRecoveryKey]): a first run closed
+/// on that step leaves nothing behind and starts again, so a recovery key
+/// that was shown is either kept or never valid.
 class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
   MasterPasswordSetupCubit({
     required ChatAuthRepository chatAuthRepository,
@@ -17,12 +22,18 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
     required FuzzyAuthStore fuzzyAuthStore,
     required PasswordStrengthService passwordStrengthService,
     BiometricAuthRepository? biometricAuthRepository,
+    PreferencesService? preferencesService,
   })  : _chatAuthRepository = chatAuthRepository,
         _appResetRepository = appResetRepository,
         _fuzzyAuthStore = fuzzyAuthStore,
         _passwordStrengthService = passwordStrengthService,
         _biometricAuthRepository = biometricAuthRepository,
-        super(const MasterPasswordSetupState());
+        _preferencesService = preferencesService,
+        super(
+          MasterPasswordSetupState(
+            interruptedBefore: preferencesService?.firstRunPending ?? false,
+          ),
+        );
 
   final ChatAuthRepository _chatAuthRepository;
   final AppResetRepository _appResetRepository;
@@ -31,6 +42,9 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
 
   /// Without it there is no fingerprint step.
   final BiometricAuthRepository? _biometricAuthRepository;
+
+  /// Remembers a first run that drew keys but did not keep them yet.
+  final PreferencesService? _preferencesService;
 
   bool isStrongEnough(String password) =>
       _passwordStrengthService.isStrongEnough(password);
@@ -45,7 +59,8 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
   }
 
   /// Clears whatever an earlier install left, then lets the core draw every
-  /// key and open the store. The recovery key comes next.
+  /// key and open the store. Nothing is kept yet: the recovery key comes
+  /// next.
   Future<void> create(String password) async {
     if (state.status.isLoading) return;
     if (!isStrongEnough(password)) {
@@ -64,7 +79,7 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
       );
       return;
     }
-    final setUpRes = await _chatAuthRepository.setUp(password);
+    final setUpRes = await _chatAuthRepository.prepareSetUp(password);
     if (setUpRes is CryptoCoreFailure<CryptoCoreMasterKeySetup>) {
       emit(
         state.copyWith(
@@ -76,6 +91,7 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
     }
     final setup =
         (setUpRes as CryptoCoreSuccess<CryptoCoreMasterKeySetup>).data;
+    await _preferencesService?.setFirstRunPending(true);
     emit(
       MasterPasswordSetupState(
         step: MasterPasswordSetupStep.recoveryKey,
@@ -83,46 +99,41 @@ class MasterPasswordSetupCubit extends Cubit<MasterPasswordSetupState> {
         recoveryKey: setup.recoveryKey,
         recoveryWrap: setup.recoveryWrap,
         recoveryLock: setup.recoveryLock,
+        pendingSetup: setup,
         quickUnlockAvailable: state.quickUnlockAvailable,
       ),
     );
   }
 
-  /// The user saved the recovery key: its wrap and lock are kept.
-  Future<void> confirmRecoveryKeySaved() async {
-    final recoveryKey = state.recoveryKey;
-    final recoveryWrap = state.recoveryWrap;
-    final recoveryLock = state.recoveryLock;
-    if (recoveryKey == null ||
-        recoveryWrap == null ||
-        recoveryLock == null ||
-        state.status.isLoading) {
-      return;
-    }
+  /// The user saved the recovery key: it is kept with the master password.
+  Future<void> confirmRecoveryKeySaved() => _keep(keepRecovery: true);
+
+  /// The user chose, after the warning, to go without a recovery key: the
+  /// master password is kept, its recovery wrap never is, so no recovery
+  /// key exists for this device.
+  Future<void> skipRecoveryKey() => _keep(keepRecovery: false);
+
+  /// Keeps the master password (and the recovery key with [keepRecovery]):
+  /// from here the device is set up. A failed write stays on the key step,
+  /// so it can be tried again.
+  Future<void> _keep({required bool keepRecovery}) async {
+    final pending = state.pendingSetup;
+    if (pending == null || state.status.isLoading) return;
     emit(state.copyWith(status: StateStatus.loading));
-    final saveRes = await _chatAuthRepository.saveRecovery(
-      PendingRecoveryKey(
-        recoveryKey: recoveryKey,
-        recoveryWrap: recoveryWrap,
-        recoveryLock: recoveryLock,
-      ),
+    final keepRes = await _chatAuthRepository.completeSetUp(
+      pending,
+      keepRecovery: keepRecovery,
     );
-    if (saveRes is CryptoCoreFailure<void>) {
+    if (keepRes is CryptoCoreFailure<void>) {
       emit(
         state.copyWith(
           status: StateStatus.failed,
-          failureType: saveRes.type,
+          failureType: keepRes.type,
         ),
       );
       return;
     }
-    _afterRecoveryKey();
-  }
-
-  /// The user chose, after the warning, to go without a recovery key: its
-  /// wrap is never stored, so no recovery key exists for this device.
-  void skipRecoveryKey() {
-    if (state.recoveryWrap == null || state.status.isLoading) return;
+    await _preferencesService?.setFirstRunPending(false);
     _afterRecoveryKey();
   }
 

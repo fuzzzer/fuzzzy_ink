@@ -305,6 +305,10 @@
   "@masterPasswordPreviousData": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
+  "accessSetupInterrupted": "წინა ჯერზე დაყენება ბოლომდე არ მივიდა. მაშინ ნანახი აღდგენის გასაღები არ იმუშავებს. ახალს მიიღებთ.",
+  "@accessSetupInterrupted": {
+    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
+  },
   "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.",
   "@masterPasswordFailed": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"

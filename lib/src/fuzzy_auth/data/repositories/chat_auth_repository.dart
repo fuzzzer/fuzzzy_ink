@@ -45,33 +45,65 @@ class ChatAuthRepository {
     return CryptoCoreSuccess(blobs?.recoveryWrap != null);
   }
 
-  /// First run: the core draws every key and opens the store; the password
-  /// and store wraps are written here. The recovery wrap and lock come back
-  /// unsaved with the recovery key: [saveRecovery] keeps them once the user
-  /// has saved the key. A failed write closes the store again.
+  /// First run in one go, without a recovery key: the core draws every key
+  /// and opens the store, and the password and store wraps are written. The
+  /// recovery wrap and lock come back unsaved with the recovery key:
+  /// [saveRecovery] keeps them. A failed write closes the store again.
   Future<CryptoCoreResponse<CryptoCoreMasterKeySetup>> setUp(
     String password,
   ) async {
-    final createRes = await _cryptoCoreService.createMasterKey(password);
+    final createRes = await prepareSetUp(password);
     if (createRes is CryptoCoreFailure<CryptoCoreMasterKeySetup>) {
-      return CryptoCoreFailure(createRes.type);
+      return createRes;
     }
     final setup =
         (createRes as CryptoCoreSuccess<CryptoCoreMasterKeySetup>).data;
-    final writeRes = await _guard(
-      () => _localDataSource.writeSetup(
-        MasterKeyBlobs(
-          passwordWrap: setup.passwordWrap,
-          storeWrap: setup.storeWrap,
-        ),
-      ),
-    );
+    final writeRes = await completeSetUp(setup, keepRecovery: false);
     if (writeRes is CryptoCoreFailure<void>) {
       await _cryptoCoreService.close();
       return CryptoCoreFailure(writeRes.type);
     }
     return CryptoCoreSuccess(setup);
   }
+
+  /// The first run's first half: the core draws every key and opens the
+  /// store, and nothing is written yet. Until [completeSetUp] the device
+  /// still reads as "not set up", so a first run closed on the recovery-key
+  /// step starts again from the beginning instead of leaving a password
+  /// whose shown recovery key never works (QA 2026-10-26).
+  Future<CryptoCoreResponse<CryptoCoreMasterKeySetup>> prepareSetUp(
+    String password,
+  ) async {
+    final createRes = await _cryptoCoreService.createMasterKey(password);
+    if (createRes is CryptoCoreFailure<CryptoCoreMasterKeySetup>) {
+      return CryptoCoreFailure(createRes.type);
+    }
+    return createRes;
+  }
+
+  /// The first run's second half, once the recovery key was kept
+  /// ([keepRecovery]) or skipped: the recovery wrap and lock (when kept),
+  /// then the store wrap, then the password wrap — the mark that the first
+  /// run is complete. A failed write leaves the store open, so it can be
+  /// tried again.
+  Future<CryptoCoreResponse<void>> completeSetUp(
+    CryptoCoreMasterKeySetup setup, {
+    required bool keepRecovery,
+  }) =>
+      _guard(() async {
+        if (keepRecovery) {
+          await _localDataSource.writeRecovery(
+            recoveryWrap: setup.recoveryWrap,
+            recoveryLock: setup.recoveryLock,
+          );
+        }
+        await _localDataSource.writeSetup(
+          MasterKeyBlobs(
+            passwordWrap: setup.passwordWrap,
+            storeWrap: setup.storeWrap,
+          ),
+        );
+      });
 
   /// Opens the store with the master password and leaves it open — the
   /// wrapped master key is the only verifier.

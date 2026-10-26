@@ -14,6 +14,8 @@ class MasterPasswordSetupState {
     this.recoveryKey,
     this.recoveryWrap,
     this.recoveryLock,
+    this.pendingSetup,
+    this.interruptedBefore = false,
     this.quickUnlockAvailable = false,
     this.quickUnlockOn = false,
     this.quickUnlockResult,
@@ -28,6 +30,14 @@ class MasterPasswordSetupState {
   final String? recoveryKey;
   final Uint8List? recoveryWrap;
   final Uint8List? recoveryLock;
+
+  /// The keys drawn at the password step, kept only when the recovery-key
+  /// step ends; dropped with the recovery key.
+  final CryptoCoreMasterKeySetup? pendingSetup;
+
+  /// An earlier first run was closed after drawing its keys and before
+  /// keeping them: the recovery key it showed never worked.
+  final bool interruptedBefore;
 
   /// The device has strong biometrics: the fingerprint step is offered.
   final bool quickUnlockAvailable;
@@ -61,6 +71,8 @@ class MasterPasswordSetupState {
       recoveryKey: dropRecoveryKey ? null : recoveryKey,
       recoveryWrap: dropRecoveryKey ? null : recoveryWrap,
       recoveryLock: dropRecoveryKey ? null : recoveryLock,
+      pendingSetup: dropRecoveryKey ? null : pendingSetup,
+      interruptedBefore: interruptedBefore,
       quickUnlockAvailable: quickUnlockAvailable ?? this.quickUnlockAvailable,
       quickUnlockOn: quickUnlockOn ?? this.quickUnlockOn,
       quickUnlockResult: quickUnlockResult,

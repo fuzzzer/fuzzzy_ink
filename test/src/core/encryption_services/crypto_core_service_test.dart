@@ -213,6 +213,57 @@ void main() {
     });
 
     test(
+        'a first run in two halves: nothing is kept until the key step ends, '
+        'then the shown recovery key opens it', () async {
+      final setup = _dataOf(await chatAuthRepository.prepareSetUp('first'));
+      expect(service.isOpen, isTrue);
+      expect(
+        _dataOf(await chatAuthRepository.status()),
+        MasterKeyStatus.notSetUp,
+        reason: 'closed here, the next start is a first run again',
+      );
+
+      _dataOf(
+        await chatAuthRepository.completeSetUp(setup, keepRecovery: true),
+      );
+      expect(_dataOf(await chatAuthRepository.status()), MasterKeyStatus.ready);
+      expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isTrue);
+
+      await service.close();
+      _dataOf(
+        await chatAuthRepository.recover(
+          recoveryKey: setup.recoveryKey,
+          newPassword: 'second',
+        ),
+      );
+      expect(service.isOpen, isTrue);
+    });
+
+    test('a typed recovery key is checked for form before any key work',
+        () async {
+      final setup = _dataOf(await chatAuthRepository.prepareSetUp('first'));
+      _dataOf(await chatAuthRepository.checkRecoveryKey(setup.recoveryKey));
+      _dataOf(
+        await chatAuthRepository.checkRecoveryKey(
+          setup.recoveryKey.toLowerCase().replaceAll('-', ' '),
+        ),
+      );
+      expect(
+        _failureOf(await chatAuthRepository.checkRecoveryKey('AAAA-AAAA')),
+        CryptoCoreFailureType.corrupt,
+      );
+    });
+
+    test('a skipped recovery key is never kept', () async {
+      final setup = _dataOf(await chatAuthRepository.prepareSetUp('first'));
+      _dataOf(
+        await chatAuthRepository.completeSetUp(setup, keepRecovery: false),
+      );
+      expect(_dataOf(await chatAuthRepository.status()), MasterKeyStatus.ready);
+      expect(_dataOf(await chatAuthRepository.hasRecoveryKey()), isFalse);
+    });
+
+    test(
         'the recovery key sets a new password and keeps every chat; a typo '
         'is corrupt; a new key ends the old one', () async {
       const chatId = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
