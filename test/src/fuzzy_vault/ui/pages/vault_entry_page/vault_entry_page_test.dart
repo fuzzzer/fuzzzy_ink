@@ -17,6 +17,8 @@ class MockVaultAuthCubit extends MockCubit<VaultAuthState>
 
 class MockVaultRepository extends Mock implements VaultRepository {}
 
+class MockVaultKey extends Mock implements VaultKey {}
+
 /// The My safe tab: every state is one private screen that stays across the
 /// change from locked to open, and an unfinished move is never offered to
 /// be created again (that would leave the real safe behind).
@@ -24,6 +26,8 @@ void main() {
   final en = FuzzzyInkLocalizationsEn();
   late MockVaultAuthCubit cubit;
   late MockVaultRepository repository;
+
+  setUpAll(() => registerFallbackValue(<VaultItemMetadata>[]));
 
   setUp(() async {
     cubit = MockVaultAuthCubit();
@@ -133,5 +137,55 @@ void main() {
     // The open safe lifts in once (slow 420 ms), then settles.
     await tester.pumpAndSettle();
     expect(find.text(en.safeEmptyTitle), findsOneWidget);
+  });
+
+  testWidgets(
+      'when the safe locks, the usernames it showed leave memory '
+      '(security review 2026-10-26)', (tester) async {
+    final key = MockVaultKey();
+    final bank = VaultItemMetadata(
+      id: 'bank',
+      title: 'Bank',
+      type: VaultItemType.password,
+      groupId: VaultGroupData.generalGroupId,
+      tags: const [],
+      isFavorite: false,
+      hasCustomPassword: false,
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
+      contentVersion: 1,
+    );
+    when(() => repository.getAllItems())
+        .thenAnswer((_) async => VaultSuccess([bank]));
+    when(() => repository.readLabels(any(), key))
+        .thenAnswer((_) async => {'bank': 'tamar@mail.ge'});
+    final states = StreamController<VaultAuthState>();
+    addTearDown(states.close);
+    await pump(
+      tester,
+      VaultAuthState(
+        status: StateStatus.success,
+        authState: VaultAuthEnum.unlocked,
+        masterKey: key,
+      ),
+      stream: states.stream,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('tamar@mail.ge'), findsOneWidget);
+    final items = BlocProvider.of<VaultItemsCubit>(
+      tester.element(find.byType(VaultHomePage)),
+    );
+    expect(items.state.labels, isNotEmpty);
+
+    states.add(
+      const VaultAuthState(
+        status: StateStatus.success,
+        authState: VaultAuthEnum.locked,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(VaultUnlockPage), findsOneWidget);
+    expect(items.state.labels, isEmpty);
   });
 }

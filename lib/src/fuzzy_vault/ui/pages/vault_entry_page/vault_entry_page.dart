@@ -36,20 +36,29 @@ class _VaultEntryPageState extends State<VaultEntryPage> {
           create: (context) => sl.get<VaultSearchCubit>(),
         ),
       ],
-      child: BlocBuilder<VaultAuthCubit, VaultAuthState>(
-        buildWhen: (previous, current) =>
-            previous.authState != current.authState,
-        builder: (context, state) {
-          final isOpen = state.authState == VaultAuthEnum.unlocked;
-          return LiftIn(
-            key: ValueKey(isOpen),
-            enabled: isOpen,
-            child: SensitiveScreen(
-              key: _privateKey,
-              child: _body(context, state.authState),
-            ),
-          );
-        },
+      child: BlocListener<VaultAuthCubit, VaultAuthState>(
+        // The tab stays while the safe is locked: the labels the open safe
+        // showed leave memory with its key.
+        listenWhen: (previous, current) =>
+            previous.authState == VaultAuthEnum.unlocked &&
+            current.authState != VaultAuthEnum.unlocked,
+        listener: (context, _) =>
+            context.read<VaultItemsCubit>().forgetLabels(),
+        child: BlocBuilder<VaultAuthCubit, VaultAuthState>(
+          buildWhen: (previous, current) =>
+              previous.authState != current.authState,
+          builder: (context, state) {
+            final isOpen = state.authState == VaultAuthEnum.unlocked;
+            return LiftIn(
+              key: ValueKey(isOpen),
+              enabled: isOpen,
+              child: SensitiveScreen(
+                key: _privateKey,
+                child: _body(context, state.authState),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
