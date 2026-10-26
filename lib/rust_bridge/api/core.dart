@@ -6,6 +6,7 @@
 import '../error.dart';
 import '../frb_generated.dart';
 import 'files.dart';
+import 'formats.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pairing.dart';
 import 'safety.dart';
@@ -167,6 +168,25 @@ abstract class CryptoCore implements RustOpaqueInterface {
   /// or a tampered blob is `Corrupt`.
   Future<Uint8List> openSetting(
       {required String name, required List<int> blob});
+
+  /// [`CryptoCore::peek_pasted`] for a chosen file: a container is told by
+  /// its header (a header-only or truncated one is `Damaged`, as the receive
+  /// would refuse it), a chat-mode one is matched to a chat exactly like a
+  /// message; a small file of sealed text (`is_text_file`) is peeked as that
+  /// text. A missing or unreadable file is `Io`.
+  Future<Peek> peekFile({required String input, required List<String> chatIds});
+
+  /// Recognises a pasted text without spending anything: no message key, no
+  /// one-time key, no state write. Invitations and acceptances answer their
+  /// clear chat id (a hint: nothing is authenticated until they are
+  /// accepted or completed); a password-sealed text needs nothing more. A
+  /// message names no chat (PROTOCOL.md §6.5), so it is tried read-only
+  /// against each of `chat_ids` ([`messages::is_for_chat`]): the first
+  /// whose session sent it is answered. Chat ids that are malformed or
+  /// unknown to the store are skipped. Only a message needs the open store
+  /// (`StoreLocked` otherwise).
+  Future<Peek> peekPasted(
+      {required String text, required List<String> chatIds});
 
   /// Step one of receiving the chat-mode container at `input` on `chat_id`:
   /// reads the header (a header-only or truncated container is `Corrupt`

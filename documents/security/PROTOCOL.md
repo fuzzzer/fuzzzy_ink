@@ -597,6 +597,38 @@ file name and folder it shows has its direction controls and control characters 
 (`UserFileNames.forDisplay`); and since 2026-10-26 it never hands a received file to another app to open —
 images and text are shown in the app, anything else is offered for saving only (§10.5, `THREAT_MODEL.md` R14).
 
+### 7.4 Recognising without opening (the Open screen's peek)
+
+Open takes anything the user pastes or picks and must route it — to the right person, to the password prompt,
+or to an error — **before** it spends a message key or a one-time key. `peek_pasted(text, chat_ids)` and
+`peek_file(path, chat_ids)` ([`api/formats.rs`](../../rust/fuzzy_crypto_core/src/api/formats.rs)) answer a
+`PeekKind` and, where there is one, a chat id. Neither writes anything: no state file, no cache entry that is
+not already on disk, no output file.
+
+| Input | Answer |
+|---|---|
+| no `Fuzz/` prefix (text) / no `FUZZ` magic and not a small text file (file) | `NotFuzzzy` |
+| `FUZZ` with a version above `0x01`, or version `0x01` with a type byte this build does not know (§12) | `NewerVersion` |
+| bad base64url, a short or malformed payload, version `0x00`, a storage-only type, a container pasted as text, a truncated or header-only container | `Damaged` |
+| invitation / acceptance | `Invitation` / `Acceptance` + the clear chat id, only if it has the chat-id shape (§2) — a **hint**, exactly as `peek_chat_id`; nothing is verified until `accept_invitation` / `complete_handshake` |
+| password-sealed blob / password-mode container | `PasswordText` / `PasswordFile` |
+| message / chat-mode container | `Message` / `ChatFile` + the chat whose session sent it, or none |
+| a file ≤ 1 MiB that is UTF-8 text | peeked as that text, `is_text_file` set (a `.fuzz` file holding a `Fuzz/` blob, made by "Send as a file") |
+
+**Finding the chat of a message without a chat id (§6.5).** The app passes the chat ids of its connected people;
+for each, `messages::is_for_chat` runs the Olm step on a **copy** of the session and drops it. A match is either a
+successful decrypt whose inner header binds to that chat (chat id, both identity keys in constant time, the peer's
+direction — §7.2 checks 4–7), or vodozemac's `MissingMessageKey`, which it only returns after finding a receiving
+chain under the message's ratchet key — a random Curve25519 key of that session alone — so the message is that
+chat's and was already opened (the app then says "Already opened" and where it is). A MAC failure, a
+`TooBigMessageGap` (any session says that on a fresh chain) or no session is "not this chat". The plaintext of a
+match is wiped at once and never crosses the bridge; the counter window is not consulted; nothing is committed.
+The real open (`decrypt_text`, `prepare_file_receive`) runs the whole of §7.2 afterwards, unchanged.
+
+What this costs: one Olm decrypt per connected chat per peek (AES-CBC + HMAC, no KDF), and a peek reveals to the
+app — never to anyone else — which chat a blob belongs to, which the paste into that chat revealed anyway. The
+wire format is unchanged: still no chat id on a message.
+
 ---
 
 ## 8. Ordering, replay and windows

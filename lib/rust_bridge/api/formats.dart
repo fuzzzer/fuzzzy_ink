@@ -7,7 +7,9 @@ import '../error.dart';
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `eq`, `fmt`
+// These functions are ignored because they are not marked as `pub`: `chat_of`, `envelope_of`, `of`, `pairing_chat_id`, `read_up_to`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `Envelope`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`
 
 /// Classifies a pasted blob without touching any key material.
 BlobType blobTypeOf({required String text}) =>
@@ -34,5 +36,67 @@ enum BlobType {
   file,
   passwordSealed,
   unknown,
+  ;
+}
+
+/// The answer of a peek: the kind, and the chat it routes to when there is one.
+class Peek {
+  final PeekKind kind;
+  final String? chatId;
+
+  /// For a file: it holds sealed **text** (a `Fuzz/` blob saved as a
+  /// `.fuzz` file), which opens like a paste of that text.
+  final bool isTextFile;
+
+  const Peek({
+    required this.kind,
+    this.chatId,
+    required this.isTextFile,
+  });
+
+  @override
+  int get hashCode => kind.hashCode ^ chatId.hashCode ^ isTextFile.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Peek &&
+          runtimeType == other.runtimeType &&
+          kind == other.kind &&
+          chatId == other.chatId &&
+          isTextFile == other.isTextFile;
+}
+
+/// What a pasted text or a chosen file is, as Open needs to know it before it
+/// spends anything (see [`CryptoCore::peek_pasted`]).
+enum PeekKind {
+  /// A signed invitation; `chat_id` is its clear chat id (a routing hint).
+  invitation,
+
+  /// A signed acceptance; `chat_id` is its clear chat id (a routing hint).
+  acceptance,
+
+  /// A chat message; `chat_id` is the chat whose session it was sent on, or
+  /// none when no given chat matches.
+  message,
+
+  /// A chat-mode file container; `chat_id` as for a message.
+  chatFile,
+
+  /// Text sealed with a password (`0x05`).
+  passwordText,
+
+  /// A password-mode file container (Basics, or a saved history archive).
+  passwordFile,
+
+  /// Fuzzzy Ink's envelope with a version or a type this build does not
+  /// know: made by a newer app.
+  newerVersion,
+
+  /// Not Fuzzzy Ink's at all (no `Fuzz/` text, no `FUZZ` file).
+  notFuzzzy,
+
+  /// Fuzzzy Ink's envelope, but cut off, malformed or a storage-only kind.
+  damaged,
   ;
 }

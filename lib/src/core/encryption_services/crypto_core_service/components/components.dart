@@ -2,6 +2,7 @@ export 'crypto_core_acceptance.dart';
 export 'crypto_core_failure_type.dart';
 export 'crypto_core_invitation.dart';
 export 'crypto_core_master_key_setup.dart';
+export 'crypto_core_peek.dart';
 export 'crypto_core_received_file.dart';
 export 'crypto_core_recovery_key.dart';
 export 'crypto_core_response.dart';

@@ -114,6 +114,54 @@ pub(crate) fn encrypt_payload(
     Ok(message)
 }
 
+/// Whether the Olm message (`olm_type`, `olm_body`) was sent on `state`'s
+/// session — the routing question of Open, answered without spending
+/// anything: the Olm step runs on a **copy** of the session that is dropped,
+/// `state` is borrowed read-only and the caller writes nothing, so the message
+/// key stays available for the real [`decrypt_text`] / file receive.
+///
+/// It is this chat's when the copy decrypts it and the inner header binds it
+/// (chat id, both identity keys in constant time, the peer's direction), or
+/// when Olm answers `MissingMessageKey`: vodozemac only reaches that error
+/// after finding a receiving chain under the message's ratchet key, which is a
+/// random Curve25519 key of this session alone — so the blob is this chat's
+/// and was already opened (or its key evicted). Every other outcome — a MAC
+/// failure (another chat's blob), `TooBigMessageGap` (on a fresh chain any
+/// session can say that), no session yet — is "not this chat". The plaintext
+/// of a match is wiped at once and never leaves this function.
+pub(crate) fn is_for_chat(state: &ChatState, olm_type: OlmType, olm_body: &[u8]) -> bool {
+    let olm = match olm_type {
+        OlmType::PreKey => match PreKeyMessage::from_bytes(olm_body) {
+            Ok(message) => OlmMessage::PreKey(message),
+            Err(_) => return false,
+        },
+        OlmType::Normal => match OlmNormalMessage::from_bytes(olm_body) {
+            Ok(message) => OlmMessage::Normal(message),
+            Err(_) => return false,
+        },
+    };
+    let (Ok(Some(mut session)), Some(peer_ed25519)) = (state.session(), state.peer_ed25519) else {
+        return false;
+    };
+    match session.decrypt(&olm) {
+        Ok(plaintext) => {
+            let plaintext = Zeroizing::new(plaintext);
+            let Ok(mut header) = InnerHeader::decode(&plaintext) else {
+                return false;
+            };
+            let keys_match = header.sender_ed25519.ct_eq(&peer_ed25519)
+                & header.recipient_ed25519.ct_eq(&state.our_ed25519);
+            let is_ours = header.chat_id == state.chat_id
+                && bool::from(keys_match)
+                && header.direction == peer_direction(state.role);
+            header.body.zeroize();
+            is_ours
+        }
+        Err(vodozemac::olm::DecryptionError::MissingMessageKey(_)) => true,
+        Err(_) => false,
+    }
+}
+
 /// Steps 2–5 of [`decrypt_text`] for any content type: Olm decrypt on a cloned
 /// session, the inner-header binding, `content_type` must match, `parse_body`
 /// must accept the body, then the counter window — and only then the commit.

@@ -575,6 +575,21 @@ impl OpenStore {
         saved
     }
 
+    /// Loads (lazily) and reads `chat_id`'s state without changing it: nothing
+    /// is written, so the file on disk stays byte-identical. Missing →
+    /// `UnknownChat`.
+    pub fn with_state<T>(
+        &mut self,
+        chat_id: &str,
+        read: impl FnOnce(&ChatState) -> T,
+    ) -> Result<T, CoreError> {
+        if !self.cache.contains_key(chat_id) {
+            let state = self.load_state(chat_id)?;
+            self.cache.insert(chat_id.to_string(), state);
+        }
+        self.cache.get(chat_id).map(read).ok_or(CoreError::Internal)
+    }
+
     /// Overwrites the state file with zeros in place (best effort), unlinks it
     /// and evicts the cache. A chat with no state file is already deleted.
     pub fn delete_chat(&mut self, chat_id: &str) -> Result<(), CoreError> {
