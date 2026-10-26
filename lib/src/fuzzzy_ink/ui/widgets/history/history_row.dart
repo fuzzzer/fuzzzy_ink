@@ -15,7 +15,8 @@ enum HistoryDirection {
 /// One row of a person's history: what and when, never the secret itself
 /// ("You locked a message · tap to read", "You opened lease.pdf · 1.2 MB ·
 /// tap to see"). Read as one sentence. [highlight] tints it once: it is the
-/// item that was just added.
+/// item that was just added. The words always show whole: with large text
+/// the title wraps and the time moves under it.
 class HistoryRow extends StatelessWidget {
   const HistoryRow({
     super.key,
@@ -42,6 +43,11 @@ class HistoryRow extends StatelessWidget {
   final bool highlight;
   final String qaId;
 
+  /// From this text size on the time goes under the title, which then has
+  /// the row's whole width ("You opene…" at the largest size, final
+  /// regression 2026-10-26).
+  static const stackedTextScale = 1.5;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.fuzzzyColors;
@@ -50,6 +56,12 @@ class HistoryRow extends StatelessWidget {
     final localizations = context.fuzzzyInkLocalizations;
     final locked = direction == HistoryDirection.locked;
     final fileName = this.fileName;
+    final isStacked =
+        MediaQuery.textScalerOf(context).scale(1) >= stackedTextScale;
+    final timeText = Text(
+      time,
+      style: type.dataS.copyWith(color: colors.inkMute),
+    );
 
     final title = switch ((locked, fileName)) {
       (true, null) => localizations.historyYouLockedMessage,
@@ -114,8 +126,6 @@ class HistoryRow extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                         style: type.titleS.copyWith(color: colors.ink),
                       ),
                       SizedBox(height: space.xs / 2),
@@ -123,11 +133,17 @@ class HistoryRow extends StatelessWidget {
                         subtitle,
                         style: type.bodyS.copyWith(color: colors.inkMute),
                       ),
+                      if (isStacked) ...[
+                        SizedBox(height: space.xs / 2),
+                        timeText,
+                      ],
                     ],
                   ),
                 ),
-                SizedBox(width: space.s),
-                Text(time, style: type.dataS.copyWith(color: colors.inkMute)),
+                if (!isStacked) ...[
+                  SizedBox(width: space.s),
+                  timeText,
+                ],
               ],
             ),
           ),

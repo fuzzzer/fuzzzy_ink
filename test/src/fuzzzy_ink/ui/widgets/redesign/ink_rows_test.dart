@@ -293,6 +293,68 @@ void main() {
       expect(iconIn('opened', CupertinoIcons.lock_open), findsOneWidget);
       expect(iconIn('opened', Icons.lock_outline), findsNothing);
     });
+
+    for (final textScale in [2.0, 3.0]) {
+      testWidgets(
+          'at text x$textScale the row wraps and keeps every word, the time '
+          'under the title (final regression 2026-10-26)', (tester) async {
+        await pumpRedesign(
+          tester,
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                HistoryRow(
+                  qaId: 'm',
+                  direction: HistoryDirection.opened,
+                  time: '07:57',
+                  onTap: () {},
+                ),
+                HistoryRow(
+                  qaId: 'f',
+                  direction: HistoryDirection.opened,
+                  time: '08:02',
+                  fileName: 'lease-2026-signed-final.pdf',
+                  fileSize: '1.2 MB',
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          textScale: textScale,
+          surface: const Size(375, 812),
+        );
+        expect(tester.takeException(), isNull);
+        for (final title in [
+          'You opened a message',
+          'You opened lease-2026-signed-final.pdf',
+        ]) {
+          final paragraph =
+              tester.renderObject<RenderParagraph>(find.text(title));
+          expect(paragraph.didExceedMaxLines, isFalse, reason: title);
+          expect(paragraph.size.width, greaterThan(0));
+        }
+        final title = tester.getRect(find.text('You opened a message'));
+        final time = tester.getRect(find.text('07:57'));
+        expect(time.top, greaterThan(title.bottom), reason: 'time below');
+        expect(time.left, title.left, reason: 'time aligned with the title');
+      });
+    }
+
+    testWidgets('at normal text the time stays at the end of the row',
+        (tester) async {
+      await pumpRedesign(
+        tester,
+        HistoryRow(
+          qaId: 'm',
+          direction: HistoryDirection.opened,
+          time: '07:57',
+          onTap: () {},
+        ),
+      );
+      final title = tester.getRect(find.text('You opened a message'));
+      final time = tester.getRect(find.text('07:57'));
+      expect(time.left, greaterThan(title.right));
+    });
   });
 
   group('FileCard and LockedTextPreview', () {
