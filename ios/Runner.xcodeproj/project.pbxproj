@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006F135CE545ED3476727507 /* InkAnywhereContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84007A97986360775E8572FE /* InkAnywhereContract.swift */; };
 		0B9E27BCC25AE98150D17099 /* InkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8322B4BADCDC847E850F7AAE /* InkActionBar.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1E0EC6705DD9D2C40634ACE9 /* InkOpenViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34DA97177AEC0EC73D9D039 /* InkOpenViews.swift */; };
@@ -87,6 +88,7 @@
 		7B7D3087552CCAAE3B650EB9 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		7D0565FE5DABB1966A8290FC /* InkText.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkText.swift; sourceTree = "<group>"; };
 		8322B4BADCDC847E850F7AAE /* InkActionBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkActionBar.swift; sourceTree = "<group>"; };
+		84007A97986360775E8572FE /* InkAnywhereContract.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereContract.swift; sourceTree = "<group>"; };
 		864380DF3B4902D2B2534201 /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
 		8875ADBBB790C6C94D3C0AAC /* InkAnywhereModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereModel.swift; sourceTree = "<group>"; };
 		89F7285057F294AAD69AC3DC /* Pods-RunnerTests.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-staging.xcconfig"; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				7D0565FE5DABB1966A8290FC /* InkText.swift */,
 				FDD4DDA670EEAFDE3EE474C3 /* InkUnlockView.swift */,
 				15FB23BA7E3F5D934A148133 /* Strings */,
+				84007A97986360775E8572FE /* InkAnywhereContract.swift */,
 			);
 			name = Anywhere;
 			path = ../apple/Anywhere;
@@ -495,6 +498,7 @@
 				69F1FD2A0CA1F7B85B881292 /* InkUnlockView.swift in Sources */,
 				75619720C80C61FFDBE43FEA /* InkAnywhereIOS.swift in Sources */,
 				86243BDC05E56101B54D19A8 /* LockMessageIntent.swift in Sources */,
+				006F135CE545ED3476727507 /* InkAnywhereContract.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
