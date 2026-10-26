@@ -42,8 +42,9 @@ class ConnectedChatState {
   }
 
   @override
+  // The number of rows, never their text (security review 2026-10-26).
   String toString() {
-    return 'ConnectedChatState(status: $status, messages: $messages, hasFetchedAllMessages: $hasFetchedAllMessages, failure: $failure, actionStatus: $actionStatus, actionType: $actionType, actionFailure: $actionFailure)';
+    return 'ConnectedChatState(status: $status, messages: ${messages.length}, hasFetchedAllMessages: $hasFetchedAllMessages, failure: $failure, actionStatus: $actionStatus, actionType: $actionType, actionFailure: $actionFailure)';
   }
 }
 

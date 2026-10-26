@@ -79,7 +79,9 @@ class MessageData {
   }
 
   @override
+  // Never the opened text: rows end up in development and profile logs
+  // (security review 2026-10-26).
   String toString() {
-    return 'MessageData(id: $id, chatId: $chatId, type: $type, encryptedMessage: $encryptedMessage, decryptedMessage: $decryptedMessage, sentAt: $sentAt, isSent: $isSent, isUnreadable: $isUnreadable, hasKeptFileKey: ${keptFileKey != null})';
+    return 'MessageData(id: $id, chatId: $chatId, type: $type, sentAt: $sentAt, isSent: $isSent, isUnreadable: $isUnreadable, hasKeptFileKey: ${keptFileKey != null})';
   }
 }
