@@ -7,10 +7,12 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 /// "Forgot your password?" (DESIGN.md section 4.2, prototype `rec-enter`
-/// and `rec-new`): type the recovery key, then a new master password. The
-/// core checks the key only while it sets the new password, so a key that
-/// does not match brings the person back to the key with "That key doesn't
-/// match. Check each group." After it the app opens (it lifts in) with
+/// and `rec-new`): type the recovery key — a typo is caught at once by its
+/// check byte, before any new password is asked for ("Key accepted.") —
+/// then a new master password. Whether the key opens this device shows only
+/// when the new password is saved, so a key of another device brings the
+/// person back to the key with "That key doesn't match. Check each group."
+/// After it the app opens (it lifts in) with
 /// "New master password saved." The way out for someone with neither the
 /// password nor the key — erase everything — sits here, behind a
 /// confirmation. A private screen.
@@ -79,17 +81,31 @@ class _MasterPasswordRecoveryViewState
     super.dispose();
   }
 
-  void _onKeyContinue() {
+  bool _checkingKey = false;
+
+  Future<void> _onKeyContinue() async {
     final localizations = context.fuzzzyInkLocalizations;
     if (MasterPasswordRecoveryView.lengthOf(_keyController.text) !=
         MasterPasswordRecoveryView.keyLength) {
       setState(() => _keyError = localizations.accessKeyTooShort);
       return;
     }
+    if (_checkingKey) return;
+    setState(() => _checkingKey = true);
+    final checkRes = await sl
+        .get<ChatAuthRepository>()
+        .checkRecoveryKey(_keyController.text);
+    if (!mounted) return;
     setState(() {
+      _checkingKey = false;
+      if (checkRes is CryptoCoreFailure<void>) {
+        _keyError = localizations.accessKeyDoesntMatch;
+        return;
+      }
       _keyError = null;
       _onPasswordStep = true;
     });
+    if (checkRes is CryptoCoreFailure<void>) unawaited(InkHaptics.heavy());
   }
 
   bool get _isPasswordReady => NewPasswordFields.isReady(
@@ -138,43 +154,8 @@ class _MasterPasswordRecoveryViewState
   }
 
   /// Everything goes, after an explicit confirmation.
-  Future<void> _onErase() async {
-    final localizations = context.fuzzzyInkLocalizations;
-    final erase = await FuzzzyDialog.show<bool>(
-      context,
-      title: localizations.eraseTitle,
-      qaId: 'recover.eraseConfirm',
-      content: Text(
-        localizations.eraseMessage,
-        style: context.fuzzzyTextStyles.body
-            .copyWith(color: context.fuzzzyColors.ink),
-      ),
-      actions: [
-        FuzzzyButton(
-          label: localizations.cancel,
-          variant: FuzzzyButtonVariant.secondary,
-          qaId: 'recover.eraseCancel',
-          onPressed: () =>
-              Navigator.of(context, rootNavigator: true).pop(false),
-        ),
-        FuzzzyButton(
-          label: localizations.eraseConfirm,
-          variant: FuzzzyButtonVariant.destructive,
-          qaId: 'recover.eraseYes',
-          onPressed: () => Navigator.of(context, rootNavigator: true).pop(true),
-        ),
-      ],
-    );
-    if (!(erase ?? false) || !mounted) return;
-    final eraseRes = await context.read<FuzzyAuthStore>().eraseEverything();
-    if (eraseRes is CryptoCoreFailure<void> && mounted) {
-      showInkToast(
-        context,
-        message: localizations.unknownError,
-        kind: FuzzzyToastKind.error,
-      );
-    }
-  }
+  Future<void> _onErase() =>
+      confirmAndEraseEverything(context, qaId: 'recover');
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +184,11 @@ class _MasterPasswordRecoveryViewState
           label: localizations.accessContinue,
           size: FuzzzyButtonSize.l,
           qaId: 'recover.continue',
-          onPressed: _keyController.text.trim().isEmpty || isLoading
-              ? null
-              : _onKeyContinue,
+          loading: _checkingKey,
+          onPressed:
+              _keyController.text.trim().isEmpty || isLoading || _checkingKey
+                  ? null
+                  : _onKeyContinue,
         ),
       ],
       children: [
@@ -218,7 +201,7 @@ class _MasterPasswordRecoveryViewState
         GuardedTextField(
           controller: _keyController,
           label: localizations.recoveryKeyField,
-          hint: 'XXXX XXXX XXXX XXXX …',
+          hint: recoveryKeyHint,
           errorText: _keyError,
           keyboardType: TextInputType.visiblePassword,
           onSubmitted: (_) => _onKeyContinue(),
@@ -267,9 +250,9 @@ class _MasterPasswordRecoveryViewState
       ],
       children: [
         TipLine(
-          icon: Icons.key_outlined,
-          text: localizations.accessKeyCheckedOnSave,
-          qaId: 'recover.checkedOnSave',
+          icon: Icons.check_circle_outline,
+          text: localizations.accessKeyAccepted,
+          qaId: 'recover.keyAccepted',
         ),
         SizedBox(height: space.l),
         NewPasswordFields(

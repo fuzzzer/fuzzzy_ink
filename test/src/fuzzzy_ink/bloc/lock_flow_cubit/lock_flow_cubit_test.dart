@@ -147,6 +147,9 @@ void main() {
       await cubit.lock(text: 'hi');
       cubit.markShared();
       expect(cubit.state.isShared, isTrue);
+      expect(cubit.state.sharedByCopy, isFalse);
+      cubit.markShared(copied: true);
+      expect(cubit.state.sharedByCopy, isTrue);
       await cubit.close();
     });
   });

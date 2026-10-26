@@ -160,6 +160,30 @@ void main() {
   });
 
   testWidgets(
+      'after Lock now the screen waits for the person: no prompt by itself, '
+      'the fingerprint button still works', (tester) async {
+    await pumpPage(
+      tester,
+      locked.copyWith(biometricEnabled: true, lockedByUser: true),
+    );
+    verifyNever(() => harness.authStore.unlockWithBiometrics());
+    await tester.tap(find.byKey(const Key('btn.unlock.bio')));
+    verify(() => harness.authStore.unlockWithBiometrics()).called(1);
+  });
+
+  testWidgets('a lock made while the app is away prompts on return, not before',
+      (tester) async {
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await pumpPage(tester, locked.copyWith(biometricEnabled: true));
+    verifyNever(() => harness.authStore.unlockWithBiometrics());
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    verify(() => harness.authStore.unlockWithBiometrics()).called(1);
+  });
+
+  testWidgets(
       'the one-time notices stay once an update or a new finger '
       'turned the shortcut off', (tester) async {
     await pumpPage(
@@ -188,6 +212,17 @@ void main() {
     expect(passwordField(), findsNothing);
     await tester.tap(find.text(l10n.tryAgain));
     verify(() => harness.authStore.checkAuthStatus()).called(1);
+
+    // Keys an earlier build left that this one cannot read: start fresh,
+    // after the confirmation.
+    when(() => harness.authStore.eraseEverything())
+        .thenAnswer((_) async => const CryptoCoreSuccess(null));
+    await tester.tap(find.text(l10n.chatUnlockErase));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.eraseMessage), findsOneWidget);
+    await tester.tap(find.text(l10n.eraseConfirm));
+    await tester.pumpAndSettle();
+    verify(() => harness.authStore.eraseEverything()).called(1);
   });
 
   testWidgets('"Forgot your password?" leads to the recovery key',

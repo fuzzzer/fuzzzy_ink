@@ -149,9 +149,10 @@ void main() {
 
   testWidgets('Lock now locks the whole app', (tester) async {
     await pumpSettings(tester);
-    when(() => harness.authStore.lock()).thenAnswer((_) async {});
+    when(() => harness.authStore.lock(byUser: any(named: 'byUser')))
+        .thenAnswer((_) async {});
     await tapRow(tester, 'settings.lockNow');
-    verify(() => harness.authStore.lock()).called(1);
+    verify(() => harness.authStore.lock(byUser: true)).called(1);
   });
 
   testWidgets('Lock the app after: five choices, 5 minutes recommended',

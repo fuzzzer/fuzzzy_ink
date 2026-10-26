@@ -151,9 +151,9 @@
   "@chatAuthUnlock": {},
   "chatAuthResecuringKeys": "გასაღებების ხელახლა დაცვა…",
   "@chatAuthResecuringKeys": {},
-  "benchmarkFileEncryption": "ფაილის დაშიფვრის ბენჩმარკი (dev)",
+  "benchmarkFileEncryption": "ფაილების ჩაკეტვის ბენჩმარკი (dev)",
   "@benchmarkFileEncryption": {},
-  "benchmarkFileEncryptionDescription": "ფაზავს და ხსნის 64 MiB დროებით ფაილს და აჩვენებს MB/s-ს",
+  "benchmarkFileEncryptionDescription": "კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს MB/s-ს",
   "@benchmarkFileEncryptionDescription": {},
   "benchmarkResult": "ბენჩმარკის შედეგი",
   "@benchmarkResult": {},
@@ -305,9 +305,13 @@
   "@masterPassword": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.",
+  "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანებს, ისტორიასა და ჩემს სეიფს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. შენახული ფაილები ადგილზე რჩება.",
   "@masterPasswordPreviousData": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
+  },
+  "accessSetupInterrupted": "წინა ჯერზე დაყენება ბოლომდე არ მივიდა. მაშინ ნანახი აღდგენის გასაღები არ იმუშავებს. ახალს მიიღებთ.",
+  "@accessSetupInterrupted": {
+    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
   },
   "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.",
   "@masterPasswordFailed": {
@@ -350,7 +354,7 @@
   "@eraseTitle": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "eraseMessage": "ჩატები, ისტორია, საცავი და პარამეტრები ამ მოწყობილობიდან წაიშლება და მათ ვეღარ დააბრუნებთ. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.",
+  "eraseMessage": "თქვენი ადამიანები, ისტორია, ჩემი სეიფი და პარამეტრები ამ მოწყობილობიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია. შენახული ფაილები ადგილზე რჩება.",
   "@eraseMessage": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
@@ -1819,9 +1823,9 @@
   "@accessNewMasterPassword": {
     "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
   },
-  "accessKeyCheckedOnSave": "გასაღები შენახვისას შემოწმდება.",
-  "@accessKeyCheckedOnSave": {
-    "description": "Georgian draft, needs a native read (access screens, 2026-10-26)"
+  "accessKeyAccepted": "გასაღები მიღებულია.",
+  "@accessKeyAccepted": {
+    "description": "Georgian draft, needs a native read (QA fixes, 2026-10-26)"
   },
   "accessSaveNewPassword": "ახალი პაროლის შენახვა",
   "@accessSaveNewPassword": {

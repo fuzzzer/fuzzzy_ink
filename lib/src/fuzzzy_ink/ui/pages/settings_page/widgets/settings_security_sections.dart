@@ -93,9 +93,7 @@ class SettingsKeepingSafeSection extends StatelessWidget {
           leading: const SettingsRowIcon(Icons.schedule),
           title: SettingsRowText(
             title: localizations.accessLockTheApp,
-            subtitle: localizations.accessLockAfter(
-              lockAfterName(localizations, autoLock.lockAfterIndex),
-            ),
+            subtitle: lockAfterSubtitle(localizations, autoLock.lockAfterIndex),
           ),
           chevron: true,
           onTap: () => _showLockAfterSheet(context),
@@ -105,7 +103,7 @@ class SettingsKeepingSafeSection extends StatelessWidget {
           leading: const SettingsRowIcon(Icons.lock_outline),
           title: SettingsRowText(title: localizations.accessLockNow),
           divider: false,
-          onTap: () => context.read<FuzzyAuthStore>().lock(),
+          onTap: () => context.read<FuzzyAuthStore>().lock(byUser: true),
         ),
       ],
     );
@@ -113,6 +111,13 @@ class SettingsKeepingSafeSection extends StatelessWidget {
 
   /// The five "Lock the app after" names, in [AutoLockSettings.
   /// lockAfterChoices] order.
+  /// "After 5 minutes", but "Right away" alone (never "After Right
+  /// away").
+  static String lockAfterSubtitle(FuzzzyInkLocalizations l, int index) =>
+      index == 0
+          ? l.accessRightAway
+          : l.accessLockAfter(lockAfterName(l, index));
+
   static String lockAfterName(FuzzzyInkLocalizations l, int index) =>
       switch (index) {
         0 => l.accessRightAway,

@@ -236,11 +236,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get chatAuthResecuringKeys => 'Re-securing your keys…';
 
   @override
-  String get benchmarkFileEncryption => 'Benchmark file encryption (dev)';
+  String get benchmarkFileEncryption => 'Benchmark locking files (dev)';
 
   @override
   String get benchmarkFileEncryptionDescription =>
-      'Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s';
+      'Locks and opens a 64 MiB test file and reports MB/s';
 
   @override
   String get benchmarkResult => 'Benchmark result';
@@ -458,7 +458,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get masterPasswordPreviousData =>
-      'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.';
+      'This version uses a master password. People, history and My safe from the earlier test version can\'t be opened with it, so they will be removed. Files you saved stay where they are.';
+
+  @override
+  String get accessSetupInterrupted =>
+      'Setup didn\'t finish last time. A recovery key you saw then won\'t work. You\'ll get a new one.';
 
   @override
   String get masterPasswordFailed =>
@@ -493,7 +497,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get eraseMessage =>
-      'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.';
+      'Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.';
 
   @override
   String get eraseConfirm => 'Erase everything';
@@ -1685,7 +1689,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get accessNewMasterPassword => 'New master password';
 
   @override
-  String get accessKeyCheckedOnSave => 'Your key is checked when you save.';
+  String get accessKeyAccepted => 'Key accepted.';
 
   @override
   String get accessSaveNewPassword => 'Save new password';

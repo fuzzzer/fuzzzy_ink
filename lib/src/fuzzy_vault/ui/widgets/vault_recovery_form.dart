@@ -113,7 +113,7 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
           controller: _recoveryKeyController,
           keyboardType: TextInputType.visiblePassword,
           label: localizations.recoveryKeyField,
-          hint: 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX',
+          hint: recoveryKeyHint,
           errorText: _errorText(),
           qaId: 'vault.recover.key',
         ),

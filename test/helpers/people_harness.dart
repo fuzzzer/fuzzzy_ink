@@ -80,6 +80,7 @@ Future<GoRouter> pumpPeople(
   bool castOn = false,
   Locale locale = const Locale('en'),
   List<String> extraStubs = const [],
+  double textScale = 1,
 }) async {
   SharedPreferences.setMockInitialValues({'fuzzzy_cast_enabled': castOn});
   final preferences = PreferencesService(await SharedPreferences.getInstance());
@@ -132,6 +133,7 @@ Future<GoRouter> pumpPeople(
           data: MediaQuery.of(context).copyWith(
             disableAnimations: reduceMotion,
             alwaysUse24HourFormat: true,
+            textScaler: TextScaler.linear(textScale),
           ),
           child: app!,
         ),

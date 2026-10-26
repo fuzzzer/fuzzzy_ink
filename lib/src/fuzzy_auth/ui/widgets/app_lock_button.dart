@@ -14,7 +14,7 @@ class AppLockButton extends StatelessWidget {
       icon: const Icon(Icons.lock_outline),
       semanticLabel: context.fuzzzyInkLocalizations.appLockNow,
       qaId: 'app.lock',
-      onPressed: () => context.read<FuzzyAuthStore>().lock(),
+      onPressed: () => context.read<FuzzyAuthStore>().lock(byUser: true),
     );
   }
 }

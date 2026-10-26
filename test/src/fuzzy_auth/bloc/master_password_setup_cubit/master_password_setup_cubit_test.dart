@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MockChatAuthRepository extends Mock implements ChatAuthRepository {}
 
@@ -24,8 +25,17 @@ void main() {
   late MockBiometricAuthRepository biometrics;
   const strong = 'quiet lantern river 58!';
 
+  final pending = CryptoCoreMasterKeySetup(
+    passwordWrap: Uint8List(1),
+    storeWrap: Uint8List(1),
+    recoveryWrap: Uint8List(1),
+    recoveryLock: Uint8List(1),
+    recoveryKey: 'AAAA-BBBB',
+  );
+
   setUpAll(() {
     registerFallbackValue(BiometricScope.chat);
+    registerFallbackValue(pending);
     registerFallbackValue(
       PendingRecoveryKey(
         recoveryKey: 'k',
@@ -42,25 +52,23 @@ void main() {
     biometrics = MockBiometricAuthRepository();
     when(() => reset.eraseEverything())
         .thenAnswer((_) async => const CryptoCoreSuccess(null));
-    when(() => chatAuth.setUp(any())).thenAnswer(
-      (_) async => CryptoCoreSuccess(
-        CryptoCoreMasterKeySetup(
-          passwordWrap: Uint8List(1),
-          storeWrap: Uint8List(1),
-          recoveryWrap: Uint8List(1),
-          recoveryLock: Uint8List(1),
-          recoveryKey: 'AAAA-BBBB',
-        ),
+    when(() => chatAuth.prepareSetUp(any()))
+        .thenAnswer((_) async => CryptoCoreSuccess(pending));
+    when(
+      () => chatAuth.completeSetUp(
+        any(),
+        keepRecovery: any(named: 'keepRecovery'),
       ),
-    );
-    when(() => chatAuth.saveRecovery(any()))
-        .thenAnswer((_) async => const CryptoCoreSuccess(null));
+    ).thenAnswer((_) async => const CryptoCoreSuccess(null));
     when(() => store.onSetUpComplete()).thenReturn(null);
     when(() => store.setBiometricEnabled(enabled: any(named: 'enabled')))
         .thenAnswer((_) async {});
   });
 
-  MasterPasswordSetupCubit build({bool canUseBiometrics = true}) {
+  MasterPasswordSetupCubit build({
+    bool canUseBiometrics = true,
+    PreferencesService? preferences,
+  }) {
     when(() => biometrics.canUseBiometrics())
         .thenAnswer((_) async => canUseBiometrics);
     return MasterPasswordSetupCubit(
@@ -69,6 +77,7 @@ void main() {
       fuzzyAuthStore: store,
       passwordStrengthService: PasswordStrengthService(),
       biometricAuthRepository: biometrics,
+      preferencesService: preferences,
     );
   }
 
@@ -82,8 +91,15 @@ void main() {
     await cubit.create(strong);
     expect(cubit.state.step, MasterPasswordSetupStep.recoveryKey);
     expect(cubit.state.recoveryKey, 'AAAA-BBBB');
+    verifyNever(
+      () => chatAuth.completeSetUp(
+        any(),
+        keepRecovery: any(named: 'keepRecovery'),
+      ),
+    );
 
     await cubit.confirmRecoveryKeySaved();
+    verify(() => chatAuth.completeSetUp(pending, keepRecovery: true)).called(1);
     expect(cubit.state.step, MasterPasswordSetupStep.quickUnlock);
     expect(cubit.state.recoveryKey, isNull, reason: 'shown once, then gone');
     verifyNever(() => store.onSetUpComplete());
@@ -104,9 +120,10 @@ void main() {
     await cubit.checkQuickUnlock();
     expect(cubit.state.totalSteps, 2);
     await cubit.create(strong);
-    cubit.skipRecoveryKey();
+    await cubit.skipRecoveryKey();
     expect(cubit.state.step, MasterPasswordSetupStep.ready);
-    verifyNever(() => chatAuth.saveRecovery(any()));
+    verify(() => chatAuth.completeSetUp(pending, keepRecovery: false))
+        .called(1);
 
     await cubit.finish();
     verify(() => store.onSetUpComplete()).called(1);
@@ -154,7 +171,55 @@ void main() {
     final cubit = build();
     await cubit.create('abc');
     expect(cubit.state.tooWeak, isTrue);
-    verifyNever(() => chatAuth.setUp(any()));
+    verifyNever(() => chatAuth.prepareSetUp(any()));
+    await cubit.close();
+  });
+
+  test(
+      'nothing is kept before the key step ends: a run closed there leaves '
+      'a mark, and the next run says its key never worked', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences =
+        PreferencesService(await SharedPreferences.getInstance());
+
+    final first = build(preferences: preferences);
+    expect(first.state.interruptedBefore, isFalse);
+    await first.create(strong);
+    expect(first.state.step, MasterPasswordSetupStep.recoveryKey);
+    verifyNever(
+      () => chatAuth.completeSetUp(
+        any(),
+        keepRecovery: any(named: 'keepRecovery'),
+      ),
+    );
+    expect(preferences.firstRunPending, isTrue);
+    // The app is closed here.
+    await first.close();
+
+    final second = build(preferences: preferences);
+    expect(second.state.interruptedBefore, isTrue);
+    await second.create(strong);
+    await second.confirmRecoveryKeySaved();
+    expect(preferences.firstRunPending, isFalse);
+    await second.close();
+  });
+
+  test('a failed save stays on the key step, with the key, to try again',
+      () async {
+    when(
+      () => chatAuth.completeSetUp(
+        any(),
+        keepRecovery: any(named: 'keepRecovery'),
+      ),
+    ).thenAnswer(
+      (_) async => const CryptoCoreFailure(CryptoCoreFailureType.io),
+    );
+    final cubit = build();
+    await cubit.create(strong);
+    await cubit.confirmRecoveryKeySaved();
+    expect(cubit.state.step, MasterPasswordSetupStep.recoveryKey);
+    expect(cubit.state.status, StateStatus.failed);
+    expect(cubit.state.recoveryKey, 'AAAA-BBBB');
     await cubit.close();
   });
 }

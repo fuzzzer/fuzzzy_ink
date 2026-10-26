@@ -68,6 +68,8 @@ void main() {
     bool justChecked = false,
     List<String> extraStubs = const [],
     MockChatGeneralDataListCubit? list,
+    double textScale = 1,
+    Locale locale = const Locale('en'),
   }) async {
     final person = chat ?? personChat();
     await pumpPeople(
@@ -85,6 +87,8 @@ void main() {
       skin: skin,
       reduceMotion: reduceMotion,
       extraStubs: extraStubs,
+      textScale: textScale,
+      locale: locale,
     );
     await tester.pump();
   }
@@ -170,6 +174,31 @@ void main() {
       expect(find.byType(HistoryRow), findsNWidgets(2));
       expect(find.text('You locked a message'), findsNothing);
     });
+
+    for (final locale in [const Locale('en'), const Locale('ka')]) {
+      testWidgets(
+          'the largest text: the filter shrinks to fit, no overflow, and a '
+          'tap still picks the segment drawn (${locale.languageCode})',
+          (tester) async {
+        tester.view.physicalSize = const Size(320, 640) * 3;
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+        showHistory(_history);
+        await pumpPerson(tester, textScale: 3.1, locale: locale);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        final filter = find.byKey(const Key('seg.person.filter'));
+        expect(tester.getRect(filter).right, lessThanOrEqualTo(320));
+        final opened = find.bySemanticsIdentifier('seg.person.filter.2');
+        await tester.tap(opened);
+        await tester.pumpAndSettle();
+        expect(
+          find.text('You locked a message', skipOffstage: false),
+          findsNothing,
+        );
+      });
+    }
 
     testWidgets('empty history, and an empty filter', (tester) async {
       showHistory([_history.first]);

@@ -9,14 +9,20 @@ import 'package:share_plus/share_plus.dart';
 
 /// Hands a recovery key to the person, off this phone (DESIGN.md section
 /// 13, item 9): "Save as file" through the system save dialog, "Print" as a
-/// one-page sheet through the system share menu (which offers Print). Both
-/// go through the app's hand-off folder and the copy is wiped as soon as the
-/// system call returns (security review 2026-10-26) — on Android, whose
-/// share menu returns before the other app has read the file, when the app
-/// is back in front — and in every case when the app locks, so no copy stays
-/// on the device. No print package: none is offline-only.
+/// one-page sheet through the system print dialog. On iPhone and Mac neither
+/// goes through the share menu, whose Copy put the whole key on the
+/// clipboard (and Universal Clipboard) — QA 2026-10-26; Android still prints
+/// through its share menu. Both go through the app's hand-off folder and the
+/// copy is wiped as soon as the system call returns (security review
+/// 2026-10-26) — on Android, whose share menu returns before the other app
+/// has read the file, when the app is back in front — and in every case when
+/// the app locks, so no copy stays on the device. No print package: none is
+/// offline-only.
 class RecoveryKeyExport {
-  const RecoveryKeyExport();
+  const RecoveryKeyExport({this.device = const InkDeviceChannel()});
+
+  /// The iOS and macOS print and save dialogs.
+  final InkDeviceChannel device;
 
   static const textFileName = 'fuzzzy-ink-recovery-key.txt';
   static const printFileName = 'fuzzzy-ink-recovery-key.png';
@@ -36,6 +42,7 @@ class RecoveryKeyExport {
     try {
       await File(filePath).writeAsString(text, flush: true);
       if (!context.mounted) return false;
+      if (Platform.isIOS) return await device.exportFile(filePath);
       return await DeviceFileInteractor.saveFile(
         filePath,
         fileName: textFileName,
@@ -44,8 +51,7 @@ class RecoveryKeyExport {
         context: context,
       );
     } finally {
-      // The save dialog (or, on iOS, the share sheet's Save to Files) has
-      // finished with the copy once it returns.
+      // Every save dialog has made its copy once it answers.
       await store.wipe(filePath);
     }
   }
@@ -57,6 +63,7 @@ class RecoveryKeyExport {
     BuildContext context, {
     required GlobalKey sheetKey,
   }) async {
+    final jobName = context.fuzzzyInkLocalizations.accessPrintSheetTitle;
     final boundary =
         sheetKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3);
@@ -70,6 +77,9 @@ class RecoveryKeyExport {
       await File(filePath)
           .writeAsBytes(bytes.buffer.asUint8List(), flush: true);
       if (!context.mounted) return false;
+      if (InkDeviceChannel.isAvailable) {
+        return await device.printImage(filePath, jobName: jobName);
+      }
       if (Platform.isAndroid) {
         await DeviceFileInteractor.shareFile(
           filePath,

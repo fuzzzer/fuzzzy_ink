@@ -240,9 +240,34 @@ void main() {
       act: (store) => store.lock(),
       expect: () => [
         isA<FuzzyAuthState>()
-            .having((s) => s.status, 'status', AuthStateStatus.locked),
+            .having((s) => s.status, 'status', AuthStateStatus.locked)
+            .having((s) => s.lockedByUser, 'lockedByUser', isFalse),
       ],
       verify: (_) => verify(() => mockService.close()).called(1),
+    );
+
+    blocTest<FuzzyAuthStore, FuzzyAuthState>(
+      "Lock now is marked as the person's own lock until the next unlock",
+      setUp: () => when(() => mockChatAuth.unlock('pw'))
+          .thenAnswer((_) async => const CryptoCoreSuccess(null)),
+      build: buildStore,
+      seed: () => const FuzzyAuthState.initial()
+          .copyWith(status: AuthStateStatus.authenticated),
+      act: (store) async {
+        await store.lock(byUser: true);
+        await store.unlock('pw');
+      },
+      expect: () => [
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.locked)
+            .having((s) => s.lockedByUser, 'lockedByUser', isTrue),
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.unlocking)
+            .having((s) => s.lockedByUser, 'lockedByUser', isTrue),
+        isA<FuzzyAuthState>()
+            .having((s) => s.status, 'status', AuthStateStatus.authenticated)
+            .having((s) => s.lockedByUser, 'lockedByUser', isFalse),
+      ],
     );
 
     blocTest<FuzzyAuthStore, FuzzyAuthState>(

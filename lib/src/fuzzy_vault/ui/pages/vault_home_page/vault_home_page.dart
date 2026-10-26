@@ -76,7 +76,11 @@ class _VaultHomePageState extends State<VaultHomePage> {
         VaultGroupData.generalGroupId;
     final saved = await context.push<VaultItem>(
       AppRouter.vaultItemEditor,
-      extra: VaultItemEditorPagePayload(type: type, groupId: groupId),
+      extra: VaultItemEditorPagePayload(
+        type: type,
+        groupId: groupId,
+        groups: context.read<VaultGroupsCubit>().state.groups,
+      ),
     );
     if (saved == null || !mounted) return;
     showInkToast(

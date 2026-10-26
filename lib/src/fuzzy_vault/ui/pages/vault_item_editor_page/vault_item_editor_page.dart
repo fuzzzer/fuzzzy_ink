@@ -14,10 +14,15 @@ class VaultItemEditorPagePayload {
   final VaultItem? existingItem; // null if creating a new item
   final String groupId;
 
+  /// The groups a new item may go in; the form offers the choice when
+  /// there is at least one besides "No group".
+  final List<VaultGroupData> groups;
+
   const VaultItemEditorPagePayload({
     required this.type,
     this.existingItem,
     this.groupId = VaultGroupData.generalGroupId,
+    this.groups = const [],
   });
 }
 
@@ -50,6 +55,15 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
 
   List<int>? _fileBytes;
   String? _fileName;
+
+  /// The group a new item goes in (QA 2026-10-26: the form had no group
+  /// choice; Move afterwards was the only way).
+  late String _groupId = widget.payload.groupId;
+
+  List<VaultGroupData> get _namedGroups => [
+        for (final group in widget.payload.groups)
+          if (group.id != VaultGroupData.generalGroupId) group,
+      ];
 
   VaultItem? get _existing => widget.payload.existingItem;
 
@@ -153,7 +167,7 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
           id: const Uuid().v4(),
           title: _finalTitle(),
           type: _type,
-          groupId: widget.payload.groupId,
+          groupId: _groupId,
           tags: const [],
           isFavorite: false,
           hasCustomPassword: false,
@@ -274,6 +288,10 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
                           VaultItemType.note => _noteFields(context),
                           VaultItemType.file => _fileFields(context),
                         },
+                        if (_existing == null && _namedGroups.isNotEmpty) ...[
+                          SizedBox(height: space.l),
+                          _groupRow(context),
+                        ],
                       ],
                     ),
                   ),
@@ -297,6 +315,34 @@ class _VaultItemEditorPageState extends State<VaultItemEditorPage> {
           ),
         ),
       ),
+    );
+  }
+
+  /// "Group · Home" with a chevron: the Move sheet picks it.
+  Widget _groupRow(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+    String? name;
+    for (final group in _namedGroups) {
+      if (group.id == _groupId) name = group.name;
+    }
+    return FuzzzyListTile(
+      qaId: 'safe.editor.group',
+      leading: const Icon(Icons.folder_outlined),
+      title: Text(localizations.safeGroup),
+      meta: name ?? localizations.safeNoGroup,
+      chevron: true,
+      divider: false,
+      onTap: _isSaving
+          ? null
+          : () async {
+              final picked = await showSafeMoveSheet(
+                context,
+                groups: widget.payload.groups,
+                currentGroupId: _groupId,
+              );
+              if (picked == null || !mounted) return;
+              setState(() => _groupId = picked);
+            },
     );
   }
 

@@ -151,9 +151,9 @@
   "@chatAuthUnlock": {},
   "chatAuthResecuringKeys": "Re-securing your keys…",
   "@chatAuthResecuringKeys": {},
-  "benchmarkFileEncryption": "Benchmark file encryption (dev)",
+  "benchmarkFileEncryption": "Benchmark locking files (dev)",
   "@benchmarkFileEncryption": {},
-  "benchmarkFileEncryptionDescription": "Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s",
+  "benchmarkFileEncryptionDescription": "Locks and opens a 64 MiB test file and reports MB/s",
   "@benchmarkFileEncryptionDescription": {},
   "benchmarkResult": "Benchmark result",
   "@benchmarkResult": {},
@@ -295,8 +295,10 @@
   "@basicsFuzzedFilesTitle": {},
   "masterPassword": "Master password",
   "@masterPassword": {},
-  "masterPasswordPreviousData": "This version uses a master password. Chats and the vault from the earlier test version can't be opened with it, so they will be removed. Files you unfuzzed stay where they are.",
+  "masterPasswordPreviousData": "This version uses a master password. People, history and My safe from the earlier test version can't be opened with it, so they will be removed. Files you saved stay where they are.",
   "@masterPasswordPreviousData": {},
+  "accessSetupInterrupted": "Setup didn't finish last time. A recovery key you saw then won't work. You'll get a new one.",
+  "@accessSetupInterrupted": {},
   "masterPasswordFailed": "Your keys could not be created. Try again.",
   "@masterPasswordFailed": {},
   "recoveryKeyTitle": "Recovery key",
@@ -321,7 +323,7 @@
   "@chatUnlockErase": {},
   "eraseTitle": "Erase everything?",
   "@eraseTitle": {},
-  "eraseMessage": "Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.",
+  "eraseMessage": "Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.",
   "@eraseMessage": {},
   "eraseConfirm": "Erase everything",
   "@eraseConfirm": {},
@@ -1924,10 +1926,8 @@
   "@accessNewMasterPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   },
-  "accessKeyCheckedOnSave": "Your key is checked when you save.",
-  "@accessKeyCheckedOnSave": {
-    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
-  },
+  "accessKeyAccepted": "Key accepted.",
+  "@accessKeyAccepted": {},
   "accessSaveNewPassword": "Save new password",
   "@accessSaveNewPassword": {
     "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."

@@ -23,6 +23,14 @@ class PreferencesService {
   Future<void> setHasCompletedTutorial(bool value) =>
       _prefs.setBool(_hasCompletedTutorialKey, value);
 
+  /// Set while a first run has drawn its keys but not yet kept them (the
+  /// recovery-key step): found at the next start, it means that run was
+  /// closed half-way and any recovery key it showed was never kept.
+  static const _firstRunPendingKey = 'first_run_pending';
+  bool get firstRunPending => _prefs.getBool(_firstRunPendingKey) ?? false;
+  Future<void> setFirstRunPending(bool value) =>
+      _prefs.setBool(_firstRunPendingKey, value);
+
   static const _lastSelectedTabKey = 'last_selected_tab';
   String get lastSelectedTab => _prefs.getString(_lastSelectedTabKey) ?? '/';
   Future<void> setLastSelectedTab(String path) =>

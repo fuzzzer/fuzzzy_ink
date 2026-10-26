@@ -534,13 +534,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @benchmarkFileEncryption.
   ///
   /// In en, this message translates to:
-  /// **'Benchmark file encryption (dev)'**
+  /// **'Benchmark locking files (dev)'**
   String get benchmarkFileEncryption;
 
   /// No description provided for @benchmarkFileEncryptionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s'**
+  /// **'Locks and opens a 64 MiB test file and reports MB/s'**
   String get benchmarkFileEncryptionDescription;
 
   /// No description provided for @benchmarkResult.
@@ -919,8 +919,14 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @masterPasswordPreviousData.
   ///
   /// In en, this message translates to:
-  /// **'This version uses a master password. Chats and the vault from the earlier test version can\'t be opened with it, so they will be removed. Files you unfuzzed stay where they are.'**
+  /// **'This version uses a master password. People, history and My safe from the earlier test version can\'t be opened with it, so they will be removed. Files you saved stay where they are.'**
   String get masterPasswordPreviousData;
+
+  /// No description provided for @accessSetupInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup didn\'t finish last time. A recovery key you saw then won\'t work. You\'ll get a new one.'**
+  String get accessSetupInterrupted;
 
   /// No description provided for @masterPasswordFailed.
   ///
@@ -979,7 +985,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @eraseMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your chats, history, vault and settings are deleted from this device and cannot be brought back. Files you unfuzzed stay where they are.'**
+  /// **'Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.'**
   String get eraseMessage;
 
   /// No description provided for @eraseConfirm.
@@ -3142,11 +3148,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'New master password'**
   String get accessNewMasterPassword;
 
-  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  /// No description provided for @accessKeyAccepted.
   ///
   /// In en, this message translates to:
-  /// **'Your key is checked when you save.'**
-  String get accessKeyCheckedOnSave;
+  /// **'Key accepted.'**
+  String get accessKeyAccepted;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///

@@ -114,6 +114,13 @@ class CryptoCoreService {
     );
   }
 
+  /// Whether a typed [recoveryKey] has a recovery key's form (32 base32
+  /// characters with a matching check byte; case, spaces and dashes
+  /// ignored): `corrupt` for a typo. No key work: whether it opens this
+  /// device shows only when it is used.
+  Future<CryptoCoreResponse<void>> checkRecoveryKey(String recoveryKey) =>
+      _guarded(() => rust_core.checkRecoveryKey(recoveryKey: recoveryKey));
+
   /// The forgotten-password path: [recoveryKey] opens [recoveryWrap], the
   /// master key is wrapped under [newPassword] (the answer, which replaces
   /// the password wrap) and the store opens. A typo in the key is `corrupt`,

@@ -436,16 +436,27 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
                     ],
                   ),
                   SizedBox(height: space.l),
-                  FuzzzySegmentedControl(
-                    qaId: 'person.filter',
-                    segments: [
-                      localizations.historyFilterAll,
-                      localizations.historyFilterLocked,
-                      localizations.historyFilterOpened,
-                    ],
-                    selectedIndex: _filter.index,
-                    onChanged: (index) =>
-                        setState(() => _filter = HistoryFilter.values[index]),
+                  // With large text the three segments are wider than the
+                  // page: they shrink to fit instead of overflowing (QA
+                  // 2026-10-26); taps still land on the segment drawn.
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: FuzzzySegmentedControl(
+                        qaId: 'person.filter',
+                        segments: [
+                          localizations.historyFilterAll,
+                          localizations.historyFilterLocked,
+                          localizations.historyFilterOpened,
+                        ],
+                        selectedIndex: _filter.index,
+                        onChanged: (index) => setState(
+                          () => _filter = HistoryFilter.values[index],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

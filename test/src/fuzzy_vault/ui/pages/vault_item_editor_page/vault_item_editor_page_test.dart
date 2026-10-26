@@ -189,6 +189,55 @@ void main() {
     });
   }
 
+  testWidgets('a new item can go straight into a group', (tester) async {
+    VaultGroupData group(String id, String name) => VaultGroupData(
+          id: id,
+          name: name,
+          emoji: '',
+          colorIndex: 0,
+          sortOrder: 0,
+          hasCustomPassword: false,
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
+        );
+    await open(
+      tester,
+      VaultItemEditorPagePayload(
+        type: VaultItemType.note,
+        groups: [
+          group(VaultGroupData.generalGroupId, 'General'),
+          group('home', 'Home'),
+          group('work', 'Work'),
+        ],
+      ),
+    );
+    expect(find.byKey(const Key('tile.safe.editor.group')), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const Key('tile.safe.editor.group')));
+    await tester.tap(find.byKey(const Key('tile.safe.editor.group')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('safe.move.work')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('field.safe.editor.note')),
+      'gate code',
+    );
+    await tester.tap(find.byKey(const Key('btn.safe.editor.save')));
+    await tester.pumpAndSettle();
+
+    final saved = verify(() => repository.createItem(captureAny(), key))
+        .captured
+        .single as VaultItem;
+    expect(saved.metadata.groupId, 'work');
+  });
+
+  testWidgets('no groups yet: no group row', (tester) async {
+    await open(
+      tester,
+      const VaultItemEditorPagePayload(type: VaultItemType.note),
+    );
+    expect(find.byKey(const Key('tile.safe.editor.group')), findsNothing);
+  });
+
   testWidgets('every field holding plaintext refuses copy, cut and share',
       (tester) async {
     await open(

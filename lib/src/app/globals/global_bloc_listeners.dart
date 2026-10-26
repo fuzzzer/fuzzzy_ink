@@ -101,8 +101,11 @@ class GlobalBlocListeners extends StatelessWidget {
               final currentLocation =
                   router.routerDelegate.currentConfiguration.uri.toString();
               if (currentLocation == AppRouter.chatUnlock ||
-                  currentLocation == AppRouter.recover ||
-                  currentLocation == AppRouter.setup) {
+                  currentLocation == AppRouter.recover) {
+                // Back where the app locked (private screens aside).
+                AppRouter.returnAfterUnlock(router);
+              } else if (currentLocation == AppRouter.setup) {
+                AppRouter.forgetReturnPlace();
                 router.go(AppRouter.home);
               }
             }
@@ -142,10 +145,12 @@ class GlobalBlocListeners extends StatelessWidget {
             final router = AppRouter.routerInstance;
             if (router == null) return;
             if (state.status.isSetupRequired) {
+              AppRouter.forgetReturnPlace();
               context.read<VaultAuthCubit>().checkVaultStatus();
               router.go(AppRouter.setup);
               return;
             }
+            if (state.status.isLocked) AppRouter.rememberReturnPlace(router);
             final currentLocation =
                 router.routerDelegate.currentConfiguration.uri.toString();
             // The recovery page is the locked app's own way in.

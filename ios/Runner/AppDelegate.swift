@@ -1,5 +1,6 @@
-import UIKit
 import Flutter
+import LocalAuthentication
+import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -15,6 +16,7 @@ import Flutter
     excludeAppFoldersFromBackup()
     registerBackupChannel()
     registerGuardChannel()
+    registerDeviceChannel()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -131,7 +133,7 @@ final class InkGuard: NSObject {
 
   private var isSecure = false
   private var isInactive = false
-  private var secureField: UITextField?
+  private var secureField: SecureCanvasField?
   private var cover: UIView?
   private var coverKind: Cover?
   private var coverGround: UIColor?
@@ -199,28 +201,28 @@ final class InkGuard: NSObject {
 
   /// Moves the window's layer into a secure text field's canvas once; after
   /// that, `isSecureTextEntry` switches the protection on and off.
+  ///
+  /// The field fills the window and the window's layer sits in a host layer
+  /// that cancels the canvas's own offset inside the field ([SecureCanvasField]),
+  /// so the app is drawn exactly where UIKit places it: what a person sees
+  /// and where a tap lands stay the same on every iPhone size and rotation.
+  /// (The first version centred a zero-size field on the window, so the whole
+  /// app, sheets included, was drawn from the screen's centre while taps went
+  /// to the real places — QA 2026-10-26.)
   private func installSecureLayer() {
     guard secureField == nil, let window = window, let superlayer = window.layer.superlayer
     else { return }
-    let field = UITextField()
+    let field = SecureCanvasField(frame: window.bounds)
     field.isUserInteractionEnabled = false
-    field.translatesAutoresizingMaskIntoConstraints = false
+    field.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     window.addSubview(field)
-    field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
-    field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
-    superlayer.addSublayer(field.layer)
-    let canvas: CALayer?
-    if #available(iOS 17.0, *) {
-      canvas = field.layer.sublayers?.last
-    } else {
-      canvas = field.layer.sublayers?.first
-    }
-    guard let canvas = canvas else {
-      field.layer.removeFromSuperlayer()
+    field.layoutIfNeeded()
+    guard let canvas = SecureCanvasField.canvas(of: field) else {
       field.removeFromSuperview()
       return
     }
-    canvas.addSublayer(window.layer)
+    superlayer.addSublayer(field.layer)
+    field.attach(canvas: canvas, content: window.layer)
     secureField = field
   }
 
@@ -313,5 +315,168 @@ final class InkGuard: NSObject {
     guard UIPasteboard.general.changeCount == count else { return "notOurs" }
     UIPasteboard.general.items = []
     return "cleared"
+  }
+}
+
+/// The text field whose secure canvas hides the window from screenshots,
+/// screen recordings and mirroring while `isSecureTextEntry` is on.
+///
+/// The canvas is the field's own text area: its origin inside the field
+/// depends on the iOS version and the field's height (a single-line field
+/// centres it). The window's layer therefore sits in [host], which is kept
+/// at the field's origin whatever the canvas does, and the field is kept the
+/// window's size; the window layer's own place is UIKit's, so drawing and
+/// hit-testing agree.
+final class SecureCanvasField: UITextField {
+  private let host = CALayer()
+  private weak var canvas: CALayer?
+
+  /// The secure canvas: the layer of the field's text canvas view, found by
+  /// its class where possible (iOS 17 moved it from first to last).
+  static func canvas(of field: UITextField) -> CALayer? {
+    let layers = field.layer.sublayers ?? []
+    if let named = layers.first(where: { layer in
+      guard let view = layer.delegate as? UIView else { return false }
+      return String(describing: type(of: view)).contains("Canvas")
+    }) {
+      return named
+    }
+    if #available(iOS 17.0, *) {
+      return layers.last
+    }
+    return layers.first
+  }
+
+  func attach(canvas: CALayer, content: CALayer) {
+    self.canvas = canvas
+    host.masksToBounds = false
+    canvas.addSublayer(host)
+    host.addSublayer(content)
+    syncHost()
+  }
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    syncHost()
+  }
+
+  override var frame: CGRect {
+    didSet { syncHost() }
+  }
+
+  override var bounds: CGRect {
+    didSet { syncHost() }
+  }
+
+  /// Puts [host]'s origin on the field's origin, with the field's size.
+  private func syncHost() {
+    guard let canvas = canvas else { return }
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    let canvasOrigin = canvas.convert(CGPoint.zero, to: layer)
+    host.frame = CGRect(
+      x: -canvasOrigin.x, y: -canvasOrigin.y, width: bounds.width, height: bounds.height)
+    CATransaction.commit()
+  }
+}
+
+// MARK: - Device: biometrics, print, save
+
+extension AppDelegate {
+  fileprivate func registerDeviceChannel() {
+    guard let registrar = registrar(forPlugin: "FuzzzyDevice") else { return }
+    let channel = FlutterMethodChannel(
+      name: InkDevice.channelName, binaryMessenger: registrar.messenger())
+    channel.setMethodCallHandler { call, result in
+      InkDevice.shared.handle(call, result: result)
+    }
+  }
+}
+
+/// The native side of `ink_device_channel.dart`.
+///
+/// - `hasStrongBiometrics`: Face ID or Touch ID is there *and enrolled*. The
+///   biometric storage plugin's own check also passes with only a passcode,
+///   which offered the fingerprint step on a phone without any (QA
+///   2026-10-26).
+/// - `printImage`: the system print dialog for one image (the recovery key
+///   sheet) — no share sheet, so no Copy, Save Image or AirDrop on the way.
+/// - `exportFile`: the system "Save to Files" dialog for one file (the
+///   recovery key as text) — again no share sheet and no clipboard.
+final class InkDevice: NSObject, UIDocumentPickerDelegate {
+  static let channelName = "com.fuzzzycore.ink/device"
+  static let shared = InkDevice()
+
+  private var pendingExport: FlutterResult?
+
+  func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    let arguments = call.arguments as? [String: Any]
+    switch call.method {
+    case "hasStrongBiometrics":
+      var error: NSError?
+      result(
+        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error))
+    case "printImage":
+      guard let path = arguments?["path"] as? String,
+        let image = UIImage(contentsOfFile: path)
+      else {
+        result(FlutterError(code: "badArguments", message: "no image", details: nil))
+        return
+      }
+      printImage(image, jobName: arguments?["jobName"] as? String ?? "", result: result)
+    case "exportFile":
+      guard let path = arguments?["path"] as? String else {
+        result(FlutterError(code: "badArguments", message: "path is missing", details: nil))
+        return
+      }
+      exportFile(URL(fileURLWithPath: path), result: result)
+    default:
+      result(FlutterMethodNotImplemented)
+    }
+  }
+
+  private var topController: UIViewController? {
+    var top = UIApplication.shared.delegate?.window??.rootViewController
+    while let presented = top?.presentedViewController { top = presented }
+    return top
+  }
+
+  private func printImage(_ image: UIImage, jobName: String, result: @escaping FlutterResult) {
+    let controller = UIPrintInteractionController.shared
+    let info = UIPrintInfo(dictionary: nil)
+    info.outputType = .general
+    info.jobName = jobName
+    controller.printInfo = info
+    controller.printingItem = image
+    let done: UIPrintInteractionController.CompletionHandler = { _, completed, error in
+      result(error == nil && completed)
+    }
+    if UIDevice.current.userInterfaceIdiom == .pad, let view = topController?.view {
+      let anchor = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 1, height: 1)
+      controller.present(from: anchor, in: view, animated: true, completionHandler: done)
+    } else {
+      controller.present(animated: true, completionHandler: done)
+    }
+  }
+
+  private func exportFile(_ url: URL, result: @escaping FlutterResult) {
+    guard pendingExport == nil, let top = topController else {
+      result(FlutterError(code: "busy", message: "a save is already open", details: nil))
+      return
+    }
+    let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+    picker.delegate = self
+    pendingExport = result
+    top.present(picker, animated: true)
+  }
+
+  func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    pendingExport?(!urls.isEmpty)
+    pendingExport = nil
+  }
+
+  func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+    pendingExport?(false)
+    pendingExport = nil
   }
 }

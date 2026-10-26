@@ -43,6 +43,14 @@ class _FakeBiometricStorage extends Fake implements BiometricStorage {
   final bool failDelete;
   final Map<String, _FakeStorageFile> files = {};
   final List<StorageFileInitOptions?> options = [];
+  CanAuthenticateResponse canAuthenticateAnswer =
+      CanAuthenticateResponse.success;
+
+  @override
+  Future<CanAuthenticateResponse> canAuthenticate({
+    StorageFileInitOptions? options,
+  }) async =>
+      canAuthenticateAnswer;
 
   @override
   Future<BiometricStorageFile> getStorage(
@@ -326,6 +334,41 @@ void main() {
         ),
         BiometricEnableResult.failed,
       );
+    });
+  });
+
+  group('whether the fingerprint step is offered', () {
+    const channel = MethodChannel('com.fuzzzycore.ink/device');
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+
+    void enrolled({required bool answer}) => messenger.setMockMethodCallHandler(
+          channel,
+          (call) async => call.method == 'hasStrongBiometrics' ? answer : null,
+        );
+
+    tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+    for (final platform in [TargetPlatform.iOS, TargetPlatform.macOS]) {
+      test(
+          'on ${platform.name}, a passcode alone is not enough: Face ID or '
+          'Touch ID must be enrolled', () async {
+        debugDefaultTargetPlatformOverride = platform;
+        build({});
+        enrolled(answer: false);
+        expect(await repository.canUseBiometrics(), isFalse);
+        enrolled(answer: true);
+        expect(await repository.canUseBiometrics(), isTrue);
+        biometricStorage.canAuthenticateAnswer =
+            CanAuthenticateResponse.errorNoBiometricEnrolled;
+        expect(await repository.canUseBiometrics(), isFalse);
+      });
+    }
+
+    test("on Android the strong-biometrics check is the plugin's", () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      build({});
+      expect(await repository.canUseBiometrics(), isTrue);
     });
   });
 }

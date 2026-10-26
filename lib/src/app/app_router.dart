@@ -55,6 +55,64 @@ class AppRouter {
     aboutEncryption,
   };
 
+  /// Screens that show a secret or plain text: not returned to after a
+  /// lock. Their parent comes back instead (the person, My safe, Home).
+  static const _privateRoutes = {
+    vaultItem,
+    vaultItemEditor,
+    personItem,
+    lockFor,
+    lockWithPassword,
+    open,
+    basics,
+    settingsMasterPassword,
+    settingsRecoveryKey,
+    settingsSafePassword,
+  };
+
+  /// Where the app was when it locked, private screens left out; restored
+  /// by [returnAfterUnlock].
+  static RouteMatchList? _returnPlace;
+
+  /// Remembers where the app is as it locks (QA 2026-10-26: after an
+  /// auto-lock, unlocking went to Home). The screens on top that are
+  /// private are dropped first, so nothing they held is kept while locked.
+  static void rememberReturnPlace(GoRouter router) {
+    var place = router.routerDelegate.currentConfiguration;
+    if (place.isEmpty ||
+        _unprotectedRoutes.contains(place.uri.path) ||
+        place.uri.path == onboarding) {
+      return;
+    }
+    while (place.isNotEmpty && _holdsPrivate(place.matches)) {
+      place = place.remove(place.last);
+    }
+    _returnPlace = place.isEmpty ? null : place;
+  }
+
+  /// Back to where the app was when it locked, or Home.
+  static void returnAfterUnlock(GoRouter router) {
+    final place = _returnPlace;
+    _returnPlace = null;
+    if (place == null) {
+      router.go(home);
+    } else {
+      router.restore(place);
+    }
+  }
+
+  /// Forgets the place (the first run, an erase).
+  static void forgetReturnPlace() => _returnPlace = null;
+
+  static bool _holdsPrivate(List<RouteMatchBase> matches) => matches.any(
+        (match) => match is ShellRouteMatch
+            ? _holdsPrivate(match.matches)
+            : _privateRoutes.contains(Uri.parse(match.matchedLocation).path),
+      );
+
+  @visibleForTesting
+  static RouteMatchList? get debugReturnPlace => _returnPlace;
+
   static GoRouter? _routerInstance;
 
   static GoRouter? get routerInstance => _routerInstance;
@@ -88,8 +146,11 @@ class AppRouter {
             sl.get<PreferencesService>().hasSeenOnboarding;
         final isOnboarding = state.matchedLocation == onboarding;
 
-        if (!hasSeenOnboarding && !isOnboarding) return onboarding;
-        if (hasSeenOnboarding && isOnboarding) return AppRouter.home;
+        // The welcome comes first and is final while unseen: falling
+        // through to the first-run rule below would send it to /setup,
+        // which sends it back here (a redirect loop, QA 2026-10-26).
+        if (!hasSeenOnboarding) return isOnboarding ? null : onboarding;
+        if (isOnboarding) return AppRouter.home;
 
         final authStatus = sl.get<FuzzyAuthStore>().state.status;
         final matchedLocation = state.matchedLocation;

@@ -238,11 +238,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get chatAuthResecuringKeys => 'გასაღებების ხელახლა დაცვა…';
 
   @override
-  String get benchmarkFileEncryption => 'ფაილის დაშიფვრის ბენჩმარკი (dev)';
+  String get benchmarkFileEncryption => 'ფაილების ჩაკეტვის ბენჩმარკი (dev)';
 
   @override
   String get benchmarkFileEncryptionDescription =>
-      'ფაზავს და ხსნის 64 MiB დროებით ფაილს და აჩვენებს MB/s-ს';
+      'კეტავს და ხსნის 64 MiB სატესტო ფაილს და აჩვენებს MB/s-ს';
 
   @override
   String get benchmarkResult => 'ბენჩმარკის შედეგი';
@@ -460,7 +460,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get masterPasswordPreviousData =>
-      'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
+      'ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ადამიანებს, ისტორიასა და ჩემს სეიფს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. შენახული ფაილები ადგილზე რჩება.';
+
+  @override
+  String get accessSetupInterrupted =>
+      'წინა ჯერზე დაყენება ბოლომდე არ მივიდა. მაშინ ნანახი აღდგენის გასაღები არ იმუშავებს. ახალს მიიღებთ.';
 
   @override
   String get masterPasswordFailed => 'გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.';
@@ -494,7 +498,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get eraseMessage =>
-      'ჩატები, ისტორია, საცავი და პარამეტრები ამ მოწყობილობიდან წაიშლება და მათ ვეღარ დააბრუნებთ. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.';
+      'თქვენი ადამიანები, ისტორია, ჩემი სეიფი და პარამეტრები ამ მოწყობილობიდან სამუდამოდ წაიშლება. დაბრუნება შეუძლებელია. შენახული ფაილები ადგილზე რჩება.';
 
   @override
   String get eraseConfirm => 'ყველაფრის წაშლა';
@@ -1694,7 +1698,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get accessNewMasterPassword => 'ახალი მთავარი პაროლი';
 
   @override
-  String get accessKeyCheckedOnSave => 'გასაღები შენახვისას შემოწმდება.';
+  String get accessKeyAccepted => 'გასაღები მიღებულია.';
 
   @override
   String get accessSaveNewPassword => 'ახალი პაროლის შენახვა';

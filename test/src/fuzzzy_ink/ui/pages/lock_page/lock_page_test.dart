@@ -303,7 +303,7 @@ void main() {
         LockedView(
           chat: _nino,
           state: lockedMessage,
-          onShared: () => shared.add(true),
+          onShared: ({copied = false}) => shared.add(copied),
           onDone: () {},
         ),
         surface: const Size(390, 844),
@@ -318,7 +318,7 @@ void main() {
       await tester.pump();
       await tester.pump(InkMotionTiming.sheetCloseAfterCopy);
       await tester.pumpAndSettle();
-      expect(shared, [true]);
+      expect(shared, [true], reason: 'it went out as Copy as text');
 
       await pumpRedesign(
         tester,
@@ -329,7 +329,7 @@ void main() {
             item: LockedItem(lockedText: _lockedText),
             isShared: true,
           ),
-          onShared: () {},
+          onShared: ({copied = false}) {},
           onDone: () {},
         ),
         surface: const Size(390, 844),
@@ -337,6 +337,26 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Share again'), findsOneWidget);
       expect(find.text('Sent to your share menu.'), findsOneWidget);
+
+      // After Copy as text the line says it was copied (QA 2026-10-26).
+      await pumpRedesign(
+        tester,
+        LockedView(
+          chat: _nino,
+          state: const LockFlowState(
+            phase: LockPhase.locked,
+            item: LockedItem(lockedText: _lockedText),
+            isShared: true,
+            sharedByCopy: true,
+          ),
+          onShared: ({copied = false}) {},
+          onDone: () {},
+        ),
+        surface: const Size(390, 844),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Copied. It stays locked.'), findsOneWidget);
+      expect(find.text('Sent to your share menu.'), findsNothing);
       final done = tester.widget<FuzzzyButton>(
         find.ancestor(
           of: find.text('Done'),

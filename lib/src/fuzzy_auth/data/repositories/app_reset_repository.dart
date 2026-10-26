@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
 /// "Erase everything and start over": the way back for someone who has
@@ -36,7 +37,13 @@ class AppResetRepository {
       _localDataSource.discardPendingLink();
       return const CryptoCoreSuccess(null);
     } catch (ex) {
-      logger.e('Erase failed: ${ex.runtimeType}');
+      // The system's code says why (a keychain entry this build may not
+      // touch, a locked keychain); never a value.
+      logger.e(
+        ex is PlatformException
+            ? 'Erase failed: PlatformException(${ex.code}, ${ex.message})'
+            : 'Erase failed: ${ex.runtimeType}',
+      );
       return const CryptoCoreFailure(CryptoCoreFailureType.io);
     }
   }

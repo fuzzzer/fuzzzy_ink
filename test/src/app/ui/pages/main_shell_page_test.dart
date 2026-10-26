@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -40,7 +41,8 @@ void main() {
       const ChatGeneralDataListState(status: StateStatus.success, chatList: []),
     );
     authStore = _MockAuthStore();
-    when(() => authStore.lock()).thenAnswer((_) async {});
+    when(() => authStore.lock(byUser: any(named: 'byUser')))
+        .thenAnswer((_) async {});
   });
 
   Future<GoRouter> pumpShell(
@@ -48,6 +50,8 @@ void main() {
     Size size = const Size(390, 844),
     FuzzzySkin skin = FuzzzySkin.night,
     bool reduceMotion = false,
+    double textScale = 1,
+    Locale locale = const Locale('en'),
   }) async {
     tester.view.physicalSize = size * tester.view.devicePixelRatio;
     addTearDown(tester.view.resetPhysicalSize);
@@ -95,12 +99,14 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: FuzzzyTheme.build(inkPack, skin),
+          locale: locale,
           localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
           supportedLocales: FuzzzyInkLocalizations.supportedLocales,
           routerConfig: router,
           builder: (context, app) => MediaQuery(
             data: MediaQuery.of(context).copyWith(
               disableAnimations: reduceMotion,
+              textScaler: TextScaler.linear(textScale),
             ),
             child: app!,
           ),
@@ -132,6 +138,42 @@ void main() {
       expect(find.text('settings tab'), findsOneWidget);
       expect(preferences.lastSelectedTab, AppRouter.settings);
     });
+  }
+
+  for (final (locale, l10n) in [
+    (const Locale('en'), FuzzzyInkLocalizationsEn()),
+    (const Locale('ka'), FuzzzyInkLocalizationsKa()),
+  ]) {
+    for (final size in [const Size(320, 640), const Size(390, 844)]) {
+      testWidgets(
+          'large text: no tab word breaks mid-word '
+          '(${locale.languageCode}, ${size.width.toInt()} wide)',
+          (tester) async {
+        await pumpShell(tester, size: size, textScale: 3.1, locale: locale);
+        expect(tester.takeException(), isNull);
+        for (final label in [
+          l10n.tabHome,
+          l10n.tabMySafe,
+          l10n.tabSettings,
+        ]) {
+          final text = label.toUpperCase();
+          final paragraph =
+              tester.renderObject<RenderParagraph>(find.text(text));
+          var start = 0;
+          for (final word in text.split(' ')) {
+            final boxes = paragraph.getBoxesForSelection(
+              TextSelection(
+                baseOffset: start,
+                extentOffset: start + word.length,
+              ),
+            );
+            final lines = boxes.map((box) => box.top.round()).toSet();
+            expect(lines, hasLength(1), reason: '"$word" on one line');
+            start += word.length + 1;
+          }
+        }
+      });
+    }
   }
 
   testWidgets('My safe has its own header with the lock while it is open',
@@ -222,7 +264,7 @@ void main() {
         variant: TargetPlatformVariant.desktop(), (tester) async {
       await pumpShell(tester, size: const Size(1024, 768));
       await press(tester, LogicalKeyboardKey.keyL, shift: true);
-      verify(() => authStore.lock()).called(1);
+      verify(() => authStore.lock(byUser: true)).called(1);
       expect(find.byKey(const Key('sheet.lockWho')), findsNothing);
     });
 

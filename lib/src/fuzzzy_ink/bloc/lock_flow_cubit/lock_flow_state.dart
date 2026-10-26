@@ -83,6 +83,7 @@ class LockFlowState {
     this.failure,
     this.item,
     this.isShared = false,
+    this.sharedByCopy = false,
   });
 
   final LockPhase phase;
@@ -99,6 +100,9 @@ class LockFlowState {
   /// The system share reported it finished.
   final bool isShared;
 
+  /// The last share was "Copy as text".
+  final bool sharedByCopy;
+
   LockFlowState copyWith({
     LockPhase? phase,
     LockKind? kind,
@@ -110,6 +114,7 @@ class LockFlowState {
     bool clearFailure = false,
     LockedItem? item,
     bool? isShared,
+    bool? sharedByCopy,
   }) {
     return LockFlowState(
       phase: phase ?? this.phase,
@@ -121,6 +126,7 @@ class LockFlowState {
       failure: clearFailure ? null : failure ?? this.failure,
       item: item ?? this.item,
       isShared: isShared ?? this.isShared,
+      sharedByCopy: sharedByCopy ?? this.sharedByCopy,
     );
   }
 

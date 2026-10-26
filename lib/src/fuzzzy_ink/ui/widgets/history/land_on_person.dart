@@ -22,11 +22,15 @@ void landOnPerson(
   }
 
   void say() {
-    final overlayContext = navigatorKey.currentState?.overlay?.context;
-    if (toast == null || overlayContext == null || !overlayContext.mounted) {
-      return;
-    }
-    showInkToast(overlayContext, message: toast, castMoment: castMoment);
+    final overlay = navigatorKey.currentState?.overlay;
+    if (toast == null || overlay == null || !overlay.mounted) return;
+    showInkToast(
+      overlay.context,
+      overlay: overlay,
+      message: toast,
+      castMoment: castMoment,
+      qaId: 'landed',
+    );
   }
 
   final router = GoRouter.of(context);

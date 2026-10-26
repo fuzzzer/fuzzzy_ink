@@ -77,7 +77,7 @@ class FuzzyCryptoCoreLib extends BaseEntrypoint<FuzzyCryptoCoreLibApi,
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 176937800;
+  int get rustContentHash => 1075131959;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -210,6 +210,8 @@ abstract class FuzzyCryptoCoreLibApi extends BaseApi {
       {required List<int> passwordWrap,
       required String oldPassword,
       required String newPassword});
+
+  Future<void> crateApiCoreCheckRecoveryKey({required String recoveryKey});
 
   Future<String> crateApiHealthCoreVersion();
 
@@ -1307,12 +1309,37 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
       );
 
   @override
+  Future<void> crateApiCoreCheckRecoveryKey({required String recoveryKey}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(recoveryKey, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 33, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_core_error,
+      ),
+      constMeta: kCrateApiCoreCheckRecoveryKeyConstMeta,
+      argValues: [recoveryKey],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiCoreCheckRecoveryKeyConstMeta =>
+      const TaskConstMeta(
+        debugName: "check_recovery_key",
+        argNames: ["recoveryKey"],
+      );
+
+  @override
   Future<String> crateApiHealthCoreVersion() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 33, port: port_);
+            funcId: 34, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -1338,7 +1365,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(storeDir, serializer);
         sse_encode_String(password, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 34, port: port_);
+            funcId: 35, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_master_key_setup,
@@ -1373,7 +1400,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
             job, serializer);
         sse_encode_StreamSink_file_progress_Sse(sink, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 35, port: port_);
+            funcId: 36, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1408,7 +1435,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
             job, serializer);
         sse_encode_StreamSink_file_progress_Sse(sink, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 36, port: port_);
+            funcId: 37, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1432,7 +1459,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 37, port: port_);
+            funcId: 38, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -1463,7 +1490,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(passwordWrap, serializer);
         sse_encode_String(password, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 38, port: port_);
+            funcId: 39, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_new_recovery_key,
@@ -1494,7 +1521,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(storeWrap, serializer);
         sse_encode_String(password, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 39, port: port_);
+            funcId: 40, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -1521,7 +1548,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(password, serializer);
         sse_encode_list_prim_u_8_loose(blob, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 40, port: port_);
+            funcId: 41, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1548,7 +1575,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(password, serializer);
         sse_encode_String(blob, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 41, port: port_);
+            funcId: 42, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -1575,7 +1602,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(password, serializer);
         sse_encode_list_prim_u_8_loose(bytes, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 42, port: port_);
+            funcId: 43, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1602,7 +1629,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(password, serializer);
         sse_encode_String(text, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 43, port: port_);
+            funcId: 44, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -1626,7 +1653,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(text, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -1659,7 +1686,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(recoveryKey, serializer);
         sse_encode_String(newPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 45, port: port_);
+            funcId: 46, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_recovered_store,
@@ -1690,7 +1717,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_list_prim_u_8_loose(bytes, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 46, port: port_);
+            funcId: 47, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1723,7 +1750,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
             job, serializer);
         sse_encode_StreamSink_file_progress_Sse(sink, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 47, port: port_);
+            funcId: 48, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -1750,7 +1777,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(passwordWrap, serializer);
         sse_encode_String(masterPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 48, port: port_);
+            funcId: 49, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_vault_init_result,
@@ -1783,7 +1810,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_u_32(version, serializer);
         sse_encode_list_prim_u_8_loose(blob, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 49, port: port_);
+            funcId: 50, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1812,7 +1839,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(recoveryKey, serializer);
         sse_encode_String(newPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 50, port: port_);
+            funcId: 51, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_vault_recovered,
@@ -1841,7 +1868,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(recovery, serializer);
         sse_encode_String(recoveryKey, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 51, port: port_);
+            funcId: 52, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_vault_recovered,
@@ -1877,7 +1904,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_u_32(version, serializer);
         sse_encode_list_prim_u_8_loose(blob, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 52, port: port_);
+            funcId: 53, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1906,7 +1933,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(newPassword, serializer);
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 53, port: port_);
+            funcId: 54, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1938,7 +1965,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_u_32(version, serializer);
         sse_encode_list_prim_u_8_loose(bytes, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 54, port: port_);
+            funcId: 55, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1970,7 +1997,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
         sse_encode_String(vaultPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 55, port: port_);
+            funcId: 56, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -1997,7 +2024,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(password, serializer);
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 56, port: port_);
+            funcId: 57, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -2027,7 +2054,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_String(masterPassword, serializer);
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 57, port: port_);
+            funcId: 58, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -2060,7 +2087,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(passwordWrap, serializer);
         sse_encode_String(masterPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 58, port: port_);
+            funcId: 59, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -2100,7 +2127,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
         sse_encode_String(newPassword, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 59, port: port_);
+            funcId: 60, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_vault_own_password,
@@ -2130,7 +2157,7 @@ class FuzzyCryptoCoreLibApiImpl extends FuzzyCryptoCoreLibApiImplPlatform
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_list_prim_u_8_loose(wrapped, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 60)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 61)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
