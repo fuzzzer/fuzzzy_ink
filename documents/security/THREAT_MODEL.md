@@ -176,7 +176,13 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   sweep also deletes Android's old share staging
   (`cache/user_files`, `cache/share_plus`), the archive working file and, on a phone, the old Basics
   `Working Folder` (`UserFileStore.wipeTemporaryPlainCopies`; test
-  `test/src/core/services/user_file_store/user_file_store_test.dart`). Nothing goes to Android's public
+  `test/src/core/services/user_file_store/user_file_store_test.dart`). A `.fuzz` file another app opens in this
+  one (the system's "open with": Android `VIEW` intents for `file:` and `content:` URIs, the exported type
+  `com.fuzzzycore.ink.fuzz` on iOS and macOS; `IncomingFiles`, since 2026-10-26) is only read, once, into a fresh
+  hand-off folder — iOS's own `Documents/Inbox` copy is deleted once taken, the Mac user's original is left where
+  it is — never run and never handed on, and goes to Open as an arrived file (§2.6); that sealed copy goes once
+  Open used it or was left, when the app locks and at every launch (`test/platform/incoming_files_test.dart`,
+  `test/src/core/services/incoming_files/incoming_files_test.dart`). Nothing goes to Android's public
   Downloads or MediaStore, Android holds no storage permission, its FileProvider serves the hand-off folder
   only (never the store key or the vault; `test/platform/user_files_test.dart`), and iOS no longer exposes
   Documents to the Files app. Deleting a chat deletes its files folder and rows (and its state, so every kept
@@ -263,7 +269,8 @@ and iPhone universal links (the domain declares the app; the production verifica
 app only), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is
 removed on every platform. macOS has no associated domain: on a Mac, links are pasted into Open. Any app on an
 Android phone can still *send* the app a link (the activity is exported); that is why a link never opens or
-connects anything without the user's tap (§2.6, §7.5). Links carry no expiry; the core never saw one anyway
+connects anything without the user's tap (§2.6, §7.5). The same holds for `.fuzz` files: any app can hand
+one to Fuzzzy Ink (§2.5), and it waits for the user's Open or Connect like a link. Links carry no expiry; the core never saw one anyway
 (`PROTOCOL.md` §4.6). They are subject to everything above.
 
 ### 2.8 OS and cloud backups
@@ -424,7 +431,10 @@ An adversary who controls the victim's OS is not on this list (§7.1).
   (no flag before keys exist), `api::safety::tests::verified_flag_survives_reload` (the flag dies with the keys).
   Low-order Curve25519 points in either pairing blob are refused by vodozemac and reported `Corrupt` with
   no state written (`PROTOCOL.md` §4.3 step 1, §4.4 step 3; F2-3 review, 22/22 degenerate points).
-- **A version-2 or unknown-format blob → refused, never guessed** (`PROTOCOL.md` §6.2, §12).
+- **A version-2 or unknown-format blob → refused, never guessed** (`PROTOCOL.md` §6.2, §12). Since 2026-10-26
+  a version above this build's, or a type byte it does not know, is told apart from damage as `NewerVersion`
+  before any key is touched; the app says "Needs a newer Fuzzzy Ink. Update the app, then try again." and
+  offers no link or download, so a forged one can at most prompt an update from the user's own store.
 
 ### 4.3 ADV-4 — device thief
 
@@ -706,8 +716,11 @@ settings password pages, the file viewer, the recovery-key print sheet) are prot
 Android `FLAG_SECURE` (screenshots, recordings and the recents thumbnail come out blank); iPhone a secure layer plus a
 cover while inactive or being recorded (it relies on the system's layer layout and would fail silently if Apple
 changed it); macOS `sharingType = .none` (reported to be ignored by ScreenCaptureKit on macOS 15 — not checked);
-Windows `WDA_EXCLUDEFROMCAPTURE` (or `WDA_MONITOR` before Windows 10 2004). Linux has none. Desktops have no
-app-switcher cover.
+Windows `WDA_EXCLUDEFROMCAPTURE` (or `WDA_MONITOR` before Windows 10 2004). Linux has none. On a phone the app
+switcher never shows a picture of any screen, private or not (since 2026-10-26): the iPhone draws a cover (the
+look's ground with the Ink mark) whenever the app is inactive, and Android 13+ turns off the recents thumbnail for
+the whole app (`setRecentsScreenshotEnabled(false)`); before Android 13 only private screens are blank there
+(`FLAG_SECURE`). Desktops have no app-switcher cover.
 
 ### 7.3 Clipboard sniffing
 
@@ -1077,7 +1090,7 @@ studio's flow directory; the review ids below are those records).
 | R36 | **Files the user takes out are in the clear.** Since 2026-10-26 the app keeps only sealed files and wipes every plain copy after its one use (A12, §2.5); what remains plain: a hand-off copy while it is shown, saved or shared (user-private storage, default file mode, wiped on use, on page close and at launch; a process kill or an Android share target that reads late are the gaps), and every file the user saves or shares — the product's purpose (a file is decrypted in order to be used), stated in the About-encryption page and the README. Builds before 2026-10-26 wrote unfuzzed files to Documents / Android Downloads; no migration removes those (pre-launch). | §2.5, §7.13, A12, T25; `PROTOCOL.md` §9.6, §10.5, §17.15 | product |
 | R37 | **The recovery key is a second password for everything the master password opens.** Printed or saved by the user (the app offers the system save dialog — a file the user can print — and never the clipboard); whoever finds it opens the app. A skipped key leaves none; a new key deletes the old wrap, lock and vault box at once. It also opens a vault that has its own password (owner, 2026-10-26: a `0x11` box sealed to the recovery lock), so a vault's own password guards against someone with the master password, not against the recovery key; a new key needs the vault's password to keep that vault recoverable. The key that opens such a vault is always one the user was shown when the vault got its own password, or later with the vault's password — giving the vault its own password ends the earlier key and shows a new one (security review 2026-10-26), so a key made by somebody else with the master password before then opens nothing. Without a kept recovery key such a vault is lost with its password (said where the user chooses it). | `PROTOCOL.md` §10.2, §10.6 | product (copy) |
 | R38 | **Rollback of a vault item together with its database row**, or of the whole device to an older snapshot, is not detected: the item's version lives in the plaintext index, and there is no trusted counter. Swapping items, or putting back an older file alone, is detected. | `PROTOCOL.md` §10.6; T27 | none (documented) |
-| R39 | **Screen protection is best-effort and absent on Linux.** Private screens use `FLAG_SECURE` (Android), a secure layer plus a cover (iPhone — relies on the system's layer layout; would fail silently if Apple changed it), `sharingType = .none` (macOS — reported to be ignored by ScreenCaptureKit on macOS 15, not checked) and `WDA_EXCLUDEFROMCAPTURE` (Windows). Linux has nothing; desktops have no app-switcher cover. Accessibility services read any screen. | §7.2; security review 2026-10-26 (L4) | product; platform |
+| R39 | **Screen protection is best-effort and absent on Linux.** Private screens use `FLAG_SECURE` (Android), a secure layer plus a cover (iPhone — relies on the system's layer layout; would fail silently if Apple changed it), `sharingType = .none` (macOS — reported to be ignored by ScreenCaptureKit on macOS 15, not checked) and `WDA_EXCLUDEFROMCAPTURE` (Windows). Linux has nothing; desktops have no app-switcher cover (phones cover every screen there: the iPhone always, Android from 13, older Androids private screens only). Accessibility services read any screen. | §7.2; security review 2026-10-26 (L4) | product; platform |
 | R40 | **The clipboard and keyboards are partly outside the app's control.** A safe password copy is cleared blind in the background on Android (which also clears text the user copied elsewhere in those 30 seconds), not at all after a process kill, and kept by Linux clipboard managers and by Windows or Mac clipboard tools that ignore the exclusion formats. The no-learning request to the keyboard is a request; a keyboard that ignores it, or one with network access, can keep what is typed. Strings in Dart (a typed password or recovery key) cannot be wiped (R19). | §2.6, §7.3; security review 2026-10-26 (M2, M3, I1) | product; user (choice of keyboard) |
 | R41 | **"Erase everything" does not reach outside the app or rewrite the disk.** It removes keys first, then every file and preference the app keeps, and the next launch compacts the database file; the pages the erase freed may stay on an SSD or a copy-on-write file system until overwritten (sealed columns were under the keys already removed; plaintext columns are metadata, §7.4). Anyone holding the phone can erase without a password (by design: it is the way out for a forgotten password and lost recovery key). | §2.5; security review 2026-10-26 (L6, I5) | none (documented) |
 | R42 | **A wrong-password wait set by the clock can be shortened by a restart.** While the app runs, the wait is also kept on a monotonic clock; after a restart only the stored wall-clock end remains, so setting the device clock forward and restarting the app ends a wait. Each attempt still costs a full Argon2id run, and a new password must reach "good". | §4.3; security review 2026-10-26 (L2) | none (documented) |

@@ -15,21 +15,28 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
 - **Links** on `https://ink.fuzzzycore.com/{invite,accept,message}#…` (the part after `#` never reaches a server),
   a QR code, or a `.fuzz` file, from one Share button. The old `fuzzylink://` scheme is gone.
 - **Lock and Open**, a page per person with their history, and the redesign with Fuzzzy Cast.
+- **Open `.fuzz` files from other apps** (Android, iPhone, Mac): the file goes to Open, which asks before it opens
+  a message or a person's file, or connects a reply.
+- **"Needs a newer Fuzzzy Ink"**: something made by a newer version of the app says so instead of "damaged".
+- **Computer keys:** ⌘ (Mac) or Ctrl + L opens Lock, + O opens Open, + comma opens Settings, + Shift + L locks the
+  app.
 
 ### Security
 - **My safe's own password means a new key.** Giving the safe its own password now draws a new safe key, re-locks
   every item under it and draws a new recovery key, shown right away; someone who knew the master password before,
   or who made a recovery key of their own with it, can no longer open the safe.
-- **A link never opens or connects anything by itself.** A message link asks "Open the message from {name}?" first,
-  a reply link asks "Connect with {name}?", and the "someone else answered your invite" warning shows only for a
-  reply that really answers your invite. Message links no longer carry the chat's id.
+- **A link or a file from another app never opens or connects anything by itself.** A message link (or file)
+  asks "Open the message from {name}?" first, a reply asks "Connect with {name}?", and the "someone else answered
+  your invite" warning shows only for a reply that really answers your invite. Message links no longer carry the
+  chat's id.
 - **Nothing plain leaves by accident.** Only locked output (and, behind a switch, a safe password) can be copied;
   password, recovery-key, message and opened-item fields offer no Copy, Share, Look Up or other apps' text actions
   (Translate and the like), and keyboards are asked not to learn what is typed. A copied safe password is cleared
   after 30 seconds, now also in the background on Android, and kept out of Windows clipboard history and the cloud
   clipboard; every copy is cleared when the app locks.
 - **Private screens** (unlock, recovery key, My safe, opened messages and files, a person's page, Basics) are kept
-  out of screenshots, recordings and the app switcher on Android, iPhone, macOS and Windows.
+  out of screenshots, recordings and the app switcher on Android, iPhone, macOS and Windows. On a phone the app
+  switcher shows no picture of any screen (iPhone, and Android 13 and later).
 - **The app keeps only locked files.** Plain copies exist only while a file is shown, saved or shared, in a private
   folder wiped right after, when the app locks and at every launch (picked files on iPhone included). Nothing is
   written to Downloads or the Files app any more. A received file is kept under the name its sender sealed inside

@@ -644,7 +644,9 @@ What this costs: one Olm decrypt per connected chat per peek (AES-CBC + HMAC, no
 app — never to anyone else — which chat a blob belongs to, which the paste into that chat revealed anyway. The
 wire format is unchanged: still no chat id on a message. Since 2026-10-26 message links carry no chat id either
 (`https://ink.fuzzzycore.com/message#<blob>`): the app peeks a link's blob on arrival to name its person, and
-opens it only when the user taps Open (THREAT_MODEL §2.6, §7.5).
+opens it only when the user taps Open (THREAT_MODEL §2.6, §7.5). A `.fuzz` file another app hands over (the
+system's "open with") is peeked the same way and opened, or its reply connected, only on the user's Open or
+Connect tap; nothing that arrives from outside spends a message key or a one-time key by itself.
 
 ---
 
@@ -890,7 +892,8 @@ Isar (app database)     StoredMessageData.sealedPlaintext                one loc
                                                                         name becomes <name> (1).<ext>.fuzz
 <application support directory>/sealed_files/basics/<name>.fuzz        the password containers Basics made (0x04, password mode)
 <application support directory>/handoff/<one folder per use>/<name>    transient: a plain (or staged sealed) file for one use — the in-app viewer, the save dialog,
-                                                                        the share sheet — wiped right after and by the launch sweep (§10.5); the only folder
+                                                                        the share sheet, a .fuzz another app handed over — wiped right after, at lock and by the
+                                                                        launch sweep (§10.5); the only folder
                                                                         Android's FileProvider serves
 ```
 
@@ -1075,7 +1078,8 @@ When the user opens, saves or shares a file, it is unfuzzed into a fresh folder 
 selectable) or given to the system save dialog (Android `ACTION_CREATE_DOCUMENT`, a computer's save panel,
 iOS the share sheet's "Save to Files") or the share sheet, and wiped right after: on closing the viewer, after
 the save, when the app is back in front after a share (Android's share sheet returns before the target has
-read), when the chat or Basics page closes, and at every launch (`UserFileStore.wipeTemporaryPlainCopies`,
+read), when the chat or Basics page closes, when the app locks (`UserFileStore.wipeAtLock`) and at every launch
+(`UserFileStore.wipeTemporaryPlainCopies`,
 which also deletes the file picker's cache copies, Android's old share staging `cache/user_files` and
 `cache/share_plus`, the archive export's working file and, on a phone, the old Basics `Working Folder`).
 A vault file item is shown from memory and written to the hand-off folder only to be saved or shared.
