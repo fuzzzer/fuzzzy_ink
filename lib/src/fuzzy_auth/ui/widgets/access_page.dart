@@ -43,7 +43,6 @@ class AccessPage extends StatelessWidget {
     final space = context.fuzzzySpace;
     final hasHeader = title != null || onBack != null;
     final back = onBack;
-    final localizations = context.fuzzzyInkLocalizations;
 
     Widget column(List<Widget> items) => Center(
           child: ConstrainedBox(
@@ -67,13 +66,11 @@ class AccessPage extends StatelessWidget {
               FuzzzyAppBar(
                 qaId: qaId ?? 'access',
                 title: title ?? '',
+                // Not the kit's onLeading: its arrow always says "Back" in
+                // English.
                 leading: back == null
                     ? null
-                    : Semantics(
-                        label: localizations.back,
-                        child: const Icon(Icons.arrow_back),
-                      ),
-                onLeading: back,
+                    : AppBarBack(barQaId: qaId ?? 'access', onPressed: back),
               ),
             Expanded(
               child: LayoutBuilder(

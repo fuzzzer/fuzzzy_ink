@@ -32,6 +32,7 @@ class BasicEncryptionContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FuzzyScaffold(
+      actionsRow: const BottomBackButton(qaId: 'basics.back'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(

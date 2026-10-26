@@ -44,6 +44,7 @@ class AboutEncryptionPage extends StatelessWidget {
     ];
 
     return FuzzyScaffold(
+      actionsRow: const BottomBackButton(qaId: 'aboutEncryption.back'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(

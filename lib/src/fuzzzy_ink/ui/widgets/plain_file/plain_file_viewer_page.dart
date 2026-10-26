@@ -87,6 +87,7 @@ class _PlainFileViewerPageState extends State<PlainFileViewerPage> {
     final displayName = UserFileNames.forDisplay(widget.fileName);
 
     return FuzzyScaffold(
+      actionsRow: const BottomBackButton(qaId: 'plainFileViewer.back'),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: space.gutter),
         child: Column(
