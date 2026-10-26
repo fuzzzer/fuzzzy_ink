@@ -101,7 +101,11 @@ void main() {
       AppRouter.chatConnected,
       AppRouter.vaultHome,
       AppRouter.settings,
-      AppRouter.auth,
+      AppRouter.settingsMasterPassword,
+      AppRouter.settingsRecoveryKey,
+      AppRouter.settingsSafePassword,
+      AppRouter.settingsHowItWorks,
+      AppRouter.settingsLegal,
       AppRouter.basics,
     ]) {
       expect(await redirectFor(tester, location), AppRouter.chatUnlock);
@@ -161,5 +165,46 @@ void main() {
 
     expect(await redirectFor(tester, AppRouter.home), AppRouter.chatUnlock);
     expect(await redirectFor(tester, AppRouter.chatUnlock), isNull);
+  });
+
+  testWidgets(
+      'the access screens that show a password or a key are private: '
+      'unlock, recovery, and the three Settings screens; the first run wraps '
+      'its own password and key steps', (tester) async {
+    await tester.pumpWidget(const Placeholder());
+    final context = tester.element(find.byType(Placeholder));
+    Widget built(String path) {
+      final route = router.configuration.routes
+          .whereType<GoRoute>()
+          .firstWhere((route) => route.path == path);
+      return route.builder!(
+        context,
+        GoRouterState(
+          router.configuration,
+          uri: Uri.parse(path),
+          matchedLocation: path,
+          fullPath: path,
+          pathParameters: const {},
+          pageKey: ValueKey(path),
+        ),
+      );
+    }
+
+    for (final path in [
+      AppRouter.chatUnlock,
+      AppRouter.recover,
+      AppRouter.settingsMasterPassword,
+      AppRouter.settingsRecoveryKey,
+      AppRouter.settingsSafePassword,
+    ]) {
+      expect(built(path), isA<SensitiveScreen>(), reason: path);
+    }
+    expect(built(AppRouter.setup), isA<MasterPasswordSetupPage>());
+    for (final path in [
+      AppRouter.settingsHowItWorks,
+      AppRouter.settingsLegal,
+    ]) {
+      expect(built(path), isNot(isA<SensitiveScreen>()), reason: path);
+    }
   });
 }

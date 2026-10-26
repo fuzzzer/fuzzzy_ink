@@ -1686,4 +1686,485 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get softSoundsLine => 'უხმო რეჟიმში არასდროს';
+
+  @override
+  String get accessWelcomeLine => 'ჩაკეტეთ. გახსნა მხოლოდ მას შეეძლება.';
+
+  @override
+  String get accessWelcomeTag =>
+      'ანგარიში არ სჭირდება · ინტერნეტში არაფერი გადის';
+
+  @override
+  String get accessStart => 'დაწყება';
+
+  @override
+  String get accessHowItWorks => 'როგორ მუშაობს';
+
+  @override
+  String get accessHowAddPerson => 'ადამიანის დამატება';
+
+  @override
+  String get accessHowLockForThem => 'ჩაკეტეთ მისთვის';
+
+  @override
+  String get accessHowTheyOpenOnce => 'ის ერთხელ ხსნის';
+
+  @override
+  String get accessWhyOnce => 'რატომ ერთხელ?';
+
+  @override
+  String get accessHowTip =>
+      'ყველაფერს ერთი მთავარი პაროლი იცავს. ახლა მას შექმნით.';
+
+  @override
+  String get accessContinue => 'გაგრძელება';
+
+  @override
+  String get accessStepPassword => 'პაროლი';
+
+  @override
+  String get accessMakeMasterPassword => 'შექმენით მთავარი პაროლი';
+
+  @override
+  String get accessTypeItAgain => 'კიდევ ერთხელ აკრიფეთ';
+
+  @override
+  String get accessNoResetBold => 'აღდგენა შეუძლებელია.';
+
+  @override
+  String get accessNoResetLine =>
+      'თუ მასაც დაკარგავთ და აღდგენის გასაღებსაც, ყველაფერი დაიკარგება.';
+
+  @override
+  String get accessUnderstandNoAccess =>
+      'გასაგებია: პაროლისა და გასაღების გარეშე წვდომა აღარ მექნება.';
+
+  @override
+  String get accessPasswordsDontMatch => 'ჯერ არ ემთხვევა.';
+
+  @override
+  String get accessStrengthWeak => 'სუსტი';
+
+  @override
+  String get accessStrengthFair => 'საშუალო';
+
+  @override
+  String get accessStrengthGood => 'კარგი';
+
+  @override
+  String get accessStrengthStrong => 'ძლიერი';
+
+  @override
+  String get accessStrengthHintEmpty => 'რჩევა: რამდენიმე შემთხვევითი სიტყვა.';
+
+  @override
+  String get accessStrengthHintWeak => 'გააგრძელეთ.';
+
+  @override
+  String get accessStrengthHintFair => 'დაამატეთ კიდევ რამდენიმე სიტყვა.';
+
+  @override
+  String get accessStrengthHintGood => 'ძნელად გამოსაცნობია.';
+
+  @override
+  String get accessStrengthHintStrong => 'ძალიან ძნელად გამოსაცნობია.';
+
+  @override
+  String accessStrengthLabel(String level) {
+    return 'პაროლის სიძლიერე: $level';
+  }
+
+  @override
+  String get accessShowPassword => 'პაროლის ჩვენება';
+
+  @override
+  String get accessHidePassword => 'პაროლის დამალვა';
+
+  @override
+  String get accessYourRecoveryKey => 'თქვენი აღდგენის გასაღები';
+
+  @override
+  String get accessRecoverySpare => 'სათადარიგო, თუ პაროლი დაგავიწყდათ.';
+
+  @override
+  String get accessPrint => 'ამობეჭდვა';
+
+  @override
+  String get accessSaveAsFile => 'ფაილად შენახვა';
+
+  @override
+  String get accessSaved => 'შენახულია';
+
+  @override
+  String get accessKeepOffPhone =>
+      'ამ ტელეფონზე ნუ შეინახავთ. ვისაც ის ექნება, ყველაფერს გახსნის.';
+
+  @override
+  String get accessKeptItSafe => 'უსაფრთხოდ შევინახე';
+
+  @override
+  String get accessSkipForNow => 'ახლა გამოტოვება';
+
+  @override
+  String get accessSkipKeyTitle => 'გამოვტოვოთ აღდგენის გასაღები?';
+
+  @override
+  String get accessSkipKeyMessage =>
+      'თუ მის გარეშე პაროლი დაგავიწყდებათ, ყველაფერი დაიკარგება. მოგვიანებით პარამეტრებში შექმნით.';
+
+  @override
+  String get accessSkipKeyKeep => 'ახლავე შენახვა';
+
+  @override
+  String get accessSkipKeyAnyway => 'მაინც გამოტოვება';
+
+  @override
+  String get accessPrintPreview => 'ბეჭდვის გადახედვა';
+
+  @override
+  String get accessPrintSheetTitle => 'Fuzzzy Ink · აღდგენის გასაღები';
+
+  @override
+  String get accessPrintLine1 =>
+      'თუ პაროლი დაგავიწყდათ, ხსნის Fuzzzy Ink-ს და ჩემს სეიფს.';
+
+  @override
+  String get accessPrintLine2 =>
+      'ვისაც ეს გასაღები და თქვენი ტელეფონი ექნება, ყველაფერს გახსნის. ტელეფონისგან შორს შეინახეთ.';
+
+  @override
+  String get accessPrintLine3 =>
+      'თუ პაროლსაც დაკარგავთ და ამ გასაღებსაც, ვერაფერს აღადგენთ.';
+
+  @override
+  String accessPrintMade(String date) {
+    return 'შექმნილია: $date. პარამეტრებიდან ახალი გასაღები ამას გააუქმებს.';
+  }
+
+  @override
+  String get accessPrintHint =>
+      'გაიხსნება გაზიარების მენიუ. იქ აირჩიეთ ამობეჭდვა.';
+
+  @override
+  String get accessPrintFailed =>
+      'ბეჭდვის ფურცელი ვერ შეიქმნა. სცადეთ ფაილად შენახვა.';
+
+  @override
+  String get accessStepQuickUnlock => 'სწრაფი განბლოკვა';
+
+  @override
+  String get accessBioTitle => 'გავხსნათ თითის ანაბეჭდით?';
+
+  @override
+  String get accessBioLine => 'პაროლიც ყოველთვის იმუშავებს.';
+
+  @override
+  String get accessBioTip => '5 წუთის უმოქმედობის შემდეგ თავისით იკეტება';
+
+  @override
+  String get accessUseBio => 'თითის ანაბეჭდი ან სახე';
+
+  @override
+  String get accessNotNow => 'ახლა არა';
+
+  @override
+  String get accessReadyTitle => 'მზად ხართ';
+
+  @override
+  String get accessAddFirstPerson => 'პირველი ადამიანის დამატება';
+
+  @override
+  String get accessLookAround => 'ჯერ მიმოვიხედავ';
+
+  @override
+  String get accessLockedTitle => 'Fuzzzy Ink ჩაკეტილია';
+
+  @override
+  String get accessWrongPassword => 'არასწორია. სცადეთ ხელახლა.';
+
+  @override
+  String get accessTooManyTries => 'ძალიან ბევრი ცდა.';
+
+  @override
+  String get accessForgotPassword => 'დაგავიწყდათ პაროლი?';
+
+  @override
+  String get accessLinkWaiting => 'ბმული გელოდებათ. გასახსნელად განბლოკეთ.';
+
+  @override
+  String get accessBioChanged =>
+      'თითის ანაბეჭდი ან სახე შეიცვალა, ამიტომ სწრაფი განბლოკვა გამოირთო. ხელახლა ჩართეთ პარამეტრებში.';
+
+  @override
+  String get accessBioReset =>
+      'განახლებამ სწრაფი განბლოკვა უსაფრთხოებისთვის გამორთო. ხელახლა ჩართეთ პარამეტრებში.';
+
+  @override
+  String get accessRecoveryKeyHeader => 'აღდგენის გასაღები';
+
+  @override
+  String get accessTypeRecoveryKey => 'შეიყვანეთ აღდგენის გასაღები';
+
+  @override
+  String get accessSpacesDontMatter =>
+      'ჰარებსა და დიდ ასოებს მნიშვნელობა არ აქვს.';
+
+  @override
+  String get accessNoKeyNothing =>
+      'გასაღები არ გაქვთ? მაშინ ამას ვერაფერი გახსნის.';
+
+  @override
+  String get accessKeyTooShort => 'აღდგენის გასაღებს 4-ნიშნიანი 8 ჯგუფი აქვს.';
+
+  @override
+  String get accessKeyDoesntMatch =>
+      'ეს გასაღები არ ემთხვევა. თითო ჯგუფი შეამოწმეთ.';
+
+  @override
+  String get accessNewMasterPassword => 'ახალი მთავარი პაროლი';
+
+  @override
+  String get accessKeyCheckedOnSave => 'გასაღები შენახვისას შემოწმდება.';
+
+  @override
+  String get accessSaveNewPassword => 'ახალი პაროლის შენახვა';
+
+  @override
+  String get accessNewPasswordSaved => 'ახალი მთავარი პაროლი შენახულია.';
+
+  @override
+  String get accessSettingsKeepingSafe => 'უსაფრთხოება';
+
+  @override
+  String get accessChangeIt => 'შეცვლა';
+
+  @override
+  String get accessMakeNewOne => 'ახლის შექმნა';
+
+  @override
+  String get accessNoKeyYet => 'ჯერ არ არის';
+
+  @override
+  String get accessFingerprintOrFace => 'თითის ანაბეჭდი ან სახე';
+
+  @override
+  String get accessNotOnThisDevice => 'ამ მოწყობილობაზე არ არის';
+
+  @override
+  String get accessLockTheApp => 'აპის ჩაკეტვა';
+
+  @override
+  String accessLockAfter(String time) {
+    return 'ავტომატურად: $time';
+  }
+
+  @override
+  String get accessLockNow => 'ახლავე ჩაკეტვა';
+
+  @override
+  String get accessLockAfterTitle => 'აპი ჩაიკეტოს';
+
+  @override
+  String get accessRightAway => 'მაშინვე';
+
+  @override
+  String get accessOneMinute => '1 წუთი';
+
+  @override
+  String get accessFiveMinutes => '5 წუთი';
+
+  @override
+  String get accessFifteenMinutes => '15 წუთი';
+
+  @override
+  String get accessOneHour => '1 საათი';
+
+  @override
+  String get accessRecommended => 'რეკომენდებული';
+
+  @override
+  String get accessOpensWith => 'იხსნება';
+
+  @override
+  String get accessItsOwnPassword => 'საკუთარი პაროლი';
+
+  @override
+  String get accessCopyPasswords => 'პაროლების კოპირება';
+
+  @override
+  String get accessClearsAfter30 => '30 წამში იშლება';
+
+  @override
+  String get accessOff => 'გამორთულია';
+
+  @override
+  String get accessSoftSoundsSoon => 'მომავალ განახლებაში';
+
+  @override
+  String get accessHelp => 'დახმარება';
+
+  @override
+  String get accessHowFuzzzyInkWorks => 'როგორ მუშაობს Fuzzzy Ink';
+
+  @override
+  String get accessPrivacyTermsSupport =>
+      'კონფიდენციალურობა, პირობები და დახმარება';
+
+  @override
+  String get accessOpensYourBrowser => 'ბრაუზერში იხსნება';
+
+  @override
+  String get accessBrowserTip =>
+      'ბრაუზერში იხსნება. თავად აპი ინტერნეტში არასდროს გადის.';
+
+  @override
+  String get accessDeveloper => 'დეველოპერი';
+
+  @override
+  String accessVersionFooter(String version, String build) {
+    return 'Fuzzzy Ink · ვერსია $version (build $build)';
+  }
+
+  @override
+  String get accessTurnOnBioTitle => 'თითის ანაბეჭდის ან სახის ჩართვა';
+
+  @override
+  String get accessTurnOnBioLine => 'ერთხელ აკრიფეთ მთავარი პაროლი.';
+
+  @override
+  String get accessTurnOnSafeBioTitle => 'თითის ანაბეჭდი ჩემი სეიფისთვის';
+
+  @override
+  String get accessTurnOnSafeBioLine => 'ერთხელ აკრიფეთ ჩემი სეიფის პაროლი.';
+
+  @override
+  String get accessTurnOn => 'ჩართვა';
+
+  @override
+  String get accessBioOn => 'თითის ანაბეჭდი ან სახე ჩართულია.';
+
+  @override
+  String get accessMySafePassword => 'ჩემი სეიფის პაროლი';
+
+  @override
+  String get accessChangeMasterPassword => 'მთავარი პაროლის შეცვლა';
+
+  @override
+  String get accessCurrentPassword => 'ამჟამინდელი პაროლი';
+
+  @override
+  String get accessNewPassword => 'ახალი პაროლი';
+
+  @override
+  String get accessRecoveryKeepsWorking => 'აღდგენის გასაღები ისევ იმუშავებს.';
+
+  @override
+  String get accessChangePassword => 'პაროლის შეცვლა';
+
+  @override
+  String get accessMasterPasswordChanged => 'მთავარი პაროლი შეიცვალა.';
+
+  @override
+  String get accessMakeNewKey => 'ახალი გასაღების შექმნა';
+
+  @override
+  String get accessOldKeyStops => 'ძველი გასაღები აღარ იმუშავებს.';
+
+  @override
+  String get accessSafePasswordToo =>
+      'ჩემს სეიფს საკუთარი პაროლი აქვს. ისიც აკრიფეთ, რომ ახალმა გასაღებმა სეიფიც გახსნას.';
+
+  @override
+  String get accessYourNewKey => 'თქვენი ახალი გასაღები';
+
+  @override
+  String get accessNoPasswordNoKey =>
+      'პაროლისა და გასაღების გარეშე წვდომა არ იქნება.';
+
+  @override
+  String get accessNewKeyKept => 'ახალი აღდგენის გასაღები დაყენებულია.';
+
+  @override
+  String get accessSafeOpensWith => 'ჩემი სეიფი იხსნება';
+
+  @override
+  String get accessSimplestRecommended => 'ყველაზე მარტივი. რეკომენდებული.';
+
+  @override
+  String get accessOneMoreToRemember => 'კიდევ ერთი დასამახსოვრებელი';
+
+  @override
+  String get accessSafePassword => 'სეიფის პაროლი';
+
+  @override
+  String get accessSaveSafePassword => 'სეიფის პაროლის შენახვა';
+
+  @override
+  String get accessSafeHasOwnPassword =>
+      'ახლა ჩემს სეიფს საკუთარი პაროლი აქვს.';
+
+  @override
+  String get accessUseMasterPassword => 'მთავარი პაროლის გამოყენება';
+
+  @override
+  String get accessSafeUsesMaster => 'ჩემი სეიფი ისევ მთავარი პაროლით იხსნება.';
+
+  @override
+  String get accessSafeNotMadeYet =>
+      'ჩემი სეიფი ჯერ არ შექმნილა. ერთხელ გახსენით მისი ჩანართიდან.';
+
+  @override
+  String get accessMasterPasswordToConfirm => 'დასადასტურებლად მთავარი პაროლი';
+
+  @override
+  String get accessHowOnceTitle => 'ყოველი რამ ერთხელ იხსნება';
+
+  @override
+  String get accessHowOnceBody =>
+      'გახსნისას გასაღები იხარჯება. ასლი ისტორიაში რჩება.';
+
+  @override
+  String get accessHowHistoryTitle => 'ისტორია ამ ტელეფონზე რჩება';
+
+  @override
+  String get accessHowHistoryBody =>
+      'მთავარი პაროლით არის ჩაკეტილი. ახალი ტელეფონი მას ვერ წაიკითხავს. ასლისთვის ადამიანის ისტორია ფაილად შეინახეთ.';
+
+  @override
+  String get accessHowOrderTitle => 'გახსენით თანმიმდევრობით';
+
+  @override
+  String get accessHowOrderBody =>
+      'ძალიან ძველი შეტყობინება შეიძლება ვეღარ გაიხსნას. მაშინ სთხოვეთ, თავიდან ჩაკეტოს.';
+
+  @override
+  String get accessHowCheckTitle => 'ადამიანის შემოწმება';
+
+  @override
+  String get accessHowCheckBody =>
+      'ორივე ტელეფონზე ერთნაირი ციფრები: შუაში არავინ ჩამდგარა. „შემოწმებულია“ თქვენი საკუთარი ჩანიშვნაა.';
+
+  @override
+  String get accessHowLinksTitle => 'ბმულები';
+
+  @override
+  String get accessHowLinksBody =>
+      'რაც # ნიშნის შემდეგ წერია, ჩვენს საიტამდე არასდროს მიდის.';
+
+  @override
+  String get accessHowFilesTitle => 'ფაილები, რომლებსაც ინახავთ';
+
+  @override
+  String get accessHowFilesBody =>
+      'აპი მხოლოდ ჩაკეტილ ფაილებს ინახავს. შენახული ასლის დაცვა თქვენზეა.';
+
+  @override
+  String get accessHowHoodTitle => 'როგორ არის აწყობილი';
+
+  @override
+  String get accessHowHoodBody =>
+      'შეტყობინებები იყენებს Olm double ratchet-ს (vodozemac, დამოუკიდებლად შემოწმებული): ყოველ შეტყობინებას ახალი გასაღები აქვს. ფაილები ნაწილებად იკეტება XChaCha20-Poly1305-ით. პაროლები Argon2id-ით მუშავდება. გასაღებები აპის შიდა ბირთვშია და არსად იგზავნება.';
+
+  @override
+  String get accessMoreAboutEncryption => 'მეტი ტექნიკური დეტალი';
 }

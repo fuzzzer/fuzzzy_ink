@@ -3119,6 +3119,894 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Never on silent'**
   String get softSoundsLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock it. Only they can open it.'**
+  String get accessWelcomeLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts · nothing goes online'**
+  String get accessWelcomeTag;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get accessStart;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get accessHowItWorks;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person'**
+  String get accessHowAddPerson;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for them'**
+  String get accessHowLockForThem;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They open it, once'**
+  String get accessHowTheyOpenOnce;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why once?'**
+  String get accessWhyOnce;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One master password guards it all. You make it next.'**
+  String get accessHowTip;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accessContinue;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accessStepPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a master password'**
+  String get accessMakeMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type it again'**
+  String get accessTypeItAgain;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No reset.'**
+  String get accessNoResetBold;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose it and your recovery key, and everything is gone.'**
+  String get accessNoResetLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I understand: no password and no key means no access.'**
+  String get accessUnderstandNoAccess;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They don\'t match yet.'**
+  String get accessPasswordsDontMatch;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get accessStrengthWeak;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get accessStrengthFair;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get accessStrengthGood;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get accessStrengthStrong;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: a few random words.'**
+  String get accessStrengthHintEmpty;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make it longer.'**
+  String get accessStrengthHintWeak;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few more words.'**
+  String get accessStrengthHintFair;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Hard to guess.'**
+  String get accessStrengthHintGood;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Very hard to guess.'**
+  String get accessStrengthHintStrong;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password strength: {level}'**
+  String accessStrengthLabel(String level);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get accessShowPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get accessHidePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key'**
+  String get accessYourRecoveryKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare, if you forget the password.'**
+  String get accessRecoverySpare;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get accessPrint;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save as file'**
+  String get accessSaveAsFile;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get accessSaved;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it off this phone. Anyone with it can open everything.'**
+  String get accessKeepOffPhone;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve kept it safe'**
+  String get accessKeptItSafe;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get accessSkipForNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the recovery key?'**
+  String get accessSkipKeyTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forget your password without it, and everything is lost. You can make one later in Settings.'**
+  String get accessSkipKeyMessage;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it now'**
+  String get accessSkipKeyKeep;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip anyway'**
+  String get accessSkipKeyAnyway;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print preview'**
+  String get accessPrintPreview;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink · recovery key'**
+  String get accessPrintSheetTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens Fuzzzy Ink and My safe if you forget your password.'**
+  String get accessPrintLine1;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this key and your phone can open everything. Keep it away from your phone.'**
+  String get accessPrintLine2;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose your password and this key, and nothing can be recovered.'**
+  String get accessPrintLine3;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Made {date}. A new key from Settings stops this one.'**
+  String accessPrintMade(String date);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone\'s share menu opens. Choose Print there.'**
+  String get accessPrintHint;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The print sheet could not be made. Try Save as file.'**
+  String get accessPrintFailed;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Quick unlock'**
+  String get accessStepQuickUnlock;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with your fingerprint?'**
+  String get accessBioTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your password always works too.'**
+  String get accessBioLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locks itself after 5 minutes away'**
+  String get accessBioTip;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or face'**
+  String get accessUseBio;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get accessNotNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re ready'**
+  String get accessReadyTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first person'**
+  String get accessAddFirstPerson;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look around first'**
+  String get accessLookAround;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink is locked'**
+  String get accessLockedTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not right. Try again.'**
+  String get accessWrongPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries.'**
+  String get accessTooManyTries;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your password?'**
+  String get accessForgotPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A link is waiting. Unlock to open it.'**
+  String get accessLinkWaiting;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.'**
+  String get accessBioChanged;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'An update turned quick unlock off to make it safer. Turn it on again in Settings.'**
+  String get accessBioReset;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get accessRecoveryKeyHeader;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your recovery key'**
+  String get accessTypeRecoveryKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and capitals don\'t matter.'**
+  String get accessSpacesDontMatter;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No key? Then nothing can open it.'**
+  String get accessNoKeyNothing;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A recovery key has 8 groups of 4.'**
+  String get accessKeyTooShort;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That key doesn\'t match. Check each group.'**
+  String get accessKeyDoesntMatch;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New master password'**
+  String get accessNewMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your key is checked when you save.'**
+  String get accessKeyCheckedOnSave;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save new password'**
+  String get accessSaveNewPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New master password saved.'**
+  String get accessNewPasswordSaved;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping it safe'**
+  String get accessSettingsKeepingSafe;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change it'**
+  String get accessChangeIt;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a new one'**
+  String get accessMakeNewOne;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'None yet'**
+  String get accessNoKeyYet;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint or face'**
+  String get accessFingerprintOrFace;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not on this device'**
+  String get accessNotOnThisDevice;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the app'**
+  String get accessLockTheApp;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'After {time}'**
+  String accessLockAfter(String time);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock now'**
+  String get accessLockNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the app after'**
+  String get accessLockAfterTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Right away'**
+  String get accessRightAway;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute'**
+  String get accessOneMinute;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'5 minutes'**
+  String get accessFiveMinutes;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'15 minutes'**
+  String get accessFifteenMinutes;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get accessOneHour;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'recommended'**
+  String get accessRecommended;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with'**
+  String get accessOpensWith;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Its own password'**
+  String get accessItsOwnPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy passwords'**
+  String get accessCopyPasswords;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Clears after 30 seconds'**
+  String get accessClearsAfter30;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get accessOff;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Coming in an update'**
+  String get accessSoftSoundsSoon;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get accessHelp;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How Fuzzzy Ink works'**
+  String get accessHowFuzzzyInkWorks;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy, terms and support'**
+  String get accessPrivacyTermsSupport;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your browser'**
+  String get accessOpensYourBrowser;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your browser. The app itself never goes online.'**
+  String get accessBrowserTip;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get accessDeveloper;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink · version {version} (build {build})'**
+  String accessVersionFooter(String version, String build);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on fingerprint or face'**
+  String get accessTurnOnBioTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your master password once.'**
+  String get accessTurnOnBioLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint for My safe'**
+  String get accessTurnOnSafeBioTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type My safe\'s own password once.'**
+  String get accessTurnOnSafeBioLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get accessTurnOn;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint or face is on.'**
+  String get accessBioOn;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe\'s password'**
+  String get accessMySafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change master password'**
+  String get accessChangeMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get accessCurrentPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get accessNewPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key keeps working.'**
+  String get accessRecoveryKeepsWorking;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get accessChangePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Master password changed.'**
+  String get accessMasterPasswordChanged;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a new key'**
+  String get accessMakeNewKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The old key stops working.'**
+  String get accessOldKeyStops;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe has its own password. Type it too, so the new key opens My safe.'**
+  String get accessSafePasswordToo;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your new key'**
+  String get accessYourNewKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No password and no key means no access.'**
+  String get accessNoPasswordNoKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your new recovery key is set.'**
+  String get accessNewKeyKept;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe opens with'**
+  String get accessSafeOpensWith;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Simplest. Recommended.'**
+  String get accessSimplestRecommended;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One more to remember'**
+  String get accessOneMoreToRemember;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe password'**
+  String get accessSafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save safe password'**
+  String get accessSaveSafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe now has its own password.'**
+  String get accessSafeHasOwnPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Use master password'**
+  String get accessUseMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe opens with your master password again.'**
+  String get accessSafeUsesMaster;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe isn\'t made yet. Open it once from its tab.'**
+  String get accessSafeNotMadeYet;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your master password, to confirm'**
+  String get accessMasterPasswordToConfirm;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each thing opens once'**
+  String get accessHowOnceTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening uses its key up. A copy stays in your history.'**
+  String get accessHowOnceBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History stays on this phone'**
+  String get accessHowHistoryTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with your master password. A new phone can\'t read it. Save a person\'s history as a file to keep a copy.'**
+  String get accessHowHistoryBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open things in order'**
+  String get accessHowOrderTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A very old message may be too old to open. Then ask them to lock it again.'**
+  String get accessHowOrderBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Checking a person'**
+  String get accessHowCheckTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers on both phones: nobody got in between. \"Checked\" is your own note.'**
+  String get accessHowCheckBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get accessHowLinksTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What comes after the # never reaches our website.'**
+  String get accessHowLinksBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Files you save'**
+  String get accessHowFilesTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The app keeps only locked files. A saved copy is yours to protect.'**
+  String get accessHowFilesBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Under the hood'**
+  String get accessHowHoodTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Messages use the Olm double ratchet (vodozemac, independently audited): a new key for every message. Files are sealed with XChaCha20-Poly1305 in pieces. Passwords go through Argon2id. Keys live in the app\'s native core and are never sent anywhere.'**
+  String get accessHowHoodBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More about encryption'**
+  String get accessMoreAboutEncryption;
 }
 
 class _FuzzzyInkLocalizationsDelegate

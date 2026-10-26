@@ -1415,5 +1415,620 @@
   "softSoundsLine": "Never on silent",
   "@softSoundsLine": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "accessWelcomeLine": "Lock it. Only they can open it.",
+  "@accessWelcomeLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWelcomeTag": "No accounts · nothing goes online",
+  "@accessWelcomeTag": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStart": "Start",
+  "@accessStart": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowItWorks": "How it works",
+  "@accessHowItWorks": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowAddPerson": "Add a person",
+  "@accessHowAddPerson": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLockForThem": "Lock for them",
+  "@accessHowLockForThem": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowTheyOpenOnce": "They open it, once",
+  "@accessHowTheyOpenOnce": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWhyOnce": "Why once?",
+  "@accessWhyOnce": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowTip": "One master password guards it all. You make it next.",
+  "@accessHowTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessContinue": "Continue",
+  "@accessContinue": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStepPassword": "Password",
+  "@accessStepPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeMasterPassword": "Make a master password",
+  "@accessMakeMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTypeItAgain": "Type it again",
+  "@accessTypeItAgain": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoResetBold": "No reset.",
+  "@accessNoResetBold": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoResetLine": "Lose it and your recovery key, and everything is gone.",
+  "@accessNoResetLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessUnderstandNoAccess": "I understand: no password and no key means no access.",
+  "@accessUnderstandNoAccess": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPasswordsDontMatch": "They don't match yet.",
+  "@accessPasswordsDontMatch": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthWeak": "Weak",
+  "@accessStrengthWeak": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthFair": "Fair",
+  "@accessStrengthFair": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthGood": "Good",
+  "@accessStrengthGood": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthStrong": "Strong",
+  "@accessStrengthStrong": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintEmpty": "Tip: a few random words.",
+  "@accessStrengthHintEmpty": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintWeak": "Make it longer.",
+  "@accessStrengthHintWeak": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintFair": "Add a few more words.",
+  "@accessStrengthHintFair": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintGood": "Hard to guess.",
+  "@accessStrengthHintGood": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintStrong": "Very hard to guess.",
+  "@accessStrengthHintStrong": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthLabel": "Password strength: {level}",
+  "@accessStrengthLabel": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "accessShowPassword": "Show password",
+  "@accessShowPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHidePassword": "Hide password",
+  "@accessHidePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessYourRecoveryKey": "Your recovery key",
+  "@accessYourRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoverySpare": "Your spare, if you forget the password.",
+  "@accessRecoverySpare": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrint": "Print",
+  "@accessPrint": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaveAsFile": "Save as file",
+  "@accessSaveAsFile": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaved": "Saved",
+  "@accessSaved": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeepOffPhone": "Keep it off this phone. Anyone with it can open everything.",
+  "@accessKeepOffPhone": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeptItSafe": "I've kept it safe",
+  "@accessKeptItSafe": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipForNow": "Skip for now",
+  "@accessSkipForNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyTitle": "Skip the recovery key?",
+  "@accessSkipKeyTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyMessage": "Forget your password without it, and everything is lost. You can make one later in Settings.",
+  "@accessSkipKeyMessage": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyKeep": "Keep it now",
+  "@accessSkipKeyKeep": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyAnyway": "Skip anyway",
+  "@accessSkipKeyAnyway": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintPreview": "Print preview",
+  "@accessPrintPreview": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintSheetTitle": "Fuzzzy Ink · recovery key",
+  "@accessPrintSheetTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine1": "Opens Fuzzzy Ink and My safe if you forget your password.",
+  "@accessPrintLine1": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine2": "Anyone with this key and your phone can open everything. Keep it away from your phone.",
+  "@accessPrintLine2": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine3": "Lose your password and this key, and nothing can be recovered.",
+  "@accessPrintLine3": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintMade": "Made {date}. A new key from Settings stops this one.",
+  "@accessPrintMade": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "accessPrintHint": "Your phone's share menu opens. Choose Print there.",
+  "@accessPrintHint": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintFailed": "The print sheet could not be made. Try Save as file.",
+  "@accessPrintFailed": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStepQuickUnlock": "Quick unlock",
+  "@accessStepQuickUnlock": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioTitle": "Unlock with your fingerprint?",
+  "@accessBioTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioLine": "Your password always works too.",
+  "@accessBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioTip": "Locks itself after 5 minutes away",
+  "@accessBioTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessUseBio": "Use fingerprint or face",
+  "@accessUseBio": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNotNow": "Not now",
+  "@accessNotNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessReadyTitle": "You're ready",
+  "@accessReadyTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessAddFirstPerson": "Add your first person",
+  "@accessAddFirstPerson": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLookAround": "Look around first",
+  "@accessLookAround": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockedTitle": "Fuzzzy Ink is locked",
+  "@accessLockedTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWrongPassword": "Not right. Try again.",
+  "@accessWrongPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTooManyTries": "Too many tries.",
+  "@accessTooManyTries": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessForgotPassword": "Forgot your password?",
+  "@accessForgotPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLinkWaiting": "A link is waiting. Unlock to open it.",
+  "@accessLinkWaiting": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioChanged": "Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.",
+  "@accessBioChanged": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioReset": "An update turned quick unlock off to make it safer. Turn it on again in Settings.",
+  "@accessBioReset": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoveryKeyHeader": "Recovery key",
+  "@accessRecoveryKeyHeader": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTypeRecoveryKey": "Type your recovery key",
+  "@accessTypeRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSpacesDontMatter": "Spaces and capitals don't matter.",
+  "@accessSpacesDontMatter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoKeyNothing": "No key? Then nothing can open it.",
+  "@accessNoKeyNothing": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyTooShort": "A recovery key has 8 groups of 4.",
+  "@accessKeyTooShort": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyDoesntMatch": "That key doesn't match. Check each group.",
+  "@accessKeyDoesntMatch": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewMasterPassword": "New master password",
+  "@accessNewMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyCheckedOnSave": "Your key is checked when you save.",
+  "@accessKeyCheckedOnSave": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaveNewPassword": "Save new password",
+  "@accessSaveNewPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewPasswordSaved": "New master password saved.",
+  "@accessNewPasswordSaved": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSettingsKeepingSafe": "Keeping it safe",
+  "@accessSettingsKeepingSafe": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangeIt": "Change it",
+  "@accessChangeIt": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeNewOne": "Make a new one",
+  "@accessMakeNewOne": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoKeyYet": "None yet",
+  "@accessNoKeyYet": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFingerprintOrFace": "Fingerprint or face",
+  "@accessFingerprintOrFace": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNotOnThisDevice": "Not on this device",
+  "@accessNotOnThisDevice": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockTheApp": "Lock the app",
+  "@accessLockTheApp": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockAfter": "After {time}",
+  "@accessLockAfter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "accessLockNow": "Lock now",
+  "@accessLockNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockAfterTitle": "Lock the app after",
+  "@accessLockAfterTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRightAway": "Right away",
+  "@accessRightAway": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneMinute": "1 minute",
+  "@accessOneMinute": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFiveMinutes": "5 minutes",
+  "@accessFiveMinutes": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFifteenMinutes": "15 minutes",
+  "@accessFifteenMinutes": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneHour": "1 hour",
+  "@accessOneHour": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecommended": "recommended",
+  "@accessRecommended": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOpensWith": "Opens with",
+  "@accessOpensWith": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessItsOwnPassword": "Its own password",
+  "@accessItsOwnPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessCopyPasswords": "Copy passwords",
+  "@accessCopyPasswords": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessClearsAfter30": "Clears after 30 seconds",
+  "@accessClearsAfter30": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOff": "Off",
+  "@accessOff": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSoftSoundsSoon": "Coming in an update",
+  "@accessSoftSoundsSoon": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHelp": "Help",
+  "@accessHelp": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFuzzzyInkWorks": "How Fuzzzy Ink works",
+  "@accessHowFuzzzyInkWorks": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrivacyTermsSupport": "Privacy, terms and support",
+  "@accessPrivacyTermsSupport": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOpensYourBrowser": "Opens your browser",
+  "@accessOpensYourBrowser": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBrowserTip": "Opens your browser. The app itself never goes online.",
+  "@accessBrowserTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessDeveloper": "Developer",
+  "@accessDeveloper": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessVersionFooter": "Fuzzzy Ink · version {version} (build {build})",
+  "@accessVersionFooter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "accessTurnOnBioTitle": "Turn on fingerprint or face",
+  "@accessTurnOnBioTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOnBioLine": "Type your master password once.",
+  "@accessTurnOnBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOnSafeBioTitle": "Fingerprint for My safe",
+  "@accessTurnOnSafeBioTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOnSafeBioLine": "Type My safe's own password once.",
+  "@accessTurnOnSafeBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOn": "Turn on",
+  "@accessTurnOn": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioOn": "Fingerprint or face is on.",
+  "@accessBioOn": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMySafePassword": "My safe's password",
+  "@accessMySafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangeMasterPassword": "Change master password",
+  "@accessChangeMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessCurrentPassword": "Current password",
+  "@accessCurrentPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewPassword": "New password",
+  "@accessNewPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoveryKeepsWorking": "Your recovery key keeps working.",
+  "@accessRecoveryKeepsWorking": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangePassword": "Change password",
+  "@accessChangePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMasterPasswordChanged": "Master password changed.",
+  "@accessMasterPasswordChanged": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeNewKey": "Make a new key",
+  "@accessMakeNewKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOldKeyStops": "The old key stops working.",
+  "@accessOldKeyStops": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafePasswordToo": "My safe has its own password. Type it too, so the new key opens My safe.",
+  "@accessSafePasswordToo": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessYourNewKey": "Your new key",
+  "@accessYourNewKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoPasswordNoKey": "No password and no key means no access.",
+  "@accessNoPasswordNoKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewKeyKept": "Your new recovery key is set.",
+  "@accessNewKeyKept": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeOpensWith": "My safe opens with",
+  "@accessSafeOpensWith": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSimplestRecommended": "Simplest. Recommended.",
+  "@accessSimplestRecommended": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneMoreToRemember": "One more to remember",
+  "@accessOneMoreToRemember": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafePassword": "Safe password",
+  "@accessSafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaveSafePassword": "Save safe password",
+  "@accessSaveSafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeHasOwnPassword": "My safe now has its own password.",
+  "@accessSafeHasOwnPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessUseMasterPassword": "Use master password",
+  "@accessUseMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeUsesMaster": "My safe opens with your master password again.",
+  "@accessSafeUsesMaster": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeNotMadeYet": "My safe isn't made yet. Open it once from its tab.",
+  "@accessSafeNotMadeYet": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMasterPasswordToConfirm": "Your master password, to confirm",
+  "@accessMasterPasswordToConfirm": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOnceTitle": "Each thing opens once",
+  "@accessHowOnceTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOnceBody": "Opening uses its key up. A copy stays in your history.",
+  "@accessHowOnceBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHistoryTitle": "History stays on this phone",
+  "@accessHowHistoryTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHistoryBody": "Locked with your master password. A new phone can't read it. Save a person's history as a file to keep a copy.",
+  "@accessHowHistoryBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOrderTitle": "Open things in order",
+  "@accessHowOrderTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOrderBody": "A very old message may be too old to open. Then ask them to lock it again.",
+  "@accessHowOrderBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowCheckTitle": "Checking a person",
+  "@accessHowCheckTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowCheckBody": "Same numbers on both phones: nobody got in between. \"Checked\" is your own note.",
+  "@accessHowCheckBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLinksTitle": "Links",
+  "@accessHowLinksTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLinksBody": "What comes after the # never reaches our website.",
+  "@accessHowLinksBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFilesTitle": "Files you save",
+  "@accessHowFilesTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFilesBody": "The app keeps only locked files. A saved copy is yours to protect.",
+  "@accessHowFilesBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHoodTitle": "Under the hood",
+  "@accessHowHoodTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHoodBody": "Messages use the Olm double ratchet (vodozemac, independently audited): a new key for every message. Files are sealed with XChaCha20-Poly1305 in pieces. Passwords go through Argon2id. Keys live in the app's native core and are never sent anywhere.",
+  "@accessHowHoodBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMoreAboutEncryption": "More about encryption",
+  "@accessMoreAboutEncryption": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
   }
 }

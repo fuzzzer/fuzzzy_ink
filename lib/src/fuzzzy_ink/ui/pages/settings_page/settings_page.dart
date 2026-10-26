@@ -2,23 +2,47 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_ink/lib.dart';
+import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 export 'widgets/widgets.dart';
 
-class SettingsPage extends StatefulWidget {
+/// The Settings tab (DESIGN.md sections 2 and 4.12, prototype `settings`):
+/// Keeping it safe · My safe · Fuzzzy Cast · Look and language · Help ·
+/// Developer (development builds only) · the app version. Rows: an icon, a
+/// title, at most a short subtitle, a chevron or a switch.
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider<FuzzyUserAuthPreferencesCubit>(
+      create: (_) => FuzzyUserAuthPreferencesCubit(
+        chatAuthRepository: sl.get<ChatAuthRepository>(),
+        fuzzyAuthStore: context.read<FuzzyAuthStore>(),
+        biometricAuthRepository: sl.get<BiometricAuthRepository>(),
+        passwordStrengthService: sl.get<PasswordStrengthService>(),
+        vaultRepository: sl.get<VaultRepository>(),
+      )..loadRecoveryKeyStatus(),
+      child: const SettingsView(),
+    );
+  }
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+/// The tab's content, below a [FuzzyUserAuthPreferencesCubit].
+class SettingsView extends StatefulWidget {
+  const SettingsView({super.key});
+
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> {
   late final FileBenchmarkCubit? _fileBenchmarkCubit;
   final PackageInfo _packageInfo = sl.get<PackageInfo>();
+  bool? _canUseBiometrics;
 
   @override
   void initState() {
@@ -26,6 +50,12 @@ class _SettingsPageState extends State<SettingsPage> {
     _fileBenchmarkCubit = isFileBenchmarkEnabled
         ? FileBenchmarkCubit(cryptoCoreService: sl.get<CryptoCoreService>())
         : null;
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    final canUse = await sl.get<BiometricAuthRepository>().canUseBiometrics();
+    if (mounted) setState(() => _canUseBiometrics = canUse);
   }
 
   @override
@@ -74,18 +104,14 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextButton.styleFrom(
                 foregroundColor: context.fuzzzyColors.focus,
               ),
-              child: Text(
-                localizations.copy,
-              ),
+              child: Text(localizations.copy),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
                 foregroundColor: context.fuzzzyColors.focus,
               ),
-              child: Text(
-                localizations.close,
-              ),
+              child: Text(localizations.close),
             ),
           ],
         );
@@ -93,256 +119,116 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> _openExternalLink(Uri uri) async {
-    final isOpened = await ExternalLinks.open(uri);
-    if (isOpened || !mounted) return;
-    FuzzzyToast.show(
-      context,
-      message: context.fuzzzyInkLocalizations.couldNotOpenLink,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final fuzzzyColors = context.fuzzzyColors;
-    final fuzzzyTextStyles = context.fuzzzyTextStyles;
     final localizations = context.fuzzzyInkLocalizations;
-
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
     final fileBenchmarkCubit = _fileBenchmarkCubit;
 
-    return FuzzyScaffold(
-      // A tab now: the bottom bar is the way out.
-      hasAutomaticBackButton: false,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: FuzzzyAppBar(
-              title: localizations.settings,
+    return ColoredBox(
+      color: colors.ground,
+      child: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          key: const Key('settings.scroll'),
+          slivers: [
+            SliverToBoxAdapter(
+              child:
+                  FuzzzyAppBar(qaId: 'settings', title: localizations.settings),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    localizations.copyPolicyTitle,
-                    style: fuzzzyTextStyles.titleM.copyWith(
-                      color: fuzzzyColors.ink,
-                      fontWeight: FontWeight.bold,
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: space.l),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AccessPage.maxContentWidth,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SettingsKeepingSafeSection(
+                          canUseBiometrics: _canUseBiometrics,
+                        ),
+                        SettingsMySafeSection(
+                          canUseBiometrics: _canUseBiometrics,
+                        ),
+                        const SettingsFuzzzyCastSection(),
+                        const SettingsLookAndLanguageSection(),
+                        SettingsSectionLabel(localizations.accessHelp),
+                        FuzzzyListTile(
+                          qaId: 'settings.howItWorks',
+                          leading: const SettingsRowIcon(Icons.help_outline),
+                          title: SettingsRowText(
+                            title: localizations.accessHowFuzzzyInkWorks,
+                          ),
+                          chevron: true,
+                          onTap: () =>
+                              context.push(AppRouter.settingsHowItWorks),
+                        ),
+                        FuzzzyListTile(
+                          qaId: 'settings.legal',
+                          leading: const SettingsRowIcon(Icons.public),
+                          title: SettingsRowText(
+                            title: localizations.accessPrivacyTermsSupport,
+                            subtitle: localizations.accessOpensYourBrowser,
+                          ),
+                          chevron: true,
+                          divider: fileBenchmarkCubit != null,
+                          onTap: () => context.push(AppRouter.settingsLegal),
+                        ),
+                        if (fileBenchmarkCubit != null) ...[
+                          SettingsSectionLabel(localizations.accessDeveloper),
+                          BlocConsumer<FileBenchmarkCubit, FileBenchmarkState>(
+                            bloc: fileBenchmarkCubit,
+                            listenWhen: (previous, current) =>
+                                previous.status != current.status,
+                            listener: (context, state) {
+                              if (state.status.isSuccess) {
+                                _showBenchmarkResult(state.result!);
+                              } else if (state.status.isFailed) {
+                                showInkToast(
+                                  context,
+                                  message: localizations.anUnknownErrorOccurred,
+                                  kind: FuzzzyToastKind.error,
+                                );
+                              }
+                            },
+                            builder: (context, state) => FuzzzyListTile(
+                              qaId: 'settings.benchmark',
+                              leading: const SettingsRowIcon(Icons.speed),
+                              title: SettingsRowText(
+                                title: localizations.benchmarkFileEncryption,
+                                subtitle: state.status.isLoading
+                                    ? localizations.loading
+                                    : localizations
+                                        .benchmarkFileEncryptionDescription,
+                              ),
+                              divider: false,
+                              onTap: state.status.isLoading
+                                  ? null
+                                  : fileBenchmarkCubit.run,
+                            ),
+                          ),
+                        ],
+                        SizedBox(height: space.xl),
+                        Text(
+                          localizations.accessVersionFooter(
+                            _packageInfo.version,
+                            _packageInfo.buildNumber,
+                          ),
+                          key: const Key('settings.version'),
+                          textAlign: TextAlign.center,
+                          style: context.fuzzzyTextStyles.bodyS
+                              .copyWith(color: colors.inkMute),
+                        ),
+                        SizedBox(height: space.xl),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    localizations.copyPolicyDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: fuzzzyColors.inkMute,
-                    ),
-                  ),
-                  if (allowVaultPasswordCopy) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      localizations.copyPolicyVaultPasswordNote(
-                        CopyPolicy.vaultPasswordClearAfter.inSeconds,
-                      ),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: fuzzzyColors.inkMute,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 32),
-                  _SettingsLinkTile(
-                    icon: Icons.shield_outlined,
-                    title: localizations.chatAuthentication,
-                    subtitle: localizations.chatAuthenticationDescription,
-                    onTap: () => context.push(AppRouter.auth),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsLinkTile(
-                    icon: Icons.lock_clock,
-                    title: localizations.aboutEncryptionTitle,
-                    subtitle: localizations.aboutEncryptionDescription,
-                    onTap: () => context.push(AppRouter.aboutEncryption),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  if (fileBenchmarkCubit != null) ...[
-                    const SizedBox(height: 12),
-                    BlocConsumer<FileBenchmarkCubit, FileBenchmarkState>(
-                      bloc: fileBenchmarkCubit,
-                      listenWhen: (previous, current) =>
-                          previous.status != current.status,
-                      listener: (context, state) {
-                        if (state.status.isSuccess) {
-                          _showBenchmarkResult(state.result!);
-                        } else if (state.status.isFailed) {
-                          FuzzzyToast.show(
-                            context,
-                            message: localizations.anUnknownErrorOccurred,
-                          );
-                        }
-                      },
-                      builder: (context, state) => _SettingsLinkTile(
-                        icon: Icons.speed,
-                        title: localizations.benchmarkFileEncryption,
-                        subtitle: state.status.isLoading
-                            ? localizations.loading
-                            : localizations.benchmarkFileEncryptionDescription,
-                        onTap: fileBenchmarkCubit.run,
-                        fuzzzyColors: fuzzzyColors,
-                        fuzzzyTextStyles: fuzzzyTextStyles,
-                      ),
-                    ),
-                  ],
-                  const SettingsFuzzzyCastSection(),
-                  const SettingsLookAndLanguageSection(),
-                  const SizedBox(height: 32),
-                  Text(
-                    localizations.legalAndSupport,
-                    style: fuzzzyTextStyles.titleM.copyWith(
-                      color: fuzzzyColors.ink,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    localizations.legalAndSupportDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: fuzzzyColors.inkMute,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _SettingsLinkTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: localizations.privacyPolicy,
-                    subtitle: localizations.privacyPolicyDescription,
-                    trailingIcon: Icons.open_in_new,
-                    onTap: () => _openExternalLink(ExternalLinks.privacyPolicy),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsLinkTile(
-                    icon: Icons.description_outlined,
-                    title: localizations.termsOfUse,
-                    subtitle: localizations.termsOfUseDescription,
-                    trailingIcon: Icons.open_in_new,
-                    onTap: () => _openExternalLink(ExternalLinks.terms),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsLinkTile(
-                    icon: Icons.help_outline,
-                    title: localizations.support,
-                    subtitle: localizations.supportDescription,
-                    trailingIcon: Icons.open_in_new,
-                    onTap: () => _openExternalLink(ExternalLinks.support),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsLinkTile(
-                    icon: Icons.delete_outline,
-                    title: localizations.dataDeletion,
-                    subtitle: localizations.dataDeletionDescription,
-                    trailingIcon: Icons.open_in_new,
-                    onTap: () => _openExternalLink(ExternalLinks.dataDeletion),
-                    fuzzzyColors: fuzzzyColors,
-                    fuzzzyTextStyles: fuzzzyTextStyles,
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Text(
-                      localizations.appVersion(
-                        _packageInfo.version,
-                        _packageInfo.buildNumber,
-                      ),
-                      style: fuzzzyTextStyles.bodyS.copyWith(
-                        color: fuzzzyColors.inkMute,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsLinkTile extends StatelessWidget {
-  const _SettingsLinkTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-    required this.fuzzzyColors,
-    required this.fuzzzyTextStyles,
-    this.trailingIcon = Icons.chevron_right,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  final IconData trailingIcon;
-  final FuzzzyColors fuzzzyColors;
-  final FuzzzyTextStyles fuzzzyTextStyles;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: fuzzzyColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: fuzzzyColors.focus.withValues(alpha: 0.2),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: fuzzzyColors.ink,
-              size: 22,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: fuzzzyTextStyles.body.copyWith(
-                      color: fuzzzyColors.ink,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: fuzzzyTextStyles.bodyS.copyWith(
-                      color: fuzzzyColors.inkMute,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              trailingIcon,
-              color: fuzzzyColors.inkMute,
-              size: 22,
             ),
           ],
         ),

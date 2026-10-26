@@ -11,12 +11,16 @@ class RecoveryKeyBlock extends StatelessWidget {
     super.key,
     required this.recoveryKey,
     this.actions,
+    this.showTag = true,
     this.qaId,
   });
 
   /// As the core gives it ("K7QF 3MZD …" or "K7QF-3MZD-…").
   final String recoveryKey;
   final Widget? actions;
+
+  /// The "No copy · no screenshots" tag; off on the print sheet.
+  final bool showTag;
   final String? qaId;
 
   /// The key's groups: split on spaces or dashes, else every four characters.
@@ -81,8 +85,10 @@ class RecoveryKeyBlock extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: space.m),
-        const Center(child: KeyTag()),
+        if (showTag) ...[
+          SizedBox(height: space.m),
+          const Center(child: KeyTag()),
+        ],
         if (actions != null) ...[SizedBox(height: space.m), actions],
       ],
     );

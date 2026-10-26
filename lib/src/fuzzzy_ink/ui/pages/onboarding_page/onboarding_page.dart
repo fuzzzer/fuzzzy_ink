@@ -1,208 +1,320 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:fuzzzy_ink/lib.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
+/// The first run's opening (DESIGN.md section 4.1, prototype `ob-welcome`
+/// and `ob-how`): Welcome (the mark, one line, Start, the language chip),
+/// then How it works (three picture cards, "Why once?", one tip, Next). Next
+/// leads to the master password.
 class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+  const OnboardingPage({super.key, this.initialPage = 0});
+
+  /// 0 Welcome, 1 How it works (back from the master password step).
+  final int initialPage;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  late int _page = widget.initialPage.clamp(0, 1);
 
   Future<void> _onNext() async {
-    if (_currentPage < 3) {
-      await _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      await sl.get<PreferencesService>().setHasSeenOnboarding(true);
-      if (mounted) context.go(AppRouter.home);
-    }
+    await sl.get<PreferencesService>().setHasSeenOnboarding(true);
+    if (mounted) context.go(AppRouter.setup);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = FuzzzyInkLocalizations.of(context)!;
-    final fuzzzyColors = context.fuzzzyColors;
-
-    return Scaffold(
-      backgroundColor: fuzzzyColors.ground,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                children: [
-                  _buildSlide(
-                    context,
-                    Icons.security,
-                    l10n.welcomeToFuzzzyInk,
-                    l10n.offlineEncryptedClipboard,
-                  ),
-                  _buildSlide(
-                    context,
-                    Icons.offline_bolt,
-                    l10n.offlineEncryptedClipboard, // Just reusing the title roughly
-                    l10n.yourDataNeverLeavesYourDeviceNoServersNoTracking,
-                  ),
-                  _buildSlide(
-                    context,
-                    Icons.handshake,
-                    l10n.secureHandshake,
-                    l10n.connectWithOthersUsingASecureOfflineCodeExchange,
-                  ),
-                  _buildSlide(
-                    context,
-                    Icons.lock_clock,
-                    l10n.forwardSecrecyTitle,
-                    l10n.forwardSecrecyNotice,
-                  ),
-                ],
-              ),
+    return AnimatedSwitcher(
+      duration: InkMotion.isReduced(context)
+          ? Duration.zero
+          : context.fuzzzyMotion.standard,
+      child: _page == 0
+          ? _WelcomeView(
+              key: const ValueKey('welcome'),
+              onStart: () => setState(() => _page = 1),
+            )
+          : _HowItWorksView(
+              key: const ValueKey('how'),
+              onBack: () => setState(() => _page = 0),
+              onNext: _onNext,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      4,
-                      (index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        height: 8,
-                        width: _currentPage == index ? 24 : 8,
-                        decoration: BoxDecoration(
-                          color: _currentPage == index
-                              ? fuzzzyColors.inkFaint
-                              : fuzzzyColors.surface,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: fuzzzyColors.inkFaint,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: _onNext,
-                      child: Text(
-                        _currentPage == 3 ? l10n.getStarted : l10n.next,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: fuzzzyColors.ground, // dark text on inkFaint
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
+}
 
-  Widget _buildSlide(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String description,
-  ) {
-    final theme = Theme.of(context);
-    final fuzzzyColors = context.fuzzzyColors;
-    const padding = EdgeInsets.all(40);
+class _WelcomeView extends StatelessWidget {
+  const _WelcomeView({super.key, required this.onStart});
 
-    // Centred when there is room, scrollable when there is not (the longer
-    // slides overflow a short window otherwise).
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: Padding(
-            padding: padding,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  size: 100,
-                  color: fuzzzyColors.inkFaint,
-                ),
-                const SizedBox(height: 48),
-                Text(
-                  title,
-                  style: _titleStyle(
-                    context,
-                    title,
-                    constraints.maxWidth - padding.horizontal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  description,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: fuzzzyColors.inkMute,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
+    final language = SettingsLookAndLanguageSection.languageName(
+      localizations,
+      SettingsLookAndLanguageSection.languageChoiceOf(
+        context.watch<LocalizationCubit>().state,
+      ),
+    );
+
+    return AccessPage(
+      qaId: 'welcome',
+      centerContent: true,
+      bottom: [
+        FuzzzyButton(
+          label: localizations.accessStart,
+          size: FuzzzyButtonSize.l,
+          qaId: 'welcome.start',
+          onPressed: onStart,
+        ),
+      ],
+      children: [
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: FuzzzyButton(
+            label: language,
+            variant: FuzzzyButtonVariant.ghost,
+            size: FuzzzyButtonSize.s,
+            icon: const Icon(Icons.translate),
+            qaId: 'welcome.language',
+            onPressed: () => showLanguageSheet(context),
           ),
         ),
+        SizedBox(height: space.xl),
+        const Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: InkMark(size: 96, qaId: 'welcome'),
+        ),
+        SizedBox(height: space.l),
+        Semantics(
+          header: true,
+          child: Text(
+            localizations.fuzzzyInk,
+            style:
+                context.fuzzzyTextStyles.displayL.copyWith(color: colors.ink),
+          ),
+        ),
+        SizedBox(height: space.m),
+        Text(
+          localizations.accessWelcomeLine,
+          style: context.fuzzzyTextStyles.titleM.copyWith(color: colors.ink),
+        ),
+        SizedBox(height: space.l),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: KeyTag(
+            icon: Icons.shield_outlined,
+            label: localizations.accessWelcomeTag,
+            qaId: 'welcome.offline',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HowItWorksView extends StatelessWidget {
+  const _HowItWorksView({
+    super.key,
+    required this.onBack,
+    required this.onNext,
+  });
+
+  final VoidCallback onBack;
+  final Future<void> Function() onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final space = context.fuzzzySpace;
+
+    return AccessPage(
+      qaId: 'how',
+      title: localizations.accessHowItWorks,
+      onBack: onBack,
+      bottom: [
+        FuzzzyButton(
+          label: localizations.next,
+          size: FuzzzyButtonSize.l,
+          qaId: 'how.next',
+          onPressed: () => unawaited(onNext()),
+        ),
+      ],
+      children: [
+        const HowItWorksCards(numbered: true),
+        SizedBox(height: space.m),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: FuzzzyButton(
+            label: localizations.accessWhyOnce,
+            variant: FuzzzyButtonVariant.ghost,
+            size: FuzzzyButtonSize.s,
+            icon: const Icon(Icons.help_outline),
+            qaId: 'how.whyOnce',
+            onPressed: () => showInkInfoSheet(context, InkInfoTopic.opensOnce),
+          ),
+        ),
+        SizedBox(height: space.m),
+        TipLine(
+          icon: Icons.key_outlined,
+          text: localizations.accessHowTip,
+          qaId: 'how.masterPassword',
+        ),
+      ],
+    );
+  }
+}
+
+/// The three picture cards of "How it works": Add a person · Lock for them
+/// · They open it, once. Side by side, stacked when the text is large.
+class HowItWorksCards extends StatelessWidget {
+  const HowItWorksCards({super.key, this.numbered = false});
+
+  /// Numbers 1–3 on the cards (the first run).
+  final bool numbered;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final space = context.fuzzzySpace;
+    final cards = [
+      (Icons.person_add_alt, localizations.accessHowAddPerson, false),
+      (Icons.lock_outline, localizations.accessHowLockForThem, true),
+      (Icons.lock_open_outlined, localizations.accessHowTheyOpenOnce, false),
+    ];
+    final stacked = MediaQuery.textScalerOf(context).scale(1) > 1.4;
+
+    final items = [
+      for (final (index, (icon, label, inverted)) in cards.indexed)
+        _PictureCard(
+          number: numbered ? index + 1 : null,
+          icon: icon,
+          label: label,
+          inverted: inverted,
+          horizontal: stacked,
+        ),
+    ];
+
+    if (stacked) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (index, item) in items.indexed) ...[
+            if (index > 0) SizedBox(height: space.s),
+            item,
+          ],
+        ],
+      );
+    }
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (index, item) in items.indexed) ...[
+            if (index > 0) SizedBox(width: space.s),
+            Expanded(child: item),
+          ],
+        ],
       ),
     );
   }
+}
 
-  /// The largest title style whose longest word fits [maxWidth], so the title
-  /// only ever wraps between words. A Georgian word can be wider than a phone
-  /// column at the display size (T-0335); English never steps down.
-  TextStyle? _titleStyle(BuildContext context, String title, double maxWidth) {
-    final textTheme = Theme.of(context).textTheme;
-    final textScaler = MediaQuery.textScalerOf(context);
-    final ink = context.fuzzzyColors.ink;
-    final candidates = [
-      textTheme.headlineMedium,
-      textTheme.titleLarge,
-      textTheme.titleMedium,
-    ].map((style) => style?.copyWith(fontWeight: FontWeight.w800, color: ink));
+class _PictureCard extends StatelessWidget {
+  const _PictureCard({
+    required this.number,
+    required this.icon,
+    required this.label,
+    required this.inverted,
+    required this.horizontal,
+  });
 
-    bool wordFits(String word, TextStyle? style) {
-      final textPainter = TextPainter(
-        text: TextSpan(text: word, style: style),
-        textDirection: TextDirection.ltr,
-        textScaler: textScaler,
-      )..layout();
-      return textPainter.width <= maxWidth;
-    }
+  final int? number;
+  final IconData icon;
+  final String label;
+  final bool inverted;
+  final bool horizontal;
 
-    return candidates.firstWhere(
-      (style) => title.split(' ').every((word) => wordFits(word, style)),
-      orElse: () => candidates.last,
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.fuzzzyColors;
+    final space = context.fuzzzySpace;
+    final number = this.number;
+    final glyph = ExcludeSemantics(
+      child: Container(
+        width: kFuzzzyMinTouchTarget,
+        height: kFuzzzyMinTouchTarget,
+        decoration: BoxDecoration(
+          color: inverted ? colors.actionPrimaryBg : colors.raised,
+          border: Border.all(
+            color: inverted ? colors.actionPrimaryBg : colors.line,
+          ),
+          borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
+        ),
+        child: Icon(
+          icon,
+          size: context.fuzzzyIconSize.l,
+          color: inverted ? colors.actionPrimaryFg : colors.ink,
+        ),
+      ),
+    );
+    final text = Text(
+      label,
+      textAlign: horizontal ? TextAlign.start : TextAlign.center,
+      style: context.fuzzzyTextStyles.bodyS.copyWith(
+        color: colors.ink,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+    final numberText = number == null
+        ? null
+        : Text(
+            '$number',
+            style:
+                context.fuzzzyTextStyles.data.copyWith(color: colors.inkMute),
+          );
+
+    return Container(
+      padding: EdgeInsets.all(space.m),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border.all(color: colors.line),
+        borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
+      ),
+      child: horizontal
+          ? Row(
+              children: [
+                if (numberText != null) ...[
+                  numberText,
+                  SizedBox(width: space.s),
+                ],
+                glyph,
+                SizedBox(width: space.m),
+                Expanded(child: text),
+              ],
+            )
+          : Column(
+              children: [
+                if (numberText != null) ...[
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: numberText,
+                  ),
+                  SizedBox(height: space.xs),
+                ],
+                glyph,
+                SizedBox(height: space.s),
+                text,
+              ],
+            ),
     );
   }
 }
