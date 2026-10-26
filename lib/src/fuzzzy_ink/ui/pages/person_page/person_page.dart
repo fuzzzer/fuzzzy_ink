@@ -271,6 +271,13 @@ class _ProvidedPersonPageState extends State<ProvidedPersonPage> {
 
   @override
   Widget build(BuildContext context) {
+    // A private screen (security review 2026-10-26): it shows who the person
+    // is and their history's file names and times, so it is kept out of
+    // screenshots, recordings and the app switcher.
+    return SensitiveScreen(child: _page(context));
+  }
+
+  Widget _page(BuildContext context) {
     final colors = context.fuzzzyColors;
 
     return BlocBuilder<ChatGeneralDataListCubit, ChatGeneralDataListState>(
