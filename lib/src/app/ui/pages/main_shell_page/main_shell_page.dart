@@ -127,14 +127,21 @@ class MainShellPage extends StatelessWidget {
             context.fuzzzySpace.s,
             context.fuzzzySpace.s,
           ),
-          child: FuzzzyBottomNav(
-            qaId: 'tabs',
-            selectedIndex: index,
-            onChanged: (i) => _select(context, i),
-            items: [
-              for (final (icon, label) in labels)
-                FuzzzyNavItem(icon: Icon(icon), label: label),
-            ],
+          // The labels grow with the text size only as far as every word
+          // still fits its third of the bar: larger, a word broke mid-word
+          // ("MY SAFESETTING S", QA 2026-10-26). The system's own tab bars
+          // stop growing too; the page above keeps the full size.
+          child: _FittingTabLabels(
+            labels: [for (final (_, label) in labels) label],
+            child: FuzzzyBottomNav(
+              qaId: 'tabs',
+              selectedIndex: index,
+              onChanged: (i) => _select(context, i),
+              items: [
+                for (final (icon, label) in labels)
+                  FuzzzyNavItem(icon: Icon(icon), label: label),
+              ],
+            ),
           ),
         ),
       ),
@@ -180,6 +187,54 @@ class _MySafeFrame extends StatelessWidget {
           Expanded(child: child),
         ],
       ),
+    );
+  }
+}
+
+/// Gives the bottom bar the largest text size, up to the person's own, at
+/// which every tab label's longest word fits its third of the bar.
+class _FittingTabLabels extends StatelessWidget {
+  const _FittingTabLabels({required this.labels, required this.child});
+
+  final List<String> labels;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final system = MediaQuery.textScalerOf(context);
+    final style = context.fuzzzyTextStyles.label;
+    final direction = Directionality.of(context);
+    final words = [
+      for (final label in labels) ...label.toUpperCase().split(' '),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // The bar's hairline border, then three equal items.
+        final itemWidth = (constraints.maxWidth - 2) / labels.length;
+        bool fits(double scale) => words.every((word) {
+              final painter = TextPainter(
+                text: TextSpan(text: word, style: style),
+                textDirection: direction,
+                textScaler: TextScaler.linear(scale),
+                maxLines: 1,
+              )..layout();
+              final width = painter.width;
+              painter.dispose();
+              return width <= itemWidth;
+            });
+
+        var scale = system.scale(1);
+        while (scale > 1 && !fits(scale)) {
+          scale = (scale - 0.05).clamp(1, double.infinity);
+        }
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(scale),
+          ),
+          child: child,
+        );
+      },
     );
   }
 }
