@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// "Forgot the vault password": the recovery key opens a vault with its own
-/// password, which then gets a new password — or opens with the master
-/// password from now on. Functional form in the current kit; the redesign
-/// restyles it.
+/// "Use recovery key" on a locked My safe with its own password (DESIGN.md
+/// section 4.11): the recovery key opens it, and it gets a new safe password
+/// (or opens with the master password from now on). The key and the new
+/// password go to the core in one step, so a wrong key changes nothing.
 class VaultRecoveryForm extends StatefulWidget {
   const VaultRecoveryForm({required this.onCancel, super.key});
 
@@ -90,15 +90,22 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          localizations.vaultRecoveryTitle,
-          style: context.fuzzzyTextStyles.titleM.copyWith(color: colors.ink),
-          textAlign: TextAlign.center,
+        const Center(
+          child: HeroGlyph(icon: Icons.key_outlined, qaId: 'safe.recover'),
+        ),
+        SizedBox(height: space.l),
+        Semantics(
+          header: true,
+          child: Text(
+            localizations.safeRecoveryTitle,
+            style: context.fuzzzyTextStyles.titleL.copyWith(color: colors.ink),
+            textAlign: TextAlign.center,
+          ),
         ),
         SizedBox(height: space.s),
         Text(
-          localizations.vaultRecoveryDescription,
-          style: context.fuzzzyTextStyles.bodyS.copyWith(color: colors.inkMute),
+          localizations.safeRecoveryLine,
+          style: context.fuzzzyTextStyles.body.copyWith(color: colors.inkMute),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: space.l),
@@ -109,7 +116,27 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
           errorText: _errorText(),
           qaId: 'vault.recover.key',
         ),
-        SizedBox(height: space.m),
+        SizedBox(height: space.s),
+        TipLine(
+          icon: Icons.key_off_outlined,
+          text: localizations.safeRecoveryNoKey,
+          trailing: const WhyLink(
+            topic: InkInfoTopic.recoveryKey,
+            qaId: 'safe.recover.why',
+          ),
+          qaId: 'safe.recover.noKey',
+        ),
+        SizedBox(height: space.l),
+        if (!_useMasterPassword) ...[
+          NewPasswordFields(
+            passwordController: _passwordController,
+            confirmController: _confirmController,
+            label: localizations.safeRecoveryNewPassword,
+            onSubmitted: _onRecover,
+            qaId: 'vault.recover',
+          ),
+          SizedBox(height: space.m),
+        ],
         FuzzzyCheckbox(
           value: _useMasterPassword,
           label: localizations.vaultRecoveryUseMasterPassword,
@@ -118,16 +145,6 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
               ? null
               : (value) => setState(() => _useMasterPassword = value),
         ),
-        if (!_useMasterPassword) ...[
-          SizedBox(height: space.m),
-          NewPasswordFields(
-            passwordController: _passwordController,
-            confirmController: _confirmController,
-            label: localizations.vaultOwnNewPassword,
-            onSubmitted: _onRecover,
-            qaId: 'vault.recover',
-          ),
-        ],
         SizedBox(height: space.l),
         FuzzzyButton(
           label: localizations.vaultRecoverySubmit,
@@ -138,7 +155,7 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
         SizedBox(height: space.s),
         FuzzzyButton(
           label: localizations.cancel,
-          variant: FuzzzyButtonVariant.secondary,
+          variant: FuzzzyButtonVariant.ghost,
           qaId: 'vault.recover.cancel',
           onPressed: _busy ? null : widget.onCancel,
         ),
