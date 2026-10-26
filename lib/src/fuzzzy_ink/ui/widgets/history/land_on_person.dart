@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:go_router/go_router.dart';
@@ -37,12 +35,9 @@ void landOnPerson(
     WidgetsBinding.instance.addPostFrameCallback((_) => say());
     return;
   }
+  // Home first, then the person on top of it, in one go (as a tapped link
+  // does): this flow's context is still mounted until the next frame.
   router.go(AppRouter.home);
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final homeContext = navigatorKey.currentContext;
-    if (homeContext != null && homeContext.mounted) {
-      HomePage.openPerson(homeContext, chat);
-    }
-    unawaited(Future<void>.microtask(say));
-  });
+  HomePage.openPerson(context, chat);
+  WidgetsBinding.instance.addPostFrameCallback((_) => say());
 }
