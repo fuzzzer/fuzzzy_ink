@@ -39,4 +39,16 @@ void main() {
     expect(window, contains('NSApplication.willTerminateNotification'));
     expect(window, contains('clearSensitiveCopy()'));
   });
+
+  test("Android lists no other app's text action (PROCESS_TEXT)", () {
+    final activity = File(
+      'android/app/src/main/kotlin/com/fuzzzycore/ink/MainActivity.kt',
+    ).readAsStringSync();
+    expect(activity, contains('"flutter/processtext"'));
+    expect(activity, contains('"ProcessText.queryTextActions"'));
+    expect(
+      File('android/app/src/main/AndroidManifest.xml').readAsStringSync(),
+      isNot(contains('android.intent.action.PROCESS_TEXT')),
+    );
+  });
 }

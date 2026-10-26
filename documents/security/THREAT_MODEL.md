@@ -226,9 +226,16 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
 
 ### 2.6 The clipboard and the screen
 
-Blobs move by copy and paste. While a `Fuzz/` text is on the clipboard it is readable by any app the OS lets
-read the clipboard; the app does not clear it. Plaintext shown on screen is readable by anything that can
-read or capture the screen. Both are outside the model (§7.2, §7.3). The app never decrypts a blob
+Blobs move by copy and paste. Only sealed output (and, behind a switch, a safe password) can be copied; every
+copy clears itself after a short time and when the app locks, while it is still the app's (§7.3). Text fields
+that hold a secret or plaintext — passwords (shown or hidden), the recovery key, the message on Lock, the Basics
+text and key, opened safe items — offer only Paste, Select all, Delete and the camera's text scan: no Copy, Cut,
+Share, Look Up, Search or another app's text action (Android's "Translate" and the like are not listed at all),
+the copy shortcuts do nothing, and the keyboard is asked for no suggestions, no autocorrect and no personalised
+learning (`GuardedTextField`, `CopyGuard.plaintextContextMenuBuilder`; security review 2026-10-26). A keyboard
+that ignores that request, or a third-party keyboard with network access, is outside the model (§7.1).
+Private screens are kept out of screenshots, recordings and the app switcher where the system allows it (§7.2).
+Plaintext shown on screen is still readable by anything that can read or capture the screen. The app never decrypts a blob
 automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
 (`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
 the user picks it. An app link (`https://ink.fuzzzycore.com/…`, below) **prefills** the input field and
@@ -676,8 +683,15 @@ and trusts the OS for memory isolation, randomness (`getrandom`), file permissio
 
 ### 7.2 Screen capture
 
-Plaintext must be shown to be read. Screenshots, screen recording, shoulder surfing, accessibility services
-that read the widget tree — out of scope. The app sets no secure-window flag.
+Plaintext must be shown to be read. Shoulder surfing and accessibility services that read the widget tree are out
+of scope. Since 2026-10-26 private screens (`SensitiveScreen`: unlock and recovery, setup's password and key steps,
+My safe, Open's password and opened items, Lock's typing step, a person's page and history items, Basics, the
+settings password pages, the file viewer, the recovery-key print sheet) are protected where the system allows it:
+Android `FLAG_SECURE` (screenshots, recordings and the recents thumbnail come out blank); iPhone a secure layer plus a
+cover while inactive or being recorded (it relies on the system's layer layout and would fail silently if Apple
+changed it); macOS `sharingType = .none` (reported to be ignored by ScreenCaptureKit on macOS 15 — not checked);
+Windows `WDA_EXCLUDEFROMCAPTURE` (or `WDA_MONITOR` before Windows 10 2004). Linux has none. Desktops have no
+app-switcher cover.
 
 ### 7.3 Clipboard sniffing
 

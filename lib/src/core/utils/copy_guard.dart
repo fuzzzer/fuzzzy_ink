@@ -318,8 +318,12 @@ abstract final class CopyGuard {
   /// still there, timer or not (security review 2026-10-26).
   static Future<void> clearOnLock() => _clipboardGuard.clearNow();
 
-  /// Context menu for a text field that holds plaintext: paste and select
-  /// stay, everything that sends the selection out of the app goes.
+  /// Context menu for a text field that holds plaintext or a secret: an
+  /// allow-list (security review 2026-10-26). Paste, Select all, Delete and
+  /// the camera's text scan bring text in or stay in the field; everything
+  /// else — Copy, Cut, Share, Look Up, Search and every custom item, which is
+  /// where Android puts other apps' text actions ("Translate" and the like) —
+  /// would send the selection out of the app and is left out.
   static Widget plaintextContextMenuBuilder(
     BuildContext context,
     EditableTextState editableTextState,
@@ -330,12 +334,11 @@ abstract final class CopyGuard {
     );
   }
 
-  static const _itemsThatLeaveTheApp = {
-    ContextMenuButtonType.copy,
-    ContextMenuButtonType.cut,
-    ContextMenuButtonType.share,
-    ContextMenuButtonType.lookUp,
-    ContextMenuButtonType.searchWeb,
+  static const _itemsThatStayInTheApp = {
+    ContextMenuButtonType.paste,
+    ContextMenuButtonType.selectAll,
+    ContextMenuButtonType.delete,
+    ContextMenuButtonType.liveTextInput,
   };
 
   @visibleForTesting
@@ -343,7 +346,7 @@ abstract final class CopyGuard {
     List<ContextMenuButtonItem> items,
   ) =>
       items
-          .where((item) => !_itemsThatLeaveTheApp.contains(item.type))
+          .where((item) => _itemsThatStayInTheApp.contains(item.type))
           .toList();
 }
 

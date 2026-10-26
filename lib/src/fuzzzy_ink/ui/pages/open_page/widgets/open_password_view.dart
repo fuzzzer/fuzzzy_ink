@@ -58,7 +58,7 @@ class _OpenPasswordViewState extends State<OpenPasswordView> {
             ),
             FlowTitle(title: localizations.openPasswordTitle),
             SizedBox(height: context.fuzzzySpace.l),
-            FuzzzyTextField(
+            GuardedTextField(
               controller: _password,
               label: localizations.openPasswordLabel,
               obscure: true,

@@ -376,6 +376,9 @@ void main() {
             contains(ContextMenuButtonType.share),
             contains(ContextMenuButtonType.lookUp),
             contains(ContextMenuButtonType.searchWeb),
+            // Android's other-app text actions ("Translate"), security
+            // review 2026-10-26.
+            contains(ContextMenuButtonType.custom),
           ),
         ),
       );

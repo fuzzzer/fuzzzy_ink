@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// A password field in the redesign: hidden text (never copyable while
-/// hidden), an eye to show it, a red field and one short line when
-/// [errorText] is set. [enabled] false greys it out and takes it out of
+/// A password field in the redesign: hidden text, an eye to show it, a red
+/// field and one short line when [errorText] is set. Shown or hidden, it is a
+/// [GuardedTextField]: no copy, cut, share or other app's text action, and
+/// no keyboard learning. [enabled] false greys it out and takes it out of
 /// focus (the lockout wait).
 class InkPasswordField extends StatefulWidget {
   const InkPasswordField({
@@ -39,7 +40,7 @@ class _InkPasswordFieldState extends State<InkPasswordField> {
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final enabled = widget.enabled;
-    final field = FuzzzyTextField(
+    final field = GuardedTextField(
       controller: widget.controller,
       label: widget.label,
       errorText: widget.errorText,
@@ -59,13 +60,10 @@ class _InkPasswordFieldState extends State<InkPasswordField> {
             enabled ? () => setState(() => _isVisible = !_isVisible) : null,
       ),
     );
-    // A shown password is plain text: the copy guard's shortcut rule keeps
-    // Ctrl/Cmd+C and X from taking it out.
-    final guarded = NoPlaintextCopy(child: field);
-    if (enabled) return guarded;
+    if (enabled) return field;
     return IgnorePointer(
       child: ExcludeFocus(
-        child: Opacity(opacity: 0.5, child: guarded),
+        child: Opacity(opacity: 0.5, child: field),
       ),
     );
   }

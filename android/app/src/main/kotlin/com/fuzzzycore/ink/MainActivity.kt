@@ -15,6 +15,22 @@ class MainActivity: FlutterFragmentActivity() {
         this.guard = guard
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, Guard.CHANNEL)
             .setMethodCallHandler(guard)
+        // Other apps' text actions ("Translate" and the like, PROCESS_TEXT)
+        // would receive the selected text: the app lists none, in any field
+        // (security review 2026-10-26). This replaces the engine's handler on
+        // Flutter's own channel; the plaintext fields' allow-list menu drops
+        // such items as well.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, PROCESS_TEXT_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "ProcessText.queryTextActions" -> result.success(emptyMap<String, String>())
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    companion object {
+        private const val PROCESS_TEXT_CHANNEL = "flutter/processtext"
     }
 
     override fun onDestroy() {

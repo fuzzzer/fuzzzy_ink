@@ -58,8 +58,9 @@ class BasicEncryptionContent extends StatelessWidget {
                       helper = currentContextLocalization.keyStrengthGood;
                     }
                   }
-                  return FuzzzyTextField(
+                  return GuardedTextField(
                     controller: keyController,
+                    keyboardType: TextInputType.visiblePassword,
                     label: context.fuzzzyInkLocalizations.customKey,
                     hint: context.fuzzzyInkLocalizations.enterYourSecretKey,
                     helper: helper,
@@ -67,7 +68,7 @@ class BasicEncryptionContent extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
-              FuzzzyTextField(
+              GuardedTextField(
                 controller: textController,
                 label: context.fuzzzyInkLocalizations.textToEncryptDecrypt,
                 maxLines: 4,
