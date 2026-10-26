@@ -66,10 +66,6 @@ class MessageDataRepository {
     return Future.wait(storedMessages.map(_openStored));
   }
 
-  Future<void> deleteMessage(int messageId) async {
-    await localDataSource.deleteMessage(messageId);
-  }
-
   /// The stored paths of the chat's file rows (sent and kept containers),
   /// without opening any seal.
   Future<List<String>> getFilePathsForChat(String chatId) async {

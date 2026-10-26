@@ -46,9 +46,7 @@ class DependencyInjection {
     final isar = await Isar.open(
       [
         StoredChatGeneralDataSchema,
-        StoredChatPreferencesSchema,
         StoredMessageDataSchema,
-        StoredUserAuthPreferencesSchema,
         StoredVaultItemSchema,
         StoredVaultGroupSchema,
         StoredVaultMetadataSchema,

@@ -87,7 +87,6 @@ class PersonPage extends StatelessWidget {
       create: (_) => ConnectedChatCubit(
         chatId: chatId,
         messageDataRepository: sl.get<MessageDataRepository>(),
-        cryptoCoreService: sl.get<CryptoCoreService>(),
         messagesPerPage: 30,
       )..loadInitialMessages(),
       child: ProvidedPersonPage(

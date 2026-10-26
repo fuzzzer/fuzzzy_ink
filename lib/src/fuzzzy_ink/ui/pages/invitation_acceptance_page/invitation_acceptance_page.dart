@@ -4,8 +4,6 @@ import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
-export 'components/components.dart';
-
 /// I got an invite (DESIGN.md section 4.4, prototypes `got-start` and
 /// `got-name`): step 1 "Open the invite" (Paste it · Choose a file; a tapped
 /// invite link skips it), step 2 "The invite is good. Who sent it?" with

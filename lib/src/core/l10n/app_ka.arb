@@ -4,78 +4,20 @@
   "@chat": {},
   "fuzzzyInk": "Fuzzzy Ink",
   "@fuzzzyInk": {},
-  "failedToLoadChats": "ჩატების ჩატვირთვა ვერ მოხერხდა.",
-  "@failedToLoadChats": {},
-  "newChat": "ახალი ჩატი",
-  "@newChat": {},
   "acceptInvitation": "მოწვევის მიღება",
   "@acceptInvitation": {},
-  "createANewChat": "ახალი ჩატის შექმნა",
-  "@createANewChat": {},
-  "enterChatName": "შეიყვანეთ ჩატის სახელი",
-  "@enterChatName": {},
-  "eg": "მაგ.",
-  "@eg": {},
   "back": "უკან",
   "@back": {},
   "create": "შექმნა",
   "@create": {},
-  "chatWithAlice": "ჩატი ანასთან",
-  "@chatWithAlice": {},
   "failedToCreateChat": "ჩატის შექმნა ვერ მოხერხდა.",
   "@failedToCreateChat": {},
-  "pleaseEnterAChatName": "გთხოვთ, შეიყვანოთ ჩატის სახელი.",
-  "@pleaseEnterAChatName": {},
-  "pleasePasteTheAcceptanceContent": "გთხოვთ, ჩასვათ მიღების ტექსტი.",
-  "@pleasePasteTheAcceptanceContent": {},
-  "failedToCompleteHandshake": "ხელის ჩამორთმევის დასრულება ვერ მოხერხდა.",
-  "@failedToCompleteHandshake": {},
-  "sendInvitation": "მოწვევის გაგზავნა",
-  "@sendInvitation": {},
-  "copyInvitation": "მოწვევის კოპირება",
-  "@copyInvitation": {},
-  "invitationCopiedToClipboard": "მოწვევა კოპირებულია ბუფერში.",
-  "@invitationCopiedToClipboard": {},
-  "provideAcceptance": "მიღების ტექსტის მიწოდება",
-  "@provideAcceptance": {},
-  "pasteAcceptanceText": "ჩასვით მიღების ტექსტი",
-  "@pasteAcceptanceText": {},
   "accept": "მიღება",
   "@accept": {},
-  "unexpectedFailureOccuredPleaseContactUs": "მოხდა მოულოდნელი შეცდომა. გთხოვთ, დაგვიკავშირდეთ.",
-  "@unexpectedFailureOccuredPleaseContactUs": {},
-  "failedToGenerateInvitation": "მოწვევის შექმნა ვერ მოხერხდა.",
-  "@failedToGenerateInvitation": {},
-  "inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages": "ჩატის დასაწყებად მეორე ადამიანმა ჯერ უნდა შემოიტანოს მოწვევა და გამოგიგზავნოთ მის ჩატში შექმნილი მიღების ტექსტი. ამის შემდეგ ისიც შეძლებს შეტყობინებების გაგზავნას და გახსნას.",
-  "@inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages": {},
-  "theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere": "მოწვეული ადამიანისგან მიღებული მიღების ტექსტი აქ ჩასვით:",
-  "@theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere": {},
-  "failedToAcceptInvitation": "მოწვევის მიღება ვერ მოხერხდა.",
-  "@failedToAcceptInvitation": {},
-  "pleaseProvideInvitationTextAndChatName": "გთხოვთ, მიუთითოთ მოწვევის ტექსტი და ჩატის სახელი.",
-  "@pleaseProvideInvitationTextAndChatName": {},
-  "acceptChatInvitation": "ჩატის მოწვევის მიღება",
-  "@acceptChatInvitation": {},
-  "pasteInvitationText": "ჩასვით მოწვევის ტექსტი",
-  "@pasteInvitationText": {},
-  "failedToGenerateAcceptance": "მიღების ტექსტის შექმნა ვერ მოხერხდა.",
-  "@failedToGenerateAcceptance": {},
   "failedToReadAcceptance": "მიღების ტექსტის წაკითხვა ვერ მოხერხდა.",
   "@failedToReadAcceptance": {},
-  "goToChat": "ჩატზე გადასვლა",
-  "@goToChat": {},
-  "copyAcceptance": "მიღების კოპირება",
-  "@copyAcceptance": {},
-  "yourAcceptanceHasBeenGeneratedSuccessfully": "თქვენი მიღების ტექსტი წარმატებით შეიქმნა.",
-  "@yourAcceptanceHasBeenGeneratedSuccessfully": {},
-  "tapToViewChat": "შეეხეთ ჩატის სანახავად.",
-  "@tapToViewChat": {},
-  "waitingForAcceptance": "ველოდებით მიღებას.",
-  "@waitingForAcceptance": {},
   "deleteChat": "ჩატის წაშლა",
   "@deleteChat": {},
-  "areYouSureYouWantToDeleteThisChat": "დარწმუნებული ხართ, რომ გსურთ ამ ჩატის წაშლა?",
-  "@areYouSureYouWantToDeleteThisChat": {},
   "cancel": "გაუქმება",
   "@cancel": {},
   "delete": "წაშლა",
@@ -94,32 +36,22 @@
   },
   "failedToGetAcceptance": "მიღების ტექსტის აღება ვერ მოხერხდა",
   "@failedToGetAcceptance": {},
-  "storagePermissionDenied": "მეხსიერებაზე წვდომის ნებართვა არ არის მიცემული.",
-  "@storagePermissionDenied": {},
   "errorPickingFiles": "ფაილების არჩევისას მოხდა შეცდომა.",
   "@errorPickingFiles": {},
   "loading": "იტვირთება",
   "@loading": {},
   "fuzz": "Fuzz",
   "@fuzz": {},
-  "defuzz": "Defuzz",
-  "@defuzz": {},
   "failedToProcessFiles": "ფაილების დამუშავება ვერ მოხერხდა",
   "@failedToProcessFiles": {},
   "chatWithIndicatedNameAlreadyExists": "ამ სახელით ჩატი უკვე არსებობს",
   "@chatWithIndicatedNameAlreadyExists": {},
-  "reveal": "ჩვენება",
-  "@reveal": {},
   "show": "ჩვენება",
   "@show": {},
   "open": "გახსნა",
   "@open": {},
   "dropFilesHere": "გადმოიტანეთ ფაილები აქ",
   "@dropFilesHere": {},
-  "shareInvitation": "მოწვევის გაზიარება",
-  "@shareInvitation": {},
-  "acceptanceText": "მიღების ტექსტი",
-  "@acceptanceText": {},
   "basicEncryption": "მარტივი დაშიფრვა",
   "@basicEncryption": {},
   "customKey": "სპეციალური გასაღები",
@@ -150,60 +82,16 @@
   "@encryptedTextAndKeyCannotBeEmpty": {},
   "decryptionFailedCheckYourKeyOrEncryptedText": "გაშიფრვა ვერ მოხერხდა შეამოწმეთ გასაღები ან დაშიფრული ტექსტი",
   "@decryptionFailedCheckYourKeyOrEncryptedText": {},
-  "welcomeToFuzzzyInk": "მოგესალმებით Fuzzzy Ink-ში",
-  "@welcomeToFuzzzyInk": {},
-  "offlineEncryptedClipboard": "ოფლაინ დაშიფრული ბუფერი",
-  "@offlineEncryptedClipboard": {},
-  "yourDataNeverLeavesYourDeviceNoServersNoTracking": "თქვენი მონაცემები არასდროს ტოვებს თქვენს მოწყობილობას. არანაირი სერვერი, არანაირი თვალთვალი.",
-  "@yourDataNeverLeavesYourDeviceNoServersNoTracking": {},
-  "secureHandshake": "უსაფრთხო ხელის ჩამორთმევა",
-  "@secureHandshake": {},
-  "connectWithOthersUsingASecureOfflineCodeExchange": "დაუკავშირდით სხვებს უსაფრთხო, ოფლაინ კოდების გაცვლის გამოყენებით.",
-  "@connectWithOthersUsingASecureOfflineCodeExchange": {},
-  "getStarted": "დაწყება",
-  "@getStarted": {},
   "next": "შემდეგი",
   "@next": {},
-  "noOngoingChats": "მიმდინარე ჩატები არ არის",
-  "@noOngoingChats": {},
-  "tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation": "დააჭირეთ ღილაკს ქვემოთ, რომ შექმნათ ახალი უსაფრთხო ხელის ჩამორთმევა ან მიიღოთ მოწვევა.",
-  "@tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation": {},
-  "stepSendYourInviteCode": "ნაბიჯი 1: გაგზავნეთ თქვენი მოწვევის კოდი",
-  "@stepSendYourInviteCode": {},
-  "sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel": "გაუგზავნეთ ეს კოდი იმ ადამიანს, ვისთანაც გსურთ საუბარი, ნებისმიერი უსაფრთხო არხის გამოყენებით.",
-  "@sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel": {},
-  "stepPasteTheirAcceptanceCode": "ნაბიჯი 2: ჩასვით მათი მიღების კოდი",
-  "@stepPasteTheirAcceptanceCode": {},
-  "onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow": "როგორც კი მიიღებენ თქვენს მოწვევას, ისინი გამოგიგზავნიან კოდს უკან. ჩასვით ის ქვემოთ.",
-  "@onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow": {},
-  "stepPasteTheirInviteCode": "ნაბიჯი 1: ჩასვით მათი მოწვევის კოდი",
-  "@stepPasteTheirInviteCode": {},
-  "askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow": "სთხოვეთ თქვენს კონტაქტს უსაფრთხოდ გაგიზიარონ მოწვევის კოდი და ჩასვით ის ქვემოთ.",
-  "@askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow": {},
-  "stepNameThisChat": "ნაბიჯი 2: დაარქვით სახელი ამ საუბარს",
-  "@stepNameThisChat": {},
-  "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.",
-  "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
   "settings": "პარამეტრები",
   "@settings": {},
-  "shareAcceptance": "მიღების გაზიარება",
-  "@shareAcceptance": {},
-  "linkExpired": "ამ ბმულის ვადა ამოიწურა.",
-  "@linkExpired": {},
-  "linkShared": "ბმული გაზიარებულია.",
-  "@linkShared": {},
   "invalidLink": "ეს ბმული არასწორია ან დაზიანებულია.",
   "@invalidLink": {},
-  "noMatchingChat": "შესაბამისი ჩატი ვერ მოიძებნა.",
-  "@noMatchingChat": {},
   "alreadyConnected": "უკვე დაკავშირებულია!",
   "@alreadyConnected": {},
   "cantAcceptOwnInvitation": "თქვენი საკუთარი მოწვევის მიღება შეუძლებელია.",
   "@cantAcceptOwnInvitation": {},
-  "connectionComplete": "კავშირი დამყარებულია!",
-  "@connectionComplete": {},
-  "incomingInvitation": "შემომავალი მოწვევა აღმოჩენილია.",
-  "@incomingInvitation": {},
   "chatNotFoundForAcceptance": "ამ მიღების ბმულისთვის ჩატი ვერ მოიძებნა.",
   "@chatNotFoundForAcceptance": {},
   "failedToProcessAcceptance": "მიღების ბმულის დამუშავება ვერ მოხერხდა.",
@@ -212,22 +100,6 @@
   "@shareFile": {},
   "vaultUntitled": "უსათაურო",
   "@vaultUntitled": {},
-  "vaultNewPassword": "ახალი პაროლი",
-  "@vaultNewPassword": {},
-  "vaultNewNote": "ახალი ჩანაწერი",
-  "@vaultNewNote": {},
-  "vaultEditItem": "ელემენტის რედაქტირება",
-  "@vaultEditItem": {},
-  "vaultTitle": "სათაური",
-  "@vaultTitle": {},
-  "vaultUsernameEmail": "მომხმარებელი / ელ-ფოსტა",
-  "@vaultUsernameEmail": {},
-  "vaultUrlWebsite": "URL (ვებგვერდი)",
-  "@vaultUrlWebsite": {},
-  "vaultNotesOptional": "შენიშვნები (არასავალდებულო)",
-  "@vaultNotesOptional": {},
-  "vaultSecureNote": "დაცული ჩანაწერი",
-  "@vaultSecureNote": {},
   "vaultSave": "შენახვა",
   "@vaultSave": {},
   "vaultPasswords": "პაროლები",
@@ -235,80 +107,25 @@
   "vaultNotes": "ჩანაწერები",
   "@vaultNotes": {},
   "vaultFiles": "ფაილები",
-  "vaultNoFilesYet": "ფაილები არ არის",
   "vaultFileLabel": "ფაილი",
   "vaultAll": "ყველა",
   "@vaultAll": {},
-  "vaultAddGroup": "ჯგუფის დამატება",
-  "@vaultAddGroup": {},
-  "vaultNewGroup": "ახალი ჯგუფი",
-  "@vaultNewGroup": {},
-  "vaultGroupName": "ჯგუფის სახელი",
-  "@vaultGroupName": {},
-  "vaultMoveToGroup": "ჯგუფში გადატანა",
-  "@vaultMoveToGroup": {},
-  "vaultNoOtherGroups": "სხვა ჯგუფები არ არის",
-  "@vaultNoOtherGroups": {},
-  "vaultNoResultsFound": "შედეგები ვერ მოიძებნა.",
-  "@vaultNoResultsFound": {},
-  "vaultNoPasswordsYet": "პაროლები ჯერ არ არის.\nდასამატებლად დააჭირეთ +.",
-  "@vaultNoPasswordsYet": {},
-  "vaultNoNotesYet": "ჩანაწერები ჯერ არ არის.\nდასამატებლად დააჭირეთ +.",
-  "@vaultNoNotesYet": {},
-  "vaultIsEmpty": "საცავი ცარიელია.\nდაამატეთ პაროლი ან ჩანაწერი.",
-  "@vaultIsEmpty": {},
   "vaultPasswordLabel": "პაროლი",
   "@vaultPasswordLabel": {},
   "vaultNoteLabel": "ჩანაწერი",
   "@vaultNoteLabel": {},
-  "vaultFailedToLoadItem": "ელემენტის ჩატვირთვა ვერ მოხერხდა",
-  "@vaultFailedToLoadItem": {},
-  "vaultSearchHint": "პაროლების და ჩანაწერების ძიება",
-  "@vaultSearchHint": {},
-  "vaultCreateYourVault": "შექმენით თქვენი საცავი",
-  "@vaultCreateYourVault": {},
   "vaultPassword": "ვოლტის პაროლი",
   "@vaultPassword": {},
-  "vaultCreateVault": "საცავის შექმნა",
-  "@vaultCreateVault": {},
-  "vaultFailedToCreate": "საცავის შექმნა ვერ მოხერხდა: {failureType}",
-  "@vaultFailedToCreate": {
-    "placeholders": {
-      "failureType": {}
-    }
-  },
-  "vaultUnlockVault": "საცავის განბლოკვა",
-  "@vaultUnlockVault": {},
   "vaultIncorrectPassword": "არასწორი პაროლი",
   "@vaultIncorrectPassword": {},
   "vaultUnlock": "განბლოკვა",
   "@vaultUnlock": {},
   "vaultForgotPassword": "დაგავიწყდათ პაროლი? თქვენი მონაცემები დაშიფრულია და აღდგენა შეუძლებელია.",
   "@vaultForgotPassword": {},
-  "vaultUnlockFailed": "განბლოკვა ვერ მოხერხდა: {failureType}",
-  "@vaultUnlockFailed": {
-    "placeholders": {
-      "failureType": {}
-    }
-  },
-  "fuzzyVault": "Fuzzy Vault",
-  "@fuzzyVault": {},
   "menu": "მენიუ",
   "@menu": {},
-  "fuzzyUserAuth": "მომხმარებლის ავთენტიფიკაცია",
-  "@fuzzyUserAuth": {},
-  "authError": "შეცდომა: {errorMessage}",
-  "@authError": {
-    "placeholders": {
-      "errorMessage": {}
-    }
-  },
   "unknownError": "უცნობი შეცდომა",
   "@unknownError": {},
-  "noDataFoundPleaseSetYourData": "მონაცემები ვერ მოიძებნა. გთხოვთ დააყენოთ თქვენი მონაცემები.",
-  "@noDataFoundPleaseSetYourData": {},
-  "lastUpdated": "ბოლო განახლება:",
-  "@lastUpdated": {},
   "keyStrengthWeak": "სუსტი (ძალიან მოკლე)",
   "@keyStrengthWeak": {},
   "keyStrengthModerate": "საშუალო (გაითვალისწინეთ ციფრების ან ასოების დამატება)",
@@ -328,38 +145,12 @@
   "@processingFailed": {},
   "chatUnlockTitle": "Fuzzzy Ink-ის განბლოკვა",
   "@chatUnlockTitle": {},
-  "chatUnlockSubtitle": "აპის გასახსნელად შეიყვანეთ მთავარი პაროლი.",
-  "@chatUnlockSubtitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "chatAuthPassword": "პაროლი",
-  "@chatAuthPassword": {},
   "chatAuthIncorrectPassword": "არასწორი პაროლი",
   "@chatAuthIncorrectPassword": {},
   "chatAuthUnlock": "განბლოკვა",
   "@chatAuthUnlock": {},
-  "chatAuthSetupDescription": "დააყენეთ პაროლი ჩატის გასაღებების დასაშიფრად. ეს თქვენს საუბრებს დამატებით დაცვას მისცემს.",
-  "@chatAuthSetupDescription": {},
-  "chatAuthSetPassword": "პაროლის დაყენება",
-  "@chatAuthSetPassword": {},
-  "chatAuthConfirmPassword": "პაროლის დადასტურება",
-  "@chatAuthConfirmPassword": {},
-  "chatAuthPasswordsDoNotMatch": "პაროლები არ ემთხვევა",
-  "@chatAuthPasswordsDoNotMatch": {},
-  "chatAuthProtectionDescription": "მთავარი პაროლი აპის ყველა გასაღებს იცავს: ჩატებს, ისტორიას და საცავს, თუ მას საკუთარი პაროლი არ აქვს. მისი გამორთვა შეუძლებელია.",
-  "@chatAuthProtectionDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "chatAuthResecuringKeys": "გასაღებების ხელახლა დაცვა…",
   "@chatAuthResecuringKeys": {},
-  "chatAuthentication": "მთავარი პაროლი",
-  "@chatAuthentication": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "chatAuthenticationDescription": "პაროლი, აღდგენის გასაღები და ავტომატური დაბლოკვა",
-  "@chatAuthenticationDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "benchmarkFileEncryption": "ფაილის დაშიფვრის ბენჩმარკი (dev)",
   "@benchmarkFileEncryption": {},
   "benchmarkFileEncryptionDescription": "ფაზავს და ხსნის 64 MiB დროებით ფაილს და აჩვენებს MB/s-ს",
@@ -380,68 +171,14 @@
   },
   "close": "დახურვა",
   "@close": {},
-  "chatAuthBiometricUnlock": "განბლოკვა ბიომეტრიით",
-  "@chatAuthBiometricUnlock": {},
-  "chatAuthBiometricEnable": "ბიომეტრიული განბლოკვის ჩართვა",
-  "@chatAuthBiometricEnable": {},
-  "chatAuthBiometricDisable": "ბიომეტრიული განბლოკვის გამორთვა",
-  "@chatAuthBiometricDisable": {},
-  "chatAuthBiometricEnabled": "ბიომეტრიული განბლოკვა ჩართულია",
-  "@chatAuthBiometricEnabled": {},
-  "chatAuthBiometricDescription": "შეიყვანეთ პაროლი დასტურისთვის, შემდეგ განბლოკეთ თითის ანაბეჭდით ან Face ID-ით.",
-  "@chatAuthBiometricDescription": {},
-  "chatAuthBiometricUnavailable": "ბიომეტრიული ავთენტიფიკაცია ამ მოწყობილობაზე მიუწვდომელია.",
-  "@chatAuthBiometricUnavailable": {},
-  "chatAuthBiometricFailed": "ბიომეტრიული ავთენტიფიკაცია ვერ მოხერხდა.",
-  "@chatAuthBiometricFailed": {},
-  "chatAuthBiometricInvalidated": "თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.",
-  "@chatAuthBiometricInvalidated": {},
   "chatAuthPasswordTooWeak": "პაროლი ძალიან სუსტია. გამოიყენეთ უფრო გრძელი პაროლი ასოებით, ციფრებით და სიმბოლოებით.",
   "@chatAuthPasswordTooWeak": {},
-  "chatAuthLockedOut": "ძალიან ბევრი არასწორი მცდელობა. ხელახლა სცადეთ {time}-ის შემდეგ.",
-  "@chatAuthLockedOut": {
-    "placeholders": {
-      "time": {}
-    }
-  },
-  "chatAuthBiometricReset": "ბიომეტრიული განბლოკვა გამოირთო განახლების გამო, რომელიც მას უფრო უსაფრთხოს ხდის. განბლოკეთ პაროლით და ხელახლა ჩართეთ პარამეტრებში.",
-  "@chatAuthBiometricReset": {},
   "biometricNotStrongEnough": "ამ მოწყობილობის ბიომეტრია საკმარისად ძლიერი არ არის თქვენი პაროლის დასაცავად. განბლოკეთ პაროლით.",
   "@biometricNotStrongEnough": {},
   "biometricNotTurnedOn": "ბიომეტრიული განბლოკვა არ ჩაირთო.",
   "@biometricNotTurnedOn": {},
-  "vaultBiometricUnlock": "განბლოკვა ბიომეტრიით",
-  "@vaultBiometricUnlock": {},
-  "vaultBiometricEnable": "ბიომეტრიული განბლოკვის ჩართვა",
-  "@vaultBiometricEnable": {},
-  "vaultBiometricDisable": "ბიომეტრიული განბლოკვის გამორთვა",
-  "@vaultBiometricDisable": {},
-  "vaultBiometricEnabled": "ბიომეტრიული განბლოკვა ჩართულია",
-  "@vaultBiometricEnabled": {},
-  "vaultBiometricDescription": "ბიომეტრიული განბლოკვის ჩასართავად დაადასტურეთ მთავარი პაროლი.",
-  "@vaultBiometricDescription": {},
-  "vaultBiometricUnavailable": "ბიომეტრიული ავთენტიფიკაცია ამ მოწყობილობაზე მიუწვდომელია.",
-  "@vaultBiometricUnavailable": {},
-  "vaultBiometricSettings": "ბიომეტრიის პარამეტრები",
-  "@vaultBiometricSettings": {},
-  "vaultBiometricInvalidPassword": "არასწორი ვოლტის პაროლი.",
-  "@vaultBiometricInvalidPassword": {},
   "vaultBiometricInvalidated": "თქვენი ბიომეტრიული მონაცემები შეიცვალა. ბიომეტრიული განბლოკვა გამოირთო. გთხოვთ ხელახლა ჩართოთ პარამეტრებიდან.",
   "@vaultBiometricInvalidated": {},
-  "vaultAuthentication": "ვოლტის ავთენტიფიკაცია",
-  "@vaultAuthentication": {},
-  "vaultAuthenticationDescription": "ვოლტის ბიომეტრიული განბლოკვის მართვა",
-  "@vaultAuthenticationDescription": {},
-  "vaultNotCreated": "ბიომეტრიული განბლოკვისთვის ჯერ შექმენით ვოლტი.",
-  "@vaultNotCreated": {},
-  "chatAuthCurrentPassword": "მიმდინარე პაროლი",
-  "@chatAuthCurrentPassword": {},
-  "chatAuthNewPassword": "ახალი პაროლი",
-  "@chatAuthNewPassword": {},
-  "chatAuthPasswordChanged": "ჩატის პაროლი შეიცვალა",
-  "@chatAuthPasswordChanged": {},
-  "vaultFileSaveWarning": "⚠️ ორიგინალი ფაილი არ იშლება ავტომატურად. შენახვის შემდეგ ფაილი რჩება მოწყობილობაზე. გთხოვთ წაშალოთ ის უსაფრთხოების მიზნით.",
-  "@vaultFileSaveWarning": {},
   "invitationAlreadyUsed": "ეს მოწვევა უკვე გამოყენებულია.",
   "@invitationAlreadyUsed": {},
   "invalidInvitation": "ეს მოწვევა არასწორია ან დაზიანებულია.",
@@ -452,14 +189,10 @@
   "@wrongChatBlob": {},
   "alreadyUnfuzzed": "ეს შეტყობინება ამ მოწყობილობაზე უკვე გაშიფრულია, ან მისი ერთჯერადი გასაღები აღარ ინახება.",
   "@alreadyUnfuzzed": {},
-  "blobTooOld": "ეს შეტყობინება გასაშიფრად ძალიან ძველია — მასზე ბევრად ახალი შეტყობინებები უკვე გაშიფრულია.",
-  "@blobTooOld": {},
   "corruptBlob": "ეს არ არის სწორი დაშიფრული შეტყობინება.",
   "@corruptBlob": {},
   "safetyNumberTitle": "უსაფრთხოების ნომერი",
   "@safetyNumberTitle": {},
-  "safetyNumberExplanation": "შეადარეთ ეს ციფრები თქვენს პარტნიორს ხმით ან პირადად. სანამ ისინი არ დაემთხვევა, შესაძლოა ვინმემ, ვინც მოწვევა ან მიღება გადაიჭირა, შუაში იყოს.",
-  "@safetyNumberExplanation": {},
   "safetyNumberVersion": "ვერსია {version}. თუ თქვენს პარტნიორს სხვა ვერსია უჩანს, ან საერთოდ არ უჩანს, შედარებამდე ორივე აპი განაახლეთ.",
   "@safetyNumberVersion": {
     "placeholders": {
@@ -468,12 +201,6 @@
       }
     }
   },
-  "safetyNumberMarkVerified": "მონიშნე როგორც დადასტურებული",
-  "@safetyNumberMarkVerified": {},
-  "safetyNumberUnmark": "მონიშვნის მოხსნა",
-  "@safetyNumberUnmark": {},
-  "safetyNumberVerifiedBadge": "დადასტურებული",
-  "@safetyNumberVerifiedBadge": {},
   "wrongPasswordFile": "არასწორი პაროლი — ამ პაროლით ამ ფაილის გაშიფვრა ვერ მოხერხდება.",
   "@wrongPasswordFile": {},
   "fileStillArriving": "ეს ფაილი ჯერ კიდევ იწერება — დაელოდეთ სრულად ჩამოტვირთვას და სცადეთ ხელახლა.",
@@ -488,8 +215,6 @@
   "@forwardSecrecyNotice": {},
   "aboutEncryptionTitle": "დაშიფვრის შესახებ",
   "@aboutEncryptionTitle": {},
-  "aboutEncryptionDescription": "რას ნიშნავს ერთჯერადი გაშიფვრა და როგორ ინახება თქვენი ისტორია",
-  "@aboutEncryptionDescription": {},
   "aboutEncryptionHistoryTitle": "თქვენი ისტორია ამ მოწყობილობაზე",
   "@aboutEncryptionHistoryTitle": {},
   "aboutEncryptionBodyHistory": "ყველა ტექსტი, რომელსაც აგზავნით ან გაშიფრავთ, აპლიკაციაში ინახება — თითოეული ჩატისთვის ცალკე გასაღებით დალუქული, რომელიც მხოლოდ ამ მოწყობილობას აქვს. თუ აპლიკაციის ჩაკეტვის პაროლი გაქვთ დაყენებული, ეს გასაღები მით არის დაცული — პაროლის გარეშე შენახული ტექსტური ისტორია ვერ გაიხსნება. ფაილებიც ასევე ინახება: აპლიკაცია მხოლოდ დალუქულ ფაილს ინახავს და მას მხოლოდ იმ წამისთვის შიფრავს, როცა გახსნით, შეინახავთ ან გააზიარებთ. შენახული ან გაზიარებული ფაილი თქვენია — ის აპლიკაციას ჩვეულებრივი ფაილის სახით ტოვებს, ამიტომ დაიცავით, როგორც ნებისმიერი სხვა ფაილი. განბლოკვის შემდეგ ჩატები ღია რჩება, სანამ აპლიკაციას არ დახურავთ; აპლიკაცია დროის გასვლის შემდეგ თავისით არ იკეტება. თუ ბიომეტრიულ განბლოკვას ჩართავთ, თქვენი პაროლი ამ მოწყობილობაზე უსაფრთხოდ ინახება, რათა თითის ანაბეჭდით ან სახით გაიხსნას.",
@@ -530,35 +255,16 @@
   "@export": {},
   "couldNotOpenFile": "ფაილის გახსნა ვერ მოხერხდა.",
   "@couldNotOpenFile": {},
-  "legalAndSupport": "სამართლებრივი ინფორმაცია და მხარდაჭერა",
-  "@legalAndSupport": {},
-  "legalAndSupportDescription": "ეს ბმულები fuzzzycore.com-ს ბრაუზერში გახსნის. თავად Fuzzzy Ink ინტერნეტს არასოდეს უკავშირდება.",
-  "@legalAndSupportDescription": {},
   "privacyPolicy": "კონფიდენციალურობის პოლიტიკა",
   "@privacyPolicy": {},
-  "privacyPolicyDescription": "რას ინახავს აპლიკაცია და სად",
-  "@privacyPolicyDescription": {},
   "termsOfUse": "გამოყენების პირობები",
   "@termsOfUse": {},
-  "termsOfUseDescription": "Fuzzzy Ink-ის გამოყენების წესები",
-  "@termsOfUseDescription": {},
   "support": "მხარდაჭერა",
   "@support": {},
-  "supportDescription": "დახმარება, კითხვები და პრობლემის შეტყობინება",
-  "@supportDescription": {},
   "dataDeletion": "მონაცემების წაშლა",
   "@dataDeletion": {},
-  "dataDeletionDescription": "როგორ წაშალოთ ყველაფერი, რასაც აპლიკაცია ინახავს",
-  "@dataDeletionDescription": {},
   "couldNotOpenLink": "ბმულის გახსნა ვერ მოხერხდა.",
   "@couldNotOpenLink": {},
-  "appVersion": "ვერსია {version} (ანაწყობი {build})",
-  "@appVersion": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
   "biometricUnlockChats": "ჩატების განსაბლოკად დაადასტურეთ ვინაობა",
   "@biometricUnlockChats": {},
   "biometricUnlockVault": "საცავის განსაბლოკად დაადასტურეთ ვინაობა",
@@ -575,42 +281,10 @@
   "@copyRefused": {
     "description": "Draft Georgian, needs a native read."
   },
-  "copyPolicyTitle": "კოპირება",
-  "@copyPolicyTitle": {
-    "description": "Draft Georgian, needs a native read."
-  },
-  "copyPolicyDescription": "აპლიკაციიდან მხოლოდ თქვენ მიერ გასაგზავნი დაშიფრული ტექსტი კოპირდება. გაშიფრული შეტყობინებები, ჩანაწერები და ფაილების მდებარეობა აპლიკაციაში რჩება. დაკოპირებული ტექსტი ბუფერიდან მალევე იშლება.",
-  "@copyPolicyDescription": {
-    "description": "Draft Georgian, needs a native read."
-  },
-  "copyPolicyVaultPasswordNote": "გამონაკლისი მხოლოდ საცავის პაროლია: დაკოპირებული პაროლი, სადაც სისტემა ამის საშუალებას იძლევა, ბუფერის ისტორიაში არ ინახება და {seconds} წამში იშლება.",
-  "@copyPolicyVaultPasswordNote": {
-    "description": "Draft Georgian, needs a native read."
-  },
   "vaultCopyPassword": "პაროლის კოპირება",
   "@vaultCopyPassword": {
     "description": "Draft Georgian, needs a native read."
   },
-  "vaultPasswordCopiedClearsIn": "პაროლი დაკოპირდა. ბუფერიდან {seconds} წამში წაიშლება.",
-  "@vaultPasswordCopiedClearsIn": {
-    "description": "Draft Georgian, needs a native read."
-  },
-  "shareAsLinkOption": "ბმულად გაგზავნა",
-  "@shareAsLinkOption": {},
-  "shareAsLinkOptionHint": "პირდაპირ Fuzzzy Ink-ში იხსნება. თუ აპი არ აქვთ, ბმული აჩვენებს, საიდან ჩამოტვირთონ.",
-  "@shareAsLinkOptionHint": {},
-  "shareAsQrCodeOption": "QR კოდის ჩვენება",
-  "@shareAsQrCodeOption": {},
-  "shareAsQrCodeOptionHint": "მეორე ტელეფონი კამერით დაასკანერებს.",
-  "@shareAsQrCodeOptionHint": {},
-  "shareAsFileOption": "ფაილად გაგზავნა",
-  "@shareAsFileOption": {},
-  "shareAsFileOptionHint": "ელფოსტისთვის ან ჩატისთვის, რომელიც გრძელ ბმულს ჭრის.",
-  "@shareAsFileOptionHint": {},
-  "qrCodeHint": "მეორე ტელეფონის კამერა ამ კოდს მიუშვირეთ. იქ Fuzzzy Ink გაიხსნება, ან ჩამოტვირთვის გვერდი, თუ აპი არ არის.",
-  "@qrCodeHint": {},
-  "notVerified": "დაუდასტურებელი",
-  "@notVerified": {},
   "saveFile": "შენახვა",
   "@saveFile": {},
   "fileSaved": "შენახულია.",
@@ -627,80 +301,20 @@
   "@masterPassword": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "masterPasswordSetupTitle": "შექმენით მთავარი პაროლი",
-  "@masterPasswordSetupTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "masterPasswordSetupDescription": "ერთი პაროლი იცავს ყველაფერს Fuzzzy Ink-ში: ჩატებს, ისტორიას და საცავს. აპის ყოველ გახსნაზე ამ პაროლს შეიყვანთ.",
-  "@masterPasswordSetupDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "masterPasswordPreviousData": "ეს ვერსია მთავარ პაროლს იყენებს. წინა სატესტო ვერსიის ჩატებსა და საცავს ის ვერ გახსნის, ამიტომ ისინი წაიშლება. ფაილები, რომლებიც გაშიფრეთ, ადგილზე რჩება.",
   "@masterPasswordPreviousData": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "masterPasswordCreate": "მთავარი პაროლის შექმნა",
-  "@masterPasswordCreate": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "masterPasswordCreating": "ვქმნით თქვენს გასაღებებს…",
-  "@masterPasswordCreating": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "masterPasswordFailed": "გასაღებები ვერ შეიქმნა. სცადეთ თავიდან.",
   "@masterPasswordFailed": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "masterPasswordIsOn": "მთავარი პაროლი ჩართულია",
-  "@masterPasswordIsOn": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "recoveryKeyTitle": "აღდგენის გასაღები",
   "@recoveryKeyTitle": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "recoveryKeyDescription": "თუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. ჩაიწერეთ ან შეინახეთ და მოწყობილობისგან მოშორებით, უსაფრთხო ადგილას გადადეთ. მას მხოლოდ ახლა ხედავთ.",
-  "@recoveryKeyDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyWarning": "პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.",
-  "@recoveryKeyWarning": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySave": "შენახვა ან ამობეჭდვა…",
-  "@recoveryKeySave": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySaved": "აღდგენის გასაღები ფაილში შეინახა",
-  "@recoveryKeySaved": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "recoveryKeySaveFailed": "აღდგენის გასაღები ვერ შეინახა.",
   "@recoveryKeySaveFailed": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyConfirm": "აღდგენის გასაღები შევინახე",
-  "@recoveryKeyConfirm": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyContinue": "გაგრძელება",
-  "@recoveryKeyContinue": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySkip": "გაგრძელება აღდგენის გასაღების გარეშე",
-  "@recoveryKeySkip": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySkipTitle": "გააგრძელებთ აღდგენის გასაღების გარეშე?",
-  "@recoveryKeySkipTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySkipMessage": "თუ მთავარ პაროლს დაგავიწყდებათ, ჩატები, ისტორია და საცავი სამუდამოდ დაიკარგება. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.",
-  "@recoveryKeySkipMessage": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeySkipConfirm": "გაგრძელება მის გარეშე",
-  "@recoveryKeySkipConfirm": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "recoveryKeyFileText": "Fuzzzy Ink-ის აღდგენის გასაღები\n\n{key}\n\nთუ მთავარ პაროლს დაგავიწყდებათ, ამ გასაღებით ახალს დააყენებთ. შეინახეთ უსაფრთხო ადგილას, მოწყობილობისგან მოშორებით. პაროლის ან ამ აღდგენის გასაღების გარეშე თქვენს მონაცემებს ვერავინ დააბრუნებს — ვერც ჩვენ.\n",
@@ -712,36 +326,8 @@
       }
     }
   },
-  "recoveryKeyIsSet": "აღდგენის გასაღები დაყენებულია.",
-  "@recoveryKeyIsSet": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyNotSet": "აღდგენის გასაღები არ გაქვთ. თუ მთავარ პაროლს დაგავიწყდებათ, მონაცემები სამუდამოდ დაიკარგება.",
-  "@recoveryKeyNotSet": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyCreateNew": "ახალი აღდგენის გასაღების შექმნა",
-  "@recoveryKeyCreateNew": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryKeyCreateNewDescription": "ახალი აღდგენის გასაღების შესაქმნელად შეიყვანეთ მთავარი პაროლი. ძველი გასაღები აღარ იმუშავებს.",
-  "@recoveryKeyCreateNewDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryTitle": "ახალი პაროლი აღდგენის გასაღებით",
-  "@recoveryTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoveryDescription": "შეიყვანეთ აპის დაყენებისას შენახული აღდგენის გასაღები და აირჩიეთ ახალი მთავარი პაროლი.",
-  "@recoveryDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "recoveryKeyField": "აღდგენის გასაღები",
   "@recoveryKeyField": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "recoverySubmit": "ახალი პაროლის დაყენება",
-  "@recoverySubmit": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "recoveryKeyTypo": "აღდგენის გასაღებში შეცდომაა. გადაამოწმეთ ოთხ-ოთხი სიმბოლოს ჯგუფები.",
@@ -750,14 +336,6 @@
   },
   "recoveryKeyWrong": "ეს აღდგენის გასაღები ამ აპს ვერ ხსნის.",
   "@recoveryKeyWrong": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "chatUnlockForgot": "დაგავიწყდათ პაროლი?",
-  "@chatUnlockForgot": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "chatUnlockUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
-  "@chatUnlockUseRecoveryKey": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "chatUnlockErase": "ყველაფრის წაშლა და თავიდან დაწყება",
@@ -788,22 +366,6 @@
   "@appLockNow": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "autoLockTitle": "ავტომატური დაბლოკვა",
-  "@autoLockTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "autoLockIdle": "დაბლოკვა, თუ აპს არ იყენებთ",
-  "@autoLockIdle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "autoLockBackground": "დაბლოკვა აპიდან გასვლის შემდეგ",
-  "@autoLockBackground": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "autoLockImmediately": "მაშინვე",
-  "@autoLockImmediately": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
   "autoLockMinutes": "{count} წთ",
   "@autoLockMinutes": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)",
@@ -815,14 +377,6 @@
   },
   "autoLockSaveFailed": "პარამეტრი ვერ შეინახა.",
   "@autoLockSaveFailed": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultPasswordModeTitle": "საცავის პაროლი",
-  "@vaultPasswordModeTitle": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultUsesMasterPassword": "საცავს მთავარი პაროლი ხსნის.",
-  "@vaultUsesMasterPassword": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "vaultUsesOwnPassword": "საცავს საკუთარი პაროლი აქვს.",
@@ -837,24 +391,8 @@
   "@vaultUseMasterPassword": {
     "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
-  "vaultOwnPasswordNote": "აღდგენის გასაღები არ არის შენახული: ამ პაროლის გარეშე საცავი სამუდამოდ დაიკარგება.",
-  "@vaultOwnPasswordNote": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
   "vaultOwnPasswordRecoveryNote": "აღდგენის გასაღები „ჩემ სეიფს“ მაინც გახსნის.",
   "@vaultOwnPasswordRecoveryNote": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultUseRecoveryKey": "აღდგენის გასაღების გამოყენება",
-  "@vaultUseRecoveryKey": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultRecoveryTitle": "„ჩემი სეიფის“ გახსნა აღდგენის გასაღებით",
-  "@vaultRecoveryTitle": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultRecoveryDescription": "შეიყვანეთ აღდგენის გასაღები და აირჩიეთ „ჩემი სეიფის“ ახალი პაროლი, ან გახსენით ის მთავარი პაროლით.",
-  "@vaultRecoveryDescription": {
     "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
   },
   "vaultRecoveryUseMasterPassword": "„ჩემი სეიფი“ მთავარი პაროლით გაიხსნას",
@@ -864,34 +402,6 @@
   "vaultRecoverySubmit": "„ჩემი სეიფის“ გახსნა",
   "@vaultRecoverySubmit": {
     "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "recoveryKeyVaultPasswordNote": "„ჩემ სეიფს“ საკუთარი პაროლი აქვს. შეიყვანეთ ისიც, რომ ახალმა გასაღებმა „ჩემი სეიფიც“ გახსნას.",
-  "@recoveryKeyVaultPasswordNote": {
-    "description": "Georgian draft, needs a native read (recovery key opens a vault with its own password, 2026-10-26)"
-  },
-  "vaultOwnNewPassword": "საცავის ახალი პაროლი",
-  "@vaultOwnNewPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultCurrentPassword": "საცავის მიმდინარე პაროლი",
-  "@vaultCurrentPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultPasswordModeChanged": "საცავის პაროლი განახლდა",
-  "@vaultPasswordModeChanged": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultCreateWithMasterDescription": "საცავი პაროლებს, ჩანაწერებსა და ფაილებს ამ მოწყობილობაზე დალუქულად ინახავს. მას მთავარი პაროლი ხსნის — საცავის შესაქმნელად შეიყვანეთ ის.",
-  "@vaultCreateWithMasterDescription": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultForgotMasterPassword": "დაგავიწყდათ მთავარი პაროლი? დაბლოკეთ აპი და გამოიყენეთ აღდგენის გასაღები.",
-  "@vaultForgotMasterPassword": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
-  },
-  "vaultTooManyAttempts": "ძალიან ბევრი არასწორი პაროლი. ცოტა მოიცადეთ და სცადეთ თავიდან.",
-  "@vaultTooManyAttempts": {
-    "description": "Georgian draft, needs a native read (master password build, 2026-10-26)"
   },
   "tabHome": "მთავარი",
   "@tabHome": {
@@ -1177,10 +687,6 @@
   "@tagNoCopy": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   },
-  "tagNoScreenshots": "ეკრანის ანაბეჭდი გამორთულია",
-  "@tagNoScreenshots": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
   "lockWhoTitle": "ვისთვისაა?",
   "@lockWhoTitle": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
@@ -1287,26 +793,6 @@
   },
   "lockPasswordNotGood": "საჭიროა დონე „კარგი“.",
   "@lockPasswordNotGood": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockStrengthLabel": "სიძლიერე",
-  "@lockStrengthLabel": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockStrengthWeak": "სუსტი",
-  "@lockStrengthWeak": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockStrengthFair": "საშუალო",
-  "@lockStrengthFair": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockStrengthGood": "კარგი",
-  "@lockStrengthGood": {
-    "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
-  },
-  "lockStrengthStrong": "ძლიერი",
-  "@lockStrengthStrong": {
     "description": "Georgian draft, needs a native read (Lock and Open flows, 2026-10-26)"
   },
   "lockFailed": "ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.",
@@ -1711,10 +1197,6 @@
   },
   "softSounds": "რბილი ხმები",
   "@softSounds": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "softSoundsLine": "უხმო რეჟიმში არასდროს",
-  "@softSoundsLine": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   },
   "safeLockedTitle": "ჩემი სეიფი ჩაკეტილია",
@@ -2637,15 +2119,6 @@
   "historyLoadError": "ისტორია ვერ ჩაიტვირთა.",
   "@historyLoadError": {
     "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "historyNewRow": "ახლა ისტორიაშია.",
-  "@historyNewRow": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
   },
   "waitingCardTitle": "პასუხს ველოდებით: {name}",
   "@waitingCardTitle": {
