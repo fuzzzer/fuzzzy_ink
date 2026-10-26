@@ -11,10 +11,10 @@ export 'components/components.dart';
 /// - your locked message (private): your text, "No copy", the locked
 ///   version, Share again and Copy locked;
 /// - your locked file: its `.fuzz` card, Share again and Save;
-/// - an opened message (private): the text, "No copy";
-/// - an opened file (private): its card, Open and Save.
-///
-/// The opened views are minimal versions of the Open flow's opened screens.
+/// - an opened message (private): Open's opened-message screen
+///   ([OpenedTextView]) with when it was opened;
+/// - an opened file (private): Open's opened-file screen ([OpenedFileView]):
+///   its card, Open (pictures and text) and Save.
 class HistoryItemPage extends StatelessWidget {
   const HistoryItemPage({super.key, required this.payload});
 
@@ -47,10 +47,42 @@ class ProvidedHistoryItemPage extends StatelessWidget {
     final view = switch ((message.isSent, message.type)) {
       (true, MessageType.text) => _LockedTextView(payload: payload),
       (true, MessageType.file) => _LockedFileView(payload: payload),
-      (false, MessageType.text) => _OpenedTextView(payload: payload),
-      (false, MessageType.file) => _OpenedFileView(payload: payload),
+      (false, MessageType.text) => _openedText(context),
+      (false, MessageType.file) => _openedFile(context),
     };
     return isPrivate(message) ? SensitiveScreen(child: view) : view;
+  }
+
+  Widget _openedText(BuildContext context) {
+    final message = payload.message;
+    return OpenedTextView(
+      state: OpenFlowState(
+        phase: OpenPhase.openedText,
+        chat: payload.chat,
+        openedText: message.isUnreadable
+            ? context.fuzzzyInkLocalizations.itemUnreadable
+            : message.decryptedMessage,
+      ),
+      whenLine: _when(context, message, sent: false),
+      onDone: () => Navigator.of(context).maybePop(),
+    );
+  }
+
+  Widget _openedFile(BuildContext context) {
+    final message = payload.message;
+    return OpenedFileView(
+      state: OpenFlowState(
+        phase: OpenPhase.openedFile,
+        chat: payload.chat,
+        openedFile: OpenedFile(
+          name: ChatFileCubit.fileNameOf(message),
+          keptRow: message,
+        ),
+      ),
+      whenLine: _when(context, message, sent: false),
+      fileSize: payload.fileSize,
+      onDone: () => Navigator.of(context).maybePop(),
+    );
   }
 }
 
@@ -226,36 +258,6 @@ class _LockedTextView extends StatelessWidget {
   }
 }
 
-class _OpenedTextView extends StatelessWidget {
-  const _OpenedTextView({required this.payload});
-
-  final HistoryItemPagePayload payload;
-
-  @override
-  Widget build(BuildContext context) {
-    final localizations = context.fuzzzyInkLocalizations;
-    final space = context.fuzzzySpace;
-    final message = payload.message;
-
-    return InkFlowScaffold(
-      qaId: 'item',
-      title: localizations.itemFromName(payload.chat.chatName),
-      footer: FuzzzyButton(
-        qaId: 'item.done',
-        label: localizations.itemDone,
-        onPressed: () => Navigator.of(context).maybePop(),
-      ),
-      children: [
-        _WhenLine(_when(context, message, sent: false)),
-        SizedBox(height: space.m),
-        _MessageBox(message: message),
-        SizedBox(height: space.s),
-        const _NoCopyRow(),
-      ],
-    );
-  }
-}
-
 class _LockedFileView extends StatelessWidget {
   const _LockedFileView({required this.payload});
 
@@ -322,115 +324,6 @@ class _LockedFileView extends StatelessWidget {
           qaId: 'item.onlyLocked',
           icon: Icons.lock_outline,
           text: localizations.itemOnlyLockedKept,
-          trailing:
-              const WhyLink(topic: InkInfoTopic.files, qaId: 'item.files'),
-        ),
-      ],
-    );
-  }
-}
-
-class _OpenedFileView extends StatelessWidget {
-  const _OpenedFileView({required this.payload});
-
-  final HistoryItemPagePayload payload;
-
-  String get _fileName => ChatFileCubit.fileNameOf(payload.message);
-
-  /// Unfuzzes the kept container into a short-lived copy and shows it in
-  /// the app's viewer; the copy is wiped when the viewer closes.
-  Future<void> _open(BuildContext context) async {
-    final cubit = context.read<ChatFileCubit>();
-    final store = cubit.userFileStore;
-    final copy = await unfuzzChatFile(context, payload.message);
-    if (copy == null || !context.mounted) return;
-    await PlainFileViewerPage.show(
-      context,
-      fileName: _fileName,
-      filePath: copy,
-      onSave: (viewerContext) => saveFileForUser(
-        viewerContext,
-        filePath: copy,
-        fileName: _fileName,
-        store: store,
-      ),
-      onShare: (viewerContext) async {
-        await shareFileForUser(viewerContext, filePath: copy, store: store);
-        cubit.wipeWhenBack(copy);
-      },
-      onClosed: () => cubit.wipe(copy),
-    );
-  }
-
-  /// A normal copy for the phone's save menu; the app keeps none.
-  Future<bool> _save(BuildContext context) async {
-    final cubit = context.read<ChatFileCubit>();
-    final copy = await unfuzzChatFile(context, payload.message);
-    if (copy == null || !context.mounted) return false;
-    try {
-      return await _handOver(
-        context,
-        filePath: copy,
-        fileName: _fileName,
-        store: cubit.userFileStore,
-      );
-    } finally {
-      unawaited(cubit.wipe(copy));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localizations = context.fuzzzyInkLocalizations;
-    final space = context.fuzzzySpace;
-    final message = payload.message;
-
-    return InkFlowScaffold(
-      qaId: 'item',
-      title: localizations.itemFromName(payload.chat.chatName),
-      footer: FuzzzyButton(
-        qaId: 'item.done',
-        label: localizations.itemDone,
-        variant: FuzzzyButtonVariant.ghost,
-        onPressed: () => Navigator.of(context).maybePop(),
-      ),
-      children: [
-        _WhenLine(_when(context, message, sent: false)),
-        SizedBox(height: space.m),
-        FileCard(
-          qaId: 'item',
-          name: UserFileNames.forDisplay(_fileName),
-          size: payload.fileSize,
-        ),
-        SizedBox(height: space.m),
-        Row(
-          children: [
-            Expanded(
-              child: FuzzzyButton(
-                qaId: 'item.open',
-                label: localizations.itemOpen,
-                icon: const Icon(Icons.visibility_outlined),
-                onPressed: () => _open(context),
-              ),
-            ),
-            SizedBox(width: space.s + space.xs / 2),
-            Expanded(
-              child: InPlaceConfirmButton(
-                qaId: 'item.save',
-                label: localizations.itemSave,
-                confirmedLabel: localizations.confirmHandedOver,
-                hold: InkMotionTiming.handedOverHold,
-                icon: const Icon(Icons.save_alt),
-                onPressed: () => _save(context),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: space.m),
-        TipLine(
-          qaId: 'item.saveCopy',
-          icon: Icons.lock_outline,
-          text: localizations.itemSaveGivesCopy,
           trailing:
               const WhyLink(topic: InkInfoTopic.files, qaId: 'item.files'),
         ),

@@ -149,7 +149,7 @@ void main() {
     expect(find.text('From Nino'), findsOneWidget);
     expect(find.text('Opened Today · 09:20'), findsOneWidget);
     expect(find.text('The keys are under the blue pot.'), findsOneWidget);
-    expect(find.byKey(const Key('tag.item.noCopy')), findsOneWidget);
+    expect(find.byKey(const Key('tag.opened.nocopy')), findsOneWidget);
     expect(find.text('Copy locked'), findsNothing);
     expect(find.text('Done'), findsOneWidget);
   });
@@ -160,6 +160,8 @@ void main() {
 
     expect(find.byType(SensitiveScreen), findsOneWidget);
     expect(find.text('beach-photo.jpg'), findsOneWidget);
+    expect(find.text('Opened Today · 09:20'), findsOneWidget);
+    expect(find.textContaining('3.1 MB'), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
     expect(

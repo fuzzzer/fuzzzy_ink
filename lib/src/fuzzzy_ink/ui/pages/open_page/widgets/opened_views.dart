@@ -5,12 +5,22 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 /// An opened message (private): "From Nino", where it went ("Just now ·
 /// kept in Nino's history", or not kept for a password text), the text
-/// large and not selectable, the "No copy" tag with Why?, and Done.
+/// large and not selectable, the "No copy" tag with Why?, and Done. A
+/// person's history shows the same screen with its own [whenLine]
+/// ("Opened Today · 09:20").
 class OpenedTextView extends StatelessWidget {
-  const OpenedTextView({super.key, required this.state, required this.onDone});
+  const OpenedTextView({
+    super.key,
+    required this.state,
+    required this.onDone,
+    this.whenLine,
+  });
 
   final OpenFlowState state;
   final VoidCallback onDone;
+
+  /// Replaces the "where it went" line.
+  final String? whenLine;
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +46,10 @@ class OpenedTextView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            chat == null
-                ? localizations.openedNotKept
-                : localizations.openedKeptInHistory(chat.chatName),
+            whenLine ??
+                (chat == null
+                    ? localizations.openedNotKept
+                    : localizations.openedKeptInHistory(chat.chatName)),
             style: type.bodyS.copyWith(color: colors.inkMute),
           ),
           SizedBox(height: space.m),
@@ -81,12 +92,26 @@ class OpenedTextView extends StatelessWidget {
 /// inside the app, for pictures and text only) and Save (the system's save
 /// dialog; "Handed over" once the system says it saved), and the tip that
 /// Fuzzzy Ink keeps only the locked copy. Every plain copy made here is
-/// wiped right after use, and again when Open closes.
+/// wiped right after use, and again when Open closes. A person's history
+/// shows the same screen for a kept file, with its own [whenLine] and the
+/// [fileSize].
 class OpenedFileView extends StatelessWidget {
-  const OpenedFileView({super.key, required this.state, required this.onDone});
+  const OpenedFileView({
+    super.key,
+    required this.state,
+    required this.onDone,
+    this.whenLine,
+    this.fileSize,
+  });
 
   final OpenFlowState state;
   final VoidCallback onDone;
+
+  /// Replaces the "where it went" line.
+  final String? whenLine;
+
+  /// "3.1 MB" on the file card, when known.
+  final String? fileSize;
 
   /// A plain copy to use now, and whether this view must wipe it after.
   Future<(String, bool)?> _plainCopy(BuildContext context) async {
@@ -174,13 +199,18 @@ class OpenedFileView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            chat == null
-                ? localizations.openedNotKept
-                : localizations.openedKeptInHistory(chat.chatName),
+            whenLine ??
+                (chat == null
+                    ? localizations.openedNotKept
+                    : localizations.openedKeptInHistory(chat.chatName)),
             style: type.bodyS.copyWith(color: colors.inkMute),
           ),
           SizedBox(height: space.m),
-          FileCard(name: file.name, qaId: 'opened.file.card'),
+          FileCard(
+            name: UserFileNames.forDisplay(file.name),
+            size: fileSize,
+            qaId: 'opened.file.card',
+          ),
           SizedBox(height: space.m),
           if (!canShow) ...[
             Text(
