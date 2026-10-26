@@ -19,6 +19,7 @@ class LockedView extends StatelessWidget {
 
   final ChatGeneralData? chat;
   final LockFlowState state;
+
   /// The system share finished; `copied` when it was "Copy as text".
   final void Function({bool copied}) onShared;
   final VoidCallback onDone;

@@ -30,7 +30,7 @@ void main() {
 
   test('every Release configuration of every flavour uses them', () {
     final configs = RegExp(
-      r'isa = XCBuildConfiguration;(.*?)name = "?([^";]+)"?;',
+      'isa = XCBuildConfiguration;(.*?)name = "?([^";]+)"?;',
       dotAll: true,
     ).allMatches(project);
     final releases = [

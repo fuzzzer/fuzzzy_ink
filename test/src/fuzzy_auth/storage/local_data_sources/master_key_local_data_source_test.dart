@@ -57,7 +57,8 @@ void main() {
       () => legacy.delete(key: MasterKeyLocalDataSource.legacyStoreKeyKey),
     ).called(1);
     verifyNever(
-        () => legacy.delete(key: MasterKeyLocalDataSource.storeWrapKey));
+      () => legacy.delete(key: MasterKeyLocalDataSource.storeWrapKey),
+    );
     verifyNever(() => legacy.deleteAll());
   });
 
@@ -101,7 +102,9 @@ void main() {
     when(() => own.delete(key: MasterKeyLocalDataSource.passwordWrapKey))
         .thenThrow(PlatformException(code: 'Unexpected security result code'));
     await expectLater(
-        dataSource.deleteAll(), throwsA(isA<PlatformException>()));
+      dataSource.deleteAll(),
+      throwsA(isA<PlatformException>()),
+    );
   });
 
   test('a key an earlier build kept under the old service is a leftover',

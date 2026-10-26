@@ -97,7 +97,7 @@ void main() {
         tester,
         returnsToPerson: returnsToPerson,
         row: 3,
-        toast: 'In Nino\'s history now.',
+        toast: "In Nino's history now.",
       );
       if (returnsToPerson) {
         unawaited(router.push(PersonPage.location(_nino.chatId)));
@@ -108,7 +108,7 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      final card = find.text('In Nino\'s history now.');
+      final card = find.text("In Nino's history now.");
       expect(card, findsOneWidget);
       final screen = tester.getSize(find.byType(MaterialApp));
       expect(

@@ -104,8 +104,7 @@ class AppRouter {
   /// Forgets the place (the first run, an erase).
   static void forgetReturnPlace() => _returnPlace = null;
 
-  static bool _holdsPrivate(List<RouteMatchBase> matches) =>
-      matches.any(
+  static bool _holdsPrivate(List<RouteMatchBase> matches) => matches.any(
         (match) => match is ShellRouteMatch
             ? _holdsPrivate(match.matches)
             : _privateRoutes.contains(Uri.parse(match.matchedLocation).path),

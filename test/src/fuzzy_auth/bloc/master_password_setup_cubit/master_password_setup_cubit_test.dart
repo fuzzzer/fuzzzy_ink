@@ -99,8 +99,7 @@ void main() {
     );
 
     await cubit.confirmRecoveryKeySaved();
-    verify(() => chatAuth.completeSetUp(pending, keepRecovery: true))
-        .called(1);
+    verify(() => chatAuth.completeSetUp(pending, keepRecovery: true)).called(1);
     expect(cubit.state.step, MasterPasswordSetupStep.quickUnlock);
     expect(cubit.state.recoveryKey, isNull, reason: 'shown once, then gone');
     verifyNever(() => store.onSetUpComplete());

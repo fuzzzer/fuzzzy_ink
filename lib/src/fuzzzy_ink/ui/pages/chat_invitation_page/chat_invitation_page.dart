@@ -232,10 +232,10 @@ class _ProvidedChatInvitationPageState
         if (_isShared) ...[
           SizedBox(height: space.s),
           InkScreenLine(
-                _wasCopied
-                    ? localizations.shareCopiedStaysLocked
-                    : localizations.inviteSharedLine,
-              ),
+            _wasCopied
+                ? localizations.shareCopiedStaysLocked
+                : localizations.inviteSharedLine,
+          ),
         ],
       ],
     );

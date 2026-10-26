@@ -163,7 +163,9 @@ void main() {
           for (final word in text.split(' ')) {
             final boxes = paragraph.getBoxesForSelection(
               TextSelection(
-                  baseOffset: start, extentOffset: start + word.length),
+                baseOffset: start,
+                extentOffset: start + word.length,
+              ),
             );
             final lines = boxes.map((box) => box.top.round()).toSet();
             expect(lines, hasLength(1), reason: '"$word" on one line');

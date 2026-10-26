@@ -342,10 +342,9 @@ void main() {
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
-    void enrolled(bool answer) => messenger.setMockMethodCallHandler(
+    void enrolled({required bool answer}) => messenger.setMockMethodCallHandler(
           channel,
-          (call) async =>
-              call.method == 'hasStrongBiometrics' ? answer : null,
+          (call) async => call.method == 'hasStrongBiometrics' ? answer : null,
         );
 
     tearDown(() => messenger.setMockMethodCallHandler(channel, null));
@@ -356,9 +355,9 @@ void main() {
           'Touch ID must be enrolled', () async {
         debugDefaultTargetPlatformOverride = platform;
         build({});
-        enrolled(false);
+        enrolled(answer: false);
         expect(await repository.canUseBiometrics(), isFalse);
-        enrolled(true);
+        enrolled(answer: true);
         expect(await repository.canUseBiometrics(), isTrue);
         biometricStorage.canAuthenticateAnswer =
             CanAuthenticateResponse.errorNoBiometricEnrolled;
@@ -366,7 +365,7 @@ void main() {
       });
     }
 
-    test('on Android the strong-biometrics check is the plugin\'s', () async {
+    test("on Android the strong-biometrics check is the plugin's", () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       build({});
       expect(await repository.canUseBiometrics(), isTrue);

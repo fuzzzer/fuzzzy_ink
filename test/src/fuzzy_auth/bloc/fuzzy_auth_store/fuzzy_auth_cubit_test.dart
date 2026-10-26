@@ -247,7 +247,7 @@ void main() {
     );
 
     blocTest<FuzzyAuthStore, FuzzyAuthState>(
-      'Lock now is marked as the person\'s own lock until the next unlock',
+      "Lock now is marked as the person's own lock until the next unlock",
       setUp: () => when(() => mockChatAuth.unlock('pw'))
           .thenAnswer((_) async => const CryptoCoreSuccess(null)),
       build: buildStore,
