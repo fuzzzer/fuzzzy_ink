@@ -101,31 +101,33 @@ class OpenProblemView extends StatelessWidget {
     return FlowScaffold(
       qaId: 'open.problem',
       onLeading: context.goBack,
-      isClose: true,
+      leading: FlowLeading.close,
       footer: button,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          FlowHero(
-            castMoment: FuzzzyCastMoment.cantOpen,
-            glyph: HeroGlyph(
-              icon: Icons.priority_high,
-              tone: HeroGlyphTone.warning,
-              qaId: 'open.problem.${problem.name}',
-            ),
-          ),
-          FlowTitle(title: title, line: line),
-          if (problem == OpenProblem.alreadyOpened) ...[
-            SizedBox(height: context.fuzzzySpace.s),
-            const Center(
-              child: WhyLink(
-                topic: InkInfoTopic.opensOnce,
-                qaId: 'open.problem.why',
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FlowHero(
+              castMoment: FuzzzyCastMoment.cantOpen,
+              glyph: HeroGlyph(
+                icon: Icons.priority_high,
+                tone: HeroGlyphTone.warning,
+                qaId: 'open.problem.${problem.name}',
               ),
             ),
+            FlowTitle(title: title, line: line),
+            if (problem == OpenProblem.alreadyOpened) ...[
+              SizedBox(height: context.fuzzzySpace.s),
+              const Center(
+                child: WhyLink(
+                  topic: InkInfoTopic.opensOnce,
+                  qaId: 'open.problem.why',
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 

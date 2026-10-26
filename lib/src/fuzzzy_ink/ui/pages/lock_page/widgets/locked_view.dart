@@ -85,7 +85,7 @@ class LockedView extends StatelessWidget {
     return FlowScaffold(
       qaId: 'locked',
       onLeading: onDone,
-      isClose: true,
+      leading: FlowLeading.close,
       footer: FuzzzyButton(
         label: localizations.flowDone,
         variant:
@@ -94,86 +94,89 @@ class LockedView extends StatelessWidget {
         qaId: 'locked.done',
         onPressed: onDone,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const FlowHero(
-            castMoment: FuzzzyCastMoment.locked,
-            // The buzz is the page's, so it also comes with Fuzzz.
-            glyph: LockSnapGlyph(buzz: false, qaId: 'locked.glyph'),
-          ),
-          FlowTitle(
-            title: chat == null
-                ? localizations.lockedWithPassword
-                : localizations.lockedForName(chat.chatName),
-            line: isShared
-                ? localizations.lockedSentToShareMenu
-                : localizations.lockedNowSendIt,
-          ),
-          SizedBox(height: space.l),
-          if (item.isFile)
-            FileCard(
-              name: '${item.fileName ?? ''}.$fuzzedFileIdentificator',
-              size:
-                  item.fileSize == null ? null : formatFileSize(item.fileSize!),
-              state: FileCardState.locked,
-              qaId: 'locked.file',
-            )
-          else
-            LockedTextPreview(
-              lockedText: item.lockedText!,
-              showLabel: true,
-              qaId: 'locked.text',
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const FlowHero(
+              castMoment: FuzzzyCastMoment.locked,
+              // The buzz is the page's, so it also comes with Fuzzz.
+              glyph: LockSnapGlyph(buzz: false, qaId: 'locked.glyph'),
             ),
-          SizedBox(height: space.m),
-          AnimatedSwitcher(
-            duration: InkMotion.isReduced(context)
-                ? Duration.zero
-                : context.fuzzzyMotion.standard,
-            child: FuzzzyButton(
-              key: ValueKey(isShared),
-              label: isShared
-                  ? localizations.lockedShareAgain
-                  : localizations.share,
-              icon: const Icon(Icons.ios_share),
-              variant: isShared
-                  ? FuzzzyButtonVariant.secondary
-                  : FuzzzyButtonVariant.primary,
-              size: FuzzzyButtonSize.l,
-              qaId: 'locked.share',
-              onPressed: () => _share(context, item),
+            FlowTitle(
+              title: chat == null
+                  ? localizations.lockedWithPassword
+                  : localizations.lockedForName(chat.chatName),
+              line: isShared
+                  ? localizations.lockedSentToShareMenu
+                  : localizations.lockedNowSendIt,
             ),
-          ),
-          SizedBox(height: space.s),
-          if (item.isFile)
-            InPlaceConfirmButton(
-              label: localizations.lockedSaveFile,
-              confirmedLabel: localizations.confirmHandedOver,
-              icon: const Icon(Icons.save_alt),
-              size: FuzzzyButtonSize.l,
-              hold: InkMotionTiming.handedOverHold,
-              qaId: 'locked.save',
-              onPressed: () => _save(context, item),
-            )
-          else
-            InPlaceConfirmButton(
-              label: localizations.lockedCopyText,
-              confirmedLabel: localizations.confirmCopied,
-              icon: const Icon(Icons.copy_outlined),
-              size: FuzzzyButtonSize.l,
-              qaId: 'locked.copy',
-              onPressed: () => _copy(item),
-            ),
-          if (chat == null) ...[
+            SizedBox(height: space.l),
+            if (item.isFile)
+              FileCard(
+                name: '${item.fileName ?? ''}.$fuzzedFileIdentificator',
+                size: item.fileSize == null
+                    ? null
+                    : formatFileSize(item.fileSize!),
+                state: FileCardState.locked,
+                qaId: 'locked.file',
+              )
+            else
+              LockedTextPreview(
+                lockedText: item.lockedText!,
+                showLabel: true,
+                qaId: 'locked.text',
+              ),
             SizedBox(height: space.m),
-            TipLine(
-              icon: Icons.key_outlined,
-              text: localizations.lockSayPassword,
-              qaId: 'locked.tip.password',
+            AnimatedSwitcher(
+              duration: InkMotion.isReduced(context)
+                  ? Duration.zero
+                  : context.fuzzzyMotion.standard,
+              child: FuzzzyButton(
+                key: ValueKey(isShared),
+                label: isShared
+                    ? localizations.lockedShareAgain
+                    : localizations.share,
+                icon: const Icon(Icons.ios_share),
+                variant: isShared
+                    ? FuzzzyButtonVariant.secondary
+                    : FuzzzyButtonVariant.primary,
+                size: FuzzzyButtonSize.l,
+                qaId: 'locked.share',
+                onPressed: () => _share(context, item),
+              ),
             ),
+            SizedBox(height: space.s),
+            if (item.isFile)
+              InPlaceConfirmButton(
+                label: localizations.lockedSaveFile,
+                confirmedLabel: localizations.confirmHandedOver,
+                icon: const Icon(Icons.save_alt),
+                size: FuzzzyButtonSize.l,
+                hold: InkMotionTiming.handedOverHold,
+                qaId: 'locked.save',
+                onPressed: () => _save(context, item),
+              )
+            else
+              InPlaceConfirmButton(
+                label: localizations.lockedCopyText,
+                confirmedLabel: localizations.confirmCopied,
+                icon: const Icon(Icons.copy_outlined),
+                size: FuzzzyButtonSize.l,
+                qaId: 'locked.copy',
+                onPressed: () => _copy(item),
+              ),
+            if (chat == null) ...[
+              SizedBox(height: space.m),
+              TipLine(
+                icon: Icons.key_outlined,
+                text: localizations.lockSayPassword,
+                qaId: 'locked.tip.password',
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

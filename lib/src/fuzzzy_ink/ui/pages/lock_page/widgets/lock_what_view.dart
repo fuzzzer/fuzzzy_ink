@@ -93,78 +93,81 @@ class _LockWhatViewState extends State<LockWhatView> {
               qaId: 'lock.do',
               onPressed: _lock,
             ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                StepsIndicator(
-                  step: 2,
-                  total: 2,
-                  label: localizations.lockStepWhat,
-                  qaId: 'lock.steps',
-                ),
-                SizedBox(height: space.l),
-                // The kit control cannot shrink yet: long words at large text
-                // sizes scale it down instead of overflowing.
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: FuzzzySegmentedControl(
-                    segments: [
-                      localizations.lockKindMessage,
-                      localizations.lockKindFile,
-                    ],
-                    selectedIndex: isFile ? 1 : 0,
-                    onChanged: (index) => cubit.chooseKind(
-                      index == 1 ? LockKind.file : LockKind.message,
-                    ),
-                    qaId: 'lock.kind',
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  StepsIndicator(
+                    step: 2,
+                    total: 2,
+                    label: localizations.lockStepWhat,
+                    qaId: 'lock.steps',
                   ),
-                ),
-                SizedBox(height: space.m),
-                if (isFile)
-                  _FileChoice(
-                    file: state.file,
-                    isPicking: _isPicking,
-                    onPick: _pick,
-                  )
-                else
-                  _MessageBox(controller: _message),
-                FlowErrorLine(
-                  text: switch (state.failure) {
-                    LockFailure.writeSomethingFirst =>
-                      localizations.lockWriteSomethingFirst,
-                    LockFailure.chooseFileFirst =>
-                      localizations.lockChooseFileFirst,
-                    LockFailure.stopped => localizations.lockStoppedNothingKept,
-                    LockFailure.failed => localizations.lockFailed,
-                    LockFailure.passwordNotGood || null => null,
-                  },
-                  qaId: 'lock.error',
-                ),
-                SizedBox(height: space.s),
-                if (chat == null) ...[
-                  _PasswordField(
-                    controller: _password,
-                    isNotGood: state.failure == LockFailure.passwordNotGood,
+                  SizedBox(height: space.l),
+                  // The kit control cannot shrink yet: long words at large text
+                  // sizes scale it down instead of overflowing.
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FuzzzySegmentedControl(
+                      segments: [
+                        localizations.lockKindMessage,
+                        localizations.lockKindFile,
+                      ],
+                      selectedIndex: isFile ? 1 : 0,
+                      onChanged: (index) => cubit.chooseKind(
+                        index == 1 ? LockKind.file : LockKind.message,
+                      ),
+                      qaId: 'lock.kind',
+                    ),
                   ),
                   SizedBox(height: space.m),
-                  TipLine(
-                    icon: Icons.key_outlined,
-                    text: localizations.lockSayPassword,
-                    trailing: const WhyLink(
-                      topic: InkInfoTopic.passwordLocking,
-                      qaId: 'lock.why.password',
+                  if (isFile)
+                    _FileChoice(
+                      file: state.file,
+                      isPicking: _isPicking,
+                      onPick: _pick,
+                    )
+                  else
+                    _MessageBox(controller: _message),
+                  FlowErrorLine(
+                    text: switch (state.failure) {
+                      LockFailure.writeSomethingFirst =>
+                        localizations.lockWriteSomethingFirst,
+                      LockFailure.chooseFileFirst =>
+                        localizations.lockChooseFileFirst,
+                      LockFailure.stopped =>
+                        localizations.lockStoppedNothingKept,
+                      LockFailure.failed => localizations.lockFailed,
+                      LockFailure.passwordNotGood || null => null,
+                    },
+                    qaId: 'lock.error',
+                  ),
+                  SizedBox(height: space.s),
+                  if (chat == null) ...[
+                    _PasswordField(
+                      controller: _password,
+                      isNotGood: state.failure == LockFailure.passwordNotGood,
                     ),
-                    qaId: 'lock.tip.password',
-                  ),
-                ] else
-                  TipLine(
-                    icon: Icons.lock_outline,
-                    text: localizations.lockOnlyNameOnce(chat.chatName),
-                    qaId: 'lock.tip.once',
-                  ),
-              ],
-            ),
+                    SizedBox(height: space.m),
+                    TipLine(
+                      icon: Icons.key_outlined,
+                      text: localizations.lockSayPassword,
+                      trailing: const WhyLink(
+                        topic: InkInfoTopic.passwordLocking,
+                        qaId: 'lock.why.password',
+                      ),
+                      qaId: 'lock.tip.password',
+                    ),
+                  ] else
+                    TipLine(
+                      icon: Icons.lock_outline,
+                      text: localizations.lockOnlyNameOnce(chat.chatName),
+                      qaId: 'lock.tip.once',
+                    ),
+                ],
+              ),
+            ],
           ),
         );
       },
@@ -302,25 +305,6 @@ class _PasswordFieldState extends State<_PasswordField> {
   @override
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
-    final text = widget.controller.text;
-    final level = sl.get<PasswordStrengthService>().assess(text).level;
-    final colors = context.fuzzzyColors;
-    final type = context.fuzzzyTextStyles;
-    // The kit meter's level words are English only; the same bar with the
-    // app's own words (kit request after approval).
-    final (Color tint, double fraction) = switch (level) {
-      PasswordStrengthLevel.weak => (colors.destructive, 0.25),
-      PasswordStrengthLevel.fair => (colors.warning, 0.5),
-      PasswordStrengthLevel.good => (colors.info, 0.75),
-      PasswordStrengthLevel.strong => (colors.success, 1.0),
-    };
-    final levelName = switch (level) {
-      PasswordStrengthLevel.weak => localizations.lockStrengthWeak,
-      PasswordStrengthLevel.fair => localizations.lockStrengthFair,
-      PasswordStrengthLevel.good => localizations.lockStrengthGood,
-      PasswordStrengthLevel.strong => localizations.lockStrengthStrong,
-    };
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -334,38 +318,8 @@ class _PasswordFieldState extends State<_PasswordField> {
           qaId: 'lock.password',
         ),
         SizedBox(height: context.fuzzzySpace.s),
-        Semantics(
-          identifier: 'lock.strength',
-          label: '${localizations.lockStrengthLabel}: $levelName',
-          child: ExcludeSemantics(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        localizations.lockStrengthLabel,
-                        style: type.label.copyWith(color: colors.inkMute),
-                      ),
-                    ),
-                    if (text.isNotEmpty)
-                      Text(
-                        levelName,
-                        key: const Key('lock.strength.level'),
-                        style: type.label.copyWith(color: tint),
-                      ),
-                  ],
-                ),
-                SizedBox(height: context.fuzzzySpace.xs),
-                FuzzzyProgressBar(
-                  value: text.isEmpty ? 0 : fraction,
-                  color: tint,
-                ),
-              ],
-            ),
-          ),
-        ),
+        // The app's one strength meter (Weak · Fair · Good · Strong).
+        PasswordMeter(password: widget.controller.text, qaId: 'lock'),
       ],
     );
   }

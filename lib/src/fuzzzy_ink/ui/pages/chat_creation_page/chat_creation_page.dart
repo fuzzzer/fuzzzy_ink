@@ -89,10 +89,10 @@ class _ProvidedChatCreationPageState extends State<ProvidedChatCreationPage> {
       builder: (context, state) {
         final isMaking = state.status.isLoading;
 
-        return InkFlowScaffold(
+        return FlowScaffold(
           qaId: 'sendInvite',
           title: localizations.addSendInvite,
-          close: true,
+          leading: FlowLeading.close,
           footer: FuzzzyButton(
             qaId: 'sendInvite.make',
             label: localizations.inviteMake,

@@ -36,9 +36,9 @@ class _PersonCheckedPageState extends State<PersonCheckedPage> {
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'checked',
-      close: true,
+      leading: FlowLeading.close,
       onLeading: _done,
       footer: FuzzzyButton(
         qaId: 'checked.done',

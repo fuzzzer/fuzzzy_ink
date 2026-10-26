@@ -164,10 +164,10 @@ class _ProvidedInvitationAcceptancePageState
     final space = context.fuzzzySpace;
     final problem = _problem;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'gotInvite',
       title: localizations.addGotInvite,
-      close: true,
+      leading: FlowLeading.close,
       children: [
         StepsIndicator(
           qaId: 'gotInvite',
@@ -242,10 +242,10 @@ class _ProvidedInvitationAcceptancePageState
     final localizations = context.fuzzzyInkLocalizations;
     final space = context.fuzzzySpace;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'gotInvite',
       title: localizations.addGotInvite,
-      close: true,
+      leading: FlowLeading.close,
       footer: FuzzzyButton(
         qaId: 'gotInvite.accept',
         label: localizations.gotAccept,

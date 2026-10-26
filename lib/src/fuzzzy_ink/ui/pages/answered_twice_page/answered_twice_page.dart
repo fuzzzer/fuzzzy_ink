@@ -29,9 +29,9 @@ class AnsweredTwicePage extends StatelessWidget {
     final space = context.fuzzzySpace;
     final name = chat.chatName;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'answeredTwice',
-      close: true,
+      leading: FlowLeading.close,
       footer: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -209,7 +209,7 @@ class _LockedTextView extends StatelessWidget {
       encryptedMessage: message.encryptedMessage,
     );
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'item',
       title: localizations.itemForName(payload.chat.chatName),
       footer: Row(
@@ -274,7 +274,7 @@ class _LockedFileView extends StatelessWidget {
       path.basename(message.encryptedMessage),
     );
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'item',
       title: localizations.itemForName(payload.chat.chatName),
       footer: Row(

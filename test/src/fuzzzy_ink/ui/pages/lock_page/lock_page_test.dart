@@ -178,10 +178,9 @@ void main() {
         'violet-harbor-lantern-91',
       );
       await tester.pump();
-      expect(
-        find.byKey(const Key('lock.strength.level')),
-        findsOneWidget,
-      );
+      // The app's one meter, the same as the master password's.
+      expect(find.byKey(const Key('meter.lock')), findsOneWidget);
+      expect(find.byType(PasswordMeter), findsOneWidget);
       expect(find.text('Weak'), findsNothing);
     });
 

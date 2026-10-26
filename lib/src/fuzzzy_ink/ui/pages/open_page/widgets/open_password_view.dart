@@ -47,30 +47,32 @@ class _OpenPasswordViewState extends State<OpenPasswordView> {
           qaId: 'open.password.open',
           onPressed: _open,
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const FlowHero(
-              glyph: HeroGlyph(
-                icon: Icons.key_outlined,
-                qaId: 'open.password.glyph',
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const FlowHero(
+                glyph: HeroGlyph(
+                  icon: Icons.key_outlined,
+                  qaId: 'open.password.glyph',
+                ),
               ),
-            ),
-            FlowTitle(title: localizations.openPasswordTitle),
-            SizedBox(height: context.fuzzzySpace.l),
-            FuzzzyTextField(
-              controller: _password,
-              label: localizations.openPasswordLabel,
-              obscure: true,
-              autofocus: true,
-              errorText: state.isPasswordWrong
-                  ? localizations.openPasswordWrong
-                  : null,
-              onSubmitted: (_) => _open(),
-              qaId: 'open.password',
-            ),
-          ],
-        ),
+              FlowTitle(title: localizations.openPasswordTitle),
+              SizedBox(height: context.fuzzzySpace.l),
+              FuzzzyTextField(
+                controller: _password,
+                label: localizations.openPasswordLabel,
+                obscure: true,
+                autofocus: true,
+                errorText: state.isPasswordWrong
+                    ? localizations.openPasswordWrong
+                    : null,
+                onSubmitted: (_) => _open(),
+                qaId: 'open.password',
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

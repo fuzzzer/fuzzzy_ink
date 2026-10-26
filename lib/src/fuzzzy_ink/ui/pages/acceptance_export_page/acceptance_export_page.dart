@@ -71,9 +71,9 @@ class _ProvidedAcceptanceExportPageState
       builder: (context, state) {
         final acceptance = state.acceptance?.content;
 
-        return InkFlowScaffold(
+        return FlowScaffold(
           qaId: 'reply',
-          close: true,
+          leading: FlowLeading.close,
           onLeading: _done,
           footer: FuzzzyButton(
             qaId: 'reply.done',

@@ -34,9 +34,9 @@ class _PersonConnectedPageState extends State<PersonConnectedPage> {
     final chat = widget.chat;
     final name = chat.chatName;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'connected',
-      close: true,
+      leading: FlowLeading.close,
       onLeading: () => PersonPage.goTo(context, chat.chatId),
       children: [
         const InkHeroSlot(

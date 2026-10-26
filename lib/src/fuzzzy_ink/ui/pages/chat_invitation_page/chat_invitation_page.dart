@@ -121,9 +121,9 @@ class _ProvidedChatInvitationPageState
       },
       builder: (context, handshake) {
         if (handshake.status.isLoading || handshake.status.isSuccess) {
-          return InkFlowScaffold(
+          return FlowScaffold(
             qaId: 'inviteReady',
-            close: true,
+            leading: FlowLeading.close,
             onLeading: () => context.go(AppRouter.home),
             children: [
               SizedBox(height: context.fuzzzySpace.xxl),
@@ -149,9 +149,9 @@ class _ProvidedChatInvitationPageState
     final name = widget.payload.chatName;
     final invitation = reader.invitation?.content;
 
-    return InkFlowScaffold(
+    return FlowScaffold(
       qaId: 'inviteReady',
-      close: true,
+      leading: FlowLeading.close,
       onLeading: () => context.go(AppRouter.home),
       footer: Column(
         mainAxisSize: MainAxisSize.min,
