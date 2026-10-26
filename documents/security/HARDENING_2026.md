@@ -6,6 +6,16 @@ tag `v1.0.0-rc.1` (commit `64615a7`) plus the fixes listed in §7 · **Companion
 defended), [`RELEASE.md`](RELEASE.md) (build provenance and reproducibility), [`../../SECURITY.md`](../../SECURITY.md)
 (disclosure policy), [`sbom/`](sbom/) (CycloneDX bills of materials), [`vectors/`](vectors/) (byte-exact test vectors).
 
+> **Superseded in parts (2026-10-26).** This is the record of the September 2026 hardening and is kept as history.
+> [`PROTOCOL.md`](PROTOCOL.md) and [`THREAT_MODEL.md`](THREAT_MODEL.md) describe the app as it is; where this document
+> differs, they win. No longer true here: plain files in Documents or Downloads (the app now keeps only locked files
+> and wipes every plain copy after use, §6); an optional app-lock password (one master password is required, with a
+> recovery key, auto-lock and wrong-password waits); "iOS is not built", a throwaway Android key and an unsigned macOS
+> build (see [`RELEASE.md`](RELEASE.md)); the old repository address; message links carrying the chat id and
+> `fuzzylink://` links (links are `https://ink.fuzzzycore.com/…` with the message only, and never open anything without
+> a tap); a vault password that only re-wraps the key (giving My safe its own password now draws a new key and a new
+> recovery key); no screen or clipboard protection (private screens are guarded and copies clear themselves).
+
 This document is the supporting material for an independent security audit of Fuzzzy Ink. It is written to be
 read by someone who has not seen the code: it says what the app's cryptography looked like before September 2026,
 what the nine diagnosed weaknesses were, what replaced them, what was measured, which product decisions are

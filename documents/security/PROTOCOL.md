@@ -593,8 +593,10 @@ and accepted names that Windows cannot create):
    real extension behind a direction override;
 2. a name over **120 bytes** ([`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277)) is cut at a
    character boundary, keeping an extension of up to 16 bytes whole — 120 leaves room for the app's ` (n)`
-   and the core's `.part` under every platform's 255 limit and keeps a file under the user's Documents
-   folder inside Windows' classic 260-character path limit;
+   and the core's `.part` under every platform's 255 limit and keeps a file in the app's private folders, or
+   in the folder the user saves it to, inside Windows' classic 260-character path limit. The app names the
+   kept container and every opened or saved copy after this cleaned name, never after the container's outside
+   file name (security review 2026-10-26);
 3. trailing dots and spaces are removed (Windows drops them silently);
 4. a Windows device name before the first dot (`CON`, `PRN`, `AUX`, `NUL`, `CONIN$`, `CONOUT$`, `COM0`–`COM9`,
    `LPT0`–`LPT9` and their `¹²³` forms; any case; trailing spaces ignored) gets a `_` in front;

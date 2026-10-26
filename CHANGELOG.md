@@ -5,18 +5,53 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- **One master password over every key**, chosen at the first run ("good" strength or better, cannot be switched
+  off), and a **printable recovery key** shown once, which opens the app if the password is forgotten. Builds before
+  this one start fresh.
+- **The whole app locks itself** after the idle time you choose (5 minutes by default) and shortly after you leave
+  it; a Lock button locks at once. Wrong passwords start a growing wait after five tries, kept across restarts.
+- **My safe** opens with the master password, or with a password of its own; the recovery key opens it either way.
+- **Links** on `https://ink.fuzzzycore.com/{invite,accept,message}#…` (the part after `#` never reaches a server),
+  a QR code, or a `.fuzz` file, from one Share button. The old `fuzzylink://` scheme is gone.
+- **Lock and Open**, a page per person with their history, and the redesign with Fuzzzy Cast.
+
 ### Security
-- **The safety number shows its version.** The page shows "Version 1" under the digits, so two app versions that
-  compute the number differently show different versions instead of different digits that look like an attack.
-  The digits of 1.1.1 and later are unchanged.
+- **My safe's own password means a new key.** Giving the safe its own password now draws a new safe key, re-locks
+  every item under it and draws a new recovery key, shown right away; someone who knew the master password before,
+  or who made a recovery key of their own with it, can no longer open the safe.
+- **A link never opens or connects anything by itself.** A message link asks "Open the message from {name}?" first,
+  a reply link asks "Connect with {name}?", and the "someone else answered your invite" warning shows only for a
+  reply that really answers your invite. Message links no longer carry the chat's id.
+- **Nothing plain leaves by accident.** Only locked output (and, behind a switch, a safe password) can be copied;
+  password, recovery-key, message and opened-item fields offer no Copy, Share, Look Up or other apps' text actions
+  (Translate and the like), and keyboards are asked not to learn what is typed. A copied safe password is cleared
+  after 30 seconds, now also in the background on Android, and kept out of Windows clipboard history and the cloud
+  clipboard; every copy is cleared when the app locks.
+- **Private screens** (unlock, recovery key, My safe, opened messages and files, a person's page, Basics) are kept
+  out of screenshots, recordings and the app switcher on Android, iPhone, macOS and Windows.
+- **The app keeps only locked files.** Plain copies exist only while a file is shown, saved or shared, in a private
+  folder wiped right after, when the app locks and at every launch (picked files on iPhone included). Nothing is
+  written to Downloads or the Files app any more. A received file is kept under the name its sender sealed inside
+  it.
+- **Every form that takes the master password counts wrong tries**, My safe's own password has its own count, and
+  setting the device clock forward or back no longer ends a wait or skips the lock.
+- **Erase everything** also clears preferences, remembered replies, picked files and a waiting link, and the
+  database file is compacted at the next launch.
+- **Fingerprint unlock** accepts strong biometrics only and asks every time.
+- **The safety number shows its version**, so two app versions that compute it differently show different versions
+  instead of different digits that look like an attack. The digits of 1.1.1 and later are unchanged.
 - **Any file name can be received.** A name the partner chooses is made safe on both sides (characters Windows
   forbids, device names such as `CON`, trailing dots, very long names) instead of making the file impossible to
   receive.
 - **One copy of the app per device.** A second copy of the app can no longer open the same chats at the same time
   (which could corrupt a chat or reuse a message key); deleting a chat overwrites its saved state in place first.
-- **Builds:** outside build steps are pinned to exact commits with the least permissions; store builds compile the
-  encryption core with the pinned Rust version and lock file; release builds are signed only with the real keys from
-  the build service and stop when a key is missing; the patched `ctutils` and `tokio` versions are in.
+- **Builds:** outside build steps are pinned to exact commits with the least permissions; checks also run on the
+  integration branch; every package install enforces the lock file; the build service's Rust installer is pinned by
+  checksum; store builds compile the encryption core with the pinned Rust version and lock file; release builds are
+  signed only with the real keys from the build service and stop when a key is missing; the patched `ctutils` and
+  `tokio` versions are in. The production link files trust the production app only. Development builds no longer
+  log opened messages.
 
 ### Changed
 - **The app is called Fuzzzy Ink** (was Fuzzzy Seal) wherever a person sees the name: the home-screen and window
@@ -24,14 +59,11 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
   shared invitation, acceptance or message, in English and Georgian. The identifiers changed too, from 1.1.1 on:
   the app id is `com.fuzzzycore.ink` (1.1.0 was `com.fuzzzytechnologies.fuzzy_chat`, so a 1.1.0 install never
   updates to this app — install it fresh), the Dart package is `fuzzzy_ink`, and the safety-number domain
-  separator is `FUZZZYINK_SAFETY_NUMBER_V1`, so a 1.1.0 device shows different safety-number digits. New files on Android now land in
-  `Downloads/Fuzzzy Ink/`; files saved earlier stay in `Downloads/Fuzzzy Seal/` and are not moved.
-- **Files land where the user can find them.** A fuzzed file (on send) and an unfuzzed file (on receive) go to
-  `Downloads/Fuzzzy Ink/<chat name>/` on Android (MediaStore, no storage permission on API 29+) and to the app's
-  Documents folder on iOS, now visible in the Files app. The bubble shows the file's name and that place instead
-  of a path; a picker's `null-` name artefact is dropped. "Show" is back on Android and iOS and opens the folder in
-  the system file manager; "Open" and "Share File" go by content URI with an explicit type. The action pill stacks
-  into rows so every action fits a 360dp phone.
+  separator is `FUZZZYINK_SAFETY_NUMBER_V1`, so a 1.1.0 device shows different safety-number digits.
+- **Files go where you put them.** The app no longer writes plain files to `Downloads/Fuzzzy Ink/` on Android or to a
+  Documents folder visible in the iPhone Files app: you save or share each file through the system, and the app
+  keeps only the locked copy. Files saved by earlier builds stay where they are and are not moved. My safe moved to
+  the app's private folder (it was in Documents, where iPhone's Files app and cloud folders could see it).
 
 ## [1.1.0] — 2026-09-13
 
