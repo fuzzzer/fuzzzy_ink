@@ -1524,6 +1524,248 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get openLockedWithPassword => 'პაროლით ჩაკეტილი';
 
   @override
+  String get lockStepWho => 'ვინ';
+
+  @override
+  String get lockStepWhat => 'რა';
+
+  @override
+  String lockForName(String name) {
+    return 'ჩაკეტვა: $name';
+  }
+
+  @override
+  String get lockKindMessage => 'შეტყობინება';
+
+  @override
+  String get lockKindFile => 'ფაილი';
+
+  @override
+  String get lockWriteMessageHint => 'დაწერეთ შეტყობინება…';
+
+  @override
+  String lockOnlyNameOnce(String name) {
+    return '$name — გახსნა მხოლოდ მას შეუძლია, ერთხელ.';
+  }
+
+  @override
+  String get lockChooseFile => 'ფაილის არჩევა';
+
+  @override
+  String get lockDropHint => 'ან კომპიუტერზე აქ ჩააგდეთ';
+
+  @override
+  String get lockChangeFile => 'შეცვლა';
+
+  @override
+  String get lockPasswordLabel => 'პაროლი ამისთვის';
+
+  @override
+  String get lockSayPassword => 'პაროლი სიტყვით უთხარით. ნუ გაუგზავნით.';
+
+  @override
+  String get lockAction => 'ჩაკეტვა';
+
+  @override
+  String get lockWriteSomethingFirst => 'ჯერ რამე დაწერეთ.';
+
+  @override
+  String get lockChooseFileFirst => 'ჯერ ფაილი აირჩიეთ.';
+
+  @override
+  String get lockPasswordNotGood => 'საჭიროა დონე „კარგი“.';
+
+  @override
+  String get lockStrengthLabel => 'სიძლიერე';
+
+  @override
+  String get lockStrengthWeak => 'სუსტი';
+
+  @override
+  String get lockStrengthFair => 'საშუალო';
+
+  @override
+  String get lockStrengthGood => 'კარგი';
+
+  @override
+  String get lockStrengthStrong => 'ძლიერი';
+
+  @override
+  String get lockFailed => 'ჩაკეტვა ვერ მოხერხდა. ხელახლა სცადეთ.';
+
+  @override
+  String get lockStoppedNothingKept => 'შეჩერდა. არაფერი შენახულა.';
+
+  @override
+  String get workingLocking => 'იკეტება';
+
+  @override
+  String get workingOpening => 'იხსნება';
+
+  @override
+  String get workingStarting => 'იწყება…';
+
+  @override
+  String get workingPause => 'პაუზა';
+
+  @override
+  String get workingGoOn => 'გაგრძელება';
+
+  @override
+  String get workingPaused => 'შეჩერებულია';
+
+  @override
+  String lockedForName(String name) {
+    return 'ჩაიკეტა: $name';
+  }
+
+  @override
+  String get lockedWithPassword => 'ჩაიკეტა პაროლით';
+
+  @override
+  String get lockedNowSendIt => 'ახლა გაუგზავნეთ.';
+
+  @override
+  String get lockedSentToShareMenu => 'გაზიარების მენიუში გაიგზავნა.';
+
+  @override
+  String get lockedShareAgain => 'ხელახლა გაზიარება';
+
+  @override
+  String get lockedCopyText => 'ჩაკეტილი ტექსტის კოპირება';
+
+  @override
+  String get lockedSaveFile => 'ჩაკეტილი ფაილის შენახვა';
+
+  @override
+  String get flowDone => 'მზადაა';
+
+  @override
+  String get openChooseFile => 'ფაილის არჩევა';
+
+  @override
+  String get openChooseFileHint => '.fuzz ფაილი';
+
+  @override
+  String get openReading => 'იკითხება…';
+
+  @override
+  String openedFromName(String name) {
+    return 'გამომგზავნი: $name';
+  }
+
+  @override
+  String openedKeptInHistory(String name) {
+    return 'ახლახან · ისტორიაში შეინახა ($name)';
+  }
+
+  @override
+  String get openedWithPassword => 'გაიხსნა პაროლით';
+
+  @override
+  String get openedNotKept => 'ახლახან · არ ინახება';
+
+  @override
+  String openedInHistoryNow(String name) {
+    return 'ახლა ისტორიაშია ($name).';
+  }
+
+  @override
+  String get openedSaveTip =>
+      '„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.';
+
+  @override
+  String get openPasswordTitle => 'რა პაროლია?';
+
+  @override
+  String get openPasswordLabel => 'პაროლი';
+
+  @override
+  String get openPasswordWrong =>
+      'ამით არ იხსნება. შეამოწმეთ და ხელახლა სცადეთ.';
+
+  @override
+  String get openErrorAlreadyTitle => 'უკვე გახსნილია';
+
+  @override
+  String openErrorAlreadyLine(String name) {
+    return 'ყოველი ჩაკეტილი რამ ერთხელ იხსნება. ის ისტორიაშია ($name).';
+  }
+
+  @override
+  String get openErrorNotYoursTitle => 'თქვენი სიიდან არ არის';
+
+  @override
+  String get openErrorNotYoursLine => 'ჯერ მოწვევა სთხოვეთ.';
+
+  @override
+  String get openErrorDamagedTitle => 'ამის გახსნა ვერ ხერხდება';
+
+  @override
+  String get openErrorDamagedLine =>
+      'შეიძლება ბოლომდე არ მოვიდა ან სხვისთვისაა. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+
+  @override
+  String get openErrorOldTitle => 'გასახსნელად ძალიან ძველია';
+
+  @override
+  String openErrorOldLine(String name) {
+    return 'სთხოვეთ, თავიდან ჩაკეტოს ($name).';
+  }
+
+  @override
+  String get openErrorNewerTitle => 'Fuzzzy Ink-ის ახალი ვერსიაა საჭირო';
+
+  @override
+  String get openErrorNewerLine => 'განაახლეთ აპი და ხელახლა სცადეთ.';
+
+  @override
+  String get openErrorOwnTitle => 'ეს თქვენი მოწვევაა';
+
+  @override
+  String get openErrorOwnLine => 'გაუგზავნეთ მეორე ადამიანს.';
+
+  @override
+  String get openErrorConnectedTitle => 'უკვე დაკავშირებულია';
+
+  @override
+  String openErrorConnectedLine(String name) {
+    return 'უკვე დაკავშირებული ხართ: $name';
+  }
+
+  @override
+  String get openErrorNotFuzzzyTitle => 'ეს Fuzzzy Ink-ისგან არ არის';
+
+  @override
+  String get openErrorNotFuzzzyLine =>
+      'გახსენით ჩაკეტილი ტექსტი, მოწვევა ან პასუხი.';
+
+  @override
+  String get openErrorArrivingTitle => 'ჯერ კიდევ მოდის';
+
+  @override
+  String get openErrorArrivingLine =>
+      'მოიცადეთ, სანამ ფაილი ბოლომდე მოვა, და ხელახლა სცადეთ.';
+
+  @override
+  String get openErrorResendTitle => 'ეს ფაილი არ გაიხსნა';
+
+  @override
+  String get openErrorResendLine =>
+      'ახლა ამ ტელეფონზე ვეღარ გაიხსნება. სთხოვეთ, ხელახლა გამოგიგზავნონ.';
+
+  @override
+  String openErrorGoToName(String name) {
+    return 'გადასვლა: $name';
+  }
+
+  @override
+  String get openErrorOk => 'კარგი';
+
+  @override
+  String get openFailed => 'გახსნა ვერ მოხერხდა. ხელახლა სცადეთ.';
+
+  @override
   String get shareTitleInvite => 'მოწვევის გაზიარება';
 
   @override

@@ -2814,6 +2814,438 @@ abstract class FuzzzyInkLocalizations {
   /// **'Locked with a password'**
   String get openLockedWithPassword;
 
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who'**
+  String get lockStepWho;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What'**
+  String get lockStepWhat;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for {name}'**
+  String lockForName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get lockKindMessage;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get lockKindFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Write your message…'**
+  String get lockWriteMessageHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only {name} can open it, once.'**
+  String lockOnlyNameOnce(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get lockChooseFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Or drop it here on a computer'**
+  String get lockDropHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get lockChangeFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password for this'**
+  String get lockPasswordLabel;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Say the password. Don\'t send it.'**
+  String get lockSayPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get lockAction;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Write something first.'**
+  String get lockWriteSomethingFirst;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file first.'**
+  String get lockChooseFileFirst;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It needs to reach Good.'**
+  String get lockPasswordNotGood;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get lockStrengthLabel;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get lockStrengthWeak;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get lockStrengthFair;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get lockStrengthGood;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get lockStrengthStrong;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t lock it. Try again.'**
+  String get lockFailed;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped. Nothing was kept.'**
+  String get lockStoppedNothingKept;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking'**
+  String get workingLocking;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening'**
+  String get workingOpening;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get workingStarting;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get workingPause;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Go on'**
+  String get workingGoOn;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get workingPaused;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked for {name}'**
+  String lockedForName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get lockedWithPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Now send it.'**
+  String get lockedNowSendIt;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to your share menu.'**
+  String get lockedSentToShareMenu;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share again'**
+  String get lockedShareAgain;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy locked text'**
+  String get lockedCopyText;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save locked file'**
+  String get lockedSaveFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get flowDone;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get openChooseFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A .fuzz file'**
+  String get openChooseFileHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Reading…'**
+  String get openReading;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'From {name}'**
+  String openedFromName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Just now · kept in {name}\'s history'**
+  String openedKeptInHistory(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened with a password'**
+  String get openedWithPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Just now · not kept'**
+  String get openedNotKept;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'In {name}\'s history now.'**
+  String openedInHistoryNow(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. Then it\'s yours.'**
+  String get openedSaveTip;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s the password?'**
+  String get openPasswordTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get openPasswordLabel;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t open it. Check it and try again.'**
+  String get openPasswordWrong;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Already opened'**
+  String get openErrorAlreadyTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each locked thing opens once. It\'s in {name}\'s history.'**
+  String openErrorAlreadyLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not from your people'**
+  String get openErrorNotYoursTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask them for an invite first.'**
+  String get openErrorNotYoursLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t open this'**
+  String get openErrorDamagedTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It may be cut off or for someone else. Ask them to send it again.'**
+  String get openErrorDamagedLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too old to open'**
+  String get openErrorOldTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask {name} to lock it again.'**
+  String openErrorOldLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a newer Fuzzzy Ink'**
+  String get openErrorNewerTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Update the app, then try again.'**
+  String get openErrorNewerLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s your own invite'**
+  String get openErrorOwnTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to the other person.'**
+  String get openErrorOwnLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Already connected'**
+  String get openErrorConnectedTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You and {name} are connected already.'**
+  String openErrorConnectedLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This isn\'t from Fuzzzy Ink'**
+  String get openErrorNotFuzzzyTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open locked text, an invite or a reply.'**
+  String get openErrorNotFuzzzyLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Still arriving'**
+  String get openErrorArrivingTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Wait until the file has fully arrived, then try again.'**
+  String get openErrorArrivingLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This file didn\'t open'**
+  String get openErrorResendTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It can\'t open on this phone now. Ask them to send it again.'**
+  String get openErrorResendLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Go to {name}'**
+  String openErrorGoToName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get openErrorOk;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open it. Try again.'**
+  String get openFailed;
+
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
   /// In en, this message translates to:

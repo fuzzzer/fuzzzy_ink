@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
@@ -46,8 +45,9 @@ Future<void> showAddPersonSheet(BuildContext context) {
   );
 }
 
-/// Lock → "Who's it for?": connected people (waiting ones shown but off),
-/// then "Lock with a password". With no one connected, "Add a person first".
+/// Lock → "Who's it for?" (step 1 of 2): connected people (waiting ones
+/// shown but off), then "Lock with a password". With no one connected, "Add
+/// a person first". A person goes on to `AppRouter.lockFor`.
 Future<void> showLockWhoSheet(
   BuildContext context, {
   required List<ChatGeneralData> people,
@@ -73,6 +73,13 @@ Future<void> showLockWhoSheet(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            StepsIndicator(
+              step: 1,
+              total: 2,
+              label: localizations.lockStepWho,
+              qaId: 'lockWho.steps',
+            ),
+            SizedBox(height: sheetContext.fuzzzySpace.s),
             _SheetTitle(localizations.lockWhoTitle),
             for (final chat in connected)
               _PersonChoice(
@@ -80,7 +87,10 @@ Future<void> showLockWhoSheet(
                 trust: HomePage.trustOf(chat, unverifiedChatIds),
                 onTap: () {
                   close();
-                  HomePage.openPerson(context, chat);
+                  context.push(
+                    AppRouter.lockFor,
+                    extra: LockPagePayload(chat: chat),
+                  );
                 },
               ),
             for (final chat in waiting)
@@ -110,95 +120,8 @@ Future<void> showLockWhoSheet(
               divider: false,
               onTap: () {
                 close();
-                context.push(AppRouter.basics);
+                context.push(AppRouter.lockWithPassword);
               },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-/// Open → "Open what you got": Paste it (a Fuzzzy Ink link opens as if
-/// tapped; the clipboard is read only on this tap), I got an invite, and
-/// Locked with a password.
-Future<void> showOpenSheet(
-  BuildContext context, {
-  required bool Function(String text) onPastedText,
-}) {
-  final localizations = context.fuzzzyInkLocalizations;
-
-  return FuzzzyBottomSheet.show<void>(
-    context,
-    qaId: 'open',
-    builder: (sheetContext) {
-      void close() => Navigator.of(sheetContext).pop();
-
-      Future<void> paste() async {
-        final data = await Clipboard.getData(Clipboard.kTextPlain);
-        final text = data?.text?.trim() ?? '';
-        if (!sheetContext.mounted) return;
-        if (text.isEmpty) {
-          showInkToast(
-            sheetContext,
-            message: localizations.openNothingToPaste,
-            kind: FuzzzyToastKind.info,
-          );
-          return;
-        }
-        if (onPastedText(text)) {
-          close();
-          return;
-        }
-        showInkToast(
-          sheetContext,
-          message: localizations.openPasteNotALink,
-          kind: FuzzzyToastKind.info,
-        );
-      }
-
-      return FuzzzyBottomSheet(
-        qaId: 'open',
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _SheetTitle(localizations.openWhatYouGot),
-            SheetDoorRow(
-              qaId: 'open.paste',
-              icon: Icons.content_paste,
-              emphasised: true,
-              title: localizations.openPasteIt,
-              hint: localizations.openPasteItHint,
-              onTap: paste,
-            ),
-            SheetDoorRow(
-              qaId: 'open.invite',
-              icon: Icons.move_to_inbox_outlined,
-              title: localizations.addGotInvite,
-              hint: localizations.addTheyStarted,
-              onTap: () {
-                close();
-                context.push(AppRouter.chatAccept);
-              },
-            ),
-            SheetDoorRow(
-              qaId: 'open.password',
-              icon: Icons.key_outlined,
-              title: localizations.openLockedWithPassword,
-              hint: localizations.lockWithPassword,
-              divider: false,
-              onTap: () {
-                close();
-                context.push(AppRouter.basics);
-              },
-            ),
-            SizedBox(height: sheetContext.fuzzzySpace.m),
-            TipLine(
-              icon: Icons.link,
-              text: localizations.openLinksTip,
-              qaId: 'open.links',
             ),
           ],
         ),

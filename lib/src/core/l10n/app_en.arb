@@ -1187,6 +1187,344 @@
   "@openLockedWithPassword": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
+  "lockStepWho": "Who",
+  "@lockStepWho": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStepWhat": "What",
+  "@lockStepWhat": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockForName": "Lock for {name}",
+  "@lockForName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockKindMessage": "Message",
+  "@lockKindMessage": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockKindFile": "File",
+  "@lockKindFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockWriteMessageHint": "Write your message…",
+  "@lockWriteMessageHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockOnlyNameOnce": "Only {name} can open it, once.",
+  "@lockOnlyNameOnce": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockChooseFile": "Choose a file",
+  "@lockChooseFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockDropHint": "Or drop it here on a computer",
+  "@lockDropHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockChangeFile": "Change",
+  "@lockChangeFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockPasswordLabel": "Password for this",
+  "@lockPasswordLabel": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockSayPassword": "Say the password. Don't send it.",
+  "@lockSayPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockAction": "Lock",
+  "@lockAction": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockWriteSomethingFirst": "Write something first.",
+  "@lockWriteSomethingFirst": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockChooseFileFirst": "Choose a file first.",
+  "@lockChooseFileFirst": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockPasswordNotGood": "It needs to reach Good.",
+  "@lockPasswordNotGood": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStrengthLabel": "Strength",
+  "@lockStrengthLabel": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStrengthWeak": "Weak",
+  "@lockStrengthWeak": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStrengthFair": "Fair",
+  "@lockStrengthFair": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStrengthGood": "Good",
+  "@lockStrengthGood": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStrengthStrong": "Strong",
+  "@lockStrengthStrong": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockFailed": "Couldn't lock it. Try again.",
+  "@lockFailed": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStoppedNothingKept": "Stopped. Nothing was kept.",
+  "@lockStoppedNothingKept": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingLocking": "Locking",
+  "@workingLocking": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingOpening": "Opening",
+  "@workingOpening": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingStarting": "Starting…",
+  "@workingStarting": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingPause": "Pause",
+  "@workingPause": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingGoOn": "Go on",
+  "@workingGoOn": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingPaused": "Paused",
+  "@workingPaused": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedForName": "Locked for {name}",
+  "@lockedForName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockedWithPassword": "Locked with a password",
+  "@lockedWithPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedNowSendIt": "Now send it.",
+  "@lockedNowSendIt": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedSentToShareMenu": "Sent to your share menu.",
+  "@lockedSentToShareMenu": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedShareAgain": "Share again",
+  "@lockedShareAgain": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedCopyText": "Copy locked text",
+  "@lockedCopyText": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedSaveFile": "Save locked file",
+  "@lockedSaveFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "flowDone": "Done",
+  "@flowDone": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openChooseFile": "Choose a file",
+  "@openChooseFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openChooseFileHint": "A .fuzz file",
+  "@openChooseFileHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openReading": "Reading…",
+  "@openReading": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openedFromName": "From {name}",
+  "@openedFromName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedKeptInHistory": "Just now · kept in {name}'s history",
+  "@openedKeptInHistory": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedWithPassword": "Opened with a password",
+  "@openedWithPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openedNotKept": "Just now · not kept",
+  "@openedNotKept": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openedInHistoryNow": "In {name}'s history now.",
+  "@openedInHistoryNow": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedSaveTip": "Save gives you a normal copy. Then it's yours.",
+  "@openedSaveTip": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordTitle": "What's the password?",
+  "@openPasswordTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordLabel": "Password",
+  "@openPasswordLabel": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordWrong": "That doesn't open it. Check it and try again.",
+  "@openPasswordWrong": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorAlreadyTitle": "Already opened",
+  "@openErrorAlreadyTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorAlreadyLine": "Each locked thing opens once. It's in {name}'s history.",
+  "@openErrorAlreadyLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNotYoursTitle": "Not from your people",
+  "@openErrorNotYoursTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNotYoursLine": "Ask them for an invite first.",
+  "@openErrorNotYoursLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorDamagedTitle": "Can't open this",
+  "@openErrorDamagedTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorDamagedLine": "It may be cut off or for someone else. Ask them to send it again.",
+  "@openErrorDamagedLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOldTitle": "Too old to open",
+  "@openErrorOldTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOldLine": "Ask {name} to lock it again.",
+  "@openErrorOldLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNewerTitle": "Needs a newer Fuzzzy Ink",
+  "@openErrorNewerTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNewerLine": "Update the app, then try again.",
+  "@openErrorNewerLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOwnTitle": "That's your own invite",
+  "@openErrorOwnTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOwnLine": "Send it to the other person.",
+  "@openErrorOwnLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorConnectedTitle": "Already connected",
+  "@openErrorConnectedTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorConnectedLine": "You and {name} are connected already.",
+  "@openErrorConnectedLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNotFuzzzyTitle": "This isn't from Fuzzzy Ink",
+  "@openErrorNotFuzzzyTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNotFuzzzyLine": "Open locked text, an invite or a reply.",
+  "@openErrorNotFuzzzyLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorArrivingTitle": "Still arriving",
+  "@openErrorArrivingTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorArrivingLine": "Wait until the file has fully arrived, then try again.",
+  "@openErrorArrivingLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorResendTitle": "This file didn't open",
+  "@openErrorResendTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorResendLine": "It can't open on this phone now. Ask them to send it again.",
+  "@openErrorResendLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorGoToName": "Go to {name}",
+  "@openErrorGoToName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorOk": "OK",
+  "@openErrorOk": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openFailed": "Couldn't open it. Try again.",
+  "@openFailed": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
   "shareTitleInvite": "Share invite",
   "@shareTitleInvite": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."

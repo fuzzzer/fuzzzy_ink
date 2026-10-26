@@ -23,6 +23,17 @@ class AppRouter {
   static const vaultHome = '/vault';
   static const vaultItemEditor = '/vault/editor';
 
+  /// Lock for one person: `extra` is a [LockPagePayload] (or the person, or
+  /// their chat id; `?chat=<id>` works too).
+  static const lockFor = '/lock/for';
+
+  /// Lock with a password (no person).
+  static const lockWithPassword = '/lock/password';
+
+  /// Open what you got: `extra` is an [OpenPagePayload] (or an
+  /// [OpenRequest]), none for the choice of Paste it / Choose a file.
+  static const open = '/open';
+
   /// Reachable without the master password. Everything else — Basics and
   /// the settings included — sits behind it: there is no "lock off".
   static const _unprotectedRoutes = {
@@ -101,9 +112,7 @@ class AppRouter {
           routes: [
             GoRoute(
               path: home,
-              builder: (_, __) => HomePage(
-                onPastedText: sl.get<FuzzyLinkHandler>().openPastedText,
-              ),
+              builder: (_, __) => const HomePage(),
             ),
             GoRoute(
               path: vaultHome,
@@ -188,6 +197,26 @@ class AppRouter {
             final chatGeneralData = state.extra! as ChatGeneralData;
             return SafetyNumberPage(chatGeneralData: chatGeneralData);
           },
+        ),
+        // Each flow marks its own private steps (typing, opened content).
+        GoRoute(
+          path: lockFor,
+          builder: (_, state) => LockPage(
+            payload: LockPagePayload.fromRoute(
+              state.extra,
+              state.uri.queryParameters['chat'],
+            ),
+          ),
+        ),
+        GoRoute(
+          path: lockWithPassword,
+          builder: (_, __) =>
+              const LockPage(payload: LockPagePayload.password()),
+        ),
+        GoRoute(
+          path: open,
+          builder: (_, state) =>
+              OpenPage(payload: OpenPagePayload.fromRoute(state.extra)),
         ),
         GoRoute(
           path: aboutEncryption,

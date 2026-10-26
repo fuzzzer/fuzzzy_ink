@@ -60,16 +60,6 @@ class FuzzyLinkHandler {
     }
   }
 
-  /// Home's Open → "Paste it": when [text] is a whole Fuzzzy Ink link it
-  /// takes the same way as a tapped link (same checks, waits while locked)
-  /// and this answers true; anything else answers false and does nothing.
-  bool openPastedText(String text) {
-    final payload = FuzzyLinkParser.parseText(text);
-    if (payload == null) return false;
-    _routePayload(payload);
-    return true;
-  }
-
   void _handleUri(Uri uri) {
     final payload = FuzzyLinkParser.parse(uri);
     if (payload == null) {
@@ -167,25 +157,18 @@ class FuzzyLinkHandler {
     }
   }
 
-  Future<void> _handleFuzzMessage(FuzzMessageLinkPayload payload) async {
-    try {
-      final chat = await _chatRepository.getChatById(payload.chatId);
-
-      if (chat == null) {
-        _showMessage(_l10n.chatNotFoundForMessage);
-        return;
-      }
-
-      _navigateCleanly(
-        AppRouter.chatConnected,
-        extra: ConnectedChatPagePayload(
-          chatGeneralData: chat,
-          prefillEncryptedMessage: payload.encryptedMessage,
+  /// A message link opens in Open, which checks the person and opens it
+  /// once (a person not on this phone is "Not from your people").
+  void _handleFuzzMessage(FuzzMessageLinkPayload payload) {
+    _navigateCleanly(
+      AppRouter.open,
+      extra: OpenPagePayload(
+        request: OpenMessageLink(
+          chatId: payload.chatId,
+          encryptedMessage: payload.encryptedMessage,
         ),
-      );
-    } catch (_) {
-      _showMessage(_l10n.failedToProcessMessage);
-    }
+      ),
+    );
   }
 
   void _showPairingWarning(ChatGeneralData chat) {

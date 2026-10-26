@@ -5,6 +5,8 @@ export 'chat_invitation_page/chat_invitation_page.dart';
 export 'connected_chat_page/connected_chat_page.dart';
 export 'home_page/home_page.dart';
 export 'invitation_acceptance_page/invitation_acceptance_page.dart';
+export 'lock_page/lock_page.dart';
 export 'onboarding_page/onboarding_page.dart';
+export 'open_page/open_page.dart';
 export 'safety_number_page/safety_number_page.dart';
 export 'settings_page/settings_page.dart';

@@ -1,6 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_cast/fuzzzy_cast.dart';
@@ -29,13 +28,9 @@ const _loaded = StateStatus.success;
 
 void main() {
   late _MockChatList chatList;
-  late List<String> pasted;
-  late String? clipboard;
 
   setUp(() {
     chatList = _MockChatList();
-    pasted = [];
-    clipboard = null;
     FuzzzyCastThrottle.reset();
   });
 
@@ -47,7 +42,6 @@ void main() {
     FuzzzySkin skin = FuzzzySkin.night,
     bool reduceMotion = false,
     bool castOn = false,
-    bool pastedIsLink = true,
   }) async {
     tester.view.physicalSize =
         const Size(390, 844) * tester.view.devicePixelRatio;
@@ -56,30 +50,13 @@ void main() {
     final preferences =
         PreferencesService(await SharedPreferences.getInstance());
 
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      SystemChannels.platform,
-      // An empty clipboard answers nothing at all, as the platforms do.
-      (call) async => call.method == 'Clipboard.getData' && clipboard != null
-          ? <String, dynamic>{'text': clipboard}
-          : null,
-    );
-    addTearDown(
-      () => tester.binding.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, null),
-    );
-
     Widget stub(String name) => Scaffold(body: Text(name));
     final router = GoRouter(
       routes: [
         GoRoute(
           path: AppRouter.home,
-          builder: (_, __) => Scaffold(
-            body: HomePage(
-              onPastedText: (text) {
-                pasted.add(text);
-                return pastedIsLink;
-              },
-            ),
+          builder: (_, __) => const Scaffold(
+            body: HomePage(),
           ),
         ),
         GoRoute(
@@ -91,8 +68,18 @@ void main() {
           builder: (_, __) => stub('got invite flow'),
         ),
         GoRoute(
-          path: AppRouter.basics,
+          path: AppRouter.lockWithPassword,
           builder: (_, __) => stub('password flow'),
+        ),
+        GoRoute(
+          path: AppRouter.lockFor,
+          builder: (_, state) => stub(
+            'lock for ${(state.extra! as LockPagePayload).chat!.chatName}',
+          ),
+        ),
+        GoRoute(
+          path: AppRouter.open,
+          builder: (_, __) => stub('open flow'),
         ),
         GoRoute(
           path: AppRouter.chatInvitation,
@@ -273,15 +260,16 @@ void main() {
       expect(find.text('password flow'), findsOneWidget);
     });
 
-    testWidgets('a connected person opens where locking happens',
+    testWidgets('a connected person goes on to "What?" for them',
         (tester) async {
       showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
       await pumpHome(tester);
       await tester.tap(find.byKey(const Key('tile.home.lock')));
       await tester.pumpAndSettle();
+      expect(find.text('Step 1 of 2 · Who'.toUpperCase()), findsOneWidget);
       await tester.tap(find.byKey(const Key('lockWho.nino')));
       await tester.pumpAndSettle();
-      expect(find.text('chat with Nino'), findsOneWidget);
+      expect(find.text('lock for Nino'), findsOneWidget);
     });
 
     testWidgets('no one connected: "Add a person first" opens Add',
@@ -311,66 +299,12 @@ void main() {
   });
 
   group('Open', () {
-    testWidgets('a pasted link goes the way a tapped link goes',
-        (tester) async {
-      showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
-      clipboard = 'https://ink.fuzzzycore.com/invite#RlVaWgEB';
-      await pumpHome(tester);
-      await tester.tap(find.byKey(const Key('tile.home.open')));
-      await tester.pumpAndSettle();
-      expect(find.text('Open what you got'), findsOneWidget);
-      expect(
-        find.text('Links and QR codes open here by themselves.'),
-        findsOneWidget,
-      );
-
-      await tester.tap(find.text('Paste it'));
-      await tester.pumpAndSettle();
-      expect(pasted, ['https://ink.fuzzzycore.com/invite#RlVaWgEB']);
-      expect(find.text('Open what you got'), findsNothing);
-    });
-
-    testWidgets('nothing to paste says so and stays', (tester) async {
+    testWidgets('the Open tile opens Open', (tester) async {
       showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
       await pumpHome(tester);
       await tester.tap(find.byKey(const Key('tile.home.open')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Paste it'));
-      await tester.pump();
-      expect(
-        find.text('Nothing to paste. Copy the locked text first.'),
-        findsOneWidget,
-      );
-      expect(pasted, isEmpty);
-      await tester.pump(const Duration(seconds: 3));
-    });
-
-    testWidgets("text that is not a link points to the person's page",
-        (tester) async {
-      showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
-      clipboard = 'Fuzz/RlVaWgED';
-      await pumpHome(tester, pastedIsLink: false);
-      await tester.tap(find.byKey(const Key('tile.home.open')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Paste it'));
-      await tester.pump();
-      expect(
-        find.text("Paste a link here. Locked text opens on the person's page."),
-        findsOneWidget,
-      );
-      expect(find.text('Open what you got'), findsOneWidget);
-      await tester.pump(const Duration(seconds: 3));
-    });
-
-    testWidgets('"Locked with a password" opens the password flow',
-        (tester) async {
-      showState(ChatGeneralDataListState(status: _loaded, chatList: [_nino]));
-      await pumpHome(tester);
-      await tester.tap(find.byKey(const Key('tile.home.open')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('open.password')));
-      await tester.pumpAndSettle();
-      expect(find.text('password flow'), findsOneWidget);
+      expect(find.text('open flow'), findsOneWidget);
     });
   });
 
