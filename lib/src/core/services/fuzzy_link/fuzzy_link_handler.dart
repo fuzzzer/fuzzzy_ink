@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,12 @@ class FuzzyLinkHandler {
   StreamSubscription<Uri>? _fileSubscription;
   FuzzyLinkPayload? _pendingPayload;
 
-  /// A `.fuzz` file's hand-off copy waiting for the unlock.
+  /// A `.fuzz` file's incoming copy waiting for the unlock.
   String? _pendingFilePath;
+
+  /// The incoming copy last handed to Open, which may still wait there for
+  /// the person's Open or Connect ([keepWaitingFileAtLock]).
+  String? _shownFilePath;
   bool _isInitialized = false;
 
   bool get hasPendingPayload =>
@@ -108,7 +113,36 @@ class FuzzyLinkHandler {
   void discardPending() {
     _pendingPayload = null;
     _pendingFilePath = null;
+    _shownFilePath = null;
     _pendingLink.value = false;
+  }
+
+  /// The app is locking. A `.fuzz` file Open still holds (on "Open the
+  /// message from …?", or still being read) is kept and waits for the
+  /// unlock like one that arrived while locked, so the lock on return does
+  /// not lose it (2026-10-26, seen live). One Open used or left is gone
+  /// already, and so is not brought back.
+  void keepWaitingFileAtLock() {
+    final filePath = _shownFilePath;
+    _shownFilePath = null;
+    final store = _incomingFiles?.userFileStore;
+    if (filePath == null || store == null) return;
+    if (_pendingPayload != null || _pendingFilePath != null) return;
+    if (!File(filePath).existsSync()) return;
+    store.keepForUnlock(filePath);
+    _pendingFilePath = filePath;
+    _pendingLink.value = true;
+  }
+
+  /// A newer arrival takes the place of a file waiting for the unlock: the
+  /// older copy goes.
+  void _dropPendingFile() {
+    final filePath = _pendingFilePath;
+    _pendingFilePath = null;
+    final store = _incomingFiles?.userFileStore;
+    if (filePath == null || store == null) return;
+    store.release(filePath);
+    unawaited(store.wipe(filePath));
   }
 
   void processPendingPayload() {
@@ -140,7 +174,7 @@ class FuzzyLinkHandler {
   Future<void> _routePayload(FuzzyLinkPayload payload) async {
     if (_isLocked || _holds > 0) {
       _pendingPayload = payload;
-      _pendingFilePath = null;
+      _dropPendingFile();
       _pendingLink.value = true;
       if (!_isLocked && navigatorKey.currentContext != null) {
         _showMessage(_l10n.linkWaitsForSafe);
@@ -151,7 +185,7 @@ class FuzzyLinkHandler {
     _processPayload(payload);
   }
 
-  /// A `.fuzz` file from another app: read once into the hand-off folder,
+  /// A `.fuzz` file from another app: read once into the incoming folder,
   /// then Open (after the unlock when the app is locked), where a message,
   /// a person's file or a reply waits for the person's Open or Connect.
   Future<void> _handleIncomingFile(Uri uri) async {
@@ -165,6 +199,7 @@ class FuzzyLinkHandler {
       return;
     }
     if (_isLocked || _holds > 0) {
+      _dropPendingFile();
       _pendingFilePath = filePath;
       _pendingPayload = null;
       _pendingLink.value = true;
@@ -177,6 +212,8 @@ class FuzzyLinkHandler {
   }
 
   void _openFile(String filePath) {
+    _incomingFiles?.userFileStore.release(filePath);
+    _shownFilePath = filePath;
     _navigateCleanly(
       AppRouter.open,
       // Arrived, not chosen: it waits for an explicit Open/Connect tap and

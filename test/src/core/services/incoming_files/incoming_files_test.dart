@@ -63,13 +63,14 @@ void main() {
         userFilesChannel: userFiles,
         channel: channel,
         platform: platform,
+        systemTemporaryDirectoryPath: path.join(root.path, 'process_tmp'),
       );
 
   File write(String filePath, [String content = 'Fuzz/AwEC']) => File(filePath)
     ..createSync(recursive: true)
     ..writeAsStringSync(content);
 
-  String handoff() => path.join(support, UserFileStore.handoffFolderName);
+  String incomingRoot() => path.join(support, UserFileStore.incomingFolderName);
 
   test('only file and content URIs are files; links are not', () {
     expect(IncomingFiles.isFileUri(Uri.parse('file:///a/b.fuzz')), isTrue);
@@ -97,13 +98,13 @@ void main() {
   });
 
   group('a file URL (iOS, macOS)', () {
-    test('is copied once into a new hand-off folder; the original stays',
+    test('is copied once into a new incoming folder; the original stays',
         () async {
       final source = write(path.join(root.path, 'Downloads', 'beach.jpg.fuzz'));
       final taken = await incoming().take(Uri.file(source.path));
 
       expect(taken, isNotNull);
-      expect(path.isWithin(handoff(), taken!), isTrue);
+      expect(path.isWithin(incomingRoot(), taken!), isTrue);
       expect(path.basename(taken), 'beach.jpg.fuzz');
       expect(File(taken).readAsStringSync(), 'Fuzz/AwEC');
       expect(source.existsSync(), isTrue, reason: "the person's own file");
@@ -111,6 +112,24 @@ void main() {
 
     test("iOS: the system's own Inbox copy is deleted once taken", () async {
       final inbox = write(path.join(documents, 'Inbox', 'note.fuzz'));
+      final taken = await incoming(platform: TargetPlatform.iOS)
+          .take(Uri.file(inbox.path));
+
+      expect(taken, isNotNull);
+      expect(File(taken!).existsSync(), isTrue);
+      expect(inbox.existsSync(), isFalse);
+    });
+
+    test("iOS: the system's tmp/<bundle>-Inbox copy is deleted once taken",
+        () async {
+      final inbox = write(
+        path.join(
+          root.path,
+          'process_tmp',
+          'com.fuzzzycore.ink-Inbox',
+          'm.fuzz',
+        ),
+      );
       final taken = await incoming(platform: TargetPlatform.iOS)
           .take(Uri.file(inbox.path));
 
@@ -139,7 +158,7 @@ void main() {
         await files.take(Uri.file(path.join(root.path, 'gone.fuzz'))),
         isNull,
       );
-      expect(Directory(handoff()).existsSync(), isFalse);
+      expect(Directory(incomingRoot()).existsSync(), isFalse);
     });
 
     test('a link is not a file to take', () async {
@@ -174,7 +193,7 @@ void main() {
       final taken =
           await incoming(platform: TargetPlatform.android).take(Uri.parse(uri));
 
-      expect(path.isWithin(handoff(), taken!), isTrue);
+      expect(path.isWithin(incomingRoot(), taken!), isTrue);
       expect(path.basename(taken), 'photo.jpg.fuzz');
       verify(() => userFiles.copyIncoming(uri, taken)).called(1);
     });
@@ -188,8 +207,8 @@ void main() {
           await incoming(platform: TargetPlatform.android).take(Uri.parse(uri));
 
       expect(taken, isNull);
-      final left = Directory(handoff()).existsSync()
-          ? Directory(handoff()).listSync()
+      final left = Directory(incomingRoot()).existsSync()
+          ? Directory(incomingRoot()).listSync()
           : const <FileSystemEntity>[];
       expect(left, isEmpty);
     });

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,8 @@ class MockFuzzyAuthStore extends Mock implements FuzzyAuthStore {}
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
 class MockIncomingFiles extends Mock implements IncomingFiles {}
+
+class MockUserFileStore extends Mock implements UserFileStore {}
 
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _invitation = 'Fuzz/RlVaWgEBJDZmMWU5YjJjLTNkNGEtNGY1Yi04YzZkLTdlOGY5YTBi';
@@ -339,13 +342,21 @@ void main() {
 
   group('a .fuzz file opened from another app', () {
     const fileUri = 'content://com.android.providers.downloads/document/7';
-    const copy = '/support/handoff/1_0/note.fuzz';
+    late String copy;
+    late Directory temp;
+    late MockUserFileStore fileStore;
     late MockIncomingFiles incomingFiles;
     late StreamController<Uri> desktopFiles;
     late List<(String, Object?)> went;
 
     setUp(() {
+      temp = Directory.systemTemp.createTempSync('incoming_test');
+      copy = '${temp.path}/note.fuzz';
+      File(copy).writeAsStringSync('Fuzz/sealed');
+      fileStore = MockUserFileStore();
+      when(() => fileStore.wipe(any())).thenAnswer((_) async {});
       incomingFiles = MockIncomingFiles();
+      when(() => incomingFiles.userFileStore).thenReturn(fileStore);
       desktopFiles = StreamController<Uri>();
       went = [];
       registerFallbackValue(Uri());
@@ -355,7 +366,10 @@ void main() {
           .thenAnswer((_) async => copy);
     });
 
-    tearDown(() => desktopFiles.close());
+    tearDown(() {
+      desktopFiles.close();
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
 
     Future<FuzzyLinkHandler> pumpWithFiles(WidgetTester tester) async {
       await tester.pumpWidget(
@@ -433,6 +447,37 @@ void main() {
       expectOpenedInOpen();
       expect(handler.hasPendingPayload, isFalse);
       expect(handler.pendingLink.value, isFalse);
+      handler.dispose();
+    });
+
+    testWidgets(
+        'still waiting on Open when the app locks, it waits for the unlock '
+        '(lock on return, seen live 2026-10-26)', (tester) async {
+      final handler = await pumpWithFiles(tester);
+      await receive(tester, fileUri);
+      expectOpenedInOpen();
+
+      handler.keepWaitingFileAtLock();
+      verify(() => fileStore.keepForUnlock(copy)).called(1);
+      expect(handler.hasPendingPayload, isTrue);
+      expect(handler.pendingLink.value, isTrue);
+
+      went.clear();
+      handler.processPendingPayload();
+      expectOpenedInOpen();
+      verify(() => fileStore.release(copy)).called(greaterThanOrEqualTo(1));
+      handler.dispose();
+    });
+
+    testWidgets('used or left on Open before the lock, it is not brought back',
+        (tester) async {
+      final handler = await pumpWithFiles(tester);
+      await receive(tester, fileUri);
+      File(copy).deleteSync();
+
+      handler.keepWaitingFileAtLock();
+      verifyNever(() => fileStore.keepForUnlock(any()));
+      expect(handler.hasPendingPayload, isFalse);
       handler.dispose();
     });
 

@@ -810,8 +810,9 @@ void main() {
       verifyNever(() => store.discardPickedCopy(file));
     });
 
-    test('a message as a file is read, its copy goes, and it still waits',
-        () async {
+    test(
+        'a message as a file is read and waits; its copy stays until Open '
+        'used or left it (a lock in between keeps it)', () async {
       final file = path.join(dir.path, 'fuzzzy-ink-message.fuzz');
       File(file).writeAsStringSync('Fuzz/AwEC\n');
       peekFileAnswers(
@@ -826,8 +827,9 @@ void main() {
       await cubit.open(OpenArrivedFile(file));
       expect(cubit.state.phase, OpenPhase.confirmMessage);
       expect(cubit.state.pendingMessage, 'Fuzz/AwEC');
-      verify(() => store.discardPickedCopy(file)).called(1);
+      verifyNever(() => store.discardPickedCopy(file));
       await cubit.close();
+      verify(() => store.discardPickedCopy(file)).called(1);
       verifyNever(
         () => crypto.decryptText(
           chatId: any(named: 'chatId'),

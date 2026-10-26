@@ -225,8 +225,48 @@ void main() {
       expect(handoff.existsSync(), isFalse);
       expect(inbox.existsSync(), isFalse);
       expect(Directory(processTmp).existsSync(), isTrue);
-      expect(pickerClears, 1);
+      // On iOS the picker's own clean-up empties all of tmp/, so the store
+      // sweeps it itself (and keeps a sealed .fuzz arriving there).
+      expect(pickerClears, 0);
       expect(sealed.existsSync(), isTrue);
+    });
+
+    test(
+        'a .fuzz file arriving or waiting for Open stays through the lock '
+        '(lock on return, seen live 2026-10-26)', () async {
+      final store = storeOn(TargetPlatform.iOS);
+      final arriving =
+          write(path.join(processTmp, 'com.fuzzzycore.ink-Inbox', 'm.fuzz'));
+      final plainBeside =
+          write(path.join(processTmp, 'com.fuzzzycore.ink-Inbox', 'a.jpg'));
+      final incoming = write(await store.newIncomingPath('note.fuzz'));
+
+      await store.wipeAtLock();
+
+      expect(arriving.existsSync(), isTrue);
+      expect(plainBeside.existsSync(), isFalse);
+      expect(incoming.existsSync(), isTrue);
+
+      // Kept for the unlock: Open's leaving does not take it until released.
+      store.keepForUnlock(incoming.path);
+      await store.discardPickedCopy(incoming.path);
+      expect(incoming.existsSync(), isTrue);
+      store.release(incoming.path);
+      await store.discardPickedCopy(incoming.path);
+      expect(incoming.existsSync(), isFalse);
+    });
+
+    test('the launch sweep and erase take incoming files', () async {
+      final store = storeOn(TargetPlatform.iOS);
+      final first = write(await store.newIncomingPath('a.fuzz'));
+      store.keepForUnlock(first.path);
+      await store.wipeTemporaryPlainCopies();
+      expect(first.existsSync(), isFalse);
+
+      final second = write(await store.newIncomingPath('b.fuzz'));
+      store.keepForUnlock(second.path);
+      await store.wipeIncoming();
+      expect(second.existsSync(), isFalse);
     });
 
     test("on a computer the user's files are never touched", () async {

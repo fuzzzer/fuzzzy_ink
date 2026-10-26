@@ -10,19 +10,20 @@ import 'package:path/path.dart' as path;
 /// Android (a `VIEW` intent), iOS and macOS (the exported type
 /// `com.fuzzzycore.ink.fuzz`).
 ///
-/// Whatever arrives is only read, once: copied into a new hand-off folder
-/// ([UserFileStore.newHandoffPath]) and handed to Open as an
+/// Whatever arrives is only read, once: copied into a new incoming folder
+/// ([UserFileStore.newIncomingPath]) and handed to Open as an
 /// [OpenArrivedFile], which peeks at it (`PROTOCOL.md` §7.4) and spends
 /// nothing until the person taps Open (a message or a person's file) or
 /// Connect (a reply). The copy is wiped once Open used it or was left
-/// ([UserFileStore.discardPickedCopy]), when the app locks, and at every
-/// launch.
+/// ([UserFileStore.discardPickedCopy]), at erase and at every launch; a
+/// lock keeps it for Open after the unlock (it is sealed).
 /// Nothing is ever run or handed on, and nothing goes on the network.
 ///
 /// - Android: a `content://` (or `file://`) URI, read by the native side
 ///   (`UserFiles.kt`), its name from the provider.
-/// - iOS: a `file://` URL in the app's own `Documents/Inbox`, where the
-///   system put its copy; that copy is deleted once taken.
+/// - iOS: a `file://` URL in the app's own `Documents/Inbox` or, on newer
+///   systems, `tmp/<bundle id>-Inbox`, where the system put its copy; that
+///   copy is deleted once taken.
 /// - macOS: Finder hands the file to the app delegate, which queues it
 ///   ([opened]); the person's own file is left where it is.
 class IncomingFiles {
@@ -32,8 +33,11 @@ class IncomingFiles {
     UserFilesChannel userFilesChannel = const UserFilesChannel(),
     MethodChannel channel = const MethodChannel(channelName),
     TargetPlatform? platform,
+    String? systemTemporaryDirectoryPath,
   })  : _userFileStore = userFileStore,
         _documentsDirectoryPath = documentsDirectoryPath,
+        _systemTemporaryDirectoryPath = systemTemporaryDirectoryPath ??
+            (Platform.isIOS ? Directory.systemTemp.path : null),
         _userFilesChannel = userFilesChannel,
         _channel = channel,
         _platform = platform;
@@ -44,7 +48,13 @@ class IncomingFiles {
   static const fallbackName = 'incoming.fuzz';
 
   final UserFileStore _userFileStore;
+
+  /// Where the incoming copies live.
+  UserFileStore get userFileStore => _userFileStore;
   final String _documentsDirectoryPath;
+
+  /// The app's own `tmp/` on iOS (`NSTemporaryDirectory()`).
+  final String? _systemTemporaryDirectoryPath;
   final UserFilesChannel _userFilesChannel;
   final MethodChannel _channel;
   final TargetPlatform? _platform;
@@ -82,7 +92,7 @@ class IncomingFiles {
     }
   }
 
-  /// Copies the file [uri] names into a new hand-off folder and answers the
+  /// Copies the file [uri] names into a new incoming folder and answers the
   /// copy's path; null when it cannot be read (gone, a folder or a link,
   /// no permission).
   Future<String?> take(Uri uri) async {
@@ -91,7 +101,7 @@ class IncomingFiles {
     try {
       if (uri.scheme == 'content') {
         final name = await _userFilesChannel.incomingName(uri.toString());
-        target = await _userFileStore.newHandoffPath(safeName(name));
+        target = await _userFileStore.newIncomingPath(safeName(name));
         await _userFilesChannel.copyIncoming(uri.toString(), target);
         return target;
       }
@@ -99,7 +109,7 @@ class IncomingFiles {
       final type = await FileSystemEntity.type(sourcePath, followLinks: false);
       if (type != FileSystemEntityType.file) return null;
       target = await _userFileStore
-          .newHandoffPath(safeName(path.basename(sourcePath)));
+          .newIncomingPath(safeName(path.basename(sourcePath)));
       await File(sourcePath).copy(target);
       if (_isOwnInboxCopy(sourcePath)) await _deleteQuietly(sourcePath);
       return target;
@@ -122,13 +132,19 @@ class IncomingFiles {
     return base;
   }
 
-  /// iOS copies a file it hands over into `Documents/Inbox`, which is the
-  /// app's own: that copy goes once taken. Nothing else is ever deleted.
+  /// iOS copies a file it hands over into `Documents/Inbox` or
+  /// `tmp/<bundle id>-Inbox` (seen on iOS 26), both the app's own: that copy
+  /// goes once taken. Nothing else is ever deleted.
   bool _isOwnInboxCopy(String sourcePath) {
     final platform = _platform ?? (Platform.isIOS ? TargetPlatform.iOS : null);
     if (platform != TargetPlatform.iOS) return false;
+    final source = _canonical(sourcePath);
     final inbox = path.join(_documentsDirectoryPath, 'Inbox');
-    return path.isWithin(_canonical(inbox), _canonical(sourcePath));
+    if (path.isWithin(_canonical(inbox), source)) return true;
+    final tmp = _systemTemporaryDirectoryPath;
+    return tmp != null &&
+        path.isWithin(_canonical(tmp), source) &&
+        path.basename(path.dirname(source)).endsWith('-Inbox');
   }
 
   static String _canonical(String filePath) {

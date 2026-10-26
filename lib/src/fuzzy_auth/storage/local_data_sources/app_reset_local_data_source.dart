@@ -50,10 +50,13 @@ class AppResetLocalDataSource {
     vaultPasswordCopySetting.value = true;
   }
 
-  /// Plain copies the picker or a hand-off left in the app's folders.
+  /// Plain copies the picker or a hand-off left in the app's folders, and
+  /// the `.fuzz` files other apps handed over (the launch sweep's set).
   Future<void> wipePlainCopies() async {
     if (sl.isRegistered<UserFileStore>()) {
-      await sl.get<UserFileStore>().wipeAtLock();
+      final store = sl.get<UserFileStore>();
+      await store.wipeIncoming();
+      await store.wipeTemporaryPlainCopies();
     }
   }
 

@@ -43,10 +43,16 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
   FileProcessingHandler? _passwordFileHandler;
   String? _plainCopy;
 
+  /// A `.fuzz` text file another app handed over, already read: kept until
+  /// Open used or left it, so a lock in between keeps it for the unlock
+  /// ([FuzzyLinkHandler.keepWaitingFileAtLock]).
+  String? _arrivedCopy;
+
   /// Opens [request]. Anything already shown is left first.
   Future<void> open(OpenRequest request) async {
     if (state.phase.isBusy) return;
     await _dropPlainCopy();
+    await _dropArrivedCopy();
     emit(const OpenFlowState(phase: OpenPhase.reading));
 
     switch (request) {
@@ -105,6 +111,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     if (state.phase != OpenPhase.confirmMessage || chat == null) return;
     if (blob != null) {
       emit(const OpenFlowState(phase: OpenPhase.reading));
+      await _dropArrivedCopy();
       await _openMessage(chatId: chat.chatId, blob: blob, isFromLink: true);
     } else if (filePath != null) {
       emit(const OpenFlowState(phase: OpenPhase.reading));
@@ -170,7 +177,11 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
       } on FileSystemException {
         return _problem(OpenProblem.failed);
       }
-      await userFileStore.discardPickedCopy(filePath);
+      if (arrived) {
+        _arrivedCopy = filePath;
+      } else {
+        await userFileStore.discardPickedCopy(filePath);
+      }
       return _route(peek, text: text, arrived: arrived);
     }
     await _route(peek, filePath: filePath, arrived: arrived);
@@ -546,6 +557,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
   Future<void> startOver() async {
     if (state.phase == OpenPhase.working) return;
     await _dropPlainCopy();
+    await _dropArrivedCopy();
     await _queueSubscription?.cancel();
     await _rowSubscription?.cancel();
     if (!isClosed) emit(const OpenFlowState());
@@ -585,6 +597,12 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     if (copy != null) await userFileStore.wipe(copy);
   }
 
+  Future<void> _dropArrivedCopy() async {
+    final copy = _arrivedCopy;
+    _arrivedCopy = null;
+    if (copy != null) await userFileStore.discardPickedCopy(copy);
+  }
+
   @override
   Future<void> close() async {
     _passwordFileHandler?.cancel();
@@ -592,6 +610,7 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
     await _rowSubscription?.cancel();
     await _passwordFileSubscription?.cancel();
     await _dropPlainCopy();
+    await _dropArrivedCopy();
     // A person's file another app handed over and still waiting for Open
     // ("Not now", or Open closed): its hand-off copy goes.
     final waitingFile =

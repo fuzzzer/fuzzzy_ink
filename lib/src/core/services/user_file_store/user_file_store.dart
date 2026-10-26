@@ -67,6 +67,13 @@ class UserFileStore {
   /// (`res/xml/user_file_paths.xml`).
   static const handoffFolderName = 'handoff';
 
+  /// `.fuzz` files another app handed over ([IncomingFiles]), waiting for
+  /// Open. They are sealed, so a lock leaves them: one that arrives as the
+  /// app locks on return, or waits on Open's confirm screen when the app
+  /// locks, is still there after the unlock (2026-10-26, seen live). They go
+  /// once Open used or left them, at erase and at every launch.
+  static const incomingFolderName = 'incoming';
+
   /// The old Basics output folder under the documents directory.
   static const legacyBasicsFolderName = 'Working Folder';
 
@@ -76,6 +83,10 @@ class UserFileStore {
 
   int _handoffCounter = 0;
   final Set<String> _pendingWipes = {};
+
+  /// Incoming files kept through a lock for Open after the unlock
+  /// ([keepForUnlock]): [wipe] leaves them until [release].
+  final Set<String> _keptForUnlock = {};
   AppLifecycleListener? _lifecycleListener;
 
   String get sealedRootPath =>
@@ -83,6 +94,9 @@ class UserFileStore {
 
   String get handoffRootPath =>
       path.join(_supportDirectoryPath, handoffFolderName);
+
+  String get incomingRootPath =>
+      path.join(_supportDirectoryPath, incomingFolderName);
 
   TargetPlatform get _hostPlatform {
     if (_platform != null) return _platform;
@@ -201,9 +215,39 @@ class UserFileStore {
 
   bool isHandoff(String filePath) => path.isWithin(handoffRootPath, filePath);
 
-  /// Deletes the hand-off copy at [filePath] and its folder. A path outside
-  /// the hand-off folder is never touched.
+  /// `<new incoming folder>/<fileName>`: where a `.fuzz` file another app
+  /// handed over is copied ([incomingFolderName]).
+  Future<String> newIncomingPath(String fileName) async {
+    final id = '${DateTime.now().microsecondsSinceEpoch}_${_handoffCounter++}';
+    final folder = await _ensureFolder(path.join(incomingRootPath, id));
+    return path.join(folder, path.basename(fileName));
+  }
+
+  bool isIncoming(String filePath) => path.isWithin(incomingRootPath, filePath);
+
+  /// The app locked while [filePath] (an incoming file) waited for Open: it
+  /// stays, whoever asks to [wipe] it, until [release].
+  void keepForUnlock(String filePath) {
+    if (isIncoming(filePath)) _keptForUnlock.add(filePath);
+  }
+
+  /// Open has the incoming file again: [wipe] may take it.
+  void release(String filePath) => _keptForUnlock.remove(filePath);
+
+  /// Every incoming file (erase everything).
+  Future<void> wipeIncoming() async {
+    _keptForUnlock.clear();
+    await _deleteQuietly(Directory(incomingRootPath));
+  }
+
+  /// Deletes the hand-off or incoming copy at [filePath] and its folder. A
+  /// path outside those folders is never touched, nor an incoming file kept
+  /// for the unlock.
   Future<void> wipe(String filePath) async {
+    if (isIncoming(filePath)) {
+      if (_keptForUnlock.contains(filePath)) return;
+      return _deleteQuietly(Directory(path.dirname(filePath)));
+    }
     if (!isHandoff(filePath)) return;
     _pendingWipes.remove(filePath);
     final folder = path.dirname(filePath);
@@ -252,9 +296,9 @@ class UserFileStore {
   /// using it; on a computer the picker hands over the user's own file,
   /// which is never deleted.
   Future<void> discardPickedCopy(String inputPath) async {
-    // A file another app opened in this one was copied into the hand-off
+    // A file another app opened in this one was copied into the incoming
     // folder ([IncomingFiles]): that copy goes once used, on every platform.
-    if (isHandoff(inputPath)) return wipe(inputPath);
+    if (isHandoff(inputPath) || isIncoming(inputPath)) return wipe(inputPath);
     if (!isPickedCopy(inputPath)) return;
     await _deleteQuietly(File(inputPath));
   }
@@ -262,11 +306,13 @@ class UserFileStore {
   /// When the app locks (security review 2026-10-26): every plain hand-off
   /// copy and every picker copy goes, as at launch. A page still showing a
   /// copy is behind the lock screen; it reads the file again only after a
-  /// new unfuzz.
+  /// new unfuzz. Sealed `.fuzz` files are left: the incoming folder, and on
+  /// iOS a `.fuzz` the system is handing over in the app's `tmp/` as it
+  /// locks on return (gone at the next launch).
   Future<void> wipeAtLock() async {
     _pendingWipes.clear();
     await _deleteQuietly(Directory(handoffRootPath));
-    await _wipePickerCopies();
+    await _wipePickerCopies(keepSealed: true);
   }
 
   /// At every launch, before anything is unfuzzed: every plain copy a
@@ -276,6 +322,7 @@ class UserFileStore {
   /// `Working Folder`. Never throws.
   Future<void> wipeTemporaryPlainCopies() async {
     await _deleteQuietly(Directory(handoffRootPath));
+    await _deleteQuietly(Directory(incomingRootPath));
 
     try {
       final support = Directory(_supportDirectoryPath);
@@ -309,12 +356,19 @@ class UserFileStore {
   /// The picker's copies on a phone: its own clean-up, Android's
   /// `cache/file_picker`, and on iOS everything in the app's `tmp/` — a
   /// folder private to the app that nothing else of the app writes to.
-  Future<void> _wipePickerCopies() async {
+  ///
+  /// With [keepSealed] (at lock) a `.fuzz` file in the iOS `tmp/` stays, and
+  /// so the picker's own clean-up, which empties all of `tmp/` there, is not
+  /// asked for on iOS.
+  Future<void> _wipePickerCopies({bool keepSealed = false}) async {
     if (!_isPhone) return;
-    try {
-      await _clearPickerCache();
-    } catch (error) {
-      logger.w('FILE STORE: could not clear the picker cache: $error');
+    final isIos = _hostPlatform == TargetPlatform.iOS;
+    if (!(keepSealed && isIos)) {
+      try {
+        await _clearPickerCache();
+      } catch (error) {
+        logger.w('FILE STORE: could not clear the picker cache: $error');
+      }
     }
     if (_hostPlatform == TargetPlatform.android) {
       await _deleteQuietly(
@@ -327,13 +381,36 @@ class UserFileStore {
         final tmp = Directory(tmpPath);
         if (await tmp.exists()) {
           await for (final entity in tmp.list()) {
-            await _deleteQuietly(entity);
+            if (keepSealed && entity is Directory) {
+              await _wipeAllButSealed(entity);
+            } else if (!(keepSealed && _isSealed(entity.path))) {
+              await _deleteQuietly(entity);
+            }
           }
         }
       } catch (error) {
         logger.w('FILE STORE: could not sweep the iOS tmp folder: $error');
       }
     }
+  }
+
+  static bool _isSealed(String filePath) =>
+      path.extension(filePath).toLowerCase() == '.$fuzzedFileIdentificator';
+
+  /// Everything in [folder] but `.fuzz` files; the folder too once empty.
+  static Future<void> _wipeAllButSealed(Directory folder) async {
+    var kept = false;
+    await for (final entity in folder.list()) {
+      if (entity is Directory) {
+        await _wipeAllButSealed(entity);
+        if (await entity.exists()) kept = true;
+      } else if (_isSealed(entity.path)) {
+        kept = true;
+      } else {
+        await _deleteQuietly(entity);
+      }
+    }
+    if (!kept) await _deleteQuietly(folder);
   }
 
   static Future<void> _clearFilePickerCache() async {

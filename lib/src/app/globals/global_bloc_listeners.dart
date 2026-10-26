@@ -129,6 +129,11 @@ class GlobalBlocListeners extends StatelessWidget {
           // picker copy goes (security review 2026-10-26).
           listener: (context, __) {
             context.read<VaultAuthCubit>().lock();
+            // Before the Open screen goes: a .fuzz file still waiting there
+            // waits for the unlock instead.
+            if (sl.isRegistered<FuzzyLinkHandler>()) {
+              sl.get<FuzzyLinkHandler>().keepWaitingFileAtLock();
+            }
             unawaited(CopyGuard.clearOnLock());
             if (sl.isRegistered<UserFileStore>()) {
               unawaited(sl.get<UserFileStore>().wipeAtLock());
