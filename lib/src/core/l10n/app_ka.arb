@@ -68,10 +68,6 @@
   "@copyAcceptance": {},
   "yourAcceptanceHasBeenGeneratedSuccessfully": "თქვენი მიღების ტექსტი წარმატებით შეიქმნა.",
   "@yourAcceptanceHasBeenGeneratedSuccessfully": {},
-  "exportAcceptance": "მიღების ექსპორტი",
-  "@exportAcceptance": {},
-  "acceptanceCopiedToClipboard": "მიღება კოპირებულია ბუფერში.",
-  "@acceptanceCopiedToClipboard": {},
   "tapToViewChat": "შეეხეთ ჩატის სანახავად.",
   "@tapToViewChat": {},
   "waitingForAcceptance": "ველოდებით მიღებას.",
@@ -84,12 +80,6 @@
   "@cancel": {},
   "delete": "წაშლა",
   "@delete": {},
-  "textGoesHere": "აქ ჩაწერეთ ტექსტი.",
-  "@textGoesHere": {},
-  "encrypting": "მიმდინარეობს დაშიფვრა",
-  "@encrypting": {},
-  "decrypting": "მიმდინარეობს გაშიფვრა",
-  "@decrypting": {},
   "copiedToTheClipboard": "კოპირებულია ბუფერში.",
   "@copiedToTheClipboard": {},
   "copy": "კოპირება",
@@ -194,18 +184,8 @@
   "@stepNameThisChat": {},
   "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.",
   "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
-  "copyFuzz": "Fuzz-ის კოპირება",
-  "@copyFuzz": {},
-  "firstEncryption": "პირველი დაშიფვრა",
-  "@firstEncryption": {},
-  "typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": "აკრიფეთ მესიჯი და დააჭირეთ გაგზავნას. ის ლოკალურად დაშიფრდება, რის შემდეგაც შეგეძლებათ უსაფრთხო, დაშიფრული ტექსტის კოპირება.",
-  "@typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": {},
   "settings": "პარამეტრები",
   "@settings": {},
-  "copyAsLink": "ბმულის კოპირება",
-  "@copyAsLink": {},
-  "linkCopiedToClipboard": "ბმული კოპირებულია ბუფერში.",
-  "@linkCopiedToClipboard": {},
   "shareAcceptance": "მიღების გაზიარება",
   "@shareAcceptance": {},
   "linkExpired": "ამ ბმულის ვადა ამოიწურა.",
@@ -228,10 +208,6 @@
   "@chatNotFoundForAcceptance": {},
   "failedToProcessAcceptance": "მიღების ბმულის დამუშავება ვერ მოხერხდა.",
   "@failedToProcessAcceptance": {},
-  "chatNotFoundForMessage": "ამ შეტყობინების ბმულისთვის ჩატი ვერ მოიძებნა.",
-  "@chatNotFoundForMessage": {},
-  "failedToProcessMessage": "შეტყობინების ბმულის დამუშავება ვერ მოხერხდა.",
-  "@failedToProcessMessage": {},
   "shareFile": "ფაილის გაზიარება",
   "@shareFile": {},
   "vaultUntitled": "უსათაურო",
@@ -498,8 +474,6 @@
   "@safetyNumberUnmark": {},
   "safetyNumberVerifiedBadge": "დადასტურებული",
   "@safetyNumberVerifiedBadge": {},
-  "verifySafetyNumberCta": "უსაფრთხოების ნომრის შემოწმება",
-  "@verifySafetyNumberCta": {},
   "wrongPasswordFile": "არასწორი პაროლი — ამ პაროლით ამ ფაილის გაშიფვრა ვერ მოხერხდება.",
   "@wrongPasswordFile": {},
   "fileStillArriving": "ეს ფაილი ჯერ კიდევ იწერება — დაელოდეთ სრულად ჩამოტვირთვას და სცადეთ ხელახლა.",
@@ -546,14 +520,6 @@
   "@fileCorrupt": {},
   "fileCancelled": "მიღება გაუქმდა — ამ ფაილის გაშიფვრა ამ მოწყობილობაზე აღარ შეიძლება; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.",
   "@fileCancelled": {},
-  "exportChatArchive": "ჩატის არქივის ექსპორტი",
-  "@exportChatArchive": {},
-  "exportChatArchiveDescription": "ამ ჩატის ისტორია პაროლით დაცულ ფაილში იფუთება (თითო შეტყობინება თითო ხაზზე). მოგვიანებით გახსენით მარტივი დაშიფრვა → ფაილის გაშიფრვა იმავე პაროლით.",
-  "@exportChatArchiveDescription": {},
-  "exportChatArchivePassword": "არქივის პაროლი",
-  "@exportChatArchivePassword": {},
-  "exportChatArchiveDone": "ჩატის არქივი ექსპორტირებულია.",
-  "@exportChatArchiveDone": {},
   "exportChatArchiveFailed": "ჩატის არქივის ექსპორტი ვერ მოხერხდა.",
   "@exportChatArchiveFailed": {},
   "exportChatArchiveNothingToExport": "ამ ჩატში ექსპორტისთვის შეტყობინებები არ არის.",
@@ -645,24 +611,12 @@
   "@qrCodeHint": {},
   "notVerified": "დაუდასტურებელი",
   "@notVerified": {},
-  "pairingWarningTitle": "შესაძლოა, თქვენი მოწვევა სხვამ მიიღო",
-  "@pairingWarningTitle": {},
-  "pairingWarningMessage": "ჩატი {chatName}-თან უკვე დაკავშირებულია, ეს თანხმობა კი სხვაა. შესაძლოა, თქვენი მოწვევა სხვამ მიიღო. სანამ ამ ჩატს ენდობით, უსაფრთხოების ნომერი {chatName}-თან პირადად ან ზარით შეადარეთ.",
-  "@pairingWarningMessage": {
-    "placeholders": {
-      "chatName": {}
-    }
-  },
   "saveFile": "შენახვა",
   "@saveFile": {},
   "fileSaved": "შენახულია.",
   "@fileSaved": {},
   "couldNotSaveFile": "ფაილის შენახვა ვერ მოხერხდა.",
   "@couldNotSaveFile": {},
-  "sentFileHint": "დაფაზულია — გააზიარეთ ან შეინახეთ",
-  "@sentFileHint": {},
-  "receivedFileHint": "ინახება დალუქული — გახსენით ან შეინახეთ",
-  "@receivedFileHint": {},
   "unfuzzingFile": "იშიფრება…",
   "@unfuzzingFile": {},
   "fileNoPreview": "ამ ფაილს აპლიკაცია ვერ აჩვენებს. შეინახეთ და სხვა აპლიკაციით გახსენით.",
@@ -1265,10 +1219,6 @@
   },
   "openNothingToPaste": "ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.",
   "@openNothingToPaste": {
-    "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
-  },
-  "openPasteNotALink": "აქ ბმული ჩასვით. ჩაკეტილი ტექსტი ადამიანის გვერდზე იხსნება.",
-  "@openPasteNotALink": {
     "description": "Georgian draft, needs a native read (redesign foundation, 2026-10-26)"
   },
   "openLockedWithPassword": "პაროლით ჩაკეტილი",
@@ -2812,15 +2762,6 @@
       }
     }
   },
-  "itemFromName": "ვისგან: {name}",
-  "@itemFromName": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "itemYouLockedWhen": "ჩაკეტეთ · {day} · {time}",
   "@itemYouLockedWhen": {
     "description": "Georgian draft, needs a native read (People screens, 2026-10-26)",
@@ -2859,14 +2800,6 @@
   },
   "itemSave": "შენახვა",
   "@itemSave": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "itemOpen": "გახსნა",
-  "@itemOpen": {
-    "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
-  },
-  "itemSaveGivesCopy": "„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.",
-  "@itemSaveGivesCopy": {
     "description": "Georgian draft, needs a native read (People screens, 2026-10-26)"
   },
   "itemUnreadable": "ეს შეტყობინება ამ ტელეფონზე ვერ იკითხება.",

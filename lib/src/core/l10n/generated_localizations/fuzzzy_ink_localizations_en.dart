@@ -117,12 +117,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Your acceptance has been generated successfully.';
 
   @override
-  String get exportAcceptance => 'Export Acceptance';
-
-  @override
-  String get acceptanceCopiedToClipboard => 'Acceptance copied to clipboard.';
-
-  @override
   String get tapToViewChat => 'Tap to view chat.';
 
   @override
@@ -140,15 +134,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get delete => 'Delete';
-
-  @override
-  String get textGoesHere => 'Text goes here.';
-
-  @override
-  String get encrypting => 'Encrypting';
-
-  @override
-  String get decrypting => 'Decrypting';
 
   @override
   String get copiedToTheClipboard => 'Copied to the clipboard.';
@@ -314,23 +299,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Choose a local name for this chat. This is only visible to you.';
 
   @override
-  String get copyFuzz => 'Copy Fuzz';
-
-  @override
-  String get firstEncryption => 'First Encryption';
-
-  @override
-  String get typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText =>
-      'Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.';
-
-  @override
   String get settings => 'Settings';
-
-  @override
-  String get copyAsLink => 'Copy as Link';
-
-  @override
-  String get linkCopiedToClipboard => 'Link copied to clipboard.';
 
   @override
   String get shareAcceptance => 'Share acceptance';
@@ -366,12 +335,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get failedToProcessAcceptance => 'Failed to process acceptance link.';
-
-  @override
-  String get chatNotFoundForMessage => 'Chat not found for this message link.';
-
-  @override
-  String get failedToProcessMessage => 'Failed to process message link.';
 
   @override
   String get shareFile => 'Share File';
@@ -747,9 +710,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get safetyNumberVerifiedBadge => 'Verified';
 
   @override
-  String get verifySafetyNumberCta => 'Verify safety number';
-
-  @override
   String get wrongPasswordFile =>
       'Wrong password — this file cannot be unfuzzed with it.';
 
@@ -833,19 +793,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get fileCancelled =>
       'Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.';
-
-  @override
-  String get exportChatArchive => 'Export chat archive';
-
-  @override
-  String get exportChatArchiveDescription =>
-      'Seals this chat\'s history into a password-protected file (one message per line). Open it later in Basic Encryption → file decryption with the same password.';
-
-  @override
-  String get exportChatArchivePassword => 'Archive password';
-
-  @override
-  String get exportChatArchiveDone => 'Chat archive exported.';
 
   @override
   String get exportChatArchiveFailed => 'Failed to export the chat archive.';
@@ -975,15 +922,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get notVerified => 'Not verified';
 
   @override
-  String get pairingWarningTitle =>
-      'Someone else may have accepted your invitation';
-
-  @override
-  String pairingWarningMessage(Object chatName) {
-    return 'Your chat with $chatName is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with $chatName in person or on a call before you trust this chat.';
-  }
-
-  @override
   String get saveFile => 'Save';
 
   @override
@@ -991,12 +929,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get couldNotSaveFile => 'Could not save the file.';
-
-  @override
-  String get sentFileHint => 'Fuzzed — share or save it';
-
-  @override
-  String get receivedFileHint => 'Kept sealed — open or save it';
 
   @override
   String get unfuzzingFile => 'Unfuzzing…';
@@ -1499,10 +1431,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get openNothingToPaste =>
       'Nothing to paste. Copy the locked text first.';
-
-  @override
-  String get openPasteNotALink =>
-      'Paste a link here. Locked text opens on the person\'s page.';
 
   @override
   String get openLockedWithPassword => 'Locked with a password';
@@ -2728,11 +2656,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   }
 
   @override
-  String itemFromName(String name) {
-    return 'From $name';
-  }
-
-  @override
   String itemYouLockedWhen(String day, String time) {
     return 'You locked this · $day · $time';
   }
@@ -2753,13 +2676,6 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get itemSave => 'Save';
-
-  @override
-  String get itemOpen => 'Open';
-
-  @override
-  String get itemSaveGivesCopy =>
-      'Save gives you a normal copy. Then it\'s yours.';
 
   @override
   String get itemUnreadable => 'This message can\'t be read on this phone.';

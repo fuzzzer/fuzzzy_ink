@@ -304,18 +304,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Your acceptance has been generated successfully.'**
   String get yourAcceptanceHasBeenGeneratedSuccessfully;
 
-  /// No description provided for @exportAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Export Acceptance'**
-  String get exportAcceptance;
-
-  /// No description provided for @acceptanceCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Acceptance copied to clipboard.'**
-  String get acceptanceCopiedToClipboard;
-
   /// No description provided for @tapToViewChat.
   ///
   /// In en, this message translates to:
@@ -351,24 +339,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
-
-  /// No description provided for @textGoesHere.
-  ///
-  /// In en, this message translates to:
-  /// **'Text goes here.'**
-  String get textGoesHere;
-
-  /// No description provided for @encrypting.
-  ///
-  /// In en, this message translates to:
-  /// **'Encrypting'**
-  String get encrypting;
-
-  /// No description provided for @decrypting.
-  ///
-  /// In en, this message translates to:
-  /// **'Decrypting'**
-  String get decrypting;
 
   /// No description provided for @copiedToTheClipboard.
   ///
@@ -670,42 +640,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Choose a local name for this chat. This is only visible to you.'**
   String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou;
 
-  /// No description provided for @copyFuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Fuzz'**
-  String get copyFuzz;
-
-  /// No description provided for @firstEncryption.
-  ///
-  /// In en, this message translates to:
-  /// **'First Encryption'**
-  String get firstEncryption;
-
-  /// No description provided for @typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText.
-  ///
-  /// In en, this message translates to:
-  /// **'Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.'**
-  String
-      get typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText;
-
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
-
-  /// No description provided for @copyAsLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy as Link'**
-  String get copyAsLink;
-
-  /// No description provided for @linkCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Link copied to clipboard.'**
-  String get linkCopiedToClipboard;
 
   /// No description provided for @shareAcceptance.
   ///
@@ -772,18 +711,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Failed to process acceptance link.'**
   String get failedToProcessAcceptance;
-
-  /// No description provided for @chatNotFoundForMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat not found for this message link.'**
-  String get chatNotFoundForMessage;
-
-  /// No description provided for @failedToProcessMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to process message link.'**
-  String get failedToProcessMessage;
 
   /// No description provided for @shareFile.
   ///
@@ -1458,12 +1385,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Verified'**
   String get safetyNumberVerifiedBadge;
 
-  /// No description provided for @verifySafetyNumberCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify safety number'**
-  String get verifySafetyNumberCta;
-
   /// No description provided for @wrongPasswordFile.
   ///
   /// In en, this message translates to:
@@ -1601,30 +1522,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.'**
   String get fileCancelled;
-
-  /// No description provided for @exportChatArchive.
-  ///
-  /// In en, this message translates to:
-  /// **'Export chat archive'**
-  String get exportChatArchive;
-
-  /// No description provided for @exportChatArchiveDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Seals this chat\'s history into a password-protected file (one message per line). Open it later in Basic Encryption → file decryption with the same password.'**
-  String get exportChatArchiveDescription;
-
-  /// No description provided for @exportChatArchivePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Archive password'**
-  String get exportChatArchivePassword;
-
-  /// No description provided for @exportChatArchiveDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat archive exported.'**
-  String get exportChatArchiveDone;
 
   /// No description provided for @exportChatArchiveFailed.
   ///
@@ -1848,18 +1745,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Not verified'**
   String get notVerified;
 
-  /// No description provided for @pairingWarningTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Someone else may have accepted your invitation'**
-  String get pairingWarningTitle;
-
-  /// No description provided for @pairingWarningMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your chat with {chatName} is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with {chatName} in person or on a call before you trust this chat.'**
-  String pairingWarningMessage(Object chatName);
-
   /// No description provided for @saveFile.
   ///
   /// In en, this message translates to:
@@ -1877,18 +1762,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Could not save the file.'**
   String get couldNotSaveFile;
-
-  /// No description provided for @sentFileHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzzed — share or save it'**
-  String get sentFileHint;
-
-  /// No description provided for @receivedFileHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Kept sealed — open or save it'**
-  String get receivedFileHint;
 
   /// No description provided for @unfuzzingFile.
   ///
@@ -2789,12 +2662,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Nothing to paste. Copy the locked text first.'**
   String get openNothingToPaste;
-
-  /// Fuzzzy Ink redesign (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Paste a link here. Locked text opens on the person\'s page.'**
-  String get openPasteNotALink;
 
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
@@ -5043,12 +4910,6 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'From {name}'**
-  String itemFromName(String name);
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
   /// **'You locked this · {day} · {time}'**
   String itemYouLockedWhen(String day, String time);
 
@@ -5081,18 +4942,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get itemSave;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Open'**
-  String get itemOpen;
-
-  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
-  ///
-  /// In en, this message translates to:
-  /// **'Save gives you a normal copy. Then it\'s yours.'**
-  String get itemSaveGivesCopy;
 
   /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
   ///

@@ -119,12 +119,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'თქვენი მიღების ტექსტი წარმატებით შეიქმნა.';
 
   @override
-  String get exportAcceptance => 'მიღების ექსპორტი';
-
-  @override
-  String get acceptanceCopiedToClipboard => 'მიღება კოპირებულია ბუფერში.';
-
-  @override
   String get tapToViewChat => 'შეეხეთ ჩატის სანახავად.';
 
   @override
@@ -142,15 +136,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get delete => 'წაშლა';
-
-  @override
-  String get textGoesHere => 'აქ ჩაწერეთ ტექსტი.';
-
-  @override
-  String get encrypting => 'მიმდინარეობს დაშიფვრა';
-
-  @override
-  String get decrypting => 'მიმდინარეობს გაშიფვრა';
 
   @override
   String get copiedToTheClipboard => 'კოპირებულია ბუფერში.';
@@ -319,23 +304,7 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'აირჩიეთ ლოკალური სახელი ამ საუბრისთვის. ეს მხოლოდ თქვენთვის იქნება ხილული.';
 
   @override
-  String get copyFuzz => 'Fuzz-ის კოპირება';
-
-  @override
-  String get firstEncryption => 'პირველი დაშიფვრა';
-
-  @override
-  String get typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText =>
-      'აკრიფეთ მესიჯი და დააჭირეთ გაგზავნას. ის ლოკალურად დაშიფრდება, რის შემდეგაც შეგეძლებათ უსაფრთხო, დაშიფრული ტექსტის კოპირება.';
-
-  @override
   String get settings => 'პარამეტრები';
-
-  @override
-  String get copyAsLink => 'ბმულის კოპირება';
-
-  @override
-  String get linkCopiedToClipboard => 'ბმული კოპირებულია ბუფერში.';
 
   @override
   String get shareAcceptance => 'მიღების გაზიარება';
@@ -372,14 +341,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get failedToProcessAcceptance =>
       'მიღების ბმულის დამუშავება ვერ მოხერხდა.';
-
-  @override
-  String get chatNotFoundForMessage =>
-      'ამ შეტყობინების ბმულისთვის ჩატი ვერ მოიძებნა.';
-
-  @override
-  String get failedToProcessMessage =>
-      'შეტყობინების ბმულის დამუშავება ვერ მოხერხდა.';
 
   @override
   String get shareFile => 'ფაილის გაზიარება';
@@ -758,9 +719,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get safetyNumberVerifiedBadge => 'დადასტურებული';
 
   @override
-  String get verifySafetyNumberCta => 'უსაფრთხოების ნომრის შემოწმება';
-
-  @override
   String get wrongPasswordFile =>
       'არასწორი პაროლი — ამ პაროლით ამ ფაილის გაშიფვრა ვერ მოხერხდება.';
 
@@ -844,19 +802,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get fileCancelled =>
       'მიღება გაუქმდა — ამ ფაილის გაშიფვრა ამ მოწყობილობაზე აღარ შეიძლება; სთხოვეთ გამომგზავნს, ხელახლა გამოგზავნოს.';
-
-  @override
-  String get exportChatArchive => 'ჩატის არქივის ექსპორტი';
-
-  @override
-  String get exportChatArchiveDescription =>
-      'ამ ჩატის ისტორია პაროლით დაცულ ფაილში იფუთება (თითო შეტყობინება თითო ხაზზე). მოგვიანებით გახსენით მარტივი დაშიფრვა → ფაილის გაშიფრვა იმავე პაროლით.';
-
-  @override
-  String get exportChatArchivePassword => 'არქივის პაროლი';
-
-  @override
-  String get exportChatArchiveDone => 'ჩატის არქივი ექსპორტირებულია.';
 
   @override
   String get exportChatArchiveFailed => 'ჩატის არქივის ექსპორტი ვერ მოხერხდა.';
@@ -986,14 +931,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get notVerified => 'დაუდასტურებელი';
 
   @override
-  String get pairingWarningTitle => 'შესაძლოა, თქვენი მოწვევა სხვამ მიიღო';
-
-  @override
-  String pairingWarningMessage(Object chatName) {
-    return 'ჩატი $chatName-თან უკვე დაკავშირებულია, ეს თანხმობა კი სხვაა. შესაძლოა, თქვენი მოწვევა სხვამ მიიღო. სანამ ამ ჩატს ენდობით, უსაფრთხოების ნომერი $chatName-თან პირადად ან ზარით შეადარეთ.';
-  }
-
-  @override
   String get saveFile => 'შენახვა';
 
   @override
@@ -1001,12 +938,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get couldNotSaveFile => 'ფაილის შენახვა ვერ მოხერხდა.';
-
-  @override
-  String get sentFileHint => 'დაფაზულია — გააზიარეთ ან შეინახეთ';
-
-  @override
-  String get receivedFileHint => 'ინახება დალუქული — გახსენით ან შეინახეთ';
 
   @override
   String get unfuzzingFile => 'იშიფრება…';
@@ -1509,10 +1440,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get openNothingToPaste =>
       'ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.';
-
-  @override
-  String get openPasteNotALink =>
-      'აქ ბმული ჩასვით. ჩაკეტილი ტექსტი ადამიანის გვერდზე იხსნება.';
 
   @override
   String get openLockedWithPassword => 'პაროლით ჩაკეტილი';
@@ -2746,11 +2673,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   }
 
   @override
-  String itemFromName(String name) {
-    return 'ვისგან: $name';
-  }
-
-  @override
   String itemYouLockedWhen(String day, String time) {
     return 'ჩაკეტეთ · $day · $time';
   }
@@ -2771,13 +2693,6 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get itemSave => 'შენახვა';
-
-  @override
-  String get itemOpen => 'გახსნა';
-
-  @override
-  String get itemSaveGivesCopy =>
-      '„შენახვა“ ჩვეულებრივ ასლს მოგცემთ. მერე ის თქვენია.';
 
   @override
   String get itemUnreadable => 'ეს შეტყობინება ამ ტელეფონზე ვერ იკითხება.';

@@ -68,10 +68,6 @@
   "@copyAcceptance": {},
   "yourAcceptanceHasBeenGeneratedSuccessfully": "Your acceptance has been generated successfully.",
   "@yourAcceptanceHasBeenGeneratedSuccessfully": {},
-  "exportAcceptance": "Export Acceptance",
-  "@exportAcceptance": {},
-  "acceptanceCopiedToClipboard": "Acceptance copied to clipboard.",
-  "@acceptanceCopiedToClipboard": {},
   "tapToViewChat": "Tap to view chat.",
   "@tapToViewChat": {},
   "waitingForAcceptance": "Waiting for acceptance.",
@@ -84,12 +80,6 @@
   "@cancel": {},
   "delete": "Delete",
   "@delete": {},
-  "textGoesHere": "Text goes here.",
-  "@textGoesHere": {},
-  "encrypting": "Encrypting",
-  "@encrypting": {},
-  "decrypting": "Decrypting",
-  "@decrypting": {},
   "copiedToTheClipboard": "Copied to the clipboard.",
   "@copiedToTheClipboard": {},
   "copy": "Copy",
@@ -194,18 +184,8 @@
   "@stepNameThisChat": {},
   "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "Choose a local name for this chat. This is only visible to you.",
   "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
-  "copyFuzz": "Copy Fuzz",
-  "@copyFuzz": {},
-  "firstEncryption": "First Encryption",
-  "@firstEncryption": {},
-  "typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": "Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.",
-  "@typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": {},
   "settings": "Settings",
   "@settings": {},
-  "copyAsLink": "Copy as Link",
-  "@copyAsLink": {},
-  "linkCopiedToClipboard": "Link copied to clipboard.",
-  "@linkCopiedToClipboard": {},
   "shareAcceptance": "Share acceptance",
   "@shareAcceptance": {},
   "linkExpired": "This link has expired.",
@@ -228,10 +208,6 @@
   "@chatNotFoundForAcceptance": {},
   "failedToProcessAcceptance": "Failed to process acceptance link.",
   "@failedToProcessAcceptance": {},
-  "chatNotFoundForMessage": "Chat not found for this message link.",
-  "@chatNotFoundForMessage": {},
-  "failedToProcessMessage": "Failed to process message link.",
-  "@failedToProcessMessage": {},
   "shareFile": "Share File",
   "@shareFile": {},
   "vaultUntitled": "Untitled",
@@ -490,8 +466,6 @@
   "@safetyNumberUnmark": {},
   "safetyNumberVerifiedBadge": "Verified",
   "@safetyNumberVerifiedBadge": {},
-  "verifySafetyNumberCta": "Verify safety number",
-  "@verifySafetyNumberCta": {},
   "wrongPasswordFile": "Wrong password — this file cannot be unfuzzed with it.",
   "@wrongPasswordFile": {},
   "fileStillArriving": "This file is still being written — wait until it has fully arrived, then try again.",
@@ -538,14 +512,6 @@
   "@fileCorrupt": {},
   "fileCancelled": "Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.",
   "@fileCancelled": {},
-  "exportChatArchive": "Export chat archive",
-  "@exportChatArchive": {},
-  "exportChatArchiveDescription": "Seals this chat's history into a password-protected file (one message per line). Open it later in Basic Encryption → file decryption with the same password.",
-  "@exportChatArchiveDescription": {},
-  "exportChatArchivePassword": "Archive password",
-  "@exportChatArchivePassword": {},
-  "exportChatArchiveDone": "Chat archive exported.",
-  "@exportChatArchiveDone": {},
   "exportChatArchiveFailed": "Failed to export the chat archive.",
   "@exportChatArchiveFailed": {},
   "exportChatArchiveNothingToExport": "This chat has no messages to export.",
@@ -637,24 +603,12 @@
   "@qrCodeHint": {},
   "notVerified": "Not verified",
   "@notVerified": {},
-  "pairingWarningTitle": "Someone else may have accepted your invitation",
-  "@pairingWarningTitle": {},
-  "pairingWarningMessage": "Your chat with {chatName} is already connected, and this acceptance is a different one. Someone else may have accepted your invitation. Compare the safety number with {chatName} in person or on a call before you trust this chat.",
-  "@pairingWarningMessage": {
-    "placeholders": {
-      "chatName": {}
-    }
-  },
   "saveFile": "Save",
   "@saveFile": {},
   "fileSaved": "Saved.",
   "@fileSaved": {},
   "couldNotSaveFile": "Could not save the file.",
   "@couldNotSaveFile": {},
-  "sentFileHint": "Fuzzed — share or save it",
-  "@sentFileHint": {},
-  "receivedFileHint": "Kept sealed — open or save it",
-  "@receivedFileHint": {},
   "unfuzzingFile": "Unfuzzing…",
   "@unfuzzingFile": {},
   "fileNoPreview": "This file cannot be shown in the app. Save it to open it with another app.",
@@ -1173,10 +1127,6 @@
   },
   "openNothingToPaste": "Nothing to paste. Copy the locked text first.",
   "@openNothingToPaste": {
-    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
-  },
-  "openPasteNotALink": "Paste a link here. Locked text opens on the person's page.",
-  "@openPasteNotALink": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
   "openLockedWithPassword": "Locked with a password",
@@ -2848,15 +2798,6 @@
       }
     }
   },
-  "itemFromName": "From {name}",
-  "@itemFromName": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "itemYouLockedWhen": "You locked this · {day} · {time}",
   "@itemYouLockedWhen": {
     "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
@@ -2895,14 +2836,6 @@
   },
   "itemSave": "Save",
   "@itemSave": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "itemOpen": "Open",
-  "@itemOpen": {
-    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
-  },
-  "itemSaveGivesCopy": "Save gives you a normal copy. Then it's yours.",
-  "@itemSaveGivesCopy": {
     "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
   },
   "itemUnreadable": "This message can't be read on this phone.",
