@@ -17,30 +17,47 @@ pub struct VaultKey {
     inner: Option<Key32>,
 }
 
-/// What [`vault_init`] and [`vault_init_with_master`] hand back: the unlocked
-/// key and its wrapping, which the app stores in the vault metadata and feeds
-/// to the unlock call later. `non_opaque` so frb passes the two fields once
-/// instead of wrapping the struct in a second handle with a cloning accessor
-/// for the key.
+/// What [`vault_init_with_master`] hands back: the unlocked key and its
+/// wrapping (a 0x20 under the master key), which the app stores in the vault
+/// metadata and feeds to the unlock call later. `non_opaque` so frb passes the
+/// two fields once instead of wrapping the struct in a second handle with a
+/// cloning accessor for the key.
+///
+/// There is no call that makes a vault with its own password from scratch:
+/// every vault starts under the master key and gets its own password only
+/// through [`vault_use_own_password`], which also draws a new recovery key —
+/// so a vault key is never sealed to a recovery lock the user was not just
+/// shown (security review 2026-10-26).
 #[frb(non_opaque)]
 pub struct VaultInitResult {
     pub key: VaultKey,
-    /// The vault key wrapped: a 0x20 under the master key, or a 0x10 under
-    /// the vault's own password.
+    /// The vault key wrapped: a 0x20 under the master key.
     pub wrapped: Vec<u8>,
-    /// 0x11 — the vault key sealed to the recovery lock, so the recovery key
-    /// opens a vault with its own password. `None` under the master key
-    /// (the recovery key reaches it through the master key) and without a
-    /// recovery key.
-    pub recovery: Option<Vec<u8>>,
 }
 
-/// What [`vault_use_own_password`] hands back: the vault key under its new
-/// password, and sealed to the recovery lock when a recovery key is kept.
+/// What [`vault_use_own_password`] hands back. The vault gets a **new** key
+/// and a **new** recovery key in the same step (security review 2026-10-26):
+/// the old key, which anyone who knew the master password could have taken
+/// from an old copy of `vault.meta`, opens nothing written after the switch,
+/// and the box is sealed to a recovery key the user is shown now, never to
+/// one somebody else may have made earlier with the master password.
 #[frb(non_opaque)]
 pub struct VaultOwnPassword {
+    /// The key before the switch: every item is re-sealed from it to `key`
+    /// ([`vault_reseal`]), then it is closed.
+    pub previous: VaultKey,
+    /// The new vault key, drawn fresh.
+    pub key: VaultKey,
+    /// 0x10 — `key` under the vault's own password.
     pub wrapped: Vec<u8>,
-    pub recovery: Option<Vec<u8>>,
+    /// The new printable recovery key, shown once.
+    pub recovery_key: String,
+    /// 0x10 — the master key under the new recovery key.
+    pub recovery_wrap: Vec<u8>,
+    /// 0x20 — the new recovery lock under the store key.
+    pub recovery_lock: Vec<u8>,
+    /// 0x11 — `key` sealed to the new recovery lock.
+    pub recovery: Vec<u8>,
 }
 
 /// What the recovery key opens a vault into: the unlocked key and the vault
@@ -49,30 +66,6 @@ pub struct VaultOwnPassword {
 pub struct VaultRecovered {
     pub key: VaultKey,
     pub wrapped: Vec<u8>,
-}
-
-/// The recovery copy of `key`: sealed to the lock that `recovery_lock` (a
-/// 0x20 under the store key of `core`) carries; `None` without a lock.
-fn recovery_copy(
-    core: &CryptoCore,
-    recovery_lock: Option<&[u8]>,
-    key: &[u8; 32],
-) -> Result<Option<Vec<u8>>, CoreError> {
-    match recovery_lock {
-        None => Ok(None),
-        Some(blob) => {
-            let lock = core.opened()?.open_recovery_lock(blob)?;
-            Ok(Some(vault::seal_for_recovery(&lock, key)?))
-        }
-    }
-}
-
-/// Opens the recovery lock early, so a bad lock costs no Argon2id run.
-fn check_lock(core: &CryptoCore, recovery_lock: Option<&[u8]>) -> Result<(), CoreError> {
-    if let Some(blob) = recovery_lock {
-        core.opened()?.open_recovery_lock(blob)?;
-    }
-    Ok(())
 }
 
 /// Draws a fresh vault key and wraps it under the master key (the default:
@@ -88,28 +81,6 @@ pub fn vault_init_with_master(
     Ok(VaultInitResult {
         key: VaultKey { inner: Some(key) },
         wrapped,
-        recovery: None,
-    })
-}
-
-/// Draws a fresh vault key and wraps it under the vault's own `password`,
-/// and — with a `recovery_lock` (the 0x20 the first run or a new recovery key
-/// left, opened with the store key of `core`) — seals it to the recovery
-/// lock too. Password strength is the app's judgement, not this function's;
-/// an empty password is refused (`WrongPassword`).
-pub fn vault_init(
-    core: &CryptoCore,
-    password: String,
-    recovery_lock: Option<Vec<u8>>,
-) -> Result<VaultInitResult, CoreError> {
-    let password = Zeroizing::new(password.into_bytes());
-    check_lock(core, recovery_lock.as_deref())?;
-    let (key, wrapped) = vault::init(&password)?;
-    let recovery = recovery_copy(core, recovery_lock.as_deref(), &key)?;
-    Ok(VaultInitResult {
-        key: VaultKey { inner: Some(key) },
-        wrapped,
-        recovery,
     })
 }
 
@@ -156,31 +127,70 @@ pub fn vault_rewrap(
     vault::rewrap(&old_password, &new_password, &wrapped)
 }
 
-/// Gives a vault that the master password opens its own password: the master
-/// password opens the vault key's 0x20 `wrapped`, the key is wrapped again as
-/// a 0x10 under `new_password` and, with a `recovery_lock`, sealed to the
-/// recovery lock. Two Argon2id runs; the caller replaces the stored blobs,
-/// after which the master password no longer opens the vault — the recovery
-/// key still does.
+/// Gives a vault that the master password opens its own password. The master
+/// password opens the master key and, with it, the current vault key (the
+/// 0x20 `wrapped`); then a **new** vault key is drawn and wrapped as a 0x10
+/// under `new_password`, a **new** recovery key is drawn, the master key is
+/// wrapped under it and its lock sealed under the store key of `core`, and
+/// the new vault key is sealed to that lock (0x11). Three Argon2id runs.
+///
+/// The caller re-seals every item from `previous` to `key`
+/// ([`vault_reseal`]), replaces the stored wrapping in one atomic step,
+/// replaces the recovery blobs, and shows the recovery key. After that the
+/// master password no longer opens the vault — not even with a copy of the
+/// old `vault.meta` — and only the recovery key just shown does.
 pub fn vault_use_own_password(
     core: &CryptoCore,
     password_wrap: Vec<u8>,
     master_password: String,
     wrapped: Vec<u8>,
     new_password: String,
-    recovery_lock: Option<Vec<u8>>,
 ) -> Result<VaultOwnPassword, CoreError> {
     let master_password = Zeroizing::new(master_password.into_bytes());
     let new_password = Zeroizing::new(new_password.into_bytes());
     master::refuse_empty(&new_password)?;
-    check_lock(core, recovery_lock.as_deref())?;
+    let store = core.opened()?;
     let master_key = master::unwrap_with_password(&password_wrap, &master_password)?;
-    let key = vault::unlock_under_master(&master_key, &wrapped)?;
+    let previous = vault::unlock_under_master(&master_key, &wrapped)?;
+    let recovery = RecoveryKey::generate()?;
+    let recovery_wrap = master::wrap_with_recovery(&master_key, &recovery)?;
     drop(master_key);
+    let lock = recovery.lock();
+    let recovery_lock = store.seal_recovery_lock(&lock)?;
+    let (key, wrapped) = vault::init(&new_password)?;
+    let recovery_box = vault::seal_for_recovery(&lock, &key)?;
     Ok(VaultOwnPassword {
-        wrapped: vault::wrap(&key, &new_password)?,
-        recovery: recovery_copy(core, recovery_lock.as_deref(), &key)?,
+        previous: VaultKey {
+            inner: Some(previous),
+        },
+        key: VaultKey { inner: Some(key) },
+        wrapped,
+        recovery_key: recovery.text().to_string(),
+        recovery_wrap,
+        recovery_lock,
+        recovery: recovery_box,
     })
+}
+
+/// Moves version `version` of the item `item_id` from the vault key `from`
+/// to the vault key `to`: opens `blob` under `from` and seals it under `to`
+/// with a fresh nonce, same item, same version. The plaintext stays in Rust
+/// and is wiped. A blob that does not open (another item, version or key) is
+/// `Corrupt`; a closed handle is `StoreLocked`.
+pub fn vault_reseal(
+    from: &VaultKey,
+    to: &VaultKey,
+    item_id: String,
+    version: u32,
+    blob: Vec<u8>,
+) -> Result<Vec<u8>, CoreError> {
+    let plain = Zeroizing::new(vault::open_item(
+        from.unlocked()?,
+        &item_id,
+        version,
+        &blob,
+    )?);
+    vault::seal_item(to.unlocked()?, &item_id, version, &plain)
 }
 
 /// Seals the key of a vault with its own password to a (new) recovery lock:
@@ -318,15 +328,34 @@ mod tests {
         (dir, setup)
     }
 
+    /// A vault key under its own `password`, made directly (the API has no
+    /// such call: a vault gets its own password only through the switch).
+    fn own_vault(password: &str) -> (VaultKey, Vec<u8>) {
+        let (key, wrapped) = vault::init(password.as_bytes()).unwrap();
+        (VaultKey { inner: Some(key) }, wrapped)
+    }
+
+    /// A vault under the master key of `setup`, switched to the own password
+    /// `vault`, with one item re-sealed: the item before and after.
+    fn switched(setup: &MasterKeySetup) -> (Vec<u8>, VaultOwnPassword, Vec<u8>, Vec<u8>) {
+        let VaultInitResult { key, wrapped } =
+            vault_init_with_master(setup.password_wrap.clone(), "master".into()).unwrap();
+        let before = vault_seal(&key, ITEM.into(), 1, b"passport".to_vec()).unwrap();
+        let own = vault_use_own_password(
+            &setup.core,
+            setup.password_wrap.clone(),
+            "master".into(),
+            wrapped.clone(),
+            "vault".into(),
+        )
+        .unwrap();
+        let after = vault_reseal(&own.previous, &own.key, ITEM.into(), 1, before.clone()).unwrap();
+        (wrapped, own, before, after)
+    }
+
     #[test]
-    fn init_seal_rewrap_unlock_open_through_the_api() {
-        let (dir, setup) = device();
-        let VaultInitResult {
-            key,
-            wrapped,
-            recovery,
-        } = vault_init(&setup.core, "pw".into(), None).unwrap();
-        assert!(recovery.is_none(), "no lock given, no recovery copy");
+    fn seal_rewrap_unlock_open_through_the_api() {
+        let (key, wrapped) = own_vault("pw");
         assert!(vault_uses_own_password(wrapped.clone()).unwrap());
         let item = vault_seal(&key, ITEM.into(), 1, b"item".to_vec()).unwrap();
         assert_eq!(
@@ -355,21 +384,13 @@ mod tests {
             err_of(vault_unlock("nope".into(), wrapped)),
             CoreError::WrongPassword
         );
-        let _ = fs::remove_dir_all(dir);
     }
 
     #[test]
     fn the_master_password_opens_the_vault_by_default() {
         let password_wrap = master_wrap("master");
-        let VaultInitResult {
-            key,
-            wrapped,
-            recovery,
-        } = vault_init_with_master(password_wrap.clone(), "master".into()).unwrap();
-        assert!(
-            recovery.is_none(),
-            "the master key carries the recovery path"
-        );
+        let VaultInitResult { key, wrapped } =
+            vault_init_with_master(password_wrap.clone(), "master".into()).unwrap();
         assert!(!vault_uses_own_password(wrapped.clone()).unwrap());
         let item = vault_seal(&key, ITEM.into(), 1, b"secret".to_vec()).unwrap();
 
@@ -400,144 +421,172 @@ mod tests {
         );
     }
 
+    /// Security review 2026-10-26 (M1): someone who knew the master password
+    /// and kept a copy of the old `vault.meta` gets the old key back from it —
+    /// and that key opens nothing the vault holds after the switch.
     #[test]
-    fn own_password_and_back_keep_every_item() {
+    fn its_own_password_draws_a_new_key_the_old_wrapping_cannot_reach() {
         let (dir, setup) = device();
-        let password_wrap = setup.password_wrap.clone();
-        let VaultInitResult { key, wrapped, .. } =
-            vault_init_with_master(password_wrap.clone(), "master".into()).unwrap();
-        let item = vault_seal(&key, ITEM.into(), 2, b"kept".to_vec()).unwrap();
+        let (old_wrapped, own, before, after) = switched(&setup);
 
+        assert!(vault_uses_own_password(own.wrapped.clone()).unwrap());
         assert_eq!(
-            err_of(vault_use_own_password(
-                &setup.core,
-                password_wrap.clone(),
-                "wrong".into(),
-                wrapped.clone(),
-                "vault".into(),
-                None
-            )),
-            CoreError::WrongPassword
+            vault_open(&own.key, ITEM.into(), 1, after.clone()).unwrap(),
+            b"passport"
+        );
+        // The old key and the new key are different keys.
+        assert_eq!(
+            vault_open(&own.key, ITEM.into(), 1, before.clone()).unwrap_err(),
+            CoreError::Corrupt
         );
         assert_eq!(
-            err_of(vault_use_own_password(
-                &setup.core,
-                password_wrap.clone(),
-                "master".into(),
-                wrapped.clone(),
-                "".into(),
-                None
-            )),
-            CoreError::WrongPassword
+            vault_open(&own.previous, ITEM.into(), 1, after.clone()).unwrap_err(),
+            CoreError::Corrupt
         );
-        let VaultOwnPassword {
-            wrapped: own,
-            recovery,
-        } = vault_use_own_password(
-            &setup.core,
-            password_wrap.clone(),
-            "master".into(),
-            wrapped,
-            "vault".into(),
-            None,
-        )
-        .unwrap();
-        assert!(recovery.is_none());
-        assert!(vault_uses_own_password(own.clone()).unwrap());
-        // The master password no longer opens it; its own password does.
+        // The old copy of vault.meta plus the master password: the old key,
+        // which opens no re-sealed item and no item written later.
+        let stale =
+            vault_unlock_with_master(setup.password_wrap.clone(), "master".into(), old_wrapped)
+                .unwrap();
+        assert_eq!(
+            vault_open(&stale, ITEM.into(), 1, after.clone()).unwrap_err(),
+            CoreError::Corrupt
+        );
+        let later = vault_seal(&own.key, ITEM.into(), 2, b"later".to_vec()).unwrap();
+        assert_eq!(
+            vault_open(&stale, ITEM.into(), 2, later).unwrap_err(),
+            CoreError::Corrupt
+        );
+        // The master password does not open the new wrapping; its own does.
         assert_eq!(
             err_of(vault_unlock_with_master(
-                password_wrap.clone(),
+                setup.password_wrap.clone(),
                 "master".into(),
-                own.clone()
+                own.wrapped.clone()
             )),
             CoreError::UnsupportedFormat
         );
         assert_eq!(
-            err_of(vault_unlock("master".into(), own.clone())),
+            err_of(vault_unlock("master".into(), own.wrapped.clone())),
             CoreError::WrongPassword
         );
-        let by_own = vault_unlock("vault".into(), own.clone()).unwrap();
+        let by_own = vault_unlock("vault".into(), own.wrapped.clone()).unwrap();
         assert_eq!(
-            vault_open(&by_own, ITEM.into(), 2, item.clone()).unwrap(),
-            b"kept"
+            vault_open(&by_own, ITEM.into(), 1, after.clone()).unwrap(),
+            b"passport"
         );
 
+        // And back to the master password: the new key, every item.
         assert_eq!(
             vault_use_master_password(
-                own.clone(),
+                own.wrapped.clone(),
                 "wrong".into(),
-                password_wrap.clone(),
+                setup.password_wrap.clone(),
                 "master".into()
             )
             .unwrap_err(),
             CoreError::WrongPassword
         );
+        let back = vault_use_master_password(
+            own.wrapped.clone(),
+            "vault".into(),
+            setup.password_wrap.clone(),
+            "master".into(),
+        )
+        .unwrap();
+        let by_master =
+            vault_unlock_with_master(setup.password_wrap.clone(), "master".into(), back).unwrap();
         assert_eq!(
-            vault_use_master_password(
-                own.clone(),
-                "vault".into(),
-                password_wrap.clone(),
-                "wrong".into()
-            )
-            .unwrap_err(),
-            CoreError::WrongPassword
-        );
-        let back =
-            vault_use_master_password(own, "vault".into(), password_wrap.clone(), "master".into())
-                .unwrap();
-        assert!(!vault_uses_own_password(back.clone()).unwrap());
-        let by_master = vault_unlock_with_master(password_wrap, "master".into(), back).unwrap();
-        assert_eq!(
-            vault_open(&by_master, ITEM.into(), 2, item).unwrap(),
-            b"kept"
+            vault_open(&by_master, ITEM.into(), 1, after).unwrap(),
+            b"passport"
         );
         let _ = fs::remove_dir_all(dir);
     }
 
-    /// The owner's rule (2026-10-26): the recovery key also opens a vault with
-    /// its own password; the master password alone still does not.
     #[test]
-    fn the_recovery_key_opens_a_vault_with_its_own_password() {
-        let (dir, setup) = device();
-        let VaultInitResult { key, wrapped, .. } =
+    fn the_switch_refuses_a_wrong_master_password_an_empty_one_and_a_locked_store() {
+        let (dir, mut setup) = device();
+        let VaultInitResult { wrapped, .. } =
             vault_init_with_master(setup.password_wrap.clone(), "master".into()).unwrap();
-        let item = vault_seal(&key, ITEM.into(), 1, b"passport".to_vec()).unwrap();
-        let VaultOwnPassword {
-            wrapped: own,
-            recovery,
-        } = vault_use_own_password(
-            &setup.core,
-            setup.password_wrap.clone(),
-            "master".into(),
-            wrapped,
-            "vault".into(),
-            Some(setup.recovery_lock.clone()),
-        )
-        .unwrap();
-        let recovery = recovery.expect("a recovery copy when a lock is kept");
-        assert_eq!(recovery.len(), 110);
-
-        // The master password alone: no way in.
+        let call = |setup: &MasterKeySetup, master: &str, new: &str| {
+            vault_use_own_password(
+                &setup.core,
+                setup.password_wrap.clone(),
+                master.into(),
+                wrapped.clone(),
+                new.into(),
+            )
+        };
         assert_eq!(
-            err_of(vault_unlock_with_master(
+            err_of(call(&setup, "wrong", "vault")),
+            CoreError::WrongPassword
+        );
+        assert_eq!(err_of(call(&setup, "master", "")), CoreError::WrongPassword);
+        // A vault that already has its own password is not a 0x20.
+        let (_, own_wrapped) = own_vault("vault");
+        assert_eq!(
+            err_of(vault_use_own_password(
+                &setup.core,
                 setup.password_wrap.clone(),
                 "master".into(),
-                own.clone()
+                own_wrapped,
+                "x".into(),
             )),
             CoreError::UnsupportedFormat
         );
+        setup.core.close();
         assert_eq!(
-            err_of(vault_unlock("master".into(), own.clone())),
-            CoreError::WrongPassword
+            err_of(call(&setup, "master", "vault")),
+            CoreError::StoreLocked
         );
+        let _ = fs::remove_dir_all(dir);
+    }
+
+    #[test]
+    fn reseal_keeps_the_item_and_version_and_refuses_the_wrong_ones() {
+        let (from, _) = own_vault("a");
+        let (mut to, _) = own_vault("b");
+        let blob = vault_seal(&from, ITEM.into(), 3, b"note".to_vec()).unwrap();
+        let moved = vault_reseal(&from, &to, ITEM.into(), 3, blob.clone()).unwrap();
+        assert_eq!(
+            vault_open(&to, ITEM.into(), 3, moved.clone()).unwrap(),
+            b"note"
+        );
+        assert_eq!(
+            vault_open(&to, ITEM.into(), 4, moved).unwrap_err(),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            err_of(vault_reseal(&from, &to, ITEM.into(), 4, blob.clone())),
+            CoreError::Corrupt
+        );
+        assert_eq!(
+            err_of(vault_reseal(&to, &from, ITEM.into(), 3, blob.clone())),
+            CoreError::Corrupt
+        );
+        to.close();
+        assert_eq!(
+            err_of(vault_reseal(&from, &to, ITEM.into(), 3, blob)),
+            CoreError::StoreLocked
+        );
+    }
+
+    /// The owner's rule (2026-10-26): the recovery key also opens a vault with
+    /// its own password; the master password alone still does not. The
+    /// recovery key that does is the one the switch made and showed.
+    #[test]
+    fn the_recovery_key_shown_at_the_switch_opens_the_vault() {
+        let (dir, setup) = device();
+        let (_, own, _, item) = switched(&setup);
+        assert_eq!(own.recovery.len(), 110);
+        assert_ne!(own.recovery_key, setup.recovery_key);
 
         // The recovery key, with a new vault password: same key, every item opens.
-        let typed = setup.recovery_key.to_lowercase();
+        let typed = own.recovery_key.to_lowercase();
         let VaultRecovered {
             key: reopened,
             wrapped: renewed,
-        } = vault_recover(recovery.clone(), typed.clone(), "fresh".into()).unwrap();
+        } = vault_recover(own.recovery.clone(), typed.clone(), "fresh".into()).unwrap();
         assert_eq!(
             vault_open(&reopened, ITEM.into(), 1, item.clone()).unwrap(),
             b"passport"
@@ -549,13 +598,14 @@ mod tests {
             CoreError::WrongPassword
         );
         // The copy keeps working after that (the vault key did not change).
-        assert!(vault_recover(recovery.clone(), typed.clone(), "again".into()).is_ok());
+        assert!(vault_recover(own.recovery.clone(), typed.clone(), "again".into()).is_ok());
 
-        // Or back to the master password.
+        // Or back to the master password, through the new recovery wrap.
         let VaultRecovered {
             key: by_recovery,
             wrapped: under_master,
-        } = vault_recover_to_master(setup.recovery_wrap.clone(), recovery.clone(), typed).unwrap();
+        } = vault_recover_to_master(own.recovery_wrap.clone(), own.recovery.clone(), typed)
+            .unwrap();
         assert!(!vault_uses_own_password(under_master.clone()).unwrap());
         assert_eq!(
             vault_open(&by_recovery, ITEM.into(), 1, item.clone()).unwrap(),
@@ -569,10 +619,14 @@ mod tests {
             b"passport"
         );
 
+        // The new recovery wrap opens the master key (forgotten master password).
+        let parsed = RecoveryKey::parse(&own.recovery_key).unwrap();
+        assert!(master::unwrap_with_recovery(&own.recovery_wrap, &parsed).is_ok());
+
         // A typo, another device's key, an empty new password.
         assert_eq!(
             err_of(vault_recover(
-                recovery.clone(),
+                own.recovery.clone(),
                 "AAAA-AAAA".into(),
                 "x".into()
             )),
@@ -581,24 +635,16 @@ mod tests {
         let (other_dir, other) = device();
         assert_eq!(
             err_of(vault_recover(
-                recovery.clone(),
+                own.recovery.clone(),
                 other.recovery_key.clone(),
                 "x".into()
             )),
             CoreError::WrongPassword
         );
         assert_eq!(
-            err_of(vault_recover_to_master(
-                other.recovery_wrap.clone(),
-                recovery.clone(),
-                setup.recovery_key.clone()
-            )),
-            CoreError::WrongPassword
-        );
-        assert_eq!(
             err_of(vault_recover(
-                recovery,
-                setup.recovery_key.clone(),
+                own.recovery,
+                own.recovery_key.clone(),
                 "".into()
             )),
             CoreError::WrongPassword
@@ -607,55 +653,35 @@ mod tests {
         let _ = fs::remove_dir_all(other_dir);
     }
 
+    /// Security review 2026-10-26 (M1): someone who knew the master password
+    /// makes a recovery key of their own before the vault gets its own
+    /// password. The switch draws another one, so theirs opens neither the
+    /// vault's box nor (once the app replaces the wrap) the master key.
     #[test]
-    fn a_vault_made_with_its_own_password_gets_a_recovery_copy() {
+    fn a_recovery_key_planted_earlier_does_not_open_the_switched_vault() {
         let (dir, setup) = device();
-        let VaultInitResult {
-            key,
-            wrapped,
-            recovery,
-        } = vault_init(
-            &setup.core,
-            "vault".into(),
-            Some(setup.recovery_lock.clone()),
-        )
-        .unwrap();
-        let item = vault_seal(&key, ITEM.into(), 1, b"note".to_vec()).unwrap();
-        let VaultRecovered { key: reopened, .. } = vault_recover(
-            recovery.expect("copy"),
-            setup.recovery_key.clone(),
-            "new".into(),
-        )
-        .unwrap();
-        assert_eq!(
-            vault_open(&reopened, ITEM.into(), 1, item).unwrap(),
-            b"note"
-        );
-
-        // A lock from another store (or a tampered one) is refused before any
-        // Argon2 run, and nothing is sealed to it.
-        let (other_dir, other) = device();
-        assert_eq!(
-            err_of(vault_init(
-                &setup.core,
-                "vault".into(),
-                Some(other.recovery_lock.clone())
-            )),
-            CoreError::Corrupt
-        );
-        let mut tampered = setup.recovery_lock.clone();
-        tampered[40] ^= 1;
-        assert_eq!(
-            err_of(vault_seal_for_recovery(
-                &setup.core,
-                tampered,
-                wrapped.clone(),
-                "vault".into()
-            )),
-            CoreError::Corrupt
-        );
+        let planted =
+            new_recovery_key(&setup.core, setup.password_wrap.clone(), "master".into()).unwrap();
+        let (_, own, _, _) = switched(&setup);
+        for earlier in [&planted.recovery_key, &setup.recovery_key] {
+            assert_eq!(
+                err_of(vault_recover(
+                    own.recovery.clone(),
+                    earlier.clone(),
+                    "mine".into()
+                )),
+                CoreError::WrongPassword
+            );
+            assert_eq!(
+                err_of(vault_recover_to_master(
+                    own.recovery_wrap.clone(),
+                    own.recovery.clone(),
+                    earlier.clone()
+                )),
+                CoreError::WrongPassword
+            );
+        }
         let _ = fs::remove_dir_all(dir);
-        let _ = fs::remove_dir_all(other_dir);
     }
 
     /// A new recovery key keeps the vault recoverable once the vault is sealed
@@ -663,17 +689,8 @@ mod tests {
     #[test]
     fn a_new_recovery_key_is_sealed_in_and_the_old_one_is_out() {
         let (dir, mut setup) = device();
-        let VaultInitResult {
-            key,
-            wrapped,
-            recovery: old_copy,
-        } = vault_init(
-            &setup.core,
-            "vault".into(),
-            Some(setup.recovery_lock.clone()),
-        )
-        .unwrap();
-        let item = vault_seal(&key, ITEM.into(), 1, b"kept".to_vec()).unwrap();
+        let (_, own, _, item) = switched(&setup);
+        let wrapped = own.wrapped.clone();
 
         let fresh =
             new_recovery_key(&setup.core, setup.password_wrap.clone(), "master".into()).unwrap();
@@ -698,13 +715,13 @@ mod tests {
             vault_recover(new_copy.clone(), fresh.recovery_key.clone(), "n".into()).unwrap();
         assert_eq!(
             vault_open(&reopened, ITEM.into(), 1, item).unwrap(),
-            b"kept"
+            b"passport"
         );
         // The old key does not open the new copy (the app replaces the old one).
         assert_eq!(
             err_of(vault_recover(
                 new_copy,
-                setup.recovery_key.clone(),
+                own.recovery_key.clone(),
                 "n".into()
             )),
             CoreError::WrongPassword
@@ -712,11 +729,33 @@ mod tests {
         // The new key does not open the old copy either.
         assert_eq!(
             err_of(vault_recover(
-                old_copy.expect("copy"),
+                own.recovery.clone(),
                 fresh.recovery_key.clone(),
                 "n".into()
             )),
             CoreError::WrongPassword
+        );
+        // A lock from another store, or a tampered one, is refused.
+        let (other_dir, other) = device();
+        assert_eq!(
+            err_of(vault_seal_for_recovery(
+                &setup.core,
+                other.recovery_lock.clone(),
+                wrapped.clone(),
+                "vault".into()
+            )),
+            CoreError::Corrupt
+        );
+        let mut tampered = fresh.recovery_lock.clone();
+        tampered[40] ^= 1;
+        assert_eq!(
+            err_of(vault_seal_for_recovery(
+                &setup.core,
+                tampered,
+                wrapped.clone(),
+                "vault".into()
+            )),
+            CoreError::Corrupt
         );
         // A vault under the master key needs no copy.
         let VaultInitResult {
@@ -744,6 +783,7 @@ mod tests {
             CoreError::StoreLocked
         );
         let _ = fs::remove_dir_all(dir);
+        let _ = fs::remove_dir_all(other_dir);
     }
 
     #[test]
@@ -760,8 +800,7 @@ mod tests {
 
     #[test]
     fn close_zeroises_and_later_calls_fail_cleanly() {
-        let (dir, setup) = device();
-        let VaultInitResult { mut key, .. } = vault_init(&setup.core, "pw".into(), None).unwrap();
+        let (mut key, _) = own_vault("pw");
         let item = vault_seal(&key, ITEM.into(), 1, b"x".to_vec()).unwrap();
 
         key.close();
@@ -776,7 +815,6 @@ mod tests {
         );
         key.close();
         assert!(key.inner.is_none());
-        let _ = fs::remove_dir_all(dir);
     }
 
     /// The review item made checkable: nothing in the vault, master-key or

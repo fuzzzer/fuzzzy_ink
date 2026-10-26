@@ -291,6 +291,19 @@ class CryptoCoreService {
     );
   }
 
+  /// Read-only: success when [acceptance] really answers the invitation the
+  /// chat [chatId] made (signed for this chat, built on its one-time key).
+  /// Asked before the "someone else answered" warning; any failure means
+  /// "not a valid reply". Nothing is consumed or written.
+  Future<CryptoCoreResponse<void>> checkAcceptance({
+    required String chatId,
+    required String acceptance,
+  }) {
+    return _withCore(
+      (core) => core.checkAcceptance(chatId: chatId, acceptance: acceptance),
+    );
+  }
+
   /// Zeroises and unlinks the chat's state; a chat the store never had is
   /// not an error.
   Future<CryptoCoreResponse<void>> deleteChat(String chatId) {
@@ -708,28 +721,6 @@ class CryptoCoreService {
     });
   }
 
-  /// Draws a fresh vault key and wraps it under the vault's own [password]
-  /// (a 0x10 blob). With a [recoveryLock] (the 0x20 the app keeps beside the
-  /// recovery wrap) the key is also sealed to the recovery lock, so the
-  /// recovery key opens this vault. Needs the open store.
-  Future<CryptoCoreResponse<CryptoCoreVaultInit>> vaultInit(
-    String password, {
-    Uint8List? recoveryLock,
-  }) {
-    return _serializedWithCore((core) async {
-      final created = await rust_vault.vaultInit(
-        core: core,
-        password: password,
-        recoveryLock: recoveryLock,
-      );
-      return CryptoCoreVaultInit(
-        key: created.key,
-        wrapped: created.wrapped,
-        recovery: created.recovery,
-      );
-    });
-  }
-
   /// Whether the vault whose key is [wrapped] has its own password (`true`)
   /// or opens with the master password (`false`). Reads the blob's type
   /// only.
@@ -784,15 +775,16 @@ class CryptoCoreService {
     );
   }
 
-  /// Gives a vault the master password opens its own [newPassword]; the
-  /// answer's `wrapped` replaces [wrapped]. With a [recoveryLock] the answer
-  /// also carries the key sealed to the recovery lock. Needs the open store.
-  Future<CryptoCoreResponse<CryptoCoreVaultWrapping>> vaultUseOwnPassword({
+  /// Gives a vault the master password opens its own [newPassword]: a new
+  /// vault key under it and a new recovery key, the new vault key sealed to
+  /// its lock (three Argon2id runs). The caller re-seals every item from the
+  /// answer's `previous` to its `key` ([vaultReseal]) before it stores the
+  /// new wrapping. Needs the open store.
+  Future<CryptoCoreResponse<CryptoCoreVaultOwnPassword>> vaultUseOwnPassword({
     required Uint8List passwordWrap,
     required String masterPassword,
     required Uint8List wrapped,
     required String newPassword,
-    Uint8List? recoveryLock,
   }) {
     return _serializedWithCore((core) async {
       final changed = await rust_vault.vaultUseOwnPassword(
@@ -801,13 +793,40 @@ class CryptoCoreService {
         masterPassword: masterPassword,
         wrapped: wrapped,
         newPassword: newPassword,
-        recoveryLock: recoveryLock,
       );
-      return CryptoCoreVaultWrapping(
+      return CryptoCoreVaultOwnPassword(
+        previous: changed.previous,
+        key: changed.key,
         wrapped: changed.wrapped,
-        recovery: changed.recovery,
+        recovery: CryptoCoreRecoveryKey(
+          recoveryKey: changed.recoveryKey,
+          recoveryWrap: changed.recoveryWrap,
+          recoveryLock: changed.recoveryLock,
+        ),
+        vaultRecovery: changed.recovery,
       );
     });
+  }
+
+  /// Moves version [version] of the item [itemId] from the vault key [from]
+  /// to [to]; the plaintext never leaves the core. A blob that does not open
+  /// under [from] for that item and version is `corrupt`.
+  Future<CryptoCoreResponse<Uint8List>> vaultReseal({
+    required VaultKey from,
+    required VaultKey to,
+    required String itemId,
+    required int version,
+    required Uint8List blob,
+  }) {
+    return _guarded(
+      () => rust_vault.vaultReseal(
+        from: from,
+        to: to,
+        itemId: itemId,
+        version: version,
+        blob: blob,
+      ),
+    );
   }
 
   /// Seals the key of a vault with its own password to [recoveryLock] (a new

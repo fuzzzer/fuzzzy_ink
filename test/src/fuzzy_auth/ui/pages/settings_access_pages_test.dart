@@ -114,13 +114,13 @@ void main() {
     });
   });
 
-  group('New recovery key', () {
-    PendingRecoveryKey pending() => PendingRecoveryKey(
-          recoveryKey: 'AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ',
-          recoveryWrap: Uint8List(1),
-          recoveryLock: Uint8List(1),
-        );
+  PendingRecoveryKey pending() => PendingRecoveryKey(
+        recoveryKey: 'AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ',
+        recoveryWrap: Uint8List(1),
+        recoveryLock: Uint8List(1),
+      );
 
+  group('New recovery key', () {
     testWidgets(
         'My safe with its own password: its password is asked too (owner, '
         '2026-10-26), and a wrong one is shown on its field', (tester) async {
@@ -203,7 +203,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('tile.safeOpensWith.own')));
       await tester.pumpAndSettle();
-      expect(find.text(l10n.vaultOwnPasswordRecoveryNote), findsOneWidget);
+      expect(find.text(l10n.accessSafeGetsNewKey), findsOneWidget);
       expect(kitButton(tester, 'safeOpensWith.save').onPressed, isNull);
 
       when(
@@ -211,7 +211,12 @@ void main() {
           masterPassword: 'master',
           newPassword: strong,
         ),
-      ).thenAnswer((_) async => VaultFailureType.incorrectMasterPassword);
+      ).thenAnswer(
+        (_) async => (
+          failure: VaultFailureType.incorrectMasterPassword,
+          recovery: null,
+        ),
+      );
       await tester.enterText(kitField('safeOpensWith.new.password'), strong);
       await tester.enterText(kitField('safeOpensWith.new.confirm'), strong);
       await tester.enterText(
@@ -224,6 +229,46 @@ void main() {
       await tester.tap(find.byKey(const Key('btn.safeOpensWith.save')));
       await tester.pumpAndSettle();
       expect(find.text(l10n.accessWrongPassword), findsOneWidget);
+    });
+
+    testWidgets(
+        'own password: the new recovery key is shown and kept only after a '
+        'save (security review 2026-10-26)', (tester) async {
+      final export = FakeRecoveryKeyExport();
+      await pumpPage(tester, SafeOpensWithPage(export: export));
+      await tester.tap(find.byKey(const Key('tile.safeOpensWith.own')));
+      await tester.pumpAndSettle();
+      final key = pending();
+      when(
+        () => harness.vault.useOwnPassword(
+          masterPassword: 'master',
+          newPassword: strong,
+        ),
+      ).thenAnswer((_) async => (failure: null, recovery: key));
+      when(() => harness.vault.keepRecoveryKey(key))
+          .thenAnswer((_) async => null);
+      await tester.enterText(kitField('safeOpensWith.new.password'), strong);
+      await tester.enterText(kitField('safeOpensWith.new.confirm'), strong);
+      await tester.enterText(
+        kitField('safeOpensWith.masterPassword'),
+        'master',
+      );
+      await tester.pump();
+      await tester
+          .ensureVisible(find.byKey(const Key('btn.safeOpensWith.save')));
+      await tester.tap(find.byKey(const Key('btn.safeOpensWith.save')));
+      await tester.pumpAndSettle();
+
+      expect(find.text(l10n.accessYourNewKey), findsOneWidget);
+      expect(find.text('AAAQ EAYE AUDA OCAJ'), findsOneWidget);
+      verifyNever(() => harness.vault.keepRecoveryKey(any()));
+      await tester.tap(find.byKey(const Key('btn.recoveryKey.save')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('btn.recoveryKey.kept')));
+      await tester.pump();
+      await tester.pump();
+      verify(() => harness.vault.keepRecoveryKey(key)).called(1);
+      await tester.pump(const Duration(seconds: 5));
     });
 
     testWidgets('back to the master password asks for the safe password',

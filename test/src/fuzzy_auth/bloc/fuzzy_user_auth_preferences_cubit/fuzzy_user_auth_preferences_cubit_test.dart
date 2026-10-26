@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:mocktail/mocktail.dart';
@@ -406,4 +407,71 @@ void main() {
       },
     );
   }
+
+  group('wrong master passwords count everywhere (security review 2026-10-26)',
+      () {
+    late AppLockThrottleRepository count;
+    final wall = DateTime(2026, 10, 26, 12);
+
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({});
+      count = AppLockThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(),
+        now: () => wall,
+      );
+    });
+
+    FuzzyUserAuthPreferencesCubit counted() => FuzzyUserAuthPreferencesCubit(
+          chatAuthRepository: chatAuthRepository,
+          fuzzyAuthStore: store,
+          biometricAuthRepository: biometricRepository,
+          passwordStrengthService: PasswordStrengthService(),
+          appLockThrottleRepository: count,
+          now: () => wall,
+        );
+
+    test(
+        'a wrong current password on Change counts, and after five the form '
+        'waits without trying', () async {
+      when(
+        () => chatAuthRepository.changePassword(
+          oldPassword: 'nope',
+          newPassword: good,
+        ),
+      ).thenAnswer(
+        (_) async =>
+            const CryptoCoreFailure(CryptoCoreFailureType.wrongPassword),
+      );
+      final cubit = counted();
+      for (var i = 0; i < AppLockThrottleData.freeAttempts; i++) {
+        await cubit.changePassword(oldPassword: 'nope', newPassword: good);
+      }
+      expect((await count.read()).failedAttempts, 5);
+      await cubit.changePassword(oldPassword: 'nope', newPassword: good);
+      verify(
+        () => chatAuthRepository.changePassword(
+          oldPassword: 'nope',
+          newPassword: good,
+        ),
+      ).called(5);
+      expect(cubit.state.activationStatus, StateStatus.failed);
+      await cubit.close();
+    });
+
+    test('turning on fingerprint counts a wrong password; a right one clears',
+        () async {
+      when(() => chatAuthRepository.unlock('nope')).thenAnswer(
+        (_) async =>
+            const CryptoCoreFailure(CryptoCoreFailureType.wrongPassword),
+      );
+      when(() => biometricRepository.enable(any(), any()))
+          .thenAnswer((_) async => BiometricEnableResult.enabled);
+      final cubit = counted();
+      await cubit.enableBiometric('nope');
+      expect((await count.read()).failedAttempts, 1);
+      await cubit.enableBiometric('right');
+      expect((await count.read()).failedAttempts, 0);
+      await cubit.close();
+    });
+  });
 }

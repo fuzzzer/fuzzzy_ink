@@ -219,11 +219,12 @@ class _VaultUnlockPageState extends State<VaultUnlockPage> {
           SizedBox(height: space.s),
         ],
         if (_showsPassword) ...[
-          FuzzzyTextField(
+          GuardedTextField(
             controller: _passwordController,
             focusNode: _passwordFocus,
             label: passwordLabel,
             obscure: !_isPasswordVisible,
+            keyboardType: TextInputType.visiblePassword,
             autofocus: true,
             errorText: errorText,
             qaId: 'safe.password',

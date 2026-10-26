@@ -37,6 +37,11 @@ class VaultFileDataSource {
   static const exportTmpFolderName = '.tmp_export';
   static const itemFileExtension = '.vault';
 
+  /// A new key's copies while the vault moves to it ([beginRekey]): the new
+  /// `vault.meta` beside the old one, each re-sealed item beside its old
+  /// file.
+  static const rekeySuffix = '.rekey';
+
   /// The vault folder under [parentDirectoryPath] (the app support directory).
   static String directoryIn(String parentDirectoryPath) =>
       path.join(parentDirectoryPath, folderName);
@@ -58,6 +63,8 @@ class VaultFileDataSource {
   Directory get _tmpDir =>
       Directory(path.join(vaultDirectoryPath, tmpFolderName));
   File get _metaFile => File(path.join(vaultDirectoryPath, metaFileName));
+  File get _stagedMetaFile =>
+      File(path.join(vaultDirectoryPath, '$metaFileName$rekeySuffix'));
   File get _migrationMarker =>
       File(path.join(vaultDirectoryPath, migrationMarkerName));
 
@@ -89,6 +96,7 @@ class VaultFileDataSource {
 
   Future<List<int>?> readMeta() async {
     await _ensureNotMigrating();
+    await finishInterruptedRekey();
     if (!await _metaFile.exists()) return null;
     return await _metaFile.readAsBytes();
   }
@@ -118,6 +126,87 @@ class VaultFileDataSource {
     if (await itemFile.exists()) {
       await itemFile.delete();
     }
+  }
+
+  /// Starts moving the vault to a new key (its own password, security review
+  /// 2026-10-26): the new `vault.meta` is written beside the old one first,
+  /// so its presence says "not committed yet" — a stop before [commitRekey]
+  /// is rolled back, a stop after it rolled forward ([finishInterruptedRekey]).
+  Future<void> beginRekey(List<int> metaBytes) async {
+    await _ensureNotMigrating();
+    await initDirectories();
+    await abandonRekey();
+    final tmpFile =
+        File(path.join(_tmpDir.path, '$metaFileName$rekeySuffix.tmp'));
+    await tmpFile.writeAsBytes(metaBytes, flush: true);
+    await tmpFile.rename(_stagedMetaFile.path);
+  }
+
+  /// One item re-sealed under the new key, beside its old file.
+  Future<void> stageRekeyedItem(String itemId, List<int> bytes) async {
+    await _ensureNotMigrating();
+    final tmpFile = File(
+      path.join(_tmpDir.path, '$itemId$itemFileExtension$rekeySuffix.tmp'),
+    );
+    await tmpFile.writeAsBytes(bytes, flush: true);
+    await tmpFile.rename(_stagedItem(itemId).path);
+  }
+
+  /// The commit: one rename puts the new `vault.meta` in place; then every
+  /// staged item replaces its old file. From here the old key opens nothing.
+  Future<void> commitRekey() async {
+    await _ensureNotMigrating();
+    await _stagedMetaFile.rename(_metaFile.path);
+    await _rollRekeyForward();
+  }
+
+  /// Drops a key change that was not committed: the staged items first, the
+  /// staged `vault.meta` last (while it exists a later start rolls back too).
+  Future<void> abandonRekey() async {
+    for (final staged in await _stagedItems()) {
+      await staged.delete();
+    }
+    if (await _stagedMetaFile.exists()) await _stagedMetaFile.delete();
+  }
+
+  /// After a stop during a key change: before the commit (the staged
+  /// `vault.meta` is still there) the old vault stays and the copies go;
+  /// after it the staged items replace the old ones. `true` when the vault
+  /// is on the new key (or no change was under way), `false` after a roll
+  /// back.
+  Future<bool> finishInterruptedRekey() async {
+    if (await _stagedMetaFile.exists()) {
+      await abandonRekey();
+      return false;
+    }
+    await _rollRekeyForward();
+    return true;
+  }
+
+  Future<void> _rollRekeyForward() async {
+    for (final staged in await _stagedItems()) {
+      final name = path.basename(staged.path);
+      await staged.rename(
+        path.join(
+          _itemsDir.path,
+          name.substring(0, name.length - rekeySuffix.length),
+        ),
+      );
+    }
+  }
+
+  File _stagedItem(String itemId) => File(
+        path.join(_itemsDir.path, '$itemId$itemFileExtension$rekeySuffix'),
+      );
+
+  Future<List<File>> _stagedItems() async {
+    if (!await _itemsDir.exists()) return const [];
+    return [
+      await for (final entity in _itemsDir.list())
+        if (entity is File &&
+            entity.path.endsWith('$itemFileExtension$rekeySuffix'))
+          entity,
+    ];
   }
 
   /// Deletes the vault folder and everything in it. Refuses any folder not

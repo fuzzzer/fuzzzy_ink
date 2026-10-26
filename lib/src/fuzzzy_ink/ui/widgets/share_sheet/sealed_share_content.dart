@@ -60,13 +60,10 @@ class SealedShareContent {
       );
 
   /// [encryptedMessage] is the stored blob, without its `Fuzz/` prefix.
-  factory SealedShareContent.message({
-    required String chatId,
-    required String encryptedMessage,
-  }) =>
+  factory SealedShareContent.message({required String encryptedMessage}) =>
       SealedShareContent(
         sealedText: '$fuzzIdentificator$encryptedMessage',
-        link: FuzzyLinkGenerator.generateFuzzLink(chatId, encryptedMessage),
+        link: FuzzyLinkGenerator.generateFuzzLink(encryptedMessage),
         fileName: 'fuzzzy-ink-message.$fuzzedFileIdentificator',
       );
 

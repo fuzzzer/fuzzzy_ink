@@ -22,15 +22,12 @@ class AcceptanceLinkPayload extends FuzzyLinkPayload {
   final String rawAcceptanceContent;
 }
 
-/// A message link names its chat in the clear, next to the blob: the blob
-/// itself carries no chat id (PROTOCOL.md §6.5, THREAT_MODEL.md §7.4).
+/// A message link carries the blob only; Open finds its chat with the
+/// core's peek and opens it only when the person taps Open (security review
+/// 2026-10-26).
 class FuzzMessageLinkPayload extends FuzzyLinkPayload {
-  const FuzzMessageLinkPayload({
-    required this.chatId,
-    required this.encryptedMessage,
-  }) : super(type: FuzzyLinkType.message);
-
-  final String chatId;
+  const FuzzMessageLinkPayload({required this.encryptedMessage})
+      : super(type: FuzzyLinkType.message);
 
   /// The blob without its `Fuzz/` prefix, as messages are stored.
   final String encryptedMessage;

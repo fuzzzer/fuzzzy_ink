@@ -139,13 +139,7 @@ void main() {
     handler.dispose();
   });
 
-  testWidgets(
-      'a different acceptance for a connected chat opens "Someone else may '
-      'have answered", never says "connected"', (tester) async {
-    when(() => chatRepository.getChatById(_chatId))
-        .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
-    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
-        .thenAnswer((_) async => false);
+  Future<FuzzyLinkHandler> pumpRouted(WidgetTester tester) async {
     final router = GoRouter(
       navigatorKey: navigatorKey,
       routes: [
@@ -184,6 +178,23 @@ void main() {
       cryptoCoreService: cryptoCoreService,
     );
     await handler.initialize();
+    return handler;
+  }
+
+  testWidgets(
+      'a different acceptance that really answers the invite opens "Someone '
+      'else may have answered", never says "connected"', (tester) async {
+    when(() => chatRepository.getChatById(_chatId))
+        .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
+    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
+        .thenAnswer((_) async => false);
+    when(
+      () => cryptoCoreService.checkAcceptance(
+        chatId: _chatId,
+        acceptance: _acceptance,
+      ),
+    ).thenAnswer((_) async => const CryptoCoreSuccess(null));
+    final handler = await pumpRouted(tester);
 
     await receive(
       tester,
@@ -194,6 +205,64 @@ void main() {
     expect(find.text('answered twice: Alice'), findsOneWidget);
     expect(find.text('Already connected!'), findsNothing);
     expect(tester.takeException(), isNull);
+    handler.dispose();
+  });
+
+  testWidgets(
+      'a forged or junk reply for a connected chat raises no alarm: it is '
+      'just not a valid reply (security review 2026-10-26)', (tester) async {
+    when(() => chatRepository.getChatById(_chatId))
+        .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
+    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
+        .thenAnswer((_) async => false);
+    when(
+      () => cryptoCoreService.checkAcceptance(
+        chatId: _chatId,
+        acceptance: _acceptance,
+      ),
+    ).thenAnswer(
+      (_) async => const CryptoCoreFailure(CryptoCoreFailureType.wrongChat),
+    );
+    final handler = await pumpRouted(tester);
+
+    await receive(
+      tester,
+      FuzzyLinkGenerator.generateAcceptanceLink(_acceptance)!,
+    );
+    await tester.pump();
+
+    expect(find.text('answered twice: Alice'), findsNothing);
+    expect(find.text('chat list'), findsOneWidget);
+    expect(find.byType(SnackBar), findsOneWidget);
+    await settleMessage(tester);
+    handler.dispose();
+  });
+
+  testWidgets(
+      "a link waits while My safe's editor holds links, then opens "
+      '(security review 2026-10-26)', (tester) async {
+    when(() => chatRepository.getChatById(_chatId))
+        .thenAnswer((_) async => _chat(ChatSetupStatus.connected));
+    when(() => chatRepository.isPairedAcceptance(_chatId, _acceptance))
+        .thenAnswer((_) async => true);
+    final handler = await pumpApp(tester);
+    final release = handler.holdLinks();
+
+    await receive(
+      tester,
+      FuzzyLinkGenerator.generateAcceptanceLink(_acceptance)!,
+    );
+    expect(handler.hasPendingPayload, isTrue);
+    expect(handler.pendingLink.value, isTrue);
+    verifyNever(() => chatRepository.getChatById(any()));
+    await settleMessage(tester);
+
+    release();
+    await tester.pump();
+    await tester.pump();
+    expect(handler.hasPendingPayload, isFalse);
+    verify(() => chatRepository.getChatById(_chatId)).called(1);
+    await settleMessage(tester);
     handler.dispose();
   });
 
@@ -248,7 +317,7 @@ void main() {
 
     await receive(
       tester,
-      FuzzyLinkGenerator.generateFuzzLink(_chatId, 'Fuzz/AwEC')!,
+      FuzzyLinkGenerator.generateFuzzLink('Fuzz/AwEC')!,
     );
 
     expect(find.byType(SnackBar), findsNothing);

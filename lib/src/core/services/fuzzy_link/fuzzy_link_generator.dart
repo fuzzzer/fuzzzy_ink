@@ -16,9 +16,10 @@ class FuzzyLinkGenerator {
       _link(FuzzyLinkType.acceptance, _blobBody(acceptanceContent));
 
   /// [encryptedMessage] is a message blob, with or without its `Fuzz/`
-  /// prefix. The chat id rides next to it so the link opens the right chat.
-  static String? generateFuzzLink(String chatId, String encryptedMessage) =>
-      _link(FuzzyLinkType.message, '$chatId.${_blobBody(encryptedMessage)}');
+  /// prefix. Nothing else rides along: the receiving app finds the chat with
+  /// the core's peek.
+  static String? generateFuzzLink(String encryptedMessage) =>
+      _link(FuzzyLinkType.message, _blobBody(encryptedMessage));
 
   static String _blobBody(String text) {
     final compact = text.replaceAll(RegExp(r'\s'), '');

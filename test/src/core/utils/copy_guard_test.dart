@@ -203,6 +203,23 @@ void main() {
     });
   });
 
+  group('locking (security review 2026-10-26)', () {
+    test('the app locking clears a pending copy at once', () async {
+      final clipboard = _FakeSecureClipboard();
+      final previous = CopyGuard.clipboardGuard;
+      final guard = ClipboardGuard(clipboard: clipboard);
+      CopyGuard.clipboardGuard = guard;
+      addTearDown(() {
+        CopyGuard.clipboardGuard = previous;
+        guard.dispose();
+      });
+      await guard.copy('Fuzz/abc', CopyContent.sealedMessage);
+      await CopyGuard.clearOnLock();
+      expect(clipboard.clears, 1);
+      expect(guard.isClearPending, isFalse);
+    });
+  });
+
   group('ClipboardGuard cleared event', () {
     test('tells when a vault password has really been cleared', () {
       fakeAsync((async) {
@@ -359,6 +376,9 @@ void main() {
             contains(ContextMenuButtonType.share),
             contains(ContextMenuButtonType.lookUp),
             contains(ContextMenuButtonType.searchWeb),
+            // Android's other-app text actions ("Translate"), security
+            // review 2026-10-26.
+            contains(ContextMenuButtonType.custom),
           ),
         ),
       );

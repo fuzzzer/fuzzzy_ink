@@ -19,11 +19,21 @@ class OpenChosenFile extends OpenRequest {
   final String filePath;
 }
 
-/// A tapped message link: its chat id rides next to the blob.
-class OpenMessageLink extends OpenRequest {
-  const OpenMessageLink({required this.chatId, required this.encryptedMessage});
+/// A `.fuzz` file another app handed to this one (the system's "open
+/// with"): like a chosen file, except that a message or a person's file waits
+/// for the person's Open, and a reply for their Connect, before anything is
+/// spent — it arrived; nobody here chose it yet (security review
+/// 2026-10-26).
+class OpenArrivedFile extends OpenRequest {
+  const OpenArrivedFile(this.filePath);
 
-  final String chatId;
+  final String filePath;
+}
+
+/// A tapped message link: the blob only. It is recognised (nothing spent)
+/// and opened only when the person taps Open (security review 2026-10-26).
+class OpenMessageLink extends OpenRequest {
+  const OpenMessageLink({required this.encryptedMessage});
 
   /// The blob without its `Fuzz/` prefix.
   final String encryptedMessage;
@@ -34,6 +44,10 @@ enum OpenPhase {
   reading,
   working,
   password,
+
+  /// A message that came by link, recognised and waiting for the person's
+  /// Open: "Open the message from {name}?".
+  confirmMessage,
   openedText,
   openedFile,
   problem;
@@ -70,12 +84,18 @@ class OpenRouteInvite extends OpenRoute {
   final String invitation;
 }
 
-/// The reply to an invite this phone sent: finish connecting.
+/// The reply to an invite this phone sent: finish connecting — at once for
+/// a paste, after "Connect with {name}?" when it [arrived] from outside.
 class OpenRouteReply extends OpenRoute {
-  const OpenRouteReply({required this.chat, required this.acceptance});
+  const OpenRouteReply({
+    required this.chat,
+    required this.acceptance,
+    this.arrived = false,
+  });
 
   final ChatGeneralData chat;
   final String acceptance;
+  final bool arrived;
 }
 
 /// A second, different reply to an invite already answered: the
@@ -124,6 +144,8 @@ class OpenFlowState {
     this.pendingPassword,
     this.isPasswordWrong = false,
     this.isBusy = false,
+    this.pendingMessage,
+    this.pendingFilePath,
   });
 
   final OpenPhase phase;
@@ -147,6 +169,12 @@ class OpenFlowState {
   final bool isPasswordWrong;
   final bool isBusy;
 
+  /// The `Fuzz/` blob [OpenPhase.confirmMessage] waits to open.
+  final String? pendingMessage;
+
+  /// Or the person's file it waits to open.
+  final String? pendingFilePath;
+
   OpenFlowState copyWith({
     double? progress,
     bool? isPasswordWrong,
@@ -167,6 +195,8 @@ class OpenFlowState {
       pendingPassword: pendingPassword,
       isPasswordWrong: isPasswordWrong ?? this.isPasswordWrong,
       isBusy: isBusy ?? this.isBusy,
+      pendingMessage: pendingMessage,
+      pendingFilePath: pendingFilePath,
     );
   }
 

@@ -180,47 +180,73 @@ void main() {
     });
   });
 
-  group('a message link', () {
+  group('a message link (security review 2026-10-26)', () {
     test('for someone not on this phone is "Not from your people"', () async {
+      peekAnswers(const CryptoCorePeek(kind: CryptoCorePeekKind.message));
       final cubit = build();
-      await cubit.open(
-        const OpenMessageLink(chatId: _strangerId, encryptedMessage: 'AwEC'),
-      );
+      await cubit.open(const OpenMessageLink(encryptedMessage: 'AwEC'));
       expect(cubit.state.problem, OpenProblem.notFromYourPeople);
       await cubit.close();
     });
 
-    test('for a person opens on their chat without a peek', () async {
+    test(
+        'for a person: recognised by the peek, nothing opened until Open, '
+        'then opened once', () async {
+      peekAnswers(
+        const CryptoCorePeek(kind: CryptoCorePeekKind.message, chatId: _ninoId),
+      );
+      decryptAnswers(const CryptoCoreSuccess('hi'));
+      when(() => messages.addMessage(any(), notifyListeners: true))
+          .thenAnswer((_) async => 3);
+      final cubit = build();
+      await cubit.open(const OpenMessageLink(encryptedMessage: 'AwEC'));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.chat, _nino);
+      verify(
+        () => crypto.peekPasted(text: 'Fuzz/AwEC', chatIds: [_ninoId]),
+      ).called(1);
+      verifyNever(
+        () => crypto.decryptText(
+          chatId: any(named: 'chatId'),
+          blob: any(named: 'blob'),
+        ),
+      );
+
+      await cubit.confirmOpen();
+      expect(cubit.state.phase, OpenPhase.openedText);
+      verify(() => crypto.decryptText(chatId: _ninoId, blob: 'Fuzz/AwEC'))
+          .called(1);
+      await cubit.close();
+    });
+
+    test('anything but a message under /message opens nothing', () async {
+      peekAnswers(
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.acceptance,
+          chatId: _ninoId,
+        ),
+      );
+      final cubit = build();
+      await cubit.open(const OpenMessageLink(encryptedMessage: 'AgE'));
+      expect(cubit.state.problem, OpenProblem.damaged);
+      expect(cubit.state.route, isNull);
+      await cubit.close();
+    });
+
+    test('pasted as text: the paste is the action, it opens at once', () async {
+      peekAnswers(
+        const CryptoCorePeek(kind: CryptoCorePeekKind.message, chatId: _ninoId),
+      );
       decryptAnswers(const CryptoCoreSuccess('hi'));
       when(() => messages.addMessage(any(), notifyListeners: true))
           .thenAnswer((_) async => 3);
       final cubit = build();
       await cubit.open(
-        const OpenMessageLink(chatId: _ninoId, encryptedMessage: 'AwEC'),
+        const OpenPastedText('https://ink.fuzzzycore.com/message#AwEC'),
       );
       expect(cubit.state.phase, OpenPhase.openedText);
       verify(() => crypto.decryptText(chatId: _ninoId, blob: 'Fuzz/AwEC'))
           .called(1);
-      verifyNever(
-        () => crypto.peekPasted(
-          text: any(named: 'text'),
-          chatIds: any(named: 'chatIds'),
-        ),
-      );
-      await cubit.close();
-    });
-
-    test('pasted as text opens the same way', () async {
-      decryptAnswers(const CryptoCoreSuccess('hi'));
-      when(() => messages.addMessage(any(), notifyListeners: true))
-          .thenAnswer((_) async => 3);
-      final cubit = build();
-      await cubit.open(
-        const OpenPastedText(
-          'https://ink.fuzzzycore.com/message#$_ninoId.AwEC',
-        ),
-      );
-      expect(cubit.state.phase, OpenPhase.openedText);
       await cubit.close();
     });
   });
@@ -309,12 +335,30 @@ void main() {
           .thenAnswer((_) async => true);
       when(() => chats.isPairedAcceptance(_ninoId, 'Fuzz/other'))
           .thenAnswer((_) async => false);
+      when(() => chats.isPairedAcceptance(_ninoId, 'Fuzz/forged'))
+          .thenAnswer((_) async => false);
+      when(
+        () => crypto.checkAcceptance(chatId: _ninoId, acceptance: 'Fuzz/other'),
+      ).thenAnswer((_) async => const CryptoCoreSuccess(null));
+      when(
+        () =>
+            crypto.checkAcceptance(chatId: _ninoId, acceptance: 'Fuzz/forged'),
+      ).thenAnswer(
+        (_) async => const CryptoCoreFailure(CryptoCoreFailureType.wrongChat),
+      );
       final cubit = build();
       await cubit.open(const OpenPastedText('Fuzz/same'));
       expect(cubit.state.problem, OpenProblem.alreadyConnected);
       await cubit.startOver();
       await cubit.open(const OpenPastedText('Fuzz/other'));
       expect(cubit.state.route, isA<OpenRouteSecondReply>());
+      // A reply that does not answer this chat's invite raises no alarm
+      // (security review 2026-10-26).
+      cubit.routeTaken();
+      await cubit.open(const OpenPastedText('Fuzz/forged'));
+      expect(cubit.state.route, isNull);
+      expect(cubit.state.problem, OpenProblem.damaged);
+      await cubit.startOver();
 
       peekAnswers(
         const CryptoCorePeek(
@@ -636,5 +680,101 @@ void main() {
     expect(cubit.state.openedText, 'from a file');
     verify(() => store.discardPickedCopy(file)).called(1);
     await cubit.close();
+  });
+
+  group('a file another app handed over (security review 2026-10-26)', () {
+    void peekFileAnswers(String file, CryptoCorePeek peek) {
+      when(
+        () => crypto.peekFile(inputPath: file, chatIds: any(named: 'chatIds')),
+      ).thenAnswer((_) async => CryptoCoreSuccess(peek));
+    }
+
+    test('a message waits for Open, then opens once', () async {
+      final file = path.join(dir.path, 'fuzzzy-ink-message.fuzz');
+      File(file).writeAsStringSync('Fuzz/AwEC\n');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.message,
+          chatId: _ninoId,
+          isTextFile: true,
+        ),
+      );
+      decryptAnswers(const CryptoCoreSuccess('from a file'));
+      when(() => messages.addMessage(any(), notifyListeners: true))
+          .thenAnswer((_) async => 5);
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.chat, _nino);
+      verifyNever(
+        () => crypto.decryptText(
+          chatId: any(named: 'chatId'),
+          blob: any(named: 'blob'),
+        ),
+      );
+      await cubit.confirmOpen();
+      verify(() => crypto.decryptText(chatId: _ninoId, blob: 'Fuzz/AwEC'))
+          .called(1);
+      expect(cubit.state.openedText, 'from a file');
+      await cubit.close();
+    });
+
+    test("a person's file waits for Open before it joins the queue", () async {
+      final file = path.join(dir.path, 'photo.jpg.fuzz');
+      File(file).writeAsStringSync('FUZZ');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.chatFile,
+          chatId: _ninoId,
+        ),
+      );
+      when(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      ).thenReturn(null);
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      expect(cubit.state.phase, OpenPhase.confirmMessage);
+      expect(cubit.state.pendingFilePath, file);
+      verifyNever(
+        () => queue.addFilesToProcess(
+          chatId: any(named: 'chatId'),
+          chatName: any(named: 'chatName'),
+          filePaths: any(named: 'filePaths'),
+        ),
+      );
+      await cubit.confirmOpen();
+      verify(
+        () => queue.addFilesToProcess(
+          chatId: _ninoId,
+          chatName: 'Nino',
+          filePaths: [file],
+        ),
+      ).called(1);
+      await cubit.close();
+    });
+
+    test('a reply goes on to "Connect with {name}?"', () async {
+      final file = path.join(dir.path, 'fuzzzy-ink-reply.fuzz');
+      File(file).writeAsStringSync('Fuzz/AgE\n');
+      peekFileAnswers(
+        file,
+        const CryptoCorePeek(
+          kind: CryptoCorePeekKind.acceptance,
+          chatId: _momId,
+          isTextFile: true,
+        ),
+      );
+      final cubit = build();
+      await cubit.open(OpenArrivedFile(file));
+      final route = cubit.state.route! as OpenRouteReply;
+      expect(route.arrived, isTrue);
+      await cubit.close();
+    });
   });
 }

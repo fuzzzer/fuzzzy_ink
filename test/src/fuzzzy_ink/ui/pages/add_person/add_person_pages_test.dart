@@ -134,6 +134,7 @@ void main() {
     Future<void> pumpReady(
       WidgetTester tester, {
       String? reply,
+      bool confirmReply = false,
       Stream<HandshakeState> states = const Stream.empty(),
       bool castOn = false,
       FuzzzySkin skin = FuzzzySkin.night,
@@ -156,6 +157,7 @@ void main() {
               chatId: peopleChatId,
               prefillAcceptanceContent: reply,
               justMade: true,
+              confirmReply: confirmReply,
             ),
           ),
         ),
@@ -238,6 +240,28 @@ void main() {
       expect(find.text('to /person/connected Tamar'), findsOneWidget);
     });
 
+    testWidgets(
+        'a reply that came by link asks "Connect with Tamar?" and connects '
+        'only on Connect (security review 2026-10-26)', (tester) async {
+      await pumpReady(tester, reply: _reply, confirmReply: true);
+      await tester.pumpAndSettle();
+      expect(find.text('Connect with Tamar?'), findsOneWidget);
+      verifyNever(
+        () => handshake.completeHandshake(
+          acceptanceContent: any(named: 'acceptanceContent'),
+          chatId: any(named: 'chatId'),
+        ),
+      );
+      await tester.tap(find.byKey(const Key('btn.replyLink.connect')));
+      await tester.pump();
+      verify(
+        () => handshake.completeHandshake(
+          acceptanceContent: _reply,
+          chatId: peopleChatId,
+        ),
+      ).called(1);
+    });
+
     testWidgets('a reply that does not connect says so and stays',
         (tester) async {
       await pumpReady(
@@ -312,7 +336,9 @@ void main() {
         expect(find.text('Paste it'), findsOneWidget);
         expect(find.text('Choose a file'), findsOneWidget);
         expect(
-          find.text('Links and QR codes open here by themselves.'),
+          find.text(
+            'Links and QR codes come here. Nothing opens until you tap Open.',
+          ),
           findsOneWidget,
         );
         expect(tester.takeException(), isNull);

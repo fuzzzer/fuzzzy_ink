@@ -104,7 +104,9 @@ void main() {
   });
 
   group('link page (link_site/)', () {
-    test('the Apple file names every app id and exactly the link paths', () {
+    test(
+        'the Apple file names the production app only (security review '
+        '2026-10-26) and exactly the link paths', () {
       final json = jsonDecode(
         read('link_site/.well-known/apple-app-site-association'),
       ) as Map<String, dynamic>;
@@ -113,13 +115,19 @@ void main() {
           .single as Map<String, dynamic>;
 
       final ids = (details['appIDs'] as List<dynamic>).cast<String>();
-      expect(
-        ids,
-        [
-          for (final id in [...appIds, devAppId])
-            'REPLACE_WITH_APPLE_TEAM_ID.$id',
-        ],
-      );
+      expect(ids, ['REPLACE_WITH_APPLE_TEAM_ID.${appIds.first}']);
+      final testIds = ((((jsonDecode(
+        read(
+          'link_site_test_builds/.well-known/'
+          'apple-app-site-association',
+        ),
+      ) as Map<String, dynamic>)['applinks'] as Map<String, dynamic>)['details']
+              as List<dynamic>)
+          .single as Map<String, dynamic>)['appIDs'] as List<dynamic>;
+      expect(testIds, [
+        for (final id in [...appIds.skip(1), devAppId])
+          'REPLACE_WITH_APPLE_TEAM_ID.$id',
+      ]);
 
       final components =
           (details['components'] as List<dynamic>).cast<Map<String, dynamic>>();
@@ -130,7 +138,7 @@ void main() {
       }
     });
 
-    test('the Android file names every package for App Links', () {
+    test('the Android file names the production package only', () {
       final statements =
           (jsonDecode(read('link_site/.well-known/assetlinks.json'))
                   as List<dynamic>)
@@ -140,7 +148,17 @@ void main() {
         statements.map(
           (s) => (s['target'] as Map<String, dynamic>)['package_name'],
         ),
-        [...appIds, devAppId],
+        [appIds.first],
+      );
+      final testStatements = (jsonDecode(
+        read('link_site_test_builds/.well-known/assetlinks.json'),
+      ) as List<dynamic>)
+          .cast<Map<String, dynamic>>();
+      expect(
+        testStatements.map(
+          (s) => (s['target'] as Map<String, dynamic>)['package_name'],
+        ),
+        [...appIds.skip(1), devAppId],
       );
       for (final statement in statements) {
         expect(

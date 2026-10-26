@@ -7,7 +7,8 @@ export 'components/components.dart';
 export 'widgets/widgets.dart';
 
 /// Open (DESIGN.md section 4.8): "Open what you got" — Paste it, Choose a
-/// file, and links that open here by themselves — then whatever it was:
+/// file, and links, which come here and wait for Open ("Open the message
+/// from {name}?", security review 2026-10-26) — then whatever it was:
 /// the opened message or file (private), the password question, or one
 /// "can't open" screen. Invites go on to "I got an invite" (straight to
 /// "Who sent it?"), replies connect on the invite's page, and a second reply
@@ -62,7 +63,7 @@ class OpenFlowView extends StatelessWidget {
       case OpenRouteInvite(:final invitation):
         cubit.routeTaken();
         context.pushReplacement(AppRouter.chatAccept, extra: invitation);
-      case OpenRouteReply(:final chat, :final acceptance):
+      case OpenRouteReply(:final chat, :final acceptance, :final arrived):
         cubit.routeTaken();
         context.pushReplacement(
           AppRouter.chatInvitation,
@@ -70,6 +71,7 @@ class OpenFlowView extends StatelessWidget {
             chatName: chat.chatName,
             chatId: chat.chatId,
             prefillAcceptanceContent: acceptance,
+            confirmReply: arrived,
           ),
         );
       case OpenRouteSecondReply(:final chat):
@@ -133,6 +135,15 @@ class OpenFlowView extends StatelessWidget {
           case OpenPhase.password:
             return SensitiveScreen(
               child: OpenPasswordView(onBack: cubit.startOver),
+            );
+          case OpenPhase.confirmMessage:
+            final chat = state.chat;
+            if (chat == null) return const OpenReadingView();
+            return OpenConfirmView(
+              chat: chat,
+              isFile: state.pendingFilePath != null,
+              onOpen: cubit.confirmOpen,
+              onNotNow: context.goBack,
             );
           case OpenPhase.openedText:
             return SensitiveScreen(

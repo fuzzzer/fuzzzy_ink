@@ -89,7 +89,9 @@ void main() {
         expect(find.text('Choose a file'), findsOneWidget);
         expect(find.text('A .fuzz file'), findsOneWidget);
         expect(
-          find.text('Links and QR codes open here by themselves.'),
+          find.text(
+            'Links and QR codes come here. Nothing opens until you tap Open.',
+          ),
           findsOneWidget,
         );
         expect(find.byType(SensitiveScreen), findsNothing);
@@ -121,6 +123,25 @@ void main() {
       verifyNever(() => cubit.open(any()));
       await tester.pump(const Duration(seconds: 3));
     });
+  });
+
+  testWidgets(
+      'a message link asks "Open the message from Nino?" and opens only on '
+      'Open (security review 2026-10-26)', (tester) async {
+    when(() => cubit.confirmOpen()).thenAnswer((_) async {});
+    show(
+      OpenFlowState(
+        phase: OpenPhase.confirmMessage,
+        chat: _nino,
+        pendingMessage: 'Fuzz/AwEC',
+      ),
+    );
+    await pumpOpen(tester);
+    expect(find.text('Open the message from Nino?'), findsOneWidget);
+    verifyNever(() => cubit.confirmOpen());
+    await tester.tap(find.byKey(const Key('btn.open.confirm.open')));
+    await tester.pump();
+    verify(() => cubit.confirmOpen()).called(1);
   });
 
   testWidgets('reading says so', (tester) async {

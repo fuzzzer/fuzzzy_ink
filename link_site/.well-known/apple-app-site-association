@@ -3,9 +3,7 @@
     "details": [
       {
         "appIDs": [
-          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink",
-          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink.stg",
-          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink.dev"
+          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink"
         ],
         "components": [
           {

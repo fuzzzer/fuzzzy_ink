@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -10,6 +11,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     required this.vaultRepository,
     required this.biometricAuthRepository,
     required this.appLockThrottleRepository,
+    this.vaultPasswordThrottleRepository,
     DateTime Function()? now,
   })  : _now = now ?? DateTime.now,
         super(const VaultAuthState());
@@ -26,7 +28,35 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
   /// The app lock's wrong-password count: a vault under the master key is a
   /// second door to the master password and shares its wait.
   final AppLockThrottleRepository appLockThrottleRepository;
+
+  /// My safe's own password: its own wrong-password count and wait
+  /// (security review 2026-10-26). Without it (tests), no wait.
+  final VaultPasswordThrottleRepository? vaultPasswordThrottleRepository;
   final DateTime Function() _now;
+
+  /// The count a password for the vault in its current mode goes to: the
+  /// master password's, or My safe's own.
+  AppLockThrottleRepository? get _countForCurrentMode => state.usesOwnPassword
+      ? vaultPasswordThrottleRepository
+      : appLockThrottleRepository;
+
+  static Future<Duration> _remaining(
+    AppLockThrottleRepository? throttle,
+    DateTime now,
+  ) async {
+    if (throttle == null) return Duration.zero;
+    return (await throttle.read()).remainingAt(now);
+  }
+
+  static Future<void> _countWrong(
+    AppLockThrottleRepository? throttle,
+    DateTime now,
+  ) async {
+    if (throttle == null) return;
+    final before = await throttle.read();
+    await throttle.save(before.afterFailure(now));
+  }
+
   Timer? _autoLockTimer;
 
   Future<void> checkVaultStatus() async {
@@ -117,12 +147,23 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
   }
 
   Future<BiometricEnableResult> enableBiometric(String currentPassword) async {
+    final throttle = _countForCurrentMode;
+    if (await _remaining(throttle, _now()) > Duration.zero) {
+      return BiometricEnableResult.wrongPassword;
+    }
     final metaRes = await vaultRepository.getMetadata();
     if (metaRes is! VaultSuccess) return BiometricEnableResult.wrongPassword;
 
     final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
     final keyRes = await cryptoRepository.unlock(currentPassword, metadata);
-    if (keyRes is VaultFailure) return BiometricEnableResult.wrongPassword;
+    if (keyRes is VaultFailure) {
+      if ((keyRes as VaultFailure).type ==
+          VaultFailureType.incorrectMasterPassword) {
+        await _countWrong(throttle, _now());
+      }
+      return BiometricEnableResult.wrongPassword;
+    }
+    await throttle?.clear();
     await _closeKey((keyRes as VaultSuccess<VaultKey>).data);
 
     final result = await biometricAuthRepository.enable(
@@ -147,14 +188,12 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     await disableBiometric();
   }
 
-  /// By default [password] is the master password and the master key wraps
-  /// the vault key; with [ownPassword] the vault gets [password] as its own.
-  ///
-  /// Under the master key the typed master password counts toward the app
-  /// lock's wait, the same as [unlock].
-  Future<void> createVault(String password, {bool ownPassword = false}) async {
-    final usesMaster = !ownPassword;
-    if (usesMaster && await lockoutRemaining() > Duration.zero) {
+  /// [password] is the master password: a new vault is always under the
+  /// master key (it gets its own password only through [useOwnPassword]).
+  /// The typed master password counts toward the app lock's wait, the same
+  /// as [unlock].
+  Future<void> createVault(String password) async {
+    if (await lockoutRemaining() > Duration.zero) {
       emit(
         state.copyWith(
           status: StateStatus.failed,
@@ -165,13 +204,10 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
     }
     emit(state.copyWith(status: StateStatus.loading));
 
-    final initRes = await cryptoRepository.initializeVault(
-      password,
-      ownPassword: ownPassword,
-    );
+    final initRes = await cryptoRepository.initializeVault(password);
     if (initRes is VaultFailure) {
       final type = (initRes as VaultFailure).type;
-      if (usesMaster && type == VaultFailureType.incorrectMasterPassword) {
+      if (type == VaultFailureType.incorrectMasterPassword) {
         final before = await appLockThrottleRepository.read();
         await appLockThrottleRepository.save(before.afterFailure(_now()));
       }
@@ -183,7 +219,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       );
       return;
     }
-    if (usesMaster) await appLockThrottleRepository.clear();
+    await appLockThrottleRepository.clear();
 
     final metadata = (initRes as VaultSuccess<VaultMetadata>).data;
     final saveRes = await vaultRepository.saveMetadata(metadata);
@@ -217,38 +253,32 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
         status: StateStatus.success,
         authState: VaultAuthEnum.unlocked,
         masterKey: masterKey,
-        usesOwnPassword: ownPassword,
-        recoverable: ownPassword && await cryptoRepository.hasRecoveryCopy(),
+        usesOwnPassword: false,
+        recoverable: false,
       ),
     );
   }
 
-  /// The wait left before the master password may be tried again (shared
-  /// with the app lock). Zero for a vault with its own password, which is
-  /// outside that count.
-  Future<Duration> lockoutRemaining() async {
-    if (state.usesOwnPassword) return Duration.zero;
-    final throttle = await appLockThrottleRepository.read();
-    return throttle.remainingAt(_now());
-  }
+  /// The wait left before the vault's password may be tried again: the
+  /// master password's (shared with the app lock), or for a vault with its
+  /// own password, that password's own count.
+  Future<Duration> lockoutRemaining() =>
+      _remaining(_countForCurrentMode, _now());
 
   /// [password] is the vault's own password, or the master password for a
   /// vault under the master key — which then counts toward the app lock's
   /// wait like any other master-password attempt.
   Future<void> unlock(String password) async {
-    final usesMaster = !state.usesOwnPassword;
-    if (usesMaster) {
-      final throttle = await appLockThrottleRepository.read();
-      if (throttle.remainingAt(_now()) > Duration.zero) {
-        emit(
-          state.copyWith(
-            status: StateStatus.failed,
-            failureType: VaultFailureType.tooManyAttempts,
-            authState: VaultAuthEnum.locked,
-          ),
-        );
-        return;
-      }
+    final throttle = _countForCurrentMode;
+    if (await _remaining(throttle, _now()) > Duration.zero) {
+      emit(
+        state.copyWith(
+          status: StateStatus.failed,
+          failureType: VaultFailureType.tooManyAttempts,
+          authState: VaultAuthEnum.locked,
+        ),
+      );
+      return;
     }
     emit(
       state.copyWith(
@@ -274,9 +304,8 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
 
     if (keyRes is VaultFailure) {
       final type = (keyRes as VaultFailure).type;
-      if (usesMaster && type == VaultFailureType.incorrectMasterPassword) {
-        final before = await appLockThrottleRepository.read();
-        await appLockThrottleRepository.save(before.afterFailure(_now()));
+      if (type == VaultFailureType.incorrectMasterPassword) {
+        await _countWrong(throttle, _now());
       }
       emit(
         state.copyWith(
@@ -287,7 +316,7 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       );
       return;
     }
-    if (usesMaster) await appLockThrottleRepository.clear();
+    await throttle?.clear();
 
     final masterKey = (keyRes as VaultSuccess<VaultKey>).data;
 
@@ -306,27 +335,117 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
   }
 
   /// Gives the vault its own password; [masterPassword] proves the change.
-  /// The biometric copy held the master password and is dropped.
-  Future<VaultFailureType?> useOwnPassword({
+  ///
+  /// The vault gets a new key and a new recovery key in the same step
+  /// (security review 2026-10-26): every item is re-sealed to the new key and
+  /// the new wrapping replaces the old in one atomic step, so an old copy of
+  /// `vault.meta` and the master password open nothing kept here; the
+  /// recovery key kept so far ends, so one somebody else made earlier with
+  /// the master password opens nothing either. The vault is left locked. The
+  /// answer carries the new recovery key, which the caller shows and keeps
+  /// only once the user has saved it ([keepRecoveryKey]). The biometric copy
+  /// held the master password and is dropped.
+  Future<({VaultFailureType? failure, PendingRecoveryKey? recovery})>
+      useOwnPassword({
     required String masterPassword,
     required String newPassword,
-  }) {
-    return _changeWrapping(
-      (metadata) => cryptoRepository.useOwnPassword(
-        masterPassword: masterPassword,
-        newPassword: newPassword,
-        metadata: metadata,
+  }) async {
+    ({VaultFailureType? failure, PendingRecoveryKey? recovery}) failed(
+      VaultFailureType type,
+    ) =>
+        (failure: type, recovery: null);
+
+    // The master password typed here counts like any other (security
+    // review 2026-10-26).
+    if (await _remaining(appLockThrottleRepository, _now()) > Duration.zero) {
+      return failed(VaultFailureType.tooManyAttempts);
+    }
+    final metaRes = await vaultRepository.getMetadata();
+    if (metaRes is VaultFailure) return failed((metaRes as VaultFailure).type);
+    final metadata = (metaRes as VaultSuccess<VaultMetadata>).data;
+    final switchRes = await cryptoRepository.useOwnPassword(
+      masterPassword: masterPassword,
+      newPassword: newPassword,
+      metadata: metadata,
+    );
+    if (switchRes is VaultFailure) {
+      final type = (switchRes as VaultFailure).type;
+      if (type == VaultFailureType.incorrectMasterPassword) {
+        await _countWrong(appLockThrottleRepository, _now());
+      }
+      return failed(type);
+    }
+    await appLockThrottleRepository.clear();
+    final changed =
+        (switchRes as VaultSuccess<CryptoCoreVaultOwnPassword>).data;
+
+    // Nothing may write an item under the old key from here on.
+    await lock();
+    final rekeyRes = await vaultRepository.rekey(
+      previous: changed.previous,
+      key: changed.key,
+      metadata: metadata.copyWith(
+        verificationToken: base64Encode(changed.wrapped),
       ),
-      usesOwnPassword: true,
+      // A copy of the old key sealed to the old recovery lock must not
+      // outlive the move: it would put the old key back.
+      beforeCommit: () async {
+        final dropRes = await cryptoRepository.dropRecoveryCopy();
+        return dropRes is VaultFailure ? dropRes.type : null;
+      },
+    );
+    await _closeKey(changed.previous);
+    await _closeKey(changed.key);
+    if (rekeyRes is VaultFailure) {
+      return failed(rekeyRes.type);
+    }
+
+    final endRes = await cryptoRepository.endRecoveryKey();
+    if (endRes is VaultFailure) {
+      logger.w('The old recovery key could not be removed');
+    }
+    await biometricAuthRepository.disable(BiometricScope.vault);
+    emit(
+      state.copyWith(
+        usesOwnPassword: true,
+        biometricEnabled: false,
+        recoverable: false,
+        recoveryKeyKept: false,
+      ),
+    );
+    return (
+      failure: null,
+      recovery: PendingRecoveryKey(
+        recoveryKey: changed.recovery.recoveryKey,
+        recoveryWrap: changed.recovery.recoveryWrap,
+        recoveryLock: changed.recovery.recoveryLock,
+        vaultRecovery: changed.vaultRecovery,
+      ),
     );
   }
 
-  /// Opens the vault with the master password again.
+  /// Keeps the recovery key [useOwnPassword] made, once the user has saved
+  /// it. `null` on success.
+  Future<VaultFailureType?> keepRecoveryKey(PendingRecoveryKey pending) async {
+    final keepRes = await cryptoRepository.keepRecoveryKey(pending);
+    await refreshRecovery();
+    return keepRes is VaultFailure ? keepRes.type : null;
+  }
+
+  /// Opens the vault with the master password again. Both passwords are
+  /// typed here; My safe's password is checked first, so a wrong answer
+  /// counts toward its own wait (security review 2026-10-26), and the master
+  /// password's wait applies too.
   Future<VaultFailureType?> useMasterPassword({
     required String vaultPassword,
     required String masterPassword,
-  }) {
-    return _changeWrapping(
+  }) async {
+    final vaultCount = vaultPasswordThrottleRepository;
+    if (await _remaining(vaultCount, _now()) > Duration.zero ||
+        await _remaining(appLockThrottleRepository, _now()) > Duration.zero) {
+      return VaultFailureType.tooManyAttempts;
+    }
+    final failure = await _changeWrapping(
       (metadata) => cryptoRepository.useMasterPassword(
         vaultPassword: vaultPassword,
         masterPassword: masterPassword,
@@ -334,6 +453,12 @@ class VaultAuthCubit extends Cubit<VaultAuthState> {
       ),
       usesOwnPassword: false,
     );
+    if (failure == VaultFailureType.incorrectMasterPassword) {
+      await _countWrong(vaultCount, _now());
+    } else if (failure == null) {
+      await vaultCount?.clear();
+    }
+    return failure;
   }
 
   /// Re-reads whether a recovery key is kept and whether it opens the vault

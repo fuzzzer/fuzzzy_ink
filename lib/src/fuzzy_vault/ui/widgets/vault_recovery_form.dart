@@ -109,8 +109,9 @@ class _VaultRecoveryFormState extends State<VaultRecoveryForm> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: space.l),
-        FuzzzyTextField(
+        GuardedTextField(
           controller: _recoveryKeyController,
+          keyboardType: TextInputType.visiblePassword,
           label: localizations.recoveryKeyField,
           hint: 'XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX',
           errorText: _errorText(),

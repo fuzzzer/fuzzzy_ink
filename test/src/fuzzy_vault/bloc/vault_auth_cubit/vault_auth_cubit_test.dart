@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:mocktail/mocktail.dart';
@@ -391,6 +395,40 @@ void main() {
       await cubit.close();
     });
 
+    test(
+        'a vault with its own password has its own count and wait (security '
+        'review 2026-10-26)', () async {
+      FlutterSecureStorage.setMockInitialValues({});
+      final wall = DateTime(2026, 10, 26, 12);
+      final ownCount = VaultPasswordThrottleRepository(
+        localDataSource: AppLockThrottleLocalDataSource(
+          key: AppLockThrottleLocalDataSource.vaultPasswordKey,
+        ),
+        now: () => wall,
+      );
+      when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
+        (_) async =>
+            const VaultFailure(VaultFailureType.incorrectMasterPassword),
+      );
+      final cubit = VaultAuthCubit(
+        cryptoRepository: mockCryptoRepo,
+        vaultRepository: mockVaultRepo,
+        biometricAuthRepository: mockBiometricRepo,
+        appLockThrottleRepository: mockThrottle,
+        vaultPasswordThrottleRepository: ownCount,
+        now: () => wall,
+      )..emit(const VaultAuthState(usesOwnPassword: true));
+      for (var i = 0; i < AppLockThrottleData.freeAttempts; i++) {
+        await cubit.unlock('nope');
+      }
+      expect(await cubit.lockoutRemaining(), const Duration(seconds: 30));
+      await cubit.unlock('nope');
+      expect(cubit.state.failureType, VaultFailureType.tooManyAttempts);
+      verify(() => mockCryptoRepo.unlock('nope', _metadata)).called(5);
+      verifyNever(() => mockThrottle.save(any()));
+      await cubit.close();
+    });
+
     test('a vault with its own password is outside the app lock count',
         () async {
       when(() => mockCryptoRepo.unlock('nope', _metadata)).thenAnswer(
@@ -405,13 +443,25 @@ void main() {
     });
 
     test(
-        'switching to an own password stores the new wrap, drops the '
-        'biometric copy and says so', () async {
-      final rewrapped = VaultMetadata(
-        vaultId: 'vault-1',
-        verificationToken: 'b3du',
-        createdAt: DateTime(2026),
-        lastUnlockedAt: DateTime(2026),
+        'switching to an own password moves the vault to the new key, ends '
+        'the old recovery key, locks the vault and hands back the new one '
+        '(security review 2026-10-26)', () async {
+      final previous = MockVaultKey();
+      final next = MockVaultKey();
+      for (final k in [previous, next]) {
+        when(k.close).thenAnswer((_) async {});
+        when(k.dispose).thenReturn(null);
+      }
+      final changed = CryptoCoreVaultOwnPassword(
+        previous: previous,
+        key: next,
+        wrapped: Uint8List.fromList([1, 2, 3]),
+        recovery: CryptoCoreRecoveryKey(
+          recoveryKey: 'AAAA-BBBB',
+          recoveryWrap: Uint8List.fromList([4]),
+          recoveryLock: Uint8List.fromList([5]),
+        ),
+        vaultRecovery: Uint8List.fromList([6]),
       );
       when(
         () => mockCryptoRepo.useOwnPassword(
@@ -419,21 +469,109 @@ void main() {
           newPassword: 'Vault-Only-9',
           metadata: _metadata,
         ),
-      ).thenAnswer((_) async => VaultSuccess(rewrapped));
+      ).thenAnswer((_) async => VaultSuccess(changed));
+      VaultMetadata? moved;
+      when(
+        () => mockVaultRepo.rekey(
+          previous: previous,
+          key: next,
+          metadata: any(named: 'metadata'),
+          beforeCommit: any(named: 'beforeCommit'),
+        ),
+      ).thenAnswer((invocation) async {
+        moved = invocation.namedArguments[#metadata] as VaultMetadata;
+        final beforeCommit = invocation.namedArguments[#beforeCommit]
+            as Future<VaultFailureType?> Function()?;
+        expect(await beforeCommit!(), isNull);
+        return const VaultSuccess(null);
+      });
+      when(() => mockCryptoRepo.endRecoveryKey())
+          .thenAnswer((_) async => const VaultSuccess(null));
       when(() => mockBiometricRepo.disable(any())).thenAnswer((_) async {});
 
-      final cubit = buildCubit();
-      final failure = await cubit.useOwnPassword(
+      final cubit = buildCubit()
+        ..emit(
+          VaultAuthState(authState: VaultAuthEnum.unlocked, masterKey: key),
+        );
+      final result = await cubit.useOwnPassword(
         masterPassword: 'master',
         newPassword: 'Vault-Only-9',
       );
 
-      expect(failure, isNull);
+      expect(result.failure, isNull);
+      expect(result.recovery?.recoveryKey, 'AAAA-BBBB');
+      expect(result.recovery?.vaultRecovery, [6]);
+      expect(moved?.verificationToken, base64Encode([1, 2, 3]));
+      expect(moved?.vaultId, _metadata.vaultId);
       expect(cubit.state.usesOwnPassword, isTrue);
-      expect(cubit.state.recoverable, isTrue);
-      verify(() => mockVaultRepo.saveMetadata(rewrapped)).called(1);
+      expect(cubit.state.authState, VaultAuthEnum.locked);
+      expect(cubit.state.recoverable, isFalse, reason: 'until it is kept');
+      verify(key.close).called(1);
+      verify(previous.close).called(1);
+      verify(next.close).called(1);
+      verify(() => mockCryptoRepo.dropRecoveryCopy()).called(1);
+      verify(() => mockCryptoRepo.endRecoveryKey()).called(1);
       verify(() => mockBiometricRepo.disable(BiometricScope.vault)).called(1);
-      verifyNever(() => mockCryptoRepo.dropRecoveryCopy());
+      verifyNever(() => mockVaultRepo.saveMetadata(any()));
+
+      final pending = result.recovery!;
+      when(() => mockCryptoRepo.keepRecoveryKey(pending))
+          .thenAnswer((_) async => const VaultSuccess(null));
+      expect(await cubit.keepRecoveryKey(pending), isNull);
+      expect(cubit.state.recoverable, isTrue);
+      await cubit.close();
+    });
+
+    test('a failed move keeps the old vault and shows no recovery key',
+        () async {
+      final previous = MockVaultKey();
+      final next = MockVaultKey();
+      for (final k in [previous, next]) {
+        when(k.close).thenAnswer((_) async {});
+        when(k.dispose).thenReturn(null);
+      }
+      when(
+        () => mockCryptoRepo.useOwnPassword(
+          masterPassword: 'master',
+          newPassword: 'Vault-Only-9',
+          metadata: _metadata,
+        ),
+      ).thenAnswer(
+        (_) async => VaultSuccess(
+          CryptoCoreVaultOwnPassword(
+            previous: previous,
+            key: next,
+            wrapped: Uint8List(1),
+            recovery: CryptoCoreRecoveryKey(
+              recoveryKey: 'K',
+              recoveryWrap: Uint8List(1),
+              recoveryLock: Uint8List(1),
+            ),
+            vaultRecovery: Uint8List(1),
+          ),
+        ),
+      );
+      when(
+        () => mockVaultRepo.rekey(
+          previous: previous,
+          key: next,
+          metadata: any(named: 'metadata'),
+          beforeCommit: any(named: 'beforeCommit'),
+        ),
+      ).thenAnswer(
+        (_) async => const VaultFailure(VaultFailureType.storageWriteError),
+      );
+      final cubit = buildCubit();
+      final result = await cubit.useOwnPassword(
+        masterPassword: 'master',
+        newPassword: 'Vault-Only-9',
+      );
+      expect(result.failure, VaultFailureType.storageWriteError);
+      expect(result.recovery, isNull);
+      expect(cubit.state.usesOwnPassword, isFalse);
+      verify(previous.close).called(1);
+      verify(next.close).called(1);
+      verifyNever(() => mockCryptoRepo.endRecoveryKey());
       await cubit.close();
     });
 
@@ -476,10 +614,11 @@ void main() {
       );
       final cubit = buildCubit();
       expect(
-        await cubit.useOwnPassword(
+        (await cubit.useOwnPassword(
           masterPassword: 'nope',
           newPassword: 'Vault-Only-9',
-        ),
+        ))
+            .failure,
         VaultFailureType.incorrectMasterPassword,
       );
       verifyNever(() => mockVaultRepo.saveMetadata(any()));

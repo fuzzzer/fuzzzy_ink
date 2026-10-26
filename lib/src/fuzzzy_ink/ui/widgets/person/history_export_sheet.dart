@@ -137,11 +137,12 @@ class _HistoryExportSheetBodyState extends State<HistoryExportSheetBody> {
                 style: type.bodyS.copyWith(color: colors.inkMute),
               ),
               SizedBox(height: space.l),
-              FuzzzyTextField(
+              GuardedTextField(
                 qaId: 'exportHistory.password',
                 controller: _password,
                 label: localizations.exportHistoryPassword,
                 obscure: !_isVisible,
+                keyboardType: TextInputType.visiblePassword,
                 autofocus: true,
                 suffix: FuzzzyIconButton(
                   qaId: 'exportHistory.peek',

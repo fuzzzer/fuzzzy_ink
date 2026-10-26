@@ -1,7 +1,7 @@
 # Fuzzzy Ink — Threat Model
 
-**Status:** describes the code in `rust/fuzzy_crypto_core` (crate 0.1.0) and the Flutter app around it on the
-`agent/chat-harden-rust-crypto-core` branch, format version 1. Its companion is [`PROTOCOL.md`](PROTOCOL.md),
+**Status:** describes the code in `rust/fuzzy_crypto_core` (crate 0.1.0) and the Flutter app around it as of the
+pre-launch security review fixes of 2026-10-26, format version 1. Its companion is [`PROTOCOL.md`](PROTOCOL.md),
 which says *what the bytes are and what the code checks*; this document says *what that buys, against whom,
 and what it does not*. Every defended claim below names the `PROTOCOL.md` section that specifies the
 mechanism and, where one exists, the test that pins it. Where this document and the code disagree, the code
@@ -31,7 +31,7 @@ What an attacker wants, in the order the product cares about it.
 | A4 | **Session state** (the double-ratchet chains — including the current *receiving chain key* — skipped message keys, the counter window) **and the chat's history key** (A7's key) | the sealed state file `<chat_id>.state` | the store key; atomic write, save-before-return (`PROTOCOL.md` §10.3). A copy of this file is the post-compromise asset of §4.3 and §4.5: it decrypts every message the peer generates on the current receiving chain until the peer has received a new ratchet key from this device (§4.3) — and, opened, it yields that chat's history key, so a state copy plus the store key also reads that chat's local history (A7), no other chat's |
 | A5 | **The master key** and **the store key** (32 bytes each, one per install) | the master key exists in the clear only for the length of one call (first run, open, password change, recovery, new recovery key, and the vault calls that use the master key) and is never kept; the store key only inside the unlocked process. At rest: the master key as two `0x10` blobs (under the master password, and under the recovery key while one is kept), the store key as a `0x20` under the master key, the recovery lock (a public key) as a `0x20` under the store key, all in the platform secure storage | Argon2id-derived KEK from the master password or the recovery key; there is no state without a password (`PROTOCOL.md` §10.2, §11) |
 | A5a | **The recovery key** (152 random bits + a check byte) | shown once; then wherever the user printed or saved it — never in the app | the user. It opens the master key exactly like the master password and, through its recovery lock, a vault with its own password (§4.3, R37) |
-| A6 | **The vault key** and **vault item content** | the wrapped vault key in the `vault.meta` file (JSON field `verificationToken`): a `0x20` under the master key by default, or a `0x10` under the vault's own password; items as `0x20` files under `items/`, each bound to its id and version; all in the app-private vault folder `<app support directory>/vault/` (§2.5) — not in Isar | the master password (default) or the vault's own password — and, for a vault with its own password, the recovery key, through a `0x11` box sealed to the recovery lock (secure storage `vault_key_recovery_v2`, only while a recovery key is kept); sealed items (`PROTOCOL.md` §6.10, §10.6). The master password alone does not open a vault with its own password. Independent of the chat store: neither the store key nor any history key (A7) opens a vault item, and the vault key opens no chat history |
+| A6 | **The vault key** and **vault item content** | the wrapped vault key in the `vault.meta` file (JSON field `verificationToken`): a `0x20` under the master key by default, or a `0x10` under the vault's own password; items as `0x20` files under `items/`, each bound to its id and version; all in the app-private vault folder `<app support directory>/vault/` (§2.5) — not in Isar | the master password (default) or the vault's own password — and, for a vault with its own password, the recovery key, through a `0x11` box sealed to the recovery lock (secure storage `vault_key_recovery_v2`, only while a recovery key is kept); sealed items (`PROTOCOL.md` §6.10, §10.6). The master password alone does not open a vault with its own password — not even together with a copy of `vault.meta` taken while the master password still opened it: giving the vault its own password draws a **new** vault key, re-seals every item under it and commits in one rename, and draws a **new** recovery key in the same step, shown to the user then, so no recovery key made earlier with the master password opens the vault (security review 2026-10-26). What that does not cover: someone who learns the vault's own password, or who holds the recovery key shown at the switch, or who copied an item *file* before the switch and also kept the old `vault.meta` (that copy is the item's content at that time, R33). Independent of the chat store: neither the store key nor any history key (A7) opens a vault item, and the vault key opens no chat history |
 | A7 | **Local message history** (sent *and* received **text** plaintext; a received file row holds its kept file key instead, under its own AAD `kept-file-key` ‖ chat id, `PROTOCOL.md` §9.6, see A12) | `StoredMessageData.sealedPlaintext`, one `0x20` seal per row, AAD `local-seal` ‖ chat id ‖ row (the row's direction byte and blob text, so a seal opens only on its own row) | **that chat's history key** — 32 random bytes drawn with the chat's Olm account and kept only inside the chat's sealed state (A4), so it is protected by the store key and, through it, the master password (`PROTOCOL.md` §3, §10.4). Owner decision D-1 (§8): design (a) with a per-chat key. One chat's key opens no other chat's history and not the peer device's copy of the same chat; a captured **store key** still opens every state and therefore every history key — the per-chat key bounds a history-key leak, not a store-key leak |
 | A8 | **The master password** and **a vault's own password** | typed by the user, never kept in the app's state after the unlock; optionally copied into the OS biometric-gated keystore when biometric unlock is enabled (§2.3) | the OS; the user |
 | A9 | **Metadata**: chat names, chat ids, timestamps, message counts and ordering, file names, sizes and the stored paths of the kept sealed files (A12), the ciphertext blobs themselves, vault item titles/tags/groups/types | plaintext columns of the Isar database | **not protected** — an explicit non-goal (§7.4, `PROTOCOL.md` §10.5) |
@@ -169,8 +169,11 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
   the Basics password containers and the vault items — all under `<app support>/` (`sealed_files/chats/<safe
   chat name> (<chat id prefix>)/`, `sealed_files/basics/`, `vault/`), never in a user-visible folder. A plain file
   exists only for one use, in a fresh folder of `<app support>/handoff/`: shown in the app (images, text), given
-  to the system save dialog or the share sheet, and wiped right after, when the chat or Basics page closes, and at
-  every launch — the launch sweep also deletes the file picker's cache copies, Android's old share staging
+  to the system save dialog or the share sheet, and wiped right after, when the chat or Basics page closes, when the
+  app locks, and at every launch. A file the phone's picker copied into the app (Android `cache/file_picker`, the
+  iPhone's `tmp/<bundle id>-Inbox`) is deleted once used, when a lock fails or is stopped, when another file is
+  chosen and when the flow closes, and swept at every lock and launch (security review 2026-10-26) — the launch
+  sweep also deletes Android's old share staging
   (`cache/user_files`, `cache/share_plus`), the archive working file and, on a phone, the old Basics
   `Working Folder` (`UserFileStore.wipeTemporaryPlainCopies`; test
   `test/src/core/services/user_file_store/user_file_store_test.dart`). Nothing goes to Android's public
@@ -223,13 +226,26 @@ ciphertext, every message's *sealed* plaintext (unreadable), and every piece of 
 
 ### 2.6 The clipboard and the screen
 
-Blobs move by copy and paste. While a `Fuzz/` text is on the clipboard it is readable by any app the OS lets
-read the clipboard; the app does not clear it. Plaintext shown on screen is readable by anything that can
-read or capture the screen. Both are outside the model (§7.2, §7.3). The app never decrypts a blob
-automatically: a message is decrypted only when the user presses send on a pasted `Fuzz/` text
-(`lib/src/fuzzzy_ink/ui/pages/connected_chat_page/connected_chat_page.dart`, `_sendText`), a file only when
-the user picks it. An app link (`https://ink.fuzzzycore.com/…`, below) **prefills** the input field and
-navigates; it decrypts nothing (§7.5).
+Blobs move by copy and paste. Only sealed output (and, behind a switch, a safe password) can be copied; every
+copy clears itself after a short time and when the app locks, while it is still the app's (§7.3). Text fields
+that hold a secret or plaintext — passwords (shown or hidden), the recovery key, the message on Lock, the Basics
+text and key, opened safe items — offer only Paste, Select all, Delete and the camera's text scan: no Copy, Cut,
+Share, Look Up, Search or another app's text action (Android's "Translate" and the like are not listed at all),
+the copy shortcuts do nothing, and the keyboard is asked for no suggestions, no autocorrect and no personalised
+learning (`GuardedTextField`, `CopyGuard.plaintextContextMenuBuilder`; security review 2026-10-26). A keyboard
+that ignores that request, or a third-party keyboard with network access, is outside the model (§7.1).
+Private screens are kept out of screenshots, recordings and the app switcher where the system allows it (§7.2).
+Plaintext shown on screen is still readable by anything that can read or capture the screen. The app never
+decrypts a blob automatically: a message is decrypted only when the user pastes it into Open (the paste is the
+action), or taps **Open** on a message that came by link; a file only when the user picks it
+(`lib/src/fuzzzy_ink/bloc/open_flow_cubit/open_flow_cubit.dart`). An app link (`https://ink.fuzzzycore.com/…`,
+below) goes to Open, where the core's peek (`PROTOCOL.md` §7.4: a trial on a throwaway copy of each session,
+nothing spent, nothing kept, nothing shown but the person's name) finds whose it is, and the screen asks "Open the
+message from {name}?"; only the Open tap spends the message key. A reply link for an invite still waiting asks
+"Connect with {name}?" and completes the pairing only on Connect. A `.fuzz` file another app hands over takes the
+same path (`OpenArrivedFile`): a message or a person's file waits for Open, a reply for Connect. A second, different reply for a connected chat
+raises the "someone else answered" warning only if the core finds it really answers this chat's invitation
+(`check_acceptance`, `PROTOCOL.md` §4.5); anything else is "not a valid reply" (security review 2026-10-26, §7.5).
 
 ### 2.7 The transport channel — the app has none
 
@@ -239,13 +255,16 @@ e-mail, another messenger, a QR code, paper. The model therefore assumes the str
 **everything on the channel can be read, modified, replayed, reordered, delayed or dropped**, and says
 nothing about the channel's own security. The users' choice of channel is theirs.
 
-App links (`https://ink.fuzzzycore.com/invite#<payload>`, `…/accept#<payload>`, `…/message#<payload>`) are
-an app-layer convenience wrapper around the same blob — base64 JSON with the blob, a version and a type. The
-payload sits only after the `#`, the part of a URL a browser never sends to the web server, so the link page
-never receives it. They are verified Android App Links and iOS/macOS universal links (the domain declares the
-app), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is removed
-on every platform. Links carry no expiry; the core never saw one anyway (`PROTOCOL.md` §4.6). They are
-subject to everything above; see §7.4 for what the message link adds in the clear.
+App links (`https://ink.fuzzzycore.com/invite#<blob>`, `…/accept#<blob>`, `…/message#<blob>`) are an
+app-layer convenience wrapper around the same blob: the `Fuzz/` text without its prefix (base64url, no
+padding), nothing else, at most 8 192 characters. The payload sits only after the `#`, the part of a URL a
+browser never sends to the web server, so the link page never receives it. They are verified Android App Links
+and iPhone universal links (the domain declares the app; the production verification files name the production
+app only), so another app cannot claim them the way it could claim the old `fuzzylink://` scheme, which is
+removed on every platform. macOS has no associated domain: on a Mac, links are pasted into Open. Any app on an
+Android phone can still *send* the app a link (the activity is exported); that is why a link never opens or
+connects anything without the user's tap (§2.6, §7.5). Links carry no expiry; the core never saw one anyway
+(`PROTOCOL.md` §4.6). They are subject to everything above.
 
 ### 2.8 OS and cloud backups
 
@@ -358,7 +377,7 @@ An adversary who controls the victim's OS is not on this list (§7.1).
   from the bytes.
 - **What ADV-1 still gets:** the existence, timing, length and channel metadata of every blob; the pairing
   blobs' public keys and the chat id inside them (`PROTOCOL.md` §6.3–6.4; nothing secret is in a pairing
-  blob); and — if the sender used "Copy as link" — the chat id in the message link (§7.4).
+  blob). Message links carry the blob only (§7.4).
 
 ### 4.2 ADV-2 — active attacker on the channel
 
@@ -422,18 +441,30 @@ locked — by the Lock button, the idle time or the time in the background; no b
   `Argon2id(password, m = 64 MiB, t = 4, p = 1)` with a random salt — the master password (strength "good" or
   better) and the recovery key (152 random bits) — in the OS secure storage (`PROTOCOL.md` §10.2, §11).
   Offline guessing costs one 64 MiB Argon2id run per candidate (≈ 0.12–0.14 s per guess on a 2021 laptop,
-  release build); in the app, wrong master passwords start growing waits after five. Tests:
+  release build); in the app, wrong master passwords start growing waits after five, counted on every form that
+  takes the master password (unlock, change password, fingerprint, new recovery key, both safe switches) and
+  kept across restarts; My safe's own password has its own count. The wait is also kept on a monotonic clock
+  while the app runs, so setting the clock forward does not end it; a restart after doing so does (the stored
+  end is wall-clock time). Tests:
   `master::tests::password::wrong_password_rejected`,
   `master::tests::password::tampered_blob_is_wrong_password_not_a_panic`,
   `api::core::tests::a_store_wrap_from_another_device_does_not_open`.
 - The vault key is wrapped under the master key by default (`0x20`, AAD `vault-key-wrap`) or under the vault's
   own password (`0x10`, AAD `vault-key`) and then also sealed to the recovery lock (`0x11`, AAD
   `vault-key-recovery`, opened only by the recovery key); vault items are sealed under it, each bound to its id
-  and version (`PROTOCOL.md` §6.10, §10.6). Tests: `vault::tests::wrong_password`,
-  `vault::tests::seal_open_tamper_detected`, `vault::tests::item_is_bound_to_its_id_and_version`,
-  `api::vault::tests::own_password_and_back_keep_every_item`,
-  `api::vault::tests::the_recovery_key_opens_a_vault_with_its_own_password`,
-  `master::tests::recovery_lock::only_the_recovery_key_of_the_lock_opens_a_box`.
+  and version (`PROTOCOL.md` §6.10, §10.6). A vault gets its own password only by moving to a **new** vault key
+  and a **new** recovery key at once (`vault_use_own_password`, then `vault_reseal` per item and one atomic
+  commit, `PROTOCOL.md` §10.6): a copy of the old `vault.meta` plus the master password yields the old key, which
+  opens nothing the vault holds afterwards, and a recovery key somebody made earlier with the master password
+  opens neither the new box nor, once the app has replaced the wrap, the master key. Tests:
+  `vault::tests::wrong_password`, `vault::tests::seal_open_tamper_detected`,
+  `vault::tests::item_is_bound_to_its_id_and_version`,
+  `api::vault::tests::its_own_password_draws_a_new_key_the_old_wrapping_cannot_reach`,
+  `api::vault::tests::a_recovery_key_planted_earlier_does_not_open_the_switched_vault`,
+  `api::vault::tests::the_recovery_key_shown_at_the_switch_opens_the_vault`,
+  `master::tests::recovery_lock::only_the_recovery_key_of_the_lock_opens_a_box`;
+  `test/src/fuzzy_vault/storage/local_data_sources/vault_file_data_source_test.dart` (a stop before the commit
+  keeps the old vault, after it the move is finished).
 - **Limit — the recovery key.** Whoever holds the printed or saved recovery key opens the master key exactly
   like the master password, and sets a new one — and opens a vault with its own password too, giving it a new
   password or putting it back under the master password. It is not guessable (152 bits; a full Argon2id run per
@@ -447,10 +478,11 @@ locked — by the Lock button, the idle time or the time in the background; no b
   when, how much, file names, and the ciphertext blobs. Files the app keeps are sealed (A12, since
   2026-10-26); a file the user saved or shared earlier is wherever the user put it, readable by anyone who can
   read that place (§2.5, R36).
-- **Limit — a password change never rotates a key.** Changing the master password, using the recovery key,
-  making a new recovery key, or changing or switching the vault password only *re-wraps* the same 32-byte master
-  key or vault key (`PROTOCOL.md` §10.2 "nothing else is keyed by the password", §10.6 "items are never
-  re-encrypted"); no re-key path exists in the crate or the app. So a copy of the secure-storage blobs taken
+- **Limit — a password change rotates no key, with one exception.** Changing the master password, using the
+  recovery key, making a new recovery key, changing the vault's own password or putting the vault back under the
+  master password only *re-wraps* the same 32-byte master key or vault key (`PROTOCOL.md` §10.2 "nothing else is
+  keyed by the password", §10.6). The one rotation is the vault getting its own password, which draws a new vault
+  key (above); the master key and the store key are never rotated. So a copy of the secure-storage blobs taken
   with an old password (or an old recovery key) known — a macOS development-flavour keychain read, a
   Linux/Windows user-profile backup (§2.8) — stays openable with that old password forever. The same holds for the vault's `0x10` blob
   (`vault.meta`, §2.5), which travels with any copy of the vault folder, plus the vault password. The only remedy is to delete every
@@ -464,10 +496,13 @@ locked — by the Lock button, the idle time or the time in the background; no b
   carries its chat's history key. Honestly stated: the per-chat key limits the blast radius of a *history-key*
   leak (one chat's history, on one device), not of a *store-key* or password leak (every chat).
 - **A device seized while the app is unlocked is this case with no password needed** — but only until the
-  whole-app auto-lock: after the idle time without a touch (1, 5 — the default — 15 or 30 minutes), once the
-  app has been in the background for the chosen time (at once, 1 minute — the default — or 5 minutes), or at
-  once with the Lock button. Locking closes the store (its key and every cached state are wiped in the core)
-  and the vault. The times are sealed under the store key, so editing a file cannot loosen them (`PROTOCOL.md`
+  whole-app auto-lock: Settings offers "Lock the app after" right away, 1 minute, 5 minutes (the default),
+  15 minutes or 1 hour of no touch, and leaving the app locks it after 1 minute away (at once with "right
+  away"); or at once with the Lock button. The time away is measured on the wall clock and on a monotonic
+  clock, the longer counts, and a wall clock set back locks at once, so moving the device clock never skips the
+  lock on return (security review 2026-10-26). Locking closes the store (its key and every cached state are
+  wiped in the core) and the vault, clears the app's copy from the clipboard and wipes every plain hand-off and
+  picker copy. The times are sealed under the store key, so editing a file cannot loosen them (`PROTOCOL.md`
   §10.7). Residual: up to the idle time with the app in the foreground (R21).
 - **What the ratchet still bounds — past messages.** Blobs the user had already read *before* the theft are
   gone from the state — their keys were deleted on use (`PROTOCOL.md` §14 step 3) — so a blob captured on the
@@ -625,7 +660,7 @@ Findings F-1 … F-9 are the nine defects the hardening brief opened (§6).
 | T22 | Post-quantum adversary records pairing blobs and messages | none in this version | §17.12 | — | **Non-goal** (§7.9); hybrid ML-KEM is the next protocol project (R22) |
 | T23 | A dependency, toolchain or CI runner ships different bytes than reviewed | `Cargo.lock` + `--locked`, committed vectors fail on any byte change, two-runner reproducible Rust core, `SHA256SUMS` + provenance attestation, SBOM drift gates | §12, §15, Appendix A; [`RELEASE.md`](RELEASE.md) | — | Flutter AOT not reproducible; as of `v1.0.0-rc.1` the Android APK's core differs from the reproduced library by one linker flag's `.hash` section (`RELEASE.md` §5, §9.2 — matched byte-for-byte after the tag with cargokit's link flags plus the packaging strip; `attest` gates both shipped cores against the rebuild from the next tag), and rc.1's compare gate was inert (evidence = the two `rust-repro-*` artifacts + review); release tags are signed with the real keys or stop — Android key from secrets, macOS Developer ID + sandbox check + notarization, Windows signing a placeholder (`RELEASE.md` §2, 2026-10-26); non-tag CI builds are unsigned proofs; a build with `--cfg fuzzing` would silently disable signature checks (§9.4) |
 | T24 | OS / cloud backup carries the store, the plaintext metadata and (per platform) the wrapped key off the device | Opted out everywhere since `6ecd9f1`: Android `allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` (cloud backup and device transfer) excluding every domain; darwin `NSURLIsExcludedFromBackupKey` on Application Support at launch + `ThisDeviceOnly` keychain items | §10.5; §2.8 here; `test/platform/backup_opt_out_test.dart` | manifest + rules + darwin-source assertions; merged manifest checked with `aapt2` | Before the fix: metadata readable by the backup provider on every platform; on **iOS** (and the macOS development flavour) the key item restored even to a new device (R33 copy case). After it: no platform backup carries the store, the database or the key; Linux/Windows have no platform backup to opt out of (a user's own profile backup still carries the store directory — R34) |
-| T25 | Unfuzzed file plaintext read from the device (thief, malware, another app or user on a desktop, a profile backup) | Since 2026-10-26 the app keeps only sealed files in private storage; a plain copy lives for one use in the private hand-off folder and is wiped right after, when the page closes and at every launch, together with the picker's cache copies and old share staging; Android: no storage permission, no Downloads/MediaStore, FileProvider limited to the hand-off folder; iOS: Documents no longer shown in the Files app; no plain file is handed to another app to open | §9.6, §10.5, §17.15; §2.5, §7.13 here | `user_file_store_test.dart`, `user_files_test.dart`, `file_processing_cubit_test.dart`, `chat_file_cubit_test.dart` | A hand-off copy is plaintext while in use (default file mode; a kill leaves it until the next launch; an Android share target may still read after the app wipes on return); a file the user saved or shared is the user's ("protect it like any other file", About encryption, README); R36 |
+| T25 | Unfuzzed file plaintext read from the device (thief, malware, another app or user on a desktop, a profile backup) | Since 2026-10-26 the app keeps only sealed files in private storage; a plain copy lives for one use in the private hand-off folder and is wiped right after, when the page closes, when the app locks and at every launch, together with the picker's copies (Android `cache/file_picker`, the iPhone's `tmp/`) and old share staging; a kept received file is named after the name sealed inside it, not its outside name; Android: no storage permission, no Downloads/MediaStore, FileProvider limited to the hand-off folder; iOS: Documents no longer shown in the Files app; no plain file is handed to another app to open | §9.6, §10.5, §17.15; §2.5, §7.13 here | `user_file_store_test.dart`, `user_files_test.dart`, `file_processing_cubit_test.dart`, `chat_file_cubit_test.dart` | A hand-off copy is plaintext while in use (default file mode; a kill leaves it until the next launch; an Android share target may still read after the app wipes on return); a file the user saved or shared is the user's ("protect it like any other file", About encryption, README); R36 |
 | T26 | The archive export leaks history: plaintext residue during or after the seal, or a weak archive password guessed offline | Plaintext JSON lines exist only in the app-support directory for the seal's duration and are deleted in `finally`; the store must be open; the dialog refuses weak/fair passwords; the container is Argon2id (m = 64 MiB, t = 4) password mode (§9.5, §11); share staging holds sealed bytes only | §9.5, §11; §2.5 here | — | A process **kill** mid-seal leaves `chat_archive_<chat id>.jsonl` until the next launch, whose sweep deletes it (since 2026-10-26); the archive is outside forward secrecy by design — its security is the password; R35 |
 
 ---
@@ -664,14 +699,38 @@ and trusts the OS for memory isolation, randomness (`getrandom`), file permissio
 
 ### 7.2 Screen capture
 
-Plaintext must be shown to be read. Screenshots, screen recording, shoulder surfing, accessibility services
-that read the widget tree — out of scope. The app sets no secure-window flag.
+Plaintext must be shown to be read. Shoulder surfing and accessibility services that read the widget tree are out
+of scope. Since 2026-10-26 private screens (`SensitiveScreen`: unlock and recovery, setup's password and key steps,
+My safe, Open's password and opened items, Lock's typing step, a person's page and history items, Basics, the
+settings password pages, the file viewer, the recovery-key print sheet) are protected where the system allows it:
+Android `FLAG_SECURE` (screenshots, recordings and the recents thumbnail come out blank); iPhone a secure layer plus a
+cover while inactive or being recorded (it relies on the system's layer layout and would fail silently if Apple
+changed it); macOS `sharingType = .none` (reported to be ignored by ScreenCaptureKit on macOS 15 — not checked);
+Windows `WDA_EXCLUDEFROMCAPTURE` (or `WDA_MONITOR` before Windows 10 2004). Linux has none. Desktops have no
+app-switcher cover.
 
 ### 7.3 Clipboard sniffing
 
-A blob on the clipboard is readable by any app the OS allows. That is ciphertext (harmless to ADV-1 beyond
-metadata), but a *decrypted* message the user copies is plaintext on the clipboard. The app does not clear
-or time out the clipboard.
+Only sealed output (a `Fuzz/` text or a link carrying one, which is ciphertext — harmless to ADV-1 beyond
+metadata) and, while Settings → My safe → Copy passwords is on, a safe password can be copied
+(`lib/src/core/utils/copy_guard.dart`); no decrypted message, file path or other plaintext can, and plaintext
+fields offer no Copy, Cut, Share, Look Up, Search or other apps' text actions (§2.6). While a copy is on the
+clipboard any app the OS allows can read it. Every copy clears itself — sealed output after 2 minutes, a safe
+password after 30 seconds — and when the app locks, but only while the clipboard still holds the app's copy. What
+holds per system for a safe password (security review 2026-10-26; needs a device check):
+- **Android:** marked sensitive (out of the clipboard preview and keyboards' clipboard history); its expiry is
+  timed natively and runs in the background, where a background app cannot look at the clipboard, so it is cleared
+  blind with `clearPrimaryClip` (API 28+) — text the user copied in another app within those 30 seconds is cleared
+  too. Also cleared when the activity is destroyed. A killed process clears nothing; Android 13+ drops the clip
+  after about an hour. Sealed output is cleared only once the app can see it is still its own (on return).
+- **iPhone:** local only (no Universal Clipboard) with the system's own expiry.
+- **macOS:** concealed and transient types (clipboard managers that honour them skip it); cleared after its time
+  and when the app quits; a force-quit clears nothing.
+- **Windows:** written natively with `ExcludeClipboardContentFromMonitorProcessing`,
+  `CanIncludeInClipboardHistory = 0` and `CanUploadToCloudClipboard = 0`, so Win+V history, the cloud clipboard
+  and well-behaved clipboard monitors leave it out; cleared after its time and when the window closes. A third-party
+  clipboard manager that ignores these formats keeps it.
+- **Linux:** the Flutter clipboard only; a clipboard manager may keep a copy.
 
 ### 7.4 Metadata
 
@@ -683,15 +742,11 @@ database out of platform backups (§2.8, R34; a user's own Linux/Windows profile
 Sealing chat names and vault titles is the same `seal_local` call on more columns —
 a documented follow-up, not this build (R11).
 
-Also in the clear, at the app layer only: a **"Copy as link"** message link
-(`https://ink.fuzzzycore.com/message#<base64 JSON>`, `lib/src/core/services/fuzzy_link/`) carries the
-**chat id** next to the blob so the receiving app can open the right chat. The raw `Fuzz/` blob never does
-(`PROTOCOL.md` §6.5). A user who shares links rather than blobs gives an observer a stable identifier that
-groups every link of one chat (only the device that opens the link sees it: it sits after the `#`). The leak is
-metadata-only: the receiving app uses `c` for a read-only database lookup and navigation, the crate takes
-the chat id from the database record, and a blob under the wrong `c` dies at the Olm MAC with no state
-change; an observer who saw the pairing blobs already knows the chat id. This is a product choice inherited
-from before the hardening; it is recorded as R12 for the owner (decision D-7), with both costs stated there.
+A message link (`https://ink.fuzzzycore.com/message#<blob>`, `lib/src/core/services/fuzzy_link/`) carries the
+blob and nothing else. Until 2026-10-26 it also carried the chat id in the clear, a stable identifier grouping
+every link of one chat; the receiving app now finds the chat with the core's peek (`PROTOCOL.md` §7.4), so the
+chat id is gone from message links (security review 2026-10-26, R12 closed). Pairing links still carry what the
+pairing blobs carry: public keys and the chat id inside them (`PROTOCOL.md` §6.3–6.4).
 
 ### 7.5 The 8-byte Olm v1 MAC — and why no forgery oracle exists here
 
@@ -711,12 +766,17 @@ classic setting is a server that decrypts on arrival. Fuzzzy Ink has none:
    inner header naming this chat, both identity keys, the right direction and a fresh counter, or the
    result is `Corrupt`/`WrongChat` with no state change — indistinguishable from a MAC failure to anyone
    but the user holding the device.
-4. **There is no network to signal anything.** The crate has no network code; the app has no server; a
-   deep link prefills a text field and decrypts nothing (§2.6).
+4. **There is no network to signal anything.** The crate has no network code; the app has no server. A link
+   is recognised by the peek on arrival — a trial on a throwaway copy of each connected session whose only
+   outcome is the person's name on the user's own screen — and is opened only on the user's Open tap (§2.6).
+   Another app on the phone can fire links (the Android activity is exported), but it learns nothing back:
+   the answer is on screen only, and nothing is spent or written.
 
-**The design rule that keeps this true, stated for every future change:** *no code path may ever decrypt
-a message or file automatically on paste, on link open, on clipboard change or on file arrival, and no
-code path may report a decryption outcome to anything outside the device.* Adding either would turn the
+**The design rule that keeps this true, stated for every future change:** *no code path may ever open (spend) a
+message or file automatically on link arrival, on clipboard change or on file arrival — only on the user's own
+paste into Open, Open tap or file pick — and no code path may report a decryption or peek outcome to anything
+outside the device.* The peek is the one read-only trial that runs on arrival (since 2026-10-26, for message
+links); it spends nothing and writes nothing, and its result is shown, never sent. Adding either would turn the
 user-as-oracle argument into a real oracle and would require revisiting this section and, most likely, the
 MAC length (R23). Pairing blobs are not affected by the MAC length at all: they are authenticated by a full
 64-byte Ed25519 signature (`PROTOCOL.md` §4.1).
@@ -866,7 +926,7 @@ Also relevant to this model, as decided on 2026-09-13: **D-2** safety number acc
 **D-6** the Android keystore move to the owner's Codemagic pipeline (a signed macOS build additionally needs the
 `com.apple.security.files.user-selected.read-write` entitlement for the file picker and the archive save panel);
 **D-5** private vulnerability reporting is enabled, the `security@` route and the website's `security.txt` are
-owner/ops items (R29); **D-7** keep the chat id in message links and state it (done in the copy); **D-10** the
+owner/ops items (R29); **D-7** keep the chat id in message links and state it (superseded 2026-10-26: the chat id is gone from message links, R12); **D-10** the
 hardened build ships as `v1.1.0`. D-4 (build fully, then test) and D-8/D-9 were applied.
 
 ---
@@ -990,7 +1050,7 @@ studio's flow directory; the review ids below are those records).
 | R9 | **Corrupt or cancelled chat-mode file consumes its message** — terminal for that container. | `PROTOCOL.md` §17.5; F3-2 review §3/N4; F3-3 review N2 | product copy |
 | R10 | **Archive export and trade-off copy — built** (F2-10 `d2a2f15`, F2-11 `57ad6d4` + `f88774b`, 2026-09-13). History leaves the app by the export (R35) or by copying messages; the copy states the single-use rule, the 63-behind window, the new-device rule, the text-only seal and the files-in-the-clear fact (§8). | §8; `PROTOCOL.md` §9.5 | closed |
 | R11 | **`getMessagesForChat` degrades on a locked store**: every text row reads as an empty string with a logged warning. Since F2-10 the row carries `isUnreadable` (set when the seal is absent, malformed, or the core answers `Corrupt` / `UnknownChat` / `StoreLocked`) and the archive export returns `storeLocked` before it touches the file system, so a blank-rows archive cannot be produced; an unreadable row exports as `"unreadable": true`. The UI still renders such a row as an empty message (only the export reads the flag). | F2-8 review §8; F2-10 review §1–3 | closed (residual: the UI shows `''`, not a marker — product) |
-| R12 | **The "Copy as link" message link carries the chat id in the clear**; pairing links carry `exp`. The raw blob does not. Both options have a cost, for D-7: **keep `c`** — a stable per-chat identifier on every message link (metadata only, §7.4); **drop `c`** — link routing disappears, because the blob carries no chat id (`PROTOCOL.md` §6.5) and the only way to route without one would be to trial-decrypt across every chat's session on link open, which the §7.5 rule forbids — a message link could then only prefill the currently open chat or ask the user to pick one. | §7.4; hardening plan §H (internal) rule "no chat id in the clear without a threat-model note" | owner |
+| R12 | **Closed 2026-10-26.** Message links carried the chat id in the clear. They now carry the blob only; the receiving app finds the chat with the read-only peek (`PROTOCOL.md` §7.4) and opens the message only on the user's Open tap (§7.5). Pairing links never carried an expiry any more and carry what the pairing blob carries. | §7.4; security review 2026-10-26 (L5) | — |
 | R13 | **A cancelled chat receive** shows no failure reason, and the next attempt on the same container reads "already unfuzzed". | F3-3 review N2 | product copy |
 | R14 | **Peer-chosen file names are not display-safe** (a Unicode direction override is a valid name). **Mitigated 2026-10-22 (security review item 4):** every shown file name has its direction controls and control characters removed (`UserFileNames.forDisplay`). **Since 2026-10-26** the app never hands a plain file to another app to open: images and text are shown in the app, anything else offers Save only, so the extension denylist and "Show in folder" are gone with the risk they guarded. Remaining: a file the user saves and then opens from their own file manager is theirs to judge; the failed-files snackbar prints the *input* container name unsanitised. | `PROTOCOL.md` §7.3; F3-2 review N1; F3-3 review §1; security review 2026-10-22 | product |
 | R15 | **Output collisions overwrite silently** (`<chat>/<originalName>`), and the name is now peer-chosen. **Mitigated 2026-10-22 (security review item 5):** the app picks the output path before the core runs and never picks an existing name or one with a `.part` beside it — `name (1).ext`, `name (2).ext`, … (`UserFileNames.uniqueOutputPath`, for chat receive and send and both Basics directions); since 2026-10-26 chat files go to the app-private `sealed_files/chats/<safe chat name> (<first 8 of the chat id>)/` and Basics files to `sealed_files/basics/`, and plain copies to a fresh hand-off folder per use, so nothing the app writes can land in a user folder or another chat's. The core is unchanged (its final rename still replaces), so a file another program creates under the chosen name *while* a job runs is replaced. | `PROTOCOL.md` §9.3, §10.5; F3-3 review N3; security review 2026-10-22 | product |
@@ -1011,12 +1071,16 @@ studio's flow directory; the review ids below are those records).
 | R30 | **Two processes on one store**: refused by an exclusive lock since 2026-10-26 (the second gets `Io`). `.part` files survive a process kill. | `PROTOCOL.md` §17.10–17.11 | lock (two processes); none for `.part` (documented) |
 | R31 | **Pairing has no timeout**: a pending chat keeps its account and one-time key until accepted, regenerated or deleted; the link-level `exp` is a hint the core never checks. | `PROTOCOL.md` §4.6 | product |
 | R32 | **No post-compromise security until the peer ratchets.** A copied state file (thief with the password, malware on an unlocked device, a user-made backup of the store directory) holds the current receiving chain key of each chat and decrypts every message the peer generates on that chain until this device sends a message carrying a new ratchet key and the peer has received it — the peer's next message is then on a chain the copy lacks; no victim read is required, and messages the peer generated before receiving it stay readable by the copy. Nothing forces the victim to send. Past messages stay protected (forward secrecy). No mitigation in scope; candidates (forcing a ratchet step on every send, or re-keying on unlock) are a protocol change for a later version. | `PROTOCOL.md` §8.1, §14 point 3 (verified against the crate: a copy of B's state opened three messages A generated afterwards, and got `Corrupt` on A's first message after A had received B's reply), §17.14; F5-1 security audit finding M1 | planner (format v2 candidate); product copy |
-| R33 | **No store or vault re-key; a leaked key outlives every password change.** `change_master_password`, `recover_master_password`, `new_recovery_key`, `vault_rewrap` and the vault switches re-wrap the *same* 32-byte keys; nothing is re-sealed, no re-key path exists. A store key or vault key read from the unlocked process, or a copy of the secure-storage blobs whose (old) password or recovery key is known — a macOS development-flavour login-keychain read, a Linux/Windows user-profile backup (§2.8; **not** an Android backup, whose entry is Keystore-bound; since `6ecd9f1` no platform backup carries the item) — opens every present and future state file — and, through the history key each state file carries, every chat's local seals — and vault item after any password change, recovery or re-pair. The per-chat history key (F2-12) does not change this: it is sealed *under* the store key, not beside it. Remedy today: delete every chat and the vault, or wipe the app (deleting one chat does destroy that chat's history key). Format v2 candidate: re-key = re-seal all state under a fresh store key. | `PROTOCOL.md` §10.2, §10.6; F4-1 review ("the master key never changes"), F4-2 review §2; §4.3, §4.5 | planner (format v2); product copy |
+| R33 | **No store re-key, and a vault re-key only when the vault gets its own password; a leaked key outlives every other password change.** `change_master_password`, `recover_master_password`, `new_recovery_key`, `vault_rewrap`, `vault_use_master_password` and `vault_recover` re-wrap the *same* 32-byte keys; nothing is re-sealed. Since 2026-10-26 `vault_use_own_password` draws a new vault key and the app re-seals every item to it (security review M1), so a vault key leaked before that switch opens nothing written after it; it is the only re-key path. A store key or vault key read from the unlocked process, or a copy of the secure-storage blobs whose (old) password or recovery key is known — a macOS development-flavour login-keychain read, a Linux/Windows user-profile backup (§2.8; **not** an Android backup, whose entry is Keystore-bound; since `6ecd9f1` no platform backup carries the item) — opens every present and future state file — and, through the history key each state file carries, every chat's local seals — and vault item after any password change, recovery or re-pair. The per-chat history key (F2-12) does not change this: it is sealed *under* the store key, not beside it. Remedy today: delete every chat and the vault, or wipe the app (deleting one chat does destroy that chat's history key). Format v2 candidate: re-key = re-seal all state under a fresh store key. | `PROTOCOL.md` §10.2, §10.6; F4-1 review ("the master key never changes"), F4-2 review §2; §4.3, §4.5 | planner (format v2); product copy |
 | R34 | **OS / cloud backups — fixed in `6ecd9f1`** (`allowBackup="false"` + `fullBackupContent` + `dataExtractionRules` on Android; `NSURLIsExcludedFromBackupKey` on Application Support and `ThisDeviceOnly` keychain items on darwin). Residual: Linux and Windows have no platform backup to opt out of, so a user's own full-profile backup still carries the store directory, the database and the vault folder (the key stays in the login keyring / DPAPI store); on Windows, OneDrive folder backup (often on by default) uploads Documents and with it every file the user saved there (and the unfuzzed files builds before 2026-10-26 left in `Documents/Fuzzzy Ink/`), and a domain roaming profile copies Roaming AppData; on darwin the exclusion is applied to the directory at launch, so a backup made before the first launch of a build ≥ `6ecd9f1` may still hold the older files; the **macOS development flavour** keeps its key item in the login keychain, where `ThisDeviceOnly` is not enforced (only the data-protection keychain enforces it), so that flavour's item still travels with a Time Machine copy of the keychain file; and the product copy says "a new device, or a fresh install, cannot re-read old blobs, and there is no cloud copy" (README, F2-11) rather than naming OS backups explicitly — sufficient for the user, noted for the copy's next pass. | §2.8; T24; `AndroidManifest.xml`, `res/xml/*.xml`, `AppDelegate.swift`, `MainFlutterWindow.swift`, `default_constants.dart`; owner decision D-8 | product copy (F2-11) |
 | R35 | **The archive export is plaintext under a password, outside forward secrecy — by design — and its working file is not `0o600`.** During an export the chat's rows exist in the clear as `<app support>/chat_archive_<chat id>.jsonl` for the seal's duration (default file mode; Dart cannot set `0o600` — routing the temp through the crate's `store::create_tmp` would close that); a process kill mid-seal leaves the file until the next launch, whose sweep deletes it (2026-10-26); on Android and iOS the sealed container goes through the private hand-off folder to the save dialog and is wiped right after (sealed bytes only). Once exported, the archive's only protection is the user's password against offline Argon2id-bounded guessing (the dialog refuses weak/fair passwords); a lost archive is the chat's history, readable by whoever guesses the password, forever. | §2.5, §7.13, T26; `PROTOCOL.md` §9.5, §11; F2-10 review N1–N2 | developer (`0o600` via a Rust temp helper) — non-blocking; boot sweep done 2026-10-26 |
 | R36 | **Files the user takes out are in the clear.** Since 2026-10-26 the app keeps only sealed files and wipes every plain copy after its one use (A12, §2.5); what remains plain: a hand-off copy while it is shown, saved or shared (user-private storage, default file mode, wiped on use, on page close and at launch; a process kill or an Android share target that reads late are the gaps), and every file the user saves or shares — the product's purpose (a file is decrypted in order to be used), stated in the About-encryption page and the README. Builds before 2026-10-26 wrote unfuzzed files to Documents / Android Downloads; no migration removes those (pre-launch). | §2.5, §7.13, A12, T25; `PROTOCOL.md` §9.6, §10.5, §17.15 | product |
-| R37 | **The recovery key is a second password for everything the master password opens.** Printed or saved by the user (the app offers the system save dialog — a file the user can print — and never the clipboard); whoever finds it opens the app. A skipped key leaves none; a new key deletes the old wrap, lock and vault box at once. It also opens a vault that has its own password (owner, 2026-10-26: a `0x11` box sealed to the recovery lock), so a vault's own password guards against someone with the master password, not against the recovery key; a new key needs the vault's password to keep that vault recoverable. Without a kept recovery key such a vault is lost with its password (said where the user chooses it). | `PROTOCOL.md` §10.2, §10.6 | product (copy) |
+| R37 | **The recovery key is a second password for everything the master password opens.** Printed or saved by the user (the app offers the system save dialog — a file the user can print — and never the clipboard); whoever finds it opens the app. A skipped key leaves none; a new key deletes the old wrap, lock and vault box at once. It also opens a vault that has its own password (owner, 2026-10-26: a `0x11` box sealed to the recovery lock), so a vault's own password guards against someone with the master password, not against the recovery key; a new key needs the vault's password to keep that vault recoverable. The key that opens such a vault is always one the user was shown when the vault got its own password, or later with the vault's password — giving the vault its own password ends the earlier key and shows a new one (security review 2026-10-26), so a key made by somebody else with the master password before then opens nothing. Without a kept recovery key such a vault is lost with its password (said where the user chooses it). | `PROTOCOL.md` §10.2, §10.6 | product (copy) |
 | R38 | **Rollback of a vault item together with its database row**, or of the whole device to an older snapshot, is not detected: the item's version lives in the plaintext index, and there is no trusted counter. Swapping items, or putting back an older file alone, is detected. | `PROTOCOL.md` §10.6; T27 | none (documented) |
+| R39 | **Screen protection is best-effort and absent on Linux.** Private screens use `FLAG_SECURE` (Android), a secure layer plus a cover (iPhone — relies on the system's layer layout; would fail silently if Apple changed it), `sharingType = .none` (macOS — reported to be ignored by ScreenCaptureKit on macOS 15, not checked) and `WDA_EXCLUDEFROMCAPTURE` (Windows). Linux has nothing; desktops have no app-switcher cover. Accessibility services read any screen. | §7.2; security review 2026-10-26 (L4) | product; platform |
+| R40 | **The clipboard and keyboards are partly outside the app's control.** A safe password copy is cleared blind in the background on Android (which also clears text the user copied elsewhere in those 30 seconds), not at all after a process kill, and kept by Linux clipboard managers and by Windows or Mac clipboard tools that ignore the exclusion formats. The no-learning request to the keyboard is a request; a keyboard that ignores it, or one with network access, can keep what is typed. Strings in Dart (a typed password or recovery key) cannot be wiped (R19). | §2.6, §7.3; security review 2026-10-26 (M2, M3, I1) | product; user (choice of keyboard) |
+| R41 | **"Erase everything" does not reach outside the app or rewrite the disk.** It removes keys first, then every file and preference the app keeps, and the next launch compacts the database file; the pages the erase freed may stay on an SSD or a copy-on-write file system until overwritten (sealed columns were under the keys already removed; plaintext columns are metadata, §7.4). Anyone holding the phone can erase without a password (by design: it is the way out for a forgotten password and lost recovery key). | §2.5; security review 2026-10-26 (L6, I5) | none (documented) |
+| R42 | **A wrong-password wait set by the clock can be shortened by a restart.** While the app runs, the wait is also kept on a monotonic clock; after a restart only the stored wall-clock end remains, so setting the device clock forward and restarting the app ends a wait. Each attempt still costs a full Argon2id run, and a new password must reach "good". | §4.3; security review 2026-10-26 (L2) | none (documented) |
 
 ---
 
@@ -1058,7 +1122,7 @@ places where a fresh pair of eyes changes the risk.
 7. **Zeroization on the Rust side** — including the exact-size serialisation of pickles (`state.rs`) and
    the wiped Argon2 buffer — and an honest statement of what the Dart side cannot wipe (R19).
 8. **Metadata and what leaves the device (§7.4, §2.8, §7.13, R5, R12, R33, R34, R35, R36)** — whether the plaintext
-   columns, the chat id in message links, the residual backup paths after the opt-out, the absence of any re-key,
+   columns, the residual backup paths after the opt-out, the absence of any re-key,
    the plain hand-off copies while a file is in use and the archive export's working-file residue are acceptable
    for the product's threat population.
 9. **The windows (§7.7)** — whether 40 / 5 / 2000 / 63 match how people will actually use a paste-based

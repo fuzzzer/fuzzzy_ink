@@ -48,17 +48,92 @@ class VaultRepository {
 
   Future<VaultResponse<void>> saveMetadata(VaultMetadata metadata) async {
     try {
-      final jsonMap = {
-        'vaultId': metadata.vaultId,
-        'verificationToken': metadata.verificationToken,
-        'createdAt': metadata.createdAt.toIso8601String(),
-        'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
-        'customDirectoryPath': metadata.customDirectoryPath,
-      };
-      final bytes = utf8.encode(jsonEncode(jsonMap));
-      await fileDataSource.writeMetaAtomic(bytes);
+      await fileDataSource.writeMetaAtomic(_metaBytes(metadata));
       return const VaultSuccess(null);
     } catch (e) {
+      return VaultFailure(
+        VaultFailureType.storageWriteError,
+        message: e.toString(),
+      );
+    }
+  }
+
+  static List<int> _metaBytes(VaultMetadata metadata) => utf8.encode(
+        jsonEncode({
+          'vaultId': metadata.vaultId,
+          'verificationToken': metadata.verificationToken,
+          'createdAt': metadata.createdAt.toIso8601String(),
+          'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
+          'customDirectoryPath': metadata.customDirectoryPath,
+        }),
+      );
+
+  /// Moves the vault to a new key (its own password, security review
+  /// 2026-10-26): every item is re-sealed from [previous] to [key] beside its
+  /// old file, [beforeCommit] runs (a failure there stops the move), and one
+  /// rename then puts [metadata] — the new key's wrapping — in place, after
+  /// which the copies replace the old files. A stop before that rename keeps
+  /// the old vault whole; a stop after it is finished at the next read of the
+  /// metadata. An item with a password of its own (no screen makes one any
+  /// more) cannot be re-sealed without that password, so the move is refused
+  /// (`fileCorrupted`).
+  Future<VaultResponse<void>> rekey({
+    required VaultKey previous,
+    required VaultKey key,
+    required VaultMetadata metadata,
+    Future<VaultFailureType?> Function()? beforeCommit,
+  }) async {
+    var committed = false;
+    try {
+      final items = await itemDataSource.getAllItems();
+      if (items.any((item) => item.hasCustomPassword)) {
+        return const VaultFailure(
+          VaultFailureType.fileCorrupted,
+          message: 'An item with its own password cannot be moved',
+        );
+      }
+      await fileDataSource.beginRekey(_metaBytes(metadata));
+      for (final item in items) {
+        final bytes = await fileDataSource.readItem(item.itemId);
+        if (bytes == null) continue;
+        final resealRes = await cryptoRepository.reseal(
+          from: previous,
+          to: key,
+          itemId: item.itemId,
+          version: item.contentVersion,
+          blob: Uint8List.fromList(bytes),
+        );
+        if (resealRes is VaultFailure<Uint8List>) {
+          await fileDataSource.abandonRekey();
+          return VaultFailure(resealRes.type, message: resealRes.message);
+        }
+        await fileDataSource.stageRekeyedItem(
+          item.itemId,
+          (resealRes as VaultSuccess<Uint8List>).data,
+        );
+      }
+      final stop = await beforeCommit?.call();
+      if (stop != null) {
+        await fileDataSource.abandonRekey();
+        return VaultFailure(stop);
+      }
+      committed = true;
+      await fileDataSource.commitRekey();
+      fuzzyHub.sendSignal(const VaultDataUpdated());
+      return const VaultSuccess(null);
+    } on VaultMoveUnfinishedException {
+      return const VaultFailure(VaultFailureType.vaultMoveUnfinished);
+    } catch (e) {
+      // Before the commit the old vault stays. After it, the move is finished
+      // now if it can be, else at the next read of the metadata.
+      try {
+        if (!committed) {
+          await fileDataSource.abandonRekey();
+        } else if (await fileDataSource.finishInterruptedRekey()) {
+          fuzzyHub.sendSignal(const VaultDataUpdated());
+          return const VaultSuccess(null);
+        }
+      } catch (_) {}
       return VaultFailure(
         VaultFailureType.storageWriteError,
         message: e.toString(),

@@ -203,6 +203,13 @@ class _MessageBox extends StatelessWidget {
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
         contextMenuBuilder: CopyGuard.plaintextContextMenuBuilder,
+        // The message is plaintext until it is locked: no suggestions,
+        // autocorrect or keyboard learning (security review 2026-10-26).
+        autocorrect: false,
+        enableSuggestions: false,
+        enableIMEPersonalizedLearning: false,
+        smartDashesType: SmartDashesType.disabled,
+        smartQuotesType: SmartQuotesType.disabled,
         style: type.body.copyWith(color: colors.fieldText),
         cursorColor: colors.ink,
         decoration: InputDecoration(
@@ -308,7 +315,7 @@ class _PasswordFieldState extends State<_PasswordField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        FuzzzyTextField(
+        GuardedTextField(
           controller: widget.controller,
           label: localizations.lockPasswordLabel,
           obscure: true,

@@ -7,5 +7,5 @@ export 'crypto_core_received_file.dart';
 export 'crypto_core_recovery_key.dart';
 export 'crypto_core_response.dart';
 export 'crypto_core_vault_init.dart';
-export 'crypto_core_vault_wrapping.dart';
+export 'crypto_core_vault_own_password.dart';
 export 'file_benchmark_result.dart';

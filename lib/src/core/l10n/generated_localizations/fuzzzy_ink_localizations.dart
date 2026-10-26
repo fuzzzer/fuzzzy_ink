@@ -685,7 +685,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyHistory.
   ///
   /// In en, this message translates to:
-  /// **'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Files are kept the same way: the app keeps only the sealed file, and unfuzzes it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.'**
+  /// **'Every text you lock or open is kept in the app, sealed per person under a key only this device holds. Your master password protects every key: without it, or your recovery key, nothing kept here can be opened. My safe opens with the master password or with a password of its own; giving it its own password also gives it a new key and a new recovery key. Files are kept the same way: the app keeps only the sealed file and unlocks it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. The app locks itself after the idle time you choose, and when it has been in the background for a while. If you turn on fingerprint or face unlock, your password is stored on this device so your fingerprint or face can release it.'**
   String get aboutEncryptionBodyHistory;
 
   /// No description provided for @aboutEncryptionWindowTitle.
@@ -709,7 +709,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyLinks.
   ///
   /// In en, this message translates to:
-  /// **'A message copied or shared as a link carries the chat’s id next to the blob, so tapping the link opens the right chat. The id is not part of the secret, but anyone who sees the link can tell which chat it belongs to. The blob itself carries no chat id.'**
+  /// **'A link carries only the locked message, after the # — the part a browser never sends to any server. A link never opens anything by itself: the app shows who it is from and opens it only when you tap Open. A reply link connects you only when you tap Connect.'**
   String get aboutEncryptionBodyLinks;
 
   /// No description provided for @aboutEncryptionErrorsTitle.
@@ -1531,7 +1531,7 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'Links and QR codes open here by themselves.'**
+  /// **'Links and QR codes come here. Nothing opens until you tap Open.'**
   String get openLinksTip;
 
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
@@ -1755,6 +1755,60 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Reading…'**
   String get openReading;
+
+  /// A message came by link: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the message from {name}?'**
+  String openLinkTitle(String name);
+
+  /// A person's locked file another app handed over: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the file from {name}?'**
+  String openArrivedFileTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'It opens once, then it stays in your history with them.'**
+  String get openLinkLine;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openLinkOpen;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get openLinkNotNow;
+
+  /// A reply to your invite came by link: nothing connects until the person taps Connect (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with {name}?'**
+  String replyLinkTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect only if {name} sent you this reply.'**
+  String replyLinkLine(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get replyLinkConnect;
+
+  /// A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'A link is waiting. It opens when you leave this safe item.'**
+  String get linkWaitsForSafe;
 
   /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
   ///
@@ -2941,7 +2995,7 @@ abstract class FuzzzyInkLocalizations {
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
-  /// **'Your phone\'s share menu opens. Choose Print there.'**
+  /// **'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.'**
   String get accessPrintHint;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
@@ -3429,6 +3483,12 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'My safe now has its own password.'**
   String get accessSafeHasOwnPassword;
+
+  /// Safe gets its own password: a new safe key and a new recovery key are made in the same step (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Next you get a new recovery key. It opens My safe, and the old key stops working.'**
+  String get accessSafeGetsNewKey;
 
   /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
   ///

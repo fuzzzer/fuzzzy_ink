@@ -327,7 +327,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyHistory =>
-      'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Files are kept the same way: the app keeps only the sealed file, and unfuzzes it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.';
+      'Every text you lock or open is kept in the app, sealed per person under a key only this device holds. Your master password protects every key: without it, or your recovery key, nothing kept here can be opened. My safe opens with the master password or with a password of its own; giving it its own password also gives it a new key and a new recovery key. Files are kept the same way: the app keeps only the sealed file and unlocks it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. The app locks itself after the idle time you choose, and when it has been in the background for a while. If you turn on fingerprint or face unlock, your password is stored on this device so your fingerprint or face can release it.';
 
   @override
   String get aboutEncryptionWindowTitle => 'Unfuzz in order';
@@ -341,7 +341,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get aboutEncryptionBodyLinks =>
-      'A message copied or shared as a link carries the chat’s id next to the blob, so tapping the link opens the right chat. The id is not part of the secret, but anyone who sees the link can tell which chat it belongs to. The blob itself carries no chat id.';
+      'A link carries only the locked message, after the # — the part a browser never sends to any server. A link never opens anything by itself: the app shows who it is from and opens it only when you tap Open. A reply link connects you only when you tap Connect.';
 
   @override
   String get aboutEncryptionErrorsTitle => 'What the errors mean';
@@ -800,7 +800,8 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get openPasteItHint => 'Locked text, invite or reply';
 
   @override
-  String get openLinksTip => 'Links and QR codes open here by themselves.';
+  String get openLinksTip =>
+      'Links and QR codes come here. Nothing opens until you tap Open.';
 
   @override
   String get openNothingToPaste =>
@@ -919,6 +920,43 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get openReading => 'Reading…';
+
+  @override
+  String openLinkTitle(String name) {
+    return 'Open the message from $name?';
+  }
+
+  @override
+  String openArrivedFileTitle(String name) {
+    return 'Open the file from $name?';
+  }
+
+  @override
+  String get openLinkLine =>
+      'It opens once, then it stays in your history with them.';
+
+  @override
+  String get openLinkOpen => 'Open';
+
+  @override
+  String get openLinkNotNow => 'Not now';
+
+  @override
+  String replyLinkTitle(String name) {
+    return 'Connect with $name?';
+  }
+
+  @override
+  String replyLinkLine(String name) {
+    return 'Connect only if $name sent you this reply.';
+  }
+
+  @override
+  String get replyLinkConnect => 'Connect';
+
+  @override
+  String get linkWaitsForSafe =>
+      'A link is waiting. It opens when you leave this safe item.';
 
   @override
   String openedFromName(String name) {
@@ -1568,7 +1606,7 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get accessPrintHint =>
-      'Your phone\'s share menu opens. Choose Print there.';
+      'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.';
 
   @override
   String get accessPrintFailed =>
@@ -1822,6 +1860,10 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get accessSafeHasOwnPassword => 'My safe now has its own password.';
+
+  @override
+  String get accessSafeGetsNewKey =>
+      'Next you get a new recovery key. It opens My safe, and the old key stops working.';
 
   @override
   String get accessUseMasterPassword => 'Use master password';

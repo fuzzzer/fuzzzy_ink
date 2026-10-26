@@ -8,10 +8,16 @@ import 'package:google_fonts/google_fonts.dart';
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
 
+  /// Names the change only, never the states' contents: a state may hold
+  /// opened text, a password or a recovery key, and development and profile
+  /// builds print this log (security review 2026-10-26).
   @override
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
     super.onChange(bloc, change);
-    log('onChange(${bloc.runtimeType}, $change)');
+    log(
+      'onChange(${bloc.runtimeType}, '
+      '${change.currentState.runtimeType} → ${change.nextState.runtimeType})',
+    );
   }
 
   @override

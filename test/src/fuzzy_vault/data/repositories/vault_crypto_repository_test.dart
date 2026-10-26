@@ -105,6 +105,63 @@ void main() {
         customPassword: custom,
       );
 
+  /// A vault under the master key moved to its own password [_password]
+  /// the way the app does it: the new metadata and the recovery key the
+  /// switch made, which is kept unless [keep] is false. [moveItem] re-seals
+  /// one item from the old key to the new one before the keys close.
+  Future<({VaultMetadata metadata, String recoveryKey, Uint8List? moved})>
+      ownVault({
+    bool keep = true,
+    VaultMetadata? from,
+    Uint8List? moveItem,
+  }) async {
+    final underMaster =
+        from ?? _metadataOf(await repository.initializeVault(_master));
+    final changed = (await repository.useOwnPassword(
+      masterPassword: _master,
+      newPassword: _password,
+      metadata: underMaster,
+    ) as VaultSuccess<CryptoCoreVaultOwnPassword>)
+        .data;
+    Uint8List? moved;
+    if (moveItem != null) {
+      moved = _bytesOf(
+        await repository.reseal(
+          from: changed.previous,
+          to: changed.key,
+          itemId: _itemId,
+          version: 1,
+          blob: moveItem,
+        ),
+      );
+    }
+    for (final key in [changed.previous, changed.key]) {
+      await key.close();
+      key.dispose();
+    }
+    if (keep) {
+      expect(await repository.endRecoveryKey(), isA<VaultSuccess<void>>());
+      expect(
+        await repository.keepRecoveryKey(
+          PendingRecoveryKey(
+            recoveryKey: changed.recovery.recoveryKey,
+            recoveryWrap: changed.recovery.recoveryWrap,
+            recoveryLock: changed.recovery.recoveryLock,
+            vaultRecovery: changed.vaultRecovery,
+          ),
+        ),
+        isA<VaultSuccess<void>>(),
+      );
+    }
+    return (
+      metadata: underMaster.copyWith(
+        verificationToken: base64Encode(changed.wrapped),
+      ),
+      recoveryKey: changed.recovery.recoveryKey,
+      moved: moved,
+    );
+  }
+
   group('a vault the master password opens (the default)', () {
     test(
         'init → the master password opens it; the key sits under the master '
@@ -165,7 +222,9 @@ void main() {
       key.dispose();
     });
 
-    test('own password and back: the same key, every item still opens',
+    test(
+        'its own password: a new key, the items move to it, the old wrapping '
+        'opens none of them (security review 2026-10-26); back keeps the key',
         () async {
       final metadata = _metadataOf(await repository.initializeVault(_master));
       final key = _keyOf(await repository.unlock(_master, metadata));
@@ -193,24 +252,33 @@ void main() {
         ),
         VaultFailureType.incorrectMasterPassword,
       );
-      final own = _metadataOf(
-        await repository.useOwnPassword(
-          masterPassword: _master,
-          newPassword: _password,
-          metadata: metadata,
-        ),
-      );
+      final switched = await ownVault(from: metadata, moveItem: sealed);
+      final own = switched.metadata;
       expect(
         (repository.usesOwnPassword(own) as VaultSuccess<bool>).data,
         isTrue,
       );
+      expect(switched.recoveryKey, isNot(masterSetup.recoveryKey));
       expect(
         _failureOf(await repository.unlock(_master, own)),
         VaultFailureType.incorrectMasterPassword,
         reason: 'the master password no longer opens it',
       );
       final ownKey = _keyOf(await repository.unlock(_password, own));
-      expect(_openedOf(await open(sealed, ownKey)).version, 1);
+      expect(_openedOf(await open(switched.moved!, ownKey)).version, 1);
+      expect(
+        _failureOf(await open(sealed, ownKey)),
+        VaultFailureType.decryptionFailed,
+        reason: 'a new key: the old item file is not under it',
+      );
+      // Someone kept the old vault.meta and knows the master password.
+      final stale = _keyOf(await repository.unlock(_master, metadata));
+      expect(
+        _failureOf(await open(switched.moved!, stale)),
+        VaultFailureType.decryptionFailed,
+      );
+      await stale.close();
+      stale.dispose();
       await ownKey.close();
       ownKey.dispose();
 
@@ -226,7 +294,7 @@ void main() {
         isFalse,
       );
       final backKey = _keyOf(await repository.unlock(_master, back));
-      expect(_openedOf(await open(sealed, backKey)).version, 1);
+      expect(_openedOf(await open(switched.moved!, backKey)).version, 1);
       await backKey.close();
       backKey.dispose();
     });
@@ -236,9 +304,7 @@ void main() {
     test(
         'init → unlock → seal/open item → rewrap → old password rejected → '
         'close → locked', () async {
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+      final metadata = (await ownVault()).metadata;
       final wrapped = base64Decode(metadata.verificationToken);
       expect(wrapped.length, 103, reason: '0x10 blob: 6 + 16 + 9 + 24 + 48');
       expect(wrapped.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 0x01, 0x10]);
@@ -288,9 +354,7 @@ void main() {
 
     test('custom-password item round trip; wrong custom password rejected',
         () async {
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+      final metadata = (await ownVault()).metadata;
       final key = _keyOf(await repository.unlock(_password, metadata));
 
       final sealed = await seal(key, custom: _customPassword);
@@ -321,14 +385,7 @@ void main() {
 
     test('wrong password → incorrectMasterPassword; weak → weakPassword',
         () async {
-      expect(
-        _failureOf(await repository.initializeVault('abc', ownPassword: true)),
-        VaultFailureType.weakPassword,
-      );
-
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+      final metadata = (await ownVault()).metadata;
       expect(
         _failureOf(await repository.unlock('wrong', metadata)),
         VaultFailureType.incorrectMasterPassword,
@@ -365,9 +422,7 @@ void main() {
     });
 
     test('a tampered item is decryptionFailed', () async {
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+      final metadata = (await ownVault()).metadata;
       final key = _keyOf(await repository.unlock(_password, metadata));
 
       final sealed = await seal(key);
@@ -383,7 +438,7 @@ void main() {
   });
 
   group('the recovery key and a vault with its own password', () {
-    Future<void> keepRecoveryKey() async {
+    Future<void> keepFirstRunKey() async {
       expect(
         await chatAuthRepository.saveRecovery(
           PendingRecoveryKey(
@@ -402,13 +457,11 @@ void main() {
     }
 
     test(
-        'made with its own password: the recovery key opens it with a new '
-        'password; the master password does not', () async {
-      await keepRecoveryKey();
-      expect(await repository.hasRecoveryKey(), isTrue);
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+        'the recovery key shown at the switch opens it with a new password; '
+        'the earlier key and the master password do not', () async {
+      await keepFirstRunKey();
+      final switched = await ownVault();
+      final metadata = switched.metadata;
       final copy = await storedCopy();
       expect(copy, isNotNull);
       expect(copy!.length, 110, reason: '0x11: 6 + 32 + 24 + 48');
@@ -437,15 +490,27 @@ void main() {
       expect(
         _failureOf(
           await repository.recover(
-            recoveryKey: masterSetup.recoveryKey,
+            recoveryKey: switched.recoveryKey,
             newPassword: 'short',
             metadata: metadata,
           ),
         ),
         VaultFailureType.weakPassword,
       );
+      // The first run's key (or one somebody made with the master password
+      // before the switch) opens nothing any more.
+      expect(
+        _failureOf(
+          await repository.recover(
+            recoveryKey: masterSetup.recoveryKey,
+            newPassword: _newPassword,
+            metadata: metadata,
+          ),
+        ),
+        VaultFailureType.recoveryKeyWrong,
+      );
       final recovered = (await repository.recover(
-        recoveryKey: masterSetup.recoveryKey.toLowerCase(),
+        recoveryKey: switched.recoveryKey.toLowerCase(),
         newPassword: _newPassword,
         metadata: metadata,
       ) as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
@@ -469,22 +534,16 @@ void main() {
     test(
         'switched to its own password, then back to the master password by '
         'the recovery key; the copy is dropped after', () async {
-      await keepRecoveryKey();
+      await keepFirstRunKey();
       final underMaster =
           _metadataOf(await repository.initializeVault(_master));
       expect(await storedCopy(), isNull);
-      final own = _metadataOf(
-        await repository.useOwnPassword(
-          masterPassword: _master,
-          newPassword: _password,
-          metadata: underMaster,
-        ),
-      );
+      final switched = await ownVault(from: underMaster);
       expect(await storedCopy(), isNotNull);
 
       final recovered = (await repository.recover(
-        recoveryKey: masterSetup.recoveryKey,
-        metadata: own,
+        recoveryKey: switched.recoveryKey,
+        metadata: switched.metadata,
       ) as VaultSuccess<({VaultKey key, VaultMetadata metadata})>)
           .data;
       await recovered.key.close();
@@ -503,19 +562,18 @@ void main() {
       expect(await repository.hasRecoveryCopy(), isFalse);
     });
 
-    test('without a recovery key no copy is made and nothing recovers',
-        () async {
+    test('a recovery key not kept: no copy, nothing recovers', () async {
+      await keepFirstRunKey();
+      final switched = await ownVault(keep: false);
+      expect(await repository.endRecoveryKey(), isA<VaultSuccess<void>>());
       expect(await repository.hasRecoveryKey(), isFalse);
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
       expect(await storedCopy(), isNull);
       expect(
         _failureOf(
           await repository.recover(
-            recoveryKey: masterSetup.recoveryKey,
+            recoveryKey: switched.recoveryKey,
             newPassword: _newPassword,
-            metadata: metadata,
+            metadata: switched.metadata,
           ),
         ),
         VaultFailureType.noRecoveryKey,
@@ -525,10 +583,8 @@ void main() {
     test(
         'a new recovery key needs the vault password, opens the vault, and '
         'ends the old key; a wrong vault password changes nothing', () async {
-      await keepRecoveryKey();
-      final metadata = _metadataOf(
-        await repository.initializeVault(_password, ownPassword: true),
-      );
+      final switched = await ownVault();
+      final metadata = switched.metadata;
       final oldCopy = await storedCopy();
 
       Future<CryptoCoreResponse<Uint8List>> Function(Uint8List) sealWith(
@@ -564,7 +620,7 @@ void main() {
       expect(
         _failureOf(
           await repository.recover(
-            recoveryKey: masterSetup.recoveryKey,
+            recoveryKey: switched.recoveryKey,
             newPassword: _newPassword,
             metadata: metadata,
           ),

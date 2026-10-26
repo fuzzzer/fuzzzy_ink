@@ -10,10 +10,11 @@ import 'package:share_plus/share_plus.dart';
 /// Hands a recovery key to the person, off this phone (DESIGN.md section
 /// 13, item 9): "Save as file" through the system save dialog, "Print" as a
 /// one-page sheet through the system share menu (which offers Print). Both
-/// go through the app's hand-off folder and the copy is wiped right after
-/// (or, while another app may still read it, when the app is back in
-/// front), so no copy stays on the device. No print package: none is
-/// offline-only.
+/// go through the app's hand-off folder and the copy is wiped as soon as the
+/// system call returns (security review 2026-10-26) — on Android, whose
+/// share menu returns before the other app has read the file, when the app
+/// is back in front — and in every case when the app locks, so no copy stays
+/// on the device. No print package: none is offline-only.
 class RecoveryKeyExport {
   const RecoveryKeyExport();
 
@@ -43,12 +44,9 @@ class RecoveryKeyExport {
         context: context,
       );
     } finally {
-      // iOS saves through the share sheet, which may still be reading.
-      if (Platform.isIOS) {
-        store.wipeWhenBack(filePath);
-      } else {
-        await store.wipe(filePath);
-      }
+      // The save dialog (or, on iOS, the share sheet's Save to Files) has
+      // finished with the copy once it returns.
+      await store.wipe(filePath);
     }
   }
 
@@ -85,7 +83,13 @@ class RecoveryKeyExport {
         context: context,
       );
     } finally {
-      store.wipeWhenBack(filePath);
+      // Android's share menu returns before the target has read the image;
+      // everywhere else it returns once the person is done with it.
+      if (Platform.isAndroid) {
+        store.wipeWhenBack(filePath);
+      } else {
+        await store.wipe(filePath);
+      }
     }
   }
 }

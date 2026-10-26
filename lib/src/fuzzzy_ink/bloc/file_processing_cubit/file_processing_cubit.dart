@@ -278,18 +278,42 @@ class FileProcessingCubit<ActualProcessingOption extends FileProcessingOption>
     );
 
     final plainPath = job.plainPath;
-    if (plainPath != null) await userFileStore.wipe(plainPath);
+    var keptPath = job.keptPath;
+    if (plainPath != null) {
+      keptPath = await _nameKeptByInnerName(keptPath, plainPath);
+      await userFileStore.wipe(plainPath);
+    }
     await userFileStore.discardPickedCopy(fileData.inputFilePath);
 
     _markFileAsFinished(
       fileData: fileData,
       status: FileProcessingStatus.completed,
-      outputFilePath: userFileStore.storedPathOf(job.keptPath),
+      outputFilePath: userFileStore.storedPathOf(keptPath),
       keptFileKey: job.keptFileKey,
       progress: 1,
     );
     _goToNextFileProcessing();
     logger.i('FILE PROCESSING: Marked as isComplete $state');
+  }
+
+  /// A kept received container is named after the name its sender sealed
+  /// inside it — checked and made safe by the core, the name the opened
+  /// copy got — not after its outside file name, which anyone on the way
+  /// could have changed (`notes.txt.fuzz` renamed `notes.bat.fuzz`).
+  /// Security review 2026-10-26. A rename that fails keeps the old name.
+  Future<String> _nameKeptByInnerName(String keptPath, String plainPath) async {
+    final desired = path.join(
+      path.dirname(keptPath),
+      '${path.basename(plainPath)}.$fuzzedFileIdentificator',
+    );
+    if (path.equals(desired, keptPath)) return keptPath;
+    try {
+      final target = await UserFileNames.uniqueOutputPath(desired);
+      return (await File(keptPath).rename(target)).path;
+    } on FileSystemException catch (error) {
+      logger.w('FILE PROCESSING: kept container keeps its name: $error');
+      return keptPath;
+    }
   }
 
   /// A failed or cancelled run: the core already removed its `.part`; the

@@ -4,7 +4,6 @@ import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 final _invitation = 'Fuzz/RlVaWgEB${'A' * 263}';
-const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 
 /// Records what the guard writes instead of touching the system clipboard.
 class _FakeSecureClipboard extends SecureClipboard {
@@ -59,22 +58,20 @@ void main() {
       expect(content.sealedText, _invitation);
     });
 
-    test('a message shares the Fuzz/ text, its link names the chat', () {
+    test('a message shares the Fuzz/ text; its link carries no chat id', () {
       final content = SealedShareContent.message(
-        chatId: _chatId,
         encryptedMessage: 'RlVaWgED',
       );
 
       expect(content.sealedText, 'Fuzz/RlVaWgED');
       expect(
         content.link,
-        'https://ink.fuzzzycore.com/message#$_chatId.RlVaWgED',
+        'https://ink.fuzzzycore.com/message#RlVaWgED',
       );
     });
 
     test('a link too long for a QR code still goes as a link', () {
       final content = SealedShareContent.message(
-        chatId: _chatId,
         encryptedMessage: 'A' * 2000,
       );
 
@@ -84,8 +81,7 @@ void main() {
 
     test('a message too long for a link goes only as a file', () {
       final content = SealedShareContent.message(
-        chatId: _chatId,
-        encryptedMessage: 'A' * FuzzyLinkParser.maxPayloadLength,
+        encryptedMessage: 'A' * (FuzzyLinkParser.maxPayloadLength + 1),
       );
 
       expect(content.link, isNull);
@@ -118,7 +114,6 @@ void main() {
       await tester.pumpWidget(
         _host(
           SealedShareContent.message(
-            chatId: _chatId,
             encryptedMessage: 'RlVaWgED',
           ),
           personName: 'Nino',
@@ -136,8 +131,7 @@ void main() {
       await tester.pumpWidget(
         _host(
           SealedShareContent.message(
-            chatId: _chatId,
-            encryptedMessage: 'A' * FuzzyLinkParser.maxPayloadLength,
+            encryptedMessage: 'A' * (FuzzyLinkParser.maxPayloadLength + 1),
           ),
         ),
       );

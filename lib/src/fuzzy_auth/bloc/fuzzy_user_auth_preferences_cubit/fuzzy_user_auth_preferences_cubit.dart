@@ -18,17 +18,30 @@ class FuzzyUserAuthPreferencesCubit
   /// its own password; without it no vault is looked at.
   final VaultRepository? _vaultRepository;
 
+  /// Every form here that takes the master password counts toward the same
+  /// wrong-password wait as the unlock screen; My safe's own password toward
+  /// its own (security review 2026-10-26). Without them (tests), no wait.
+  final AppLockThrottleRepository? _masterCount;
+  final VaultPasswordThrottleRepository? _vaultCount;
+  final DateTime Function() _now;
+
   FuzzyUserAuthPreferencesCubit({
     required ChatAuthRepository chatAuthRepository,
     required FuzzyAuthStore fuzzyAuthStore,
     required BiometricAuthRepository biometricAuthRepository,
     required PasswordStrengthService passwordStrengthService,
     VaultRepository? vaultRepository,
+    AppLockThrottleRepository? appLockThrottleRepository,
+    VaultPasswordThrottleRepository? vaultPasswordThrottleRepository,
+    DateTime Function()? now,
   })  : _chatAuthRepository = chatAuthRepository,
         _fuzzyAuthStore = fuzzyAuthStore,
         _biometricAuthRepository = biometricAuthRepository,
         _passwordStrengthService = passwordStrengthService,
         _vaultRepository = vaultRepository,
+        _masterCount = appLockThrottleRepository,
+        _vaultCount = vaultPasswordThrottleRepository,
+        _now = now ?? DateTime.now,
         super(
           const FuzzyUserAuthPreferencesState(
             activationStatus: StateStatus.initial,
@@ -67,6 +80,28 @@ class FuzzyUserAuthPreferencesCubit
           ? currentContextLocalization.chatAuthIncorrectPassword
           : currentContextLocalization.unknownError;
 
+  Future<bool> _isWaiting(AppLockThrottleRepository? count) async =>
+      count != null && (await count.read()).remainingAt(_now()) > Duration.zero;
+
+  /// Counts a wrong password before the answer shows; a right one ends the
+  /// count.
+  Future<void> _counted(
+    AppLockThrottleRepository? count, {
+    required bool wrong,
+  }) async {
+    if (count == null) return;
+    if (wrong) {
+      await count.save((await count.read()).afterFailure(_now()));
+    } else {
+      await count.clear();
+    }
+  }
+
+  bool _refusedWhileWaiting(AuthPreferencesAction action) {
+    _emitFailed(action, currentContextLocalization.accessTooManyTries);
+    return true;
+  }
+
   /// Re-wraps the master key only; the biometric copy held the old password
   /// and is dropped.
   Future<void> changePassword({
@@ -78,6 +113,10 @@ class FuzzyUserAuthPreferencesCubit
       _emitFailed(action, currentContextLocalization.chatAuthPasswordTooWeak);
       return;
     }
+    if (await _isWaiting(_masterCount)) {
+      _refusedWhileWaiting(action);
+      return;
+    }
     emit(
       state.copyWith(activationStatus: StateStatus.loading, lastAction: action),
     );
@@ -86,9 +125,13 @@ class FuzzyUserAuthPreferencesCubit
       newPassword: newPassword,
     );
     if (changeRes is CryptoCoreFailure<void>) {
+      if (changeRes.type == CryptoCoreFailureType.wrongPassword) {
+        await _counted(_masterCount, wrong: true);
+      }
       _emitFailed(action, _messageOf(changeRes.type));
       return;
     }
+    await _counted(_masterCount, wrong: false);
     await _biometricAuthRepository.disable(BiometricScope.chat);
     await _fuzzyAuthStore.setBiometricEnabled(enabled: false);
     emit(
@@ -100,14 +143,22 @@ class FuzzyUserAuthPreferencesCubit
   /// the copy is made.
   Future<void> enableBiometric(String currentPassword) async {
     const action = AuthPreferencesAction.enableBiometric;
+    if (await _isWaiting(_masterCount)) {
+      _refusedWhileWaiting(action);
+      return;
+    }
     emit(
       state.copyWith(activationStatus: StateStatus.loading, lastAction: action),
     );
     final unlockRes = await _chatAuthRepository.unlock(currentPassword);
     if (unlockRes is CryptoCoreFailure<void>) {
+      if (unlockRes.type == CryptoCoreFailureType.wrongPassword) {
+        await _counted(_masterCount, wrong: true);
+      }
       _emitFailed(action, _messageOf(unlockRes.type));
       return;
     }
+    await _counted(_masterCount, wrong: false);
     final result = await _biometricAuthRepository.enable(
       BiometricScope.chat,
       currentPassword,
@@ -148,6 +199,10 @@ class FuzzyUserAuthPreferencesCubit
     String? vaultPassword,
   }) async {
     const action = AuthPreferencesAction.newRecoveryKey;
+    if (await _isWaiting(_masterCount) || await _isWaiting(_vaultCount)) {
+      _refusedWhileWaiting(action);
+      return;
+    }
     emit(
       state.copyWith(activationStatus: StateStatus.loading, lastAction: action),
     );
@@ -184,6 +239,11 @@ class FuzzyUserAuthPreferencesCubit
             },
     );
     if (createRes is CryptoCoreFailure<PendingRecoveryKey>) {
+      if (vaultPasswordWrong) {
+        await _counted(_vaultCount, wrong: true);
+      } else if (createRes.type == CryptoCoreFailureType.wrongPassword) {
+        await _counted(_masterCount, wrong: true);
+      }
       _emitFailed(
         action,
         vaultPasswordWrong
@@ -193,6 +253,8 @@ class FuzzyUserAuthPreferencesCubit
       );
       return;
     }
+    await _counted(_masterCount, wrong: false);
+    if (vaultMetadata != null) await _counted(_vaultCount, wrong: false);
     emit(
       state.copyWith(
         activationStatus: StateStatus.success,

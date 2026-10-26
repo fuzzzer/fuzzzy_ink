@@ -213,17 +213,16 @@ class _MasterPasswordRecoveryViewState
         SizedBox(height: space.s),
         AccessLine(localizations.accessSpacesDontMatter),
         SizedBox(height: space.l),
-        // The key is a secret: no copy or cut out of this field.
-        NoPlaintextCopy(
-          child: FuzzzyTextField(
-            controller: _keyController,
-            label: localizations.recoveryKeyField,
-            hint: 'XXXX XXXX XXXX XXXX …',
-            errorText: _keyError,
-            keyboardType: TextInputType.visiblePassword,
-            onSubmitted: (_) => _onKeyContinue(),
-            qaId: 'recover.keyField',
-          ),
+        // The key is a secret: no copy, cut, share or other app's text
+        // action, and no keyboard learning (GuardedTextField).
+        GuardedTextField(
+          controller: _keyController,
+          label: localizations.recoveryKeyField,
+          hint: 'XXXX XXXX XXXX XXXX …',
+          errorText: _keyError,
+          keyboardType: TextInputType.visiblePassword,
+          onSubmitted: (_) => _onKeyContinue(),
+          qaId: 'recover.keyField',
         ),
         SizedBox(height: space.m),
         TipLine(

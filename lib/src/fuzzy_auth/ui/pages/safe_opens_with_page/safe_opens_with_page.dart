@@ -8,12 +8,15 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 /// Settings → My safe → Opens with (prototype `set-safepw`): Master password
 /// ("Simplest. Recommended.") or Its own password ("One more to
 /// remember"). Choosing its own asks for the new password (Good or better,
-/// twice) and says "Your recovery key can still open My safe."; going back
-/// asks for My safe's password. Either way the master password confirms the
-/// change. Each switch re-wraps the same safe key; nothing inside is locked
-/// again. A private screen.
+/// twice); My safe then gets a new key, everything in it is locked again
+/// under that key, and a new recovery key is shown here to print or save,
+/// as on the first run (security review 2026-10-26). Going back asks for
+/// My safe's password and keeps the key. Either way the master password
+/// confirms the change. A private screen.
 class SafeOpensWithPage extends StatefulWidget {
-  const SafeOpensWithPage({super.key});
+  const SafeOpensWithPage({super.key, this.export});
+
+  final RecoveryKeyExport? export;
 
   @override
   State<SafeOpensWithPage> createState() => _SafeOpensWithPageState();
@@ -28,6 +31,10 @@ class _SafeOpensWithPageState extends State<SafeOpensWithPage> {
   /// The choice on screen; the current mode until the person picks.
   bool? _chooseOwn;
   bool _busy = false;
+
+  /// The recovery key the switch to its own password made, on screen until
+  /// it is kept or skipped.
+  PendingRecoveryKey? _pending;
   String? _masterError;
   String? _safeError;
 
@@ -55,15 +62,21 @@ class _SafeOpensWithPageState extends State<SafeOpensWithPage> {
     final localizations = context.fuzzzyInkLocalizations;
     final cubit = context.read<VaultAuthCubit>();
     setState(() => _busy = true);
-    final failure = toOwn
-        ? await cubit.useOwnPassword(
-            masterPassword: _masterController.text,
-            newPassword: _newController.text,
-          )
-        : await cubit.useMasterPassword(
-            vaultPassword: _safeController.text,
-            masterPassword: _masterController.text,
-          );
+    final VaultFailureType? failure;
+    PendingRecoveryKey? pending;
+    if (toOwn) {
+      final result = await cubit.useOwnPassword(
+        masterPassword: _masterController.text,
+        newPassword: _newController.text,
+      );
+      failure = result.failure;
+      pending = result.recovery;
+    } else {
+      failure = await cubit.useMasterPassword(
+        vaultPassword: _safeController.text,
+        masterPassword: _masterController.text,
+      );
+    }
     if (!mounted) return;
     setState(() => _busy = false);
     if (failure == null) {
@@ -77,7 +90,11 @@ class _SafeOpensWithPageState extends State<SafeOpensWithPage> {
             ? localizations.accessSafeHasOwnPassword
             : localizations.accessSafeUsesMaster,
       );
-      leaveAccessPage(context);
+      if (pending != null) {
+        setState(() => _pending = pending);
+      } else {
+        leaveAccessPage(context);
+      }
     } else if (failure == VaultFailureType.incorrectMasterPassword) {
       unawaited(InkHaptics.heavy());
       setState(() => _masterError = localizations.accessWrongPassword);
@@ -87,18 +104,69 @@ class _SafeOpensWithPageState extends State<SafeOpensWithPage> {
     } else {
       showInkToast(
         context,
-        message: failure == VaultFailureType.weakPassword
-            ? localizations.chatAuthPasswordTooWeak
-            : localizations.unknownError,
+        message: switch (failure) {
+          VaultFailureType.weakPassword =>
+            localizations.chatAuthPasswordTooWeak,
+          VaultFailureType.tooManyAttempts => localizations.accessTooManyTries,
+          _ => localizations.unknownError,
+        },
         kind: FuzzzyToastKind.error,
       );
     }
+  }
+
+  Future<void> _keepRecoveryKey(PendingRecoveryKey pending) async {
+    final localizations = context.fuzzzyInkLocalizations;
+    setState(() => _busy = true);
+    final failure =
+        await context.read<VaultAuthCubit>().keepRecoveryKey(pending);
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (failure != null) {
+      showInkToast(
+        context,
+        message: localizations.recoveryKeySaveFailed,
+        kind: FuzzzyToastKind.error,
+      );
+      return;
+    }
+    unawaited(InkHaptics.light());
+    showInkToast(context, message: localizations.accessNewKeyKept);
+    setState(() => _pending = null);
+    leaveAccessPage(context);
+  }
+
+  void _skipRecoveryKey() {
+    unawaited(context.read<VaultAuthCubit>().refreshRecovery());
+    setState(() => _pending = null);
+    leaveAccessPage(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final space = context.fuzzzySpace;
+    final pending = _pending;
+    if (pending != null) {
+      return RecoveryKeyStepView(
+        recoveryKey: pending.recoveryKey,
+        busy: _busy,
+        onKept: () => _keepRecoveryKey(pending),
+        onSkipped: _skipRecoveryKey,
+        pageTitle: localizations.recoveryKeyTitle,
+        title: localizations.accessYourNewKey,
+        note: AccessNote(
+          tone: AccessNoteTone.danger,
+          text: localizations.accessNoPasswordNoKey,
+          trailing: const WhyLink(
+            topic: InkInfoTopic.recoveryKey,
+            label: WhyLinkLabel.more,
+          ),
+          qaId: 'safeOpensWith.noAccess',
+        ),
+        export: widget.export ?? const RecoveryKeyExport(),
+      );
+    }
     final vault = context.watch<VaultAuthCubit>().state;
     final hasVault = SettingsMySafeSection.hasVault(vault);
     final usesOwn = vault.usesOwnPassword;
@@ -193,7 +261,7 @@ class _SafeOpensWithPageState extends State<SafeOpensWithPage> {
             SizedBox(height: space.m),
             TipLine(
               icon: Icons.print_outlined,
-              text: localizations.vaultOwnPasswordRecoveryNote,
+              text: localizations.accessSafeGetsNewKey,
               trailing: const WhyLink(topic: InkInfoTopic.safePassword),
               qaId: 'safeOpensWith.recovery',
             ),

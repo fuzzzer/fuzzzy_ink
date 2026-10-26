@@ -6,6 +6,13 @@ the three features that landed after it (F2-12 per-chat history key `820d38d`, F
 F2-11 trade-off copy `57ad6d4`/`f88774b`) · **Owner decision that asked for this:** D-10
 (`flow/fuzzy-chat-hardening/OWNER_DECISIONS.md`).
 
+> **Superseded in parts (2026-10-26).** This bridge describes the app as of September 2026 and is kept as history.
+> [`PROTOCOL.md`](PROTOCOL.md) and [`THREAT_MODEL.md`](THREAT_MODEL.md) describe the app as it is. No longer true here:
+> files kept in the clear (the app now keeps only locked files and wipes every plain copy after use); the optional
+> app lock (one master password with a recovery key, auto-lock and wrong-password waits); `fuzzylink://` links and their
+> 24-hour expiry (links are `https://ink.fuzzzycore.com/…`, carry the message only, have no expiry and never open
+> anything without a tap); the chat screen and other files this document links that were since removed.
+
 This is the bridge from the app *you* built to the app that exists now. It is written for you, not for an auditor:
 [`PROTOCOL.md`](PROTOCOL.md) and [`THREAT_MODEL.md`](THREAT_MODEL.md) already exist for them, and
 [`HARDENING_2026.md`](HARDENING_2026.md) is the public write-up. Every claim below points at a file (old paths are

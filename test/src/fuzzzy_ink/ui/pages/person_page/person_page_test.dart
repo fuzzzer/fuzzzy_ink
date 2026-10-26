@@ -106,6 +106,12 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(find.text('Nino'), findsOneWidget);
+          // Private: names, times and file names (security review
+          // 2026-10-26).
+          expect(
+            SensitiveScreen.isIn(tester.element(find.text('Nino'))),
+            isTrue,
+          );
           expect(find.byKey(const Key('notice.person.notChecked')), findsOne);
           expect(find.byKey(const Key('btn.person.lock')), findsOneWidget);
           expect(find.byKey(const Key('btn.person.open')), findsOneWidget);

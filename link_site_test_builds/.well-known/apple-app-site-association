@@ -1,0 +1,29 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink.stg",
+          "REPLACE_WITH_APPLE_TEAM_ID.com.fuzzzycore.ink.dev"
+        ],
+        "components": [
+          {
+            "/": "/invite",
+            "#": "?*",
+            "comment": "Invitation. The payload after # stays on the device."
+          },
+          {
+            "/": "/accept",
+            "#": "?*",
+            "comment": "Acceptance. The payload after # stays on the device."
+          },
+          {
+            "/": "/message",
+            "#": "?*",
+            "comment": "Sealed message. The payload after # stays on the device."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -23,6 +23,9 @@ class NewRecoveryKeyPage extends StatelessWidget {
         fuzzyAuthStore: context.read<FuzzyAuthStore>(),
         biometricAuthRepository: sl.get<BiometricAuthRepository>(),
         passwordStrengthService: sl.get<PasswordStrengthService>(),
+        appLockThrottleRepository: sl.get<AppLockThrottleRepository>(),
+        vaultPasswordThrottleRepository:
+            sl.get<VaultPasswordThrottleRepository>(),
         vaultRepository: sl.get<VaultRepository>(),
       ),
       child: NewRecoveryKeyView(export: export),

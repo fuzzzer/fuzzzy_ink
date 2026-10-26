@@ -117,6 +117,13 @@ class _VaultPlaintextFieldState extends State<VaultPlaintextField> {
                     minLines: widget.minLines,
                     maxLines: widget.obscure ? 1 : widget.maxLines,
                     contextMenuBuilder: CopyGuard.plaintextContextMenuBuilder,
+                    // No suggestions, autocorrect or keyboard learning for
+                    // opened text (security review 2026-10-26).
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    enableIMEPersonalizedLearning: false,
+                    smartDashesType: SmartDashesType.disabled,
+                    smartQuotesType: SmartQuotesType.disabled,
                     style: inputStyle,
                     cursorColor: colors.fieldText,
                     decoration: InputDecoration.collapsed(
