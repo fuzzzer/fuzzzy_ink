@@ -80,9 +80,9 @@ flutter:
     - assets/fonts/SpaceMono/
     # The Fuzzzy Ink mark for in-app use (sun and drop on a transparent ground, 1x/2x/3x).
     # ink_mark (night look, red #b2261d) and ink_mark_paper (light look, paper red #a32218): the
-    # drop is cut out, so the screen's own ground shows through it. Vector masters beside them
-    # in assets/logo/; ink_mark_solid (the drop painted in ink) is not used by the app, so it is
-    # not bundled (the brand bundle keeps it).
+    # drop is solid brand black #0b0c0f on both (owner, 2026-10-27). Vector masters beside them
+    # in assets/logo/; ink_mark_solid (the same as ink_mark) is not used by the app, so it is not
+    # bundled (the brand bundle keeps it).
     - assets/logo/ink_mark.png
     - assets/logo/ink_mark_paper.png
 
