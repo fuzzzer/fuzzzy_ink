@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// Home's header: the mark (26), "Fuzzzy Ink" and "Lock the app now".
+/// Home's header: the mark (26) and "Fuzzzy Ink", with the keeper's first
+/// spot at its end (Lock now is in Settings).
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
 
@@ -34,7 +35,7 @@ class HomeHeader extends StatelessWidget {
                 ),
               ),
             ),
-            const AppLockButton(),
+            const CastKeeperSpot(0),
           ],
         ),
       ),
@@ -96,7 +97,8 @@ class HomeActionTiles extends StatelessWidget {
   }
 }
 
-/// "PEOPLE · 3" with the small Add button (once someone is there).
+/// "PEOPLE · 3" with the small Add button (once someone is there), and the
+/// keeper's second spot before it.
 class HomeSectionHeader extends StatelessWidget {
   const HomeSectionHeader({super.key, this.count, this.onAdd});
 
@@ -134,6 +136,7 @@ class HomeSectionHeader extends StatelessWidget {
               ),
             ),
           ),
+          const CastKeeperSpot(1),
           if (onAdd != null)
             FuzzzyButton(
               label: localizations.homeAdd,

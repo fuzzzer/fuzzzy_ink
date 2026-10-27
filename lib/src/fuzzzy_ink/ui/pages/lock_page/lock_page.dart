@@ -68,8 +68,12 @@ class LockFlowView extends StatelessWidget {
     return BlocConsumer<LockFlowCubit, LockFlowState>(
       listenWhen: (previous, current) => previous.phase != current.phase,
       listener: (context, state) {
-        // "Lock done": one medium buzz, with or without Fuzzzy Cast.
-        if (state.phase == LockPhase.locked) InkHaptics.medium();
+        // "Lock done": one medium buzz, with or without Fuzzzy Cast; the
+        // keeper of the tab the person goes back to does its happy move.
+        if (state.phase == LockPhase.locked) {
+          InkHaptics.medium();
+          CastKeeperCues.cue(CastKeeperCue.locked);
+        }
       },
       builder: (context, state) {
         final cubit = context.read<LockFlowCubit>();

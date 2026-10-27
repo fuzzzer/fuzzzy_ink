@@ -187,6 +187,42 @@ void main() {
       expect(find.text('send invite flow'), findsOneWidget);
     });
 
+    testWidgets('no lock button in the header (Lock now is in Settings)',
+        (tester) async {
+      showState(
+        ChatGeneralDataListState(status: _loaded, chatList: [_mom]),
+      );
+      await pumpHome(tester);
+      expect(find.byKey(const Key('mark.home')), findsOneWidget);
+      expect(find.byKey(const Key('iconbtn.app.lock')), findsNothing);
+      expect(find.byKey(const Key('keeper.home')), findsNothing);
+    });
+
+    testWidgets('with Fuzzzy Cast on, Fuzzz keeps the header', (tester) async {
+      showState(
+        ChatGeneralDataListState(status: _loaded, chatList: [_mom]),
+      );
+      await pumpHome(tester, castOn: true);
+      expect(find.byKey(const Key('keeper.home')), findsOneWidget);
+      expect(
+        tester.widget<CastFigure>(find.byType(CastFigure)).character,
+        CastCharacters.fuzzz,
+      );
+      expect(
+        tester.getCenter(find.byKey(const Key('keeper.home'))).dy,
+        lessThan(tester.getTopLeft(find.byKey(const Key('tile.home.lock'))).dy),
+      );
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('empty with Fuzzzy Cast on: no keeper beside the picture',
+        (tester) async {
+      showState(const ChatGeneralDataListState(status: _loaded, chatList: []));
+      await pumpHome(tester, castOn: true);
+      expect(find.byKey(const Key('keeper.home')), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
     testWidgets('people: count, a chip for each, the waiting line, and Add',
         (tester) async {
       showState(

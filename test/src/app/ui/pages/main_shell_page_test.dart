@@ -60,21 +60,42 @@ void main() {
     final router = GoRouter(
       navigatorKey: rootKey,
       routes: [
-        ShellRoute(
-          builder: (_, __, child) =>
-              MainShellPage(preferencesService: preferences, child: child),
-          routes: [
-            GoRoute(
-              path: AppRouter.home,
-              builder: (_, __) => const Text('home tab'),
+        StatefulShellRoute(
+          builder: (_, __, navigationShell) => MainShellPage(
+            preferencesService: preferences,
+            navigationShell: navigationShell,
+          ),
+          navigatorContainerBuilder: MainShellPage.tabStack,
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.home,
+                  builder: (_, __) => const _Counter('home tab'),
+                ),
+              ],
             ),
-            GoRoute(
-              path: AppRouter.vaultHome,
-              builder: (_, __) => const Text('safe tab'),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.vaultHome,
+                  builder: (_, __) => const Text('safe tab'),
+                  routes: [
+                    GoRoute(
+                      path: 'item',
+                      builder: (_, __) => const Text('safe item'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            GoRoute(
-              path: AppRouter.settings,
-              builder: (_, __) => const Text('settings tab'),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.settings,
+                  builder: (_, __) => const Text('settings tab'),
+                ),
+              ],
             ),
           ],
         ),
@@ -126,7 +147,7 @@ void main() {
       expect(find.text('HOME'), findsOneWidget);
       expect(find.text('MY SAFE'), findsOneWidget);
       expect(find.text('SETTINGS'), findsOneWidget);
-      expect(find.text('home tab'), findsOneWidget);
+      expect(find.text('home tab 0'), findsOneWidget);
 
       await tester.tap(find.text('MY SAFE'));
       await tester.pumpAndSettle();
@@ -197,6 +218,72 @@ void main() {
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
     expect(find.text('settings tab'), findsOneWidget);
+  });
+
+  testWidgets('a tab keeps its place while another shows', (tester) async {
+    await pumpShell(tester);
+    await tester.tap(find.text('home tab 0'));
+    await tester.pump();
+    await tester.tap(find.text('home tab 1'));
+    await tester.pump();
+    expect(find.text('home tab 2'), findsOneWidget);
+
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pumpAndSettle();
+    expect(find.text('settings tab'), findsOneWidget);
+    expect(find.textContaining('home tab'), findsNothing);
+
+    await tester.tap(find.text('HOME'));
+    await tester.pumpAndSettle();
+    expect(find.text('home tab 2'), findsOneWidget);
+  });
+
+  testWidgets('the chosen tab fades in over the last one', (tester) async {
+    await pumpShell(tester);
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+    final fades = tester.widgetList<FadeTransition>(
+      find.descendant(
+        of: find.byType(TabFade),
+        matching: find.byType(FadeTransition),
+      ),
+    );
+    expect(
+      fades.map((fade) => fade.opacity.value),
+      contains(inExclusiveRange(0, 1)),
+    );
+    // The last tab still shows under it while it fades in.
+    expect(find.text('home tab 0'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text('home tab 0'), findsNothing);
+  });
+
+  testWidgets('with reduced motion the chosen tab shows at once',
+      (tester) async {
+    await pumpShell(tester, reduceMotion: true);
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pump();
+    expect(find.text('settings tab'), findsOneWidget);
+    expect(find.text('home tab 0'), findsNothing);
+  });
+
+  testWidgets('choosing the tab already shown goes back to its first screen',
+      (tester) async {
+    final router = await pumpShell(tester);
+    router.go('/vault/item');
+    await tester.pumpAndSettle();
+    expect(find.text('safe item'), findsOneWidget);
+
+    await tester.tap(find.text('HOME'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('MY SAFE'));
+    await tester.pumpAndSettle();
+    expect(find.text('safe item'), findsOneWidget);
+
+    await tester.tap(find.text('MY SAFE'));
+    await tester.pumpAndSettle();
+    expect(find.text('safe tab'), findsOneWidget);
   });
 
   testWidgets('full-screen flows sit outside the tabs', (tester) async {
@@ -275,4 +362,24 @@ void main() {
       expect(find.text('open flow'), findsNothing);
     });
   });
+}
+
+/// A tab with state of its own: "<label> <taps>".
+class _Counter extends StatefulWidget {
+  const _Counter(this.label);
+
+  final String label;
+
+  @override
+  State<_Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<_Counter> {
+  int _taps = 0;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => setState(() => _taps++),
+        child: Text('${widget.label} $_taps'),
+      );
 }

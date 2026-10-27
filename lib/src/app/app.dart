@@ -13,8 +13,12 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-final ThemeData _paperTheme = FuzzzyTheme.build();
-final ThemeData _nightTheme = FuzzzyTheme.build(inkPack, FuzzzySkin.night);
+// One page transition for every full-screen screen, on both looks.
+final ThemeData _paperTheme = FuzzzyTheme.build().copyWith(
+  pageTransitionsTheme: InkPageTransitionsBuilder.theme,
+);
+final ThemeData _nightTheme = FuzzzyTheme.build(inkPack, FuzzzySkin.night)
+    .copyWith(pageTransitionsTheme: InkPageTransitionsBuilder.theme);
 
 class App extends StatelessWidget {
   const App({super.key});

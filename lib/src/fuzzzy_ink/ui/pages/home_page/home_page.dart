@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fuzzzy_cast/fuzzzy_cast.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 export 'widgets/widgets.dart';
 
-/// The Home tab (DESIGN.md sections 2 and 4): the mark and the lock-now
-/// button, two big tiles (Lock, Open), then the people. Every person comes
-/// from [ChatGeneralDataListCubit]; trust comes from its verified flags.
+/// The Home tab (DESIGN.md sections 2 and 4): the mark, two big tiles (Lock,
+/// Open), then the people. Every person comes from
+/// [ChatGeneralDataListCubit]; trust comes from its verified flags. With
+/// Fuzzzy Cast on, Fuzzz keeps the screen ([CastKeeper]), except while the
+/// empty Home's own picture shows Fuzzz.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -19,34 +22,40 @@ class HomePage extends StatelessWidget {
         final people = state.chatList ?? const <ChatGeneralData>[];
         final isLoaded = state.status.isSuccess;
 
-        return ColoredBox(
-          color: context.fuzzzyColors.ground,
-          child: SafeArea(
-            bottom: false,
-            child: CustomScrollView(
-              key: const Key('home.scroll'),
-              slivers: [
-                const SliverToBoxAdapter(child: HomeHeader()),
-                SliverToBoxAdapter(
-                  child: HomeActionTiles(
-                    onLock: () => showLockWhoSheet(
-                      context,
-                      people: people,
-                      unverifiedChatIds: state.unverifiedChatIds,
+        return CastKeeper(
+          character: CastCharacters.fuzzz,
+          tabPath: AppRouter.home,
+          qaId: 'home',
+          enabled: !(isLoaded && people.isEmpty),
+          child: ColoredBox(
+            color: context.fuzzzyColors.ground,
+            child: SafeArea(
+              bottom: false,
+              child: CustomScrollView(
+                key: const Key('home.scroll'),
+                slivers: [
+                  const SliverToBoxAdapter(child: HomeHeader()),
+                  SliverToBoxAdapter(
+                    child: HomeActionTiles(
+                      onLock: () => showLockWhoSheet(
+                        context,
+                        people: people,
+                        unverifiedChatIds: state.unverifiedChatIds,
+                      ),
+                      onOpen: () => context.push(AppRouter.open),
                     ),
-                    onOpen: () => context.push(AppRouter.open),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: HomeSectionHeader(
-                    count: isLoaded ? people.length : null,
-                    onAdd: isLoaded && people.isNotEmpty
-                        ? () => showAddPersonSheet(context)
-                        : null,
+                  SliverToBoxAdapter(
+                    child: HomeSectionHeader(
+                      count: isLoaded ? people.length : null,
+                      onAdd: isLoaded && people.isNotEmpty
+                          ? () => showAddPersonSheet(context)
+                          : null,
+                    ),
                   ),
-                ),
-                ..._content(context, state, people),
-              ],
+                  ..._content(context, state, people),
+                ],
+              ),
             ),
           ),
         );

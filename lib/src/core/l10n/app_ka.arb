@@ -1103,7 +1103,9 @@
     "description": "Needs the owner's native read: auto-lock reads 'ავტომატურად 5 წუთში'; options are now 'in N minutes'."
   },
   "accessLockNow": "ახლავე ჩაკეტვა",
-  "@accessLockNow": {},
+  "@accessLockNow": {
+    "description": "Draft, needs the owner's native read: Settings row that locks the whole app now (the padlock left Home's header, owner 2026-10-27)."
+  },
   "accessLockAfterTitle": "აპი ჩაიკეტოს",
   "@accessLockAfterTitle": {},
   "accessRightAway": "მაშინვე",

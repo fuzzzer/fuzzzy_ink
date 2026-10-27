@@ -8,7 +8,7 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 
 | Piece | File | Use it for |
 |---|---|---|
-| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark everywhere (header 26, lock screen 56, welcome 96, print sheet 18, QR screen). Paints `assets/logo/ink_mark.png` on the dark look and `ink_mark_paper.png` on the light look. |
+| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark everywhere (header 26, lock screen 56, welcome 96, print sheet 18, QR screen). Paints `assets/logo/ink_mark.png` on the dark look and `ink_mark_paper.png` on the light look: the drop solid black on the red sun on both. |
 | `StepsIndicator` | `app/ui/widgets/guided/` | The step bar at the top of every flow ("Step 2 of 3 · Recovery key"). |
 | `StepPicture` | `app/ui/widgets/guided/` | The three-dot picture instead of a paragraph. `StepPicture.inviteSteps(context, name:)` is the invite flow's. `justDone` fills a step once. |
 | `WhyLink`, `showInkInfoSheet`, `InkInfoTopic` | `app/ui/widgets/guided/` | "Why?" / "How?" / "More" links and the nine explanation sheets. |
@@ -16,10 +16,12 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 | `HeroGlyph`, `LockSnapGlyph` | `app/ui/widgets/ink_motion/` | The picture slot of result screens when Fuzzzy Cast is off; "Lock done" snap. |
 | `InPlaceConfirmButton` | `app/ui/widgets/ink_motion/` | "Copied", "Handed over", "Saved": confirm on the pressed button after the real result. |
 | `CheckDraw`, `RowTint`, `ChipSwap`, `LiftIn`, `SettleIn` | `app/ui/widgets/ink_motion/` | Section 10's responses: check draw, new-row glow, chip change, lift after unlock, mark settle. |
+| `TabFade`, `InkPageTransitionsBuilder` | `app/ui/widgets/ink_motion/` | The tabs kept alive with a soft fade (the router's tab container, `MainShellPage.tabStack`); the one page transition for every other screen, set on both themes (the iPhone slide and back-swipe; a fade with reduced motion). |
 | `InkMotion`, `InkMotionTiming`, `InkHaptics` | `app/ui/widgets/ink_motion/` | Whether something may move here (reduced motion, private screen), the named delays, buzzes. |
 | `AppBarBack`, `BottomBackButton` | `app/ui/widgets/back_buttons/` | Back read aloud in the app's language: `AppBarBack` as a kit `FuzzzyAppBar`'s `leading` (never the kit's `onLeading`, which always says "Back" in English); `BottomBackButton` as `FuzzyScaffold.actionsRow` on the older screens. |
 | `DesktopShortcuts` | `app/ui/widgets/desktop_shortcuts/` | The computer keys around the tabs (⌘ on a Mac, Ctrl elsewhere): L Lock, O Open, comma Settings, Shift + L lock the app. Nothing on a phone. |
 | `FuzzzyCastReaction`, `FuzzzyCastMoment`, `showInkToast` | `app/ui/widgets/fuzzzy_cast/` | Fuzzz in the picture slot (pass the glyph as `fallback`) or at the start of a confirmation toast. |
+| `CastKeeper`, `CastKeeperSpot`, `CastKeeperCues` | `app/ui/widgets/fuzzzy_cast/` | One cast character keeping a tab: its screen places two `CastKeeperSpot`s clear of buttons and text; a tap moves it to the other spot. Lock and Open call `CastKeeperCues.cue` and the keeper of the tab the person returns to reacts. Off with Fuzzzy Cast, below a `SensitiveScreen` and while `enabled` is false. |
 | `ActionTile` | `fuzzzy_ink/ui/widgets/home/` | The big Lock / Open tiles. |
 | `PersonRow`, `PersonTrustChip`, `WaitNotes` | `fuzzzy_ink/ui/widgets/people/` | A person on Home or in a picker; the trust chip; the two waiting notes. |
 | `HistoryRow`, `FileCard`, `LockedTextPreview` | `fuzzzy_ink/ui/widgets/history/` | History rows (never the text); a file with its state; the faded locked text. |

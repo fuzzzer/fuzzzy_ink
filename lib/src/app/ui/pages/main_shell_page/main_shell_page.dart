@@ -1,24 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fuzzzy_cast/fuzzzy_cast.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 /// The three tabs, Home · My safe · Settings: a bottom bar on phones, a side
-/// rail from 600 px wide. Every full-screen flow (first run, lock screen,
-/// recovery, Lock, Open, adding a person, a person's page) is a route
-/// outside this shell. The content lifts in once when the shell appears,
-/// which is right after an unlock. On a computer, ⌘/Ctrl + L, O and ,
-/// open Lock, Open and Settings ([DesktopShortcuts]).
+/// rail from 600 px wide. Each tab stays alive while another shows, so its
+/// place is kept, and a chosen tab fades in ([tabStack]); choosing the tab
+/// already shown goes back to its first screen. Every full-screen flow
+/// (first run, lock screen, recovery, Lock, Open, adding a person, a
+/// person's page) is a route outside this shell. The content lifts in once
+/// when the shell appears, which is right after an unlock. On a computer,
+/// ⌘/Ctrl + L, O and , open Lock, Open and Settings ([DesktopShortcuts]).
 class MainShellPage extends StatelessWidget {
   const MainShellPage({
     super.key,
-    required this.child,
+    required this.navigationShell,
     required this.preferencesService,
   });
 
-  final Widget child;
+  /// The tabs' own navigators, from the router's stateful shell.
+  final StatefulNavigationShell navigationShell;
   final PreferencesService preferencesService;
+
+  /// The router's container for the tabs' navigators: every tab kept alive,
+  /// the chosen one fading in, My safe below its own header.
+  static Widget tabStack(
+    BuildContext context,
+    StatefulNavigationShell navigationShell,
+    List<Widget> children,
+  ) {
+    return TabFade(
+      currentIndex: navigationShell.currentIndex,
+      children: [
+        for (var i = 0; i < children.length; i++)
+          i == 1 ? _MySafeFrame(child: children[i]) : children[i],
+      ],
+    );
+  }
 
   /// The tabs' locations, in order.
   static const tabs = [AppRouter.home, AppRouter.vaultHome, AppRouter.settings];
@@ -38,7 +58,10 @@ class MainShellPage extends StatelessWidget {
   void _select(BuildContext context, int index) {
     final location = tabs[index];
     preferencesService.setLastSelectedTab(location);
-    context.go(location);
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 
   /// Lock, as Home's tile: "Who's it for?" first.
@@ -55,7 +78,7 @@ class MainShellPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final colors = context.fuzzzyColors;
-    final index = indexOf(GoRouterState.of(context).uri.path);
+    final index = navigationShell.currentIndex;
     final isWide = MediaQuery.sizeOf(context).width >= railFrom;
 
     final labels = [
@@ -69,9 +92,7 @@ class MainShellPage extends StatelessWidget {
       onOpen: () => context.push(AppRouter.open),
       onSettings: () => _select(context, 2),
       onLockApp: () => context.read<FuzzyAuthStore>().lock(byUser: true),
-      child: LiftIn(
-        child: index == 1 ? _MySafeFrame(child: child) : child,
-      ),
+      child: LiftIn(child: navigationShell),
     );
 
     if (isWide) {
@@ -150,7 +171,10 @@ class MainShellPage extends StatelessWidget {
 }
 
 /// My safe's header: its name and, while it is open, the lock that closes
-/// it (DESIGN.md section 4.11). The safe's own pages sit below.
+/// it (DESIGN.md section 4.11). The safe's own pages sit below. With Fuzzzy
+/// Cast on, the Bridge Guard keeps the open safe from the header (both its
+/// spots are there, outside the private pages); never while it is locked,
+/// where its password is asked for.
 class _MySafeFrame extends StatelessWidget {
   const _MySafeFrame({required this.child});
 
@@ -160,32 +184,47 @@ class _MySafeFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
 
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          FuzzzyAppBar(
-            qaId: 'mySafe',
-            title: localizations.tabMySafe,
-            actions: [
-              BlocBuilder<VaultAuthCubit, VaultAuthState>(
-                builder: (context, state) {
-                  if (state.authState != VaultAuthEnum.unlocked) {
-                    return const SizedBox.shrink();
-                  }
-                  return FuzzzyIconButton(
-                    icon: const Icon(Icons.lock_outline),
-                    semanticLabel: localizations.safeLockButton,
-                    qaId: 'mySafe.lock',
-                    onPressed: () => context.read<VaultAuthCubit>().lock(),
-                  );
-                },
-              ),
-            ],
-          ),
-          Expanded(child: child),
-        ],
+    final isOpen = context.select<VaultAuthCubit, bool>(
+      (cubit) => cubit.state.authState == VaultAuthEnum.unlocked,
+    );
+
+    return CastKeeper(
+      character: CastCharacters.bridgeGuard,
+      tabPath: AppRouter.vaultHome,
+      qaId: 'mySafe',
+      enabled: isOpen,
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FuzzzyAppBar(
+              qaId: 'mySafe',
+              title: localizations.tabMySafe,
+              actions: [
+                CastKeeperSpot(
+                  1,
+                  padding: EdgeInsets.only(right: context.fuzzzySpace.xl),
+                ),
+                const CastKeeperSpot(0),
+                BlocBuilder<VaultAuthCubit, VaultAuthState>(
+                  builder: (context, state) {
+                    if (state.authState != VaultAuthEnum.unlocked) {
+                      return const SizedBox.shrink();
+                    }
+                    return FuzzzyIconButton(
+                      icon: const Icon(Icons.lock_outline),
+                      semanticLabel: localizations.safeLockButton,
+                      qaId: 'mySafe.lock',
+                      onPressed: () => context.read<VaultAuthCubit>().lock(),
+                    );
+                  },
+                ),
+              ],
+            ),
+            Expanded(child: child),
+          ],
+        ),
       ),
     );
   }

@@ -101,77 +101,86 @@ class OpenFlowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OpenFlowCubit, OpenFlowState>(
+    // Opened: the keeper of the tab the person goes back to is surprised,
+    // then happy.
+    return BlocListener<OpenFlowCubit, OpenFlowState>(
       listenWhen: (previous, current) =>
-          (current.route != null && previous.route != current.route) ||
-          (current.phase == OpenPhase.openedFile &&
-              previous.phase != OpenPhase.openedFile),
-      listener: (context, state) {
-        final route = state.route;
-        if (route != null) return _followRoute(context, route);
-        // A file finished opening: one light buzz.
-        InkHaptics.light();
-      },
-      builder: (context, state) {
-        final cubit = context.read<OpenFlowCubit>();
-        final localizations = context.fuzzzyInkLocalizations;
-        switch (state.phase) {
-          case OpenPhase.choose:
-            return OpenChooseView(onClose: context.goBack);
-          case OpenPhase.reading:
-            return const OpenReadingView();
-          case OpenPhase.working:
-            return PopScope(
-              canPop: false,
-              child: FlowWorkingView(
-                qaId: 'open.working',
-                title: localizations.workingOpening,
-                icon: CupertinoIcons.lock_open,
-                fileName: state.workingName ?? '',
-                progress: state.progress,
-                onCancel: cubit.cancel,
-              ),
-            );
-          case OpenPhase.password:
-            return SensitiveScreen(
-              child: OpenPasswordView(onBack: cubit.startOver),
-            );
-          case OpenPhase.confirmMessage:
-            final chat = state.chat;
-            if (chat == null) return const OpenReadingView();
-            return OpenConfirmView(
-              chat: chat,
-              isFile: state.pendingFilePath != null,
-              onOpen: cubit.confirmOpen,
-              onNotNow: context.goBack,
-            );
-          case OpenPhase.openedText:
-            return SensitiveScreen(
-              child: OpenedTextView(
-                state: state,
-                onDone: () => _done(context, state),
-              ),
-            );
-          case OpenPhase.openedFile:
-            return SensitiveScreen(
-              child: OpenedFileView(
-                state: state,
-                onDone: () => _done(context, cubit.state),
-              ),
-            );
-          case OpenPhase.problem:
-            return OpenProblemView(
-              problem: state.problem ?? OpenProblem.failed,
-              chat: state.chat,
-              onBack: cubit.startOver,
-              onGoToPerson: (chat) => landOnPerson(
-                context,
+          previous.phase != current.phase &&
+          (current.phase == OpenPhase.openedText ||
+              current.phase == OpenPhase.openedFile),
+      listener: (_, __) => CastKeeperCues.cue(CastKeeperCue.opened),
+      child: BlocConsumer<OpenFlowCubit, OpenFlowState>(
+        listenWhen: (previous, current) =>
+            (current.route != null && previous.route != current.route) ||
+            (current.phase == OpenPhase.openedFile &&
+                previous.phase != OpenPhase.openedFile),
+        listener: (context, state) {
+          final route = state.route;
+          if (route != null) return _followRoute(context, route);
+          // A file finished opening: one light buzz.
+          InkHaptics.light();
+        },
+        builder: (context, state) {
+          final cubit = context.read<OpenFlowCubit>();
+          final localizations = context.fuzzzyInkLocalizations;
+          switch (state.phase) {
+            case OpenPhase.choose:
+              return OpenChooseView(onClose: context.goBack);
+            case OpenPhase.reading:
+              return const OpenReadingView();
+            case OpenPhase.working:
+              return PopScope(
+                canPop: false,
+                child: FlowWorkingView(
+                  qaId: 'open.working',
+                  title: localizations.workingOpening,
+                  icon: CupertinoIcons.lock_open,
+                  fileName: state.workingName ?? '',
+                  progress: state.progress,
+                  onCancel: cubit.cancel,
+                ),
+              );
+            case OpenPhase.password:
+              return SensitiveScreen(
+                child: OpenPasswordView(onBack: cubit.startOver),
+              );
+            case OpenPhase.confirmMessage:
+              final chat = state.chat;
+              if (chat == null) return const OpenReadingView();
+              return OpenConfirmView(
                 chat: chat,
-                returnsToPerson: returnsToPerson,
-              ),
-            );
-        }
-      },
+                isFile: state.pendingFilePath != null,
+                onOpen: cubit.confirmOpen,
+                onNotNow: context.goBack,
+              );
+            case OpenPhase.openedText:
+              return SensitiveScreen(
+                child: OpenedTextView(
+                  state: state,
+                  onDone: () => _done(context, state),
+                ),
+              );
+            case OpenPhase.openedFile:
+              return SensitiveScreen(
+                child: OpenedFileView(
+                  state: state,
+                  onDone: () => _done(context, cubit.state),
+                ),
+              );
+            case OpenPhase.problem:
+              return OpenProblemView(
+                problem: state.problem ?? OpenProblem.failed,
+                chat: state.chat,
+                onBack: cubit.startOver,
+                onGoToPerson: (chat) => landOnPerson(
+                  context,
+                  chat: chat,
+                  returnsToPerson: returnsToPerson,
+                ),
+              );
+          }
+        },
+      ),
     );
   }
 }

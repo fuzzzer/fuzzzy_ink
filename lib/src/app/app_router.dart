@@ -124,7 +124,9 @@ class AppRouter {
   @visibleForTesting
   static set debugRouterInstance(GoRouter? router) => _routerInstance = router;
 
-  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
+  static final _homeNavigatorKey = GlobalKey<NavigatorState>();
+  static final _vaultNavigatorKey = GlobalKey<NavigatorState>();
+  static final _settingsNavigatorKey = GlobalKey<NavigatorState>();
 
   static GoRouter router({
     required GlobalKey<NavigatorState> navigatorKey,
@@ -179,48 +181,66 @@ class AppRouter {
         return null;
       },
       routes: [
-        ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          builder: (context, state, child) {
+        // The three tabs, each kept alive with its own stack (its place is
+        // still there after a switch). Every other page is a full-screen
+        // route below.
+        StatefulShellRoute(
+          builder: (context, state, navigationShell) {
             return MainShellPage(
               preferencesService: sl.get<PreferencesService>(),
-              child: child,
+              navigationShell: navigationShell,
             );
           },
-          // The three tabs. Every other page is a full-screen route below.
-          routes: [
-            GoRoute(
-              path: home,
-              builder: (_, __) => const HomePage(),
-            ),
-            GoRoute(
-              path: vaultHome,
-              // My safe keeps its own private screen across locked and open.
-              builder: (_, __) => const VaultEntryPage(),
+          navigatorContainerBuilder: MainShellPage.tabStack,
+          branches: [
+            StatefulShellBranch(
+              navigatorKey: _homeNavigatorKey,
               routes: [
                 GoRoute(
-                  path: 'item',
-                  parentNavigatorKey: navigatorKey,
-                  builder: (_, state) => SensitiveScreen(
-                    child: VaultItemPage(item: state.extra! as VaultItem),
-                  ),
-                ),
-                GoRoute(
-                  path: 'editor',
-                  // A full screen over the tabs.
-                  parentNavigatorKey: navigatorKey,
-                  builder: (_, state) {
-                    final payload = state.extra! as VaultItemEditorPagePayload;
-                    return SensitiveScreen(
-                      child: VaultItemEditorPage(payload: payload),
-                    );
-                  },
+                  path: home,
+                  builder: (_, __) => const HomePage(),
                 ),
               ],
             ),
-            GoRoute(
-              path: settings,
-              builder: (_, __) => const SettingsPage(),
+            StatefulShellBranch(
+              navigatorKey: _vaultNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: vaultHome,
+                  // My safe keeps its own private screen across locked and open.
+                  builder: (_, __) => const VaultEntryPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'item',
+                      parentNavigatorKey: navigatorKey,
+                      builder: (_, state) => SensitiveScreen(
+                        child: VaultItemPage(item: state.extra! as VaultItem),
+                      ),
+                    ),
+                    GoRoute(
+                      path: 'editor',
+                      // A full screen over the tabs.
+                      parentNavigatorKey: navigatorKey,
+                      builder: (_, state) {
+                        final payload =
+                            state.extra! as VaultItemEditorPagePayload;
+                        return SensitiveScreen(
+                          child: VaultItemEditorPage(payload: payload),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _settingsNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: settings,
+                  builder: (_, __) => const SettingsPage(),
+                ),
+              ],
             ),
           ],
         ),

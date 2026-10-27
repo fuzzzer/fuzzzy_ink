@@ -21,7 +21,10 @@ class SettingsFuzzzyCastSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SettingsSectionLabel(localizations.fuzzzyCast),
+            SettingsSectionLabel(
+              localizations.fuzzzyCast,
+              trailing: const CastKeeperSpot(1),
+            ),
             FuzzzyListTile(
               qaId: 'settings.fuzzzyCast',
               leading: const SettingsRowIcon(Icons.auto_awesome_outlined),
@@ -236,13 +239,17 @@ Future<void> showSettingsChoiceSheet<T>(
 
 /// A Settings section's label ("KEEPING IT SAFE").
 class SettingsSectionLabel extends StatelessWidget {
-  const SettingsSectionLabel(this.text, {super.key});
+  const SettingsSectionLabel(this.text, {super.key, this.trailing});
 
   final String text;
 
+  /// At the label's end, within its top space (the keeper's spot).
+  final Widget? trailing;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final trailing = this.trailing;
+    final label = Padding(
       padding: EdgeInsets.only(
         top: context.fuzzzySpace.xl,
         bottom: context.fuzzzySpace.s,
@@ -256,6 +263,13 @@ class SettingsSectionLabel extends StatelessWidget {
           ),
         ),
       ),
+    );
+    if (trailing == null) return label;
+    return Stack(
+      children: [
+        label,
+        Positioned(right: 0, bottom: 0, child: trailing),
+      ],
     );
   }
 }

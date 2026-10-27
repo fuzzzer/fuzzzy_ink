@@ -6,9 +6,11 @@ export 'chip_swap.dart';
 export 'hero_glyph.dart';
 export 'in_place_confirm_button.dart';
 export 'ink_haptics.dart';
+export 'ink_page_transitions.dart';
 export 'lift_in.dart';
 export 'row_tint.dart';
 export 'settle_in.dart';
+export 'tab_fade.dart';
 
 /// What the redesign's small responses may do here (DESIGN.md section 10).
 ///
