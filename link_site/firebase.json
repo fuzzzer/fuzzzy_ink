@@ -7,7 +7,6 @@
       ".firebaserc",
       ".firebase/**",
       "README.md",
-      ".well-known/assetlinks.json",
       "**/.DS_Store",
       ".gitignore"
     ],

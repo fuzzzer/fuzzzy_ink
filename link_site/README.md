@@ -5,8 +5,6 @@ here: from this folder, `firebase deploy --only hosting`. The domain's DNS is on
 for `ink` stay "DNS only" (grey cloud) so Firebase holds the certificate and serves the link files
 untouched.
 
-`assetlinks.json` is left out of the deploy (`ignore` in `firebase.json`) until it holds the real Play
-signing fingerprint; then remove it from `ignore` and deploy again.
 
 ## Files
 
@@ -22,11 +20,10 @@ in `../link_site_test_builds/.well-known/`; publish those only on a separate tes
 
 ## Still to replace
 
-The Apple team id (`7W88HRQFXP`, owner 2026-10-27) is in. Left:
+The Apple team id (`7W88HRQFXP`) and the Play app signing key's SHA-256 (in `assetlinks.json`) are in (owner 2026-10-27). Left:
 
 | Placeholder | Where | What |
 |---|---|---|
-| `REPLACE_WITH_PRODUCTION_RELEASE_CERT_SHA256_FINGERPRINT` | `assetlinks.json` | SHA-256 of the certificate Google Play signs `com.fuzzzycore.ink` with (Play Console › App integrity › App signing), as `AB:CD:…` |
 | `REPLACE_WITH_APP_STORE_ID` | `index.html` | the number in the App Store address |
 | `REPLACE_WITH_DESKTOP_DOWNLOAD_URL` | `index.html` | where the Mac, Windows and Linux builds are downloaded |
 
