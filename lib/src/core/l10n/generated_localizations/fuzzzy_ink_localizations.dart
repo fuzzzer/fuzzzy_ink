@@ -2194,16 +2194,16 @@ abstract class FuzzzyInkLocalizations {
   /// **'Fuzzzy Cast'**
   String get fuzzzyCast;
 
-  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  /// The Fuzzzy Cast switch line (Settings and the first-run You're ready card); owner wording, 2026-10-27.
   ///
   /// In en, this message translates to:
-  /// **'Fuzzz reacts when you lock and open.'**
+  /// **'Mini characters guard your safe and locks. Just for fun.'**
   String get fuzzzyCastLine;
 
-  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  /// Toast after turning Fuzzzy Cast on (owner, 2026-10-27: mini characters that guard, just for fun).
   ///
   /// In en, this message translates to:
-  /// **'Fuzzzy Cast is on.'**
+  /// **'Fuzzzy Cast is on. Your guards are on watch.'**
   String get fuzzzyCastOn;
 
   /// Fuzzzy Ink redesign (DESIGN.md copy table).

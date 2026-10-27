@@ -1278,13 +1278,13 @@
   "@fuzzzyCast": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
-  "fuzzzyCastLine": "Fuzzz reacts when you lock and open.",
+  "fuzzzyCastLine": "Mini characters guard your safe and locks. Just for fun.",
   "@fuzzzyCastLine": {
-    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+    "description": "The Fuzzzy Cast switch line (Settings and the first-run You're ready card); owner wording, 2026-10-27."
   },
-  "fuzzzyCastOn": "Fuzzzy Cast is on.",
+  "fuzzzyCastOn": "Fuzzzy Cast is on. Your guards are on watch.",
   "@fuzzzyCastOn": {
-    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+    "description": "Toast after turning Fuzzzy Cast on (owner, 2026-10-27: mini characters that guard, just for fun)."
   },
   "softSounds": "Soft sounds",
   "@softSounds": {

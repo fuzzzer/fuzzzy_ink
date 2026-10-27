@@ -1177,10 +1177,11 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get fuzzzyCast => 'Fuzzzy Cast';
 
   @override
-  String get fuzzzyCastLine => 'Fuzzz reacts when you lock and open.';
+  String get fuzzzyCastLine =>
+      'Mini characters guard your safe and locks. Just for fun.';
 
   @override
-  String get fuzzzyCastOn => 'Fuzzzy Cast is on.';
+  String get fuzzzyCastOn => 'Fuzzzy Cast is on. Your guards are on watch.';
 
   @override
   String get softSounds => 'Soft sounds';

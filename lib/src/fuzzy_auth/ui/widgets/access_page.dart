@@ -17,6 +17,7 @@ class AccessPage extends StatelessWidget {
     this.bottom = const [],
     this.centerContent = false,
     this.qaId,
+    this.actions = const [],
   });
 
   final List<Widget> children;
@@ -33,6 +34,9 @@ class AccessPage extends StatelessWidget {
   /// screen).
   final bool centerContent;
   final String? qaId;
+
+  /// At the header's end (a Fuzzzy Cast keeper's spots).
+  final List<Widget> actions;
 
   /// The widest the content gets (the design's dialog width on a computer).
   static const double maxContentWidth = 560;
@@ -71,6 +75,7 @@ class AccessPage extends StatelessWidget {
                 leading: back == null
                     ? null
                     : AppBarBack(barQaId: qaId ?? 'access', onPressed: back),
+                actions: actions,
               ),
             Expanded(
               child: LayoutBuilder(
@@ -163,6 +168,7 @@ class AccessNote extends StatelessWidget {
     this.bold,
     this.trailing,
     this.qaId,
+    this.actions = const [],
   });
 
   final String text;
@@ -170,6 +176,9 @@ class AccessNote extends StatelessWidget {
   final AccessNoteTone tone;
   final Widget? trailing;
   final String? qaId;
+
+  /// At the header's end (a Fuzzzy Cast keeper's spots).
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {

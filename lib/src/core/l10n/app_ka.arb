@@ -776,12 +776,14 @@
   "@languageGeorgian": {},
   "fuzzzyCast": "Fuzzzy Cast",
   "@fuzzzyCast": {},
-  "fuzzzyCastLine": "Fuzzz რეაგირებს, როცა კეტავთ ან ხსნით.",
+  "fuzzzyCastLine": "პატარა მცველები იცავენ თქვენს სეიფს და იმას, რასაც კეტავთ. უბრალოდ გასართობად.",
   "@fuzzzyCastLine": {
-    "description": "Needs the owner's native read: Fuzzz stays in Latin letters; რეაგირებს for 'reacts'."
+    "description": "Draft, needs the owner's native read: მცველები for the mini guards; 'რასაც კეტავთ' for 'your locks' (2026-10-27)."
   },
-  "fuzzzyCastOn": "Fuzzzy Cast ჩართულია.",
-  "@fuzzzyCastOn": {},
+  "fuzzzyCastOn": "Fuzzzy Cast ჩართულია. მცველები სადარაჯოზე არიან.",
+  "@fuzzzyCastOn": {
+    "description": "Draft, needs the owner's native read: სადარაჯოზე არიან for 'on watch' (2026-10-27)."
+  },
   "softSounds": "რბილი ხმები",
   "@softSounds": {},
   "safeLockedTitle": "ჩემი სეიფი ჩაკეტილია",

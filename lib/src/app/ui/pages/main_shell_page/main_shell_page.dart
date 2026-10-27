@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_cast/fuzzzy_cast.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
@@ -189,7 +188,7 @@ class _MySafeFrame extends StatelessWidget {
     );
 
     return CastKeeper(
-      character: CastCharacters.bridgeGuard,
+      role: CastKeepers.mySafe,
       tabPath: AppRouter.vaultHome,
       qaId: 'mySafe',
       enabled: isOpen,

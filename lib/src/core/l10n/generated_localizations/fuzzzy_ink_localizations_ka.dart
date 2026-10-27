@@ -1184,10 +1184,11 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get fuzzzyCast => 'Fuzzzy Cast';
 
   @override
-  String get fuzzzyCastLine => 'Fuzzz რეაგირებს, როცა კეტავთ ან ხსნით.';
+  String get fuzzzyCastLine =>
+      'პატარა მცველები იცავენ თქვენს სეიფს და იმას, რასაც კეტავთ. უბრალოდ გასართობად.';
 
   @override
-  String get fuzzzyCastOn => 'Fuzzzy Cast ჩართულია.';
+  String get fuzzzyCastOn => 'Fuzzzy Cast ჩართულია. მცველები სადარაჯოზე არიან.';
 
   @override
   String get softSounds => 'რბილი ხმები';

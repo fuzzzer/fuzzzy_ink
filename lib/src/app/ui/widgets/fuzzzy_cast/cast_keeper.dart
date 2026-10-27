@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,27 +46,62 @@ abstract final class CastKeeperCues {
   }
 }
 
+/// A keeper: the character and the moves it keeps watch with, by id (ids
+/// the character does not have are skipped).
+class CastKeeperRole {
+  const CastKeeperRole(this.character, this.watchMoves);
+
+  final CastCharacter character;
+  final List<String> watchMoves;
+}
+
+/// Who keeps which screen.
+abstract final class CastKeepers {
+  static const home = CastKeeperRole(CastCharacters.fuzzz, ['keeps-watch']);
+  static const mySafe = CastKeeperRole(
+    CastCharacters.bridgeGuard,
+    ['guard-change', 'state-your-reason'],
+  );
+  static const settings = CastKeeperRole(
+    CastCharacters.sunKeeper,
+    ['still-warm', 'sunrise'],
+  );
+  static const howItWorks = CastKeeperRole(
+    CastCharacters.sensei,
+    ['slower-again', 'staff-ring'],
+  );
+  static const legal = CastKeeperRole(
+    CastCharacters.judge,
+    ['weighing', 'verdict'],
+  );
+
+  static const all = [home, mySafe, settings, howItWorks, legal];
+}
+
 /// One Fuzzzy Cast character keeping a main screen (a tab at [tabPath]). It
 /// sits in one of the screen's two quiet spots ([CastKeeperSpot] 0 and 1,
 /// placed by the screen clear of its buttons and text). A tap hides it and
 /// it comes back in the other spot. Back on its screen after a lock it does
-/// a short happy move; after an open, surprised, then happy.
+/// a short happy move; after an open, surprised, then happy. While it sits
+/// with its screen in front it keeps watch: now and then (every 25 to 45 s)
+/// it plays one of its role's watch moves, then rests still again.
 ///
 /// It shows only while the Fuzzzy Cast setting is on and never below a
 /// [SensitiveScreen] (nor while [enabled] is false); otherwise the spots take
 /// no room, so the screen is exactly as without it. Screen readers skip it.
-/// With reduced motion it only fades and changes its face.
+/// With reduced motion it only fades and changes its face, and never plays a
+/// move.
 class CastKeeper extends StatefulWidget {
   const CastKeeper({
     super.key,
-    required this.character,
+    required this.role,
     required this.tabPath,
     required this.qaId,
     this.enabled = true,
     required this.child,
   });
 
-  final CastCharacter character;
+  final CastKeeperRole role;
   final String tabPath;
   final String qaId;
   final bool enabled;
@@ -73,6 +109,13 @@ class CastKeeper extends StatefulWidget {
 
   /// The keeper's width and height in its spot.
   static const double size = 40;
+
+  /// The first watch comes this long (plus up to [watchSpread]) after the
+  /// screen shows; the next ones [watchEvery] (plus up to [watchSpread])
+  /// after the last.
+  static const watchFirst = Duration(seconds: 8);
+  static const watchEvery = Duration(seconds: 25);
+  static const watchSpread = Duration(seconds: 20);
 
   @override
   State<CastKeeper> createState() => _CastKeeperState();
@@ -82,6 +125,12 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
   late final AnimationController _presence;
   late final CastMoveController _moves;
   final List<Timer> _timers = [];
+  final Random _random = Random();
+  Timer? _watchTimer;
+  int _nextWatch = 0;
+
+  /// A watching move is playing.
+  bool _watching = false;
   GoRouter? _router;
   ValueListenable<TickerModeData>? _tickerMode;
 
@@ -113,6 +162,7 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
       _tickerMode = tickerMode..addListener(_maybeReact);
     }
     _maybeReact();
+    _watchTimer ??= _scheduleWatch(first: true);
   }
 
   @override
@@ -123,6 +173,7 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
     for (final timer in _timers) {
       timer.cancel();
     }
+    _watchTimer?.cancel();
     _moves.dispose();
     _presence.dispose();
     super.dispose();
@@ -147,6 +198,56 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
     _timers.add(timer);
   }
 
+  List<String> get _watchIds {
+    final has = {for (final move in widget.role.character.info.moves) move.id};
+    return [
+      for (final id in widget.role.watchMoves)
+        if (has.contains(id)) id,
+    ];
+  }
+
+  Timer _scheduleWatch({bool first = false}) {
+    _watchTimer?.cancel();
+    final base = first ? CastKeeper.watchFirst : CastKeeper.watchEvery;
+    final spread = CastKeeper.watchSpread.inMilliseconds;
+    return _watchTimer = Timer(
+      base + Duration(milliseconds: _random.nextInt(spread)),
+      _watch,
+    );
+  }
+
+  /// One watching move, if the keeper is shown, in front and idle.
+  void _watch() {
+    if (!mounted) return;
+    final ids = _watchIds;
+    final idle = !_acting && !_moving && _presence.value == 1;
+    if (ids.isEmpty ||
+        !idle ||
+        !_shows ||
+        !_inFront ||
+        InkMotion.isReduced(context)) {
+      _scheduleWatch();
+      return;
+    }
+    final id = ids[_nextWatch++ % ids.length];
+    _watching = true;
+    setState(() => _acting = true);
+    _moves.play(id).then((_) {
+      if (!mounted || !_watching) return;
+      _watching = false;
+      setState(() => _acting = false);
+      _scheduleWatch();
+    });
+  }
+
+  /// Ends a watching move early (a reaction or a hop comes first).
+  void _stopWatching() {
+    if (!_watching) return;
+    _watching = false;
+    _moves.stop();
+    _scheduleWatch();
+  }
+
   void _maybeReact() {
     if (!mounted || CastKeeperCues.latest.value == null) return;
     if (!_shows || !_inFront) return;
@@ -157,6 +258,7 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
   }
 
   void _react(CastKeeperCue cue) {
+    _stopWatching();
     _feel(
       cue == CastKeeperCue.locked ? CastFeeling.happy : CastFeeling.surprised,
     );
@@ -185,6 +287,8 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
   Future<void> _hop() async {
     if (_moving) return;
     _moving = true;
+    _stopWatching();
+    if (_acting) _rest();
     final motion = context.fuzzzyMotion;
     _presence.duration = motion.standard;
     await _presence.reverse().orCancel.catchError((_) {});
@@ -215,7 +319,7 @@ class _CastKeeperState extends State<CastKeeper> with TickerProviderStateMixin {
         child: AnimatedBuilder(
           animation: presence,
           child: CastFigure(
-            character: widget.character,
+            character: widget.role.character,
             body: CastBody.dark,
             ground: ground,
             background: false,

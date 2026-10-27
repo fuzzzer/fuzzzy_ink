@@ -48,31 +48,43 @@ class LegalLinksPage extends StatelessWidget {
       ),
     ];
 
-    return AccessPage(
+    return CastKeeper(
+      role: CastKeepers.legal,
+      tabPath: AppRouter.settingsLegal,
       qaId: 'legal',
-      title: localizations.accessPrivacyTermsSupport,
-      onBack: () => leaveAccessPage(context),
-      children: [
-        TipLine(
-          icon: Icons.public,
-          text: localizations.accessBrowserTip,
-          qaId: 'legal.browser',
-        ),
-        SizedBox(height: context.fuzzzySpace.m),
-        for (final (index, (id, icon, title, uri)) in links.indexed)
-          FuzzzyListTile(
-            qaId: 'legal.$id',
-            leading: SettingsRowIcon(icon),
-            title: SettingsRowText(title: title),
-            trailing: Icon(
-              Icons.open_in_new,
-              size: context.fuzzzyIconSize.m,
-              color: context.fuzzzyColors.inkMute,
-            ),
-            divider: index < links.length - 1,
-            onTap: () => _open(context, uri),
+      child: AccessPage(
+        qaId: 'legal',
+        title: localizations.accessPrivacyTermsSupport,
+        onBack: () => leaveAccessPage(context),
+        actions: [
+          CastKeeperSpot(
+            1,
+            padding: EdgeInsets.only(right: context.fuzzzySpace.xl),
           ),
-      ],
+          const CastKeeperSpot(0),
+        ],
+        children: [
+          TipLine(
+            icon: Icons.public,
+            text: localizations.accessBrowserTip,
+            qaId: 'legal.browser',
+          ),
+          SizedBox(height: context.fuzzzySpace.m),
+          for (final (index, (id, icon, title, uri)) in links.indexed)
+            FuzzzyListTile(
+              qaId: 'legal.$id',
+              leading: SettingsRowIcon(icon),
+              title: SettingsRowText(title: title),
+              trailing: Icon(
+                Icons.open_in_new,
+                size: context.fuzzzyIconSize.m,
+                color: context.fuzzzyColors.inkMute,
+              ),
+              divider: index < links.length - 1,
+              onTap: () => _open(context, uri),
+            ),
+        ],
+      ),
     );
   }
 }

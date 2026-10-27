@@ -49,38 +49,47 @@ class HowItWorksPage extends StatelessWidget {
       ),
     ];
 
-    return AccessPage(
+    return CastKeeper(
+      role: CastKeepers.howItWorks,
+      tabPath: AppRouter.settingsHowItWorks,
       qaId: 'howItWorks',
-      title: localizations.accessHowFuzzzyInkWorks,
-      onBack: () => leaveAccessPage(context),
-      children: [
-        const HowItWorksCards(),
-        SizedBox(height: space.l),
-        for (final (id, title, text) in facts)
+      child: AccessPage(
+        qaId: 'howItWorks',
+        title: localizations.accessHowFuzzzyInkWorks,
+        onBack: () => leaveAccessPage(context),
+        actions: [
+          CastKeeperSpot(1, padding: EdgeInsets.only(right: space.xl)),
+          const CastKeeperSpot(0),
+        ],
+        children: [
+          const HowItWorksCards(),
+          SizedBox(height: space.l),
+          for (final (id, title, text) in facts)
+            FuzzzyAccordion(
+              qaId: 'how.$id',
+              title: title,
+              child: Text(text, style: body),
+            ),
           FuzzzyAccordion(
-            qaId: 'how.$id',
-            title: title,
-            child: Text(text, style: body),
+            qaId: 'how.hood',
+            title: localizations.accessHowHoodTitle,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(localizations.accessHowHoodBody, style: body),
+                SizedBox(height: space.s),
+                FuzzzyButton(
+                  label: localizations.accessMoreAboutEncryption,
+                  variant: FuzzzyButtonVariant.ghost,
+                  size: FuzzzyButtonSize.s,
+                  qaId: 'how.aboutEncryption',
+                  onPressed: () => context.push(AppRouter.aboutEncryption),
+                ),
+              ],
+            ),
           ),
-        FuzzzyAccordion(
-          qaId: 'how.hood',
-          title: localizations.accessHowHoodTitle,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(localizations.accessHowHoodBody, style: body),
-              SizedBox(height: space.s),
-              FuzzzyButton(
-                label: localizations.accessMoreAboutEncryption,
-                variant: FuzzzyButtonVariant.ghost,
-                size: FuzzzyButtonSize.s,
-                qaId: 'how.aboutEncryption',
-                onPressed: () => context.push(AppRouter.aboutEncryption),
-              ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
