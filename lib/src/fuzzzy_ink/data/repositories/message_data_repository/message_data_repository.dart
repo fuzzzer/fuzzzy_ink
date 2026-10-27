@@ -66,21 +66,47 @@ class MessageDataRepository {
     return Future.wait(storedMessages.map(_openStored));
   }
 
-  Future<void> deleteMessage(int messageId) async {
-    await localDataSource.deleteMessage(messageId);
+  /// The stored paths of the chat's file rows (sent and kept containers),
+  /// without opening any seal.
+  Future<List<String>> getFilePathsForChat(String chatId) async {
+    final storedMessages = await localDataSource.getMessagesForChat(chatId);
+    return [
+      for (final stored in storedMessages)
+        if (stored.messageType == MessageType.file.name)
+          stored.encryptedMessage,
+    ];
   }
 
   Future<void> deleteAllMessagesForChat(String chatId) async {
     await localDataSource.deleteAllMessagesForChat(chatId);
   }
 
-  /// File rows (F3-3) carry no seal; a text row whose seal cannot be made is
-  /// still written, with the warning logged, so the blob is never lost.
+  /// What a seal is bound to: the row's direction and its own `Fuzz/` blob
+  /// text. A seal copied onto another row, or a row flipped between sent
+  /// and received, no longer opens (security review 2026-10-22).
+  static Uint8List _rowBinding({
+    required bool isSent,
+    required String encryptedMessage,
+  }) {
+    return Uint8List.fromList([
+      if (isSent) 1 else 0,
+      ...utf8.encode(encryptedMessage),
+    ]);
+  }
+
+  /// A file row carries no text seal: a received file row keeps its sealed
+  /// file key there instead (`PROTOCOL.md` §9.6). A text row whose seal
+  /// cannot be made is still written, with the warning logged, so the blob is
+  /// never lost.
   Future<String?> _sealPlaintext(MessageData message) async {
-    if (!message.type.isText) return null;
+    if (!message.type.isText) return message.keptFileKey;
 
     final sealRes = await cryptoCoreService.sealLocal(
       chatId: message.chatId,
+      row: _rowBinding(
+        isSent: message.isSent,
+        encryptedMessage: message.encryptedMessage,
+      ),
       bytes: Uint8List.fromList(utf8.encode(message.decryptedMessage)),
     );
 
@@ -92,8 +118,8 @@ class MessageDataRepository {
     return base64Encode((sealRes as CryptoCoreSuccess<Uint8List>).data);
   }
 
-  /// Text rows open their seal; a file row keeps its path in both fields
-  /// (as the connected chat did before the ratchet). A missing or corrupt
+  /// Text rows open their seal; a file row keeps its stored path in both
+  /// fields and, when received, its sealed file key. A missing or corrupt
   /// seal reads as an empty message flagged `isUnreadable` and is logged,
   /// never thrown.
   Future<MessageData> _openStored(StoredMessageData stored) async {
@@ -101,6 +127,7 @@ class MessageDataRepository {
       return MessageData.fromStored(
         stored,
         decryptedMessage: stored.encryptedMessage,
+        keptFileKey: stored.sealedPlaintext,
       );
     }
 
@@ -132,6 +159,10 @@ class MessageDataRepository {
 
     final openRes = await cryptoCoreService.openLocal(
       chatId: stored.chatId,
+      row: _rowBinding(
+        isSent: stored.isSent,
+        encryptedMessage: stored.encryptedMessage,
+      ),
       blob: sealed,
     );
 

@@ -2,20 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- FuzzyLink Custom URL Scheme -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.fuzzzycore.ink</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fuzzylink</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-		</dict>
-	</array>
+	<!-- Links are https://ink.fuzzzycore.com/<kind>#<payload> universal links
+	     (Associated Domains in Runner.entitlements), read by app_links only:
+	     Flutter's own deep linking would also hand them to the router. No
+	     custom URL scheme: another app could claim it. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -45,16 +37,6 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- The files the app produces stay in Documents, which the Files app shows
-	     as "On My iPhone › Fuzzzy Ink"; "Show" opens it there (T-0366). -->
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>shareddocuments</string>
-	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -76,6 +58,46 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- .fuzz files: Fuzzzy Ink opens them (Open), and declares the type, a plain
+	     binary. A file that arrives is copied once into the private hand-off folder
+	     (incoming_files.dart) and never run. Opening in place stays unset
+	     (no): iOS hands over its own copy in Documents/Inbox, deleted once taken, never the
+	     file in place, and the app's folders stay out of the Files app. -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Fuzzzy Ink locked file</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.fuzzzycore.ink.fuzz</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.fuzzzycore.ink.fuzz</string>
+			<key>UTTypeDescription</key>
+			<string>Fuzzzy Ink locked file</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>fuzz</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 	<!-- Export compliance: the app does use encryption (Rust core: Olm, XChaCha20-Poly1305,
 	     Argon2id), but only standard algorithms, and it is not distributed in France. App
 	     Store Connect's App Encryption Documentation, answered that way, classes it as

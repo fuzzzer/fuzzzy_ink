@@ -1,0 +1,8 @@
+{
+  "name": "fuzzzy-ink-sbom-tools",
+  "private": true,
+  "description": "The SBOM generator for ./sbom.sh flutter, installed from package-lock.json with npm ci (exact versions and integrity hashes).",
+  "dependencies": {
+    "@cyclonedx/cdxgen": "12.8.4"
+  }
+}

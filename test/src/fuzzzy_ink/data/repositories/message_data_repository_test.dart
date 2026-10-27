@@ -43,8 +43,11 @@ class FakeMessageDataLocalDataSource extends Fake
   }
 }
 
-Uint8List? _blobOf(CryptoCoreResponse<Uint8List?> readRes) =>
-    (readRes as CryptoCoreSuccess<Uint8List?>).data;
+/// A row's binding as the repository forms it: direction byte ‖ blob text.
+Uint8List _row({required bool isSent, required String blob}) =>
+    Uint8List.fromList([if (isSent) 1 else 0, ...utf8.encode(blob)]);
+
+const _masterPassword = 'Test-Master-Pass-1';
 
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _otherChatId = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
@@ -69,19 +72,19 @@ void main() {
 
   late Directory storeDir;
   late CryptoCoreService service;
-  late CryptoStoreKeyRepository storeKeyRepository;
+  late ChatAuthRepository auth;
   late FakeMessageDataLocalDataSource dataSource;
   late MessageDataRepository repository;
 
   Future<void> openStore() async {
-    await storeKeyRepository.ensureStoreKey('');
     expect(
-      await service.openStore(
-        wrapped: _blobOf(await storeKeyRepository.read())!,
-        password: '',
-      ),
-      isA<CryptoCoreSuccess<void>>(),
+      await auth.setUp(_masterPassword),
+      isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>(),
     );
+  }
+
+  Future<void> reopenStore() async {
+    expect(await auth.unlock(_masterPassword), isA<CryptoCoreSuccess<void>>());
   }
 
   /// History is sealed under the chat's own key, which exists from the
@@ -97,7 +100,10 @@ void main() {
     FlutterSecureStorage.setMockInitialValues({});
     storeDir = Directory.systemTemp.createTempSync('fuzzy_message_repo_');
     service = CryptoCoreService(storeDirectoryPath: storeDir.path);
-    storeKeyRepository = CryptoStoreKeyRepository(cryptoCoreService: service);
+    auth = ChatAuthRepository(
+      localDataSource: MasterKeyLocalDataSource(),
+      cryptoCoreService: service,
+    );
     dataSource = FakeMessageDataLocalDataSource();
     repository = MessageDataRepository(
       localDataSource: dataSource,
@@ -153,7 +159,7 @@ void main() {
         ['', ''],
         reason: 'a locked store reads as empty, never throws',
       );
-      await openStore();
+      await reopenStore();
 
       final page = await repository.getMessagesForChatPaginated(
         _chatId,
@@ -179,20 +185,15 @@ void main() {
 
       final otherDir = Directory.systemTemp.createTempSync('fuzzy_other_');
       final other = CryptoCoreService(storeDirectoryPath: otherDir.path);
-      final otherKeys = CryptoStoreKeyRepository(cryptoCoreService: other);
       addTearDown(() async {
         await other.close();
         otherDir.deleteSync(recursive: true);
       });
-      FlutterSecureStorage.setMockInitialValues({});
-      await otherKeys.ensureStoreKey('');
-      await other.openStore(
-        wrapped: _blobOf(await otherKeys.read())!,
-        password: '',
-      );
+      await other.createMasterKey(_masterPassword);
       await invite(other, _chatId);
       final foreignSeal = await other.sealLocal(
         chatId: _chatId,
+        row: _row(isSent: true, blob: row.encryptedMessage),
         bytes: Uint8List.fromList(utf8.encode('hello')),
       );
       row.sealedPlaintext =
@@ -229,7 +230,11 @@ void main() {
 
       final sealed = base64Decode(row.sealedPlaintext!);
       expect(
-        await service.openLocal(chatId: _otherChatId, blob: sealed),
+        await service.openLocal(
+          chatId: _otherChatId,
+          row: _row(isSent: false, blob: row.encryptedMessage),
+          blob: sealed,
+        ),
         isA<CryptoCoreFailure<Uint8List>>().having(
           (failure) => failure.type,
           'type',
@@ -258,6 +263,39 @@ void main() {
     });
 
     test(
+        'the seal is per row (security review 2026-10-22): moved onto another '
+        'row, or with the row flipped between sent and received, it reads as '
+        'empty', () async {
+      await repository.addMessage(_text('first', isSent: true));
+      await repository.addMessage(_text('second', isSent: false));
+      final first = dataSource.rows.first;
+      final second = dataSource.rows.last;
+      expect(
+        (await repository.getMessagesForChat(_chatId))
+            .map((m) => m.decryptedMessage),
+        ['first', 'second'],
+      );
+
+      final swapped = first.sealedPlaintext;
+      first.sealedPlaintext = second.sealedPlaintext;
+      second.sealedPlaintext = swapped;
+      expect(
+        (await repository.getMessagesForChat(_chatId))
+            .map((m) => m.isUnreadable),
+        [true, true],
+      );
+
+      second
+        ..sealedPlaintext = first.sealedPlaintext
+        ..isSent = true;
+      expect(
+        (await repository.getMessagesForChat(_chatId)).last.decryptedMessage,
+        '',
+        reason: 'the right seal on its row, but the direction flipped',
+      );
+    });
+
+    test(
         'a row that opens is not flagged; a row whose seal fails is flagged '
         'isUnreadable, as is one read through a locked store', () async {
       await repository.addMessage(_text('hello', isSent: true));
@@ -278,14 +316,14 @@ void main() {
       );
     });
 
-    test('a file row carries no seal and keeps its path in both fields',
+    test('a sent file row carries no seal and keeps its path in both fields',
         () async {
       await repository.addMessage(
         MessageData(
           id: 0,
           chatId: _chatId,
           type: MessageType.file,
-          encryptedMessage: '/tmp/photo.jpg.fuzz',
+          encryptedMessage: 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz',
           decryptedMessage: '',
           sentAt: DateTime.now(),
           isSent: true,
@@ -295,8 +333,39 @@ void main() {
 
       final message = (await repository.getMessagesForChat(_chatId)).single;
       expect(message.type, MessageType.file);
-      expect(message.encryptedMessage, '/tmp/photo.jpg.fuzz');
-      expect(message.decryptedMessage, '/tmp/photo.jpg.fuzz');
+      expect(message.encryptedMessage, 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz');
+      expect(message.decryptedMessage, 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz');
+      expect(message.keptFileKey, isNull);
+      expect(
+        await repository.getFilePathsForChat(_chatId),
+        ['chats/Bob (6f1e9b2c)/photo.jpg.fuzz'],
+      );
+    });
+
+    test(
+        "a received file row keeps the container's sealed key as it is, "
+        'and gives it back', () async {
+      await repository.addMessage(
+        MessageData(
+          id: 0,
+          chatId: _chatId,
+          type: MessageType.file,
+          encryptedMessage: 'chats/Bob (6f1e9b2c)/photo.jpg.fuzz',
+          decryptedMessage: '',
+          sentAt: DateTime.now(),
+          isSent: false,
+          keptFileKey: 'RlVaWgEg',
+        ),
+      );
+      await repository.addMessage(_text('hello', isSent: true));
+      expect(dataSource.rows.first.sealedPlaintext, 'RlVaWgEg');
+
+      final file = (await repository.getMessagesForChat(_chatId)).first;
+      expect(file.keptFileKey, 'RlVaWgEg');
+      expect(
+        await repository.getFilePathsForChat(_chatId),
+        ['chats/Bob (6f1e9b2c)/photo.jpg.fuzz'],
+      );
     });
 
     test('a locked store still stores the blob, without a seal', () async {

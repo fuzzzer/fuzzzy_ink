@@ -16,19 +16,29 @@ class BasicEncryptionPage extends StatelessWidget {
         BlocProvider<BasicEncryptionCubit>(
           create: (context) => BasicEncryptionCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
           ),
         ),
         BlocProvider<CustomFileProcessingCubit<FileEncryptionOption>>(
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
             processingOption: const FileEncryptionOption(),
           ),
         ),
         BlocProvider<CustomFileProcessingCubit<FileDecryptionOption>>(
           create: (context) => CustomFileProcessingCubit(
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            userFileStore: sl.get<UserFileStore>(),
+            passwordStrengthService: sl.get<PasswordStrengthService>(),
             processingOption: const FileDecryptionOption(),
           ),
+        ),
+        BlocProvider<BasicsFuzzedFilesCubit>(
+          create: (context) => BasicsFuzzedFilesCubit(
+            userFileStore: sl.get<UserFileStore>(),
+          )..load(),
         ),
       ],
       child: const _ProvidedBasicEncryptionPage(),
@@ -50,6 +60,7 @@ class _ProvidedBasicEncryptionPageState
   final TextEditingController _textController = TextEditingController();
 
   String _resultText = '';
+  bool _isResultSealed = false;
   List<String>? _selectedFilePaths;
 
   @override
@@ -70,6 +81,21 @@ class _ProvidedBasicEncryptionPageState
     setState(() {
       _selectedFilePaths = paths;
     });
+  }
+
+  /// Unfuzzes a container the app keeps, under the key typed above.
+  void _openFuzzedFile(String filePath) {
+    final key = _keyController.text;
+    if (key.isEmpty) {
+      FuzzzyToast.show(
+        context,
+        message: context.fuzzzyInkLocalizations.pleaseEnterAKey,
+      );
+      return;
+    }
+    context
+        .read<CustomFileProcessingCubit<FileDecryptionOption>>()
+        .addFilesToProcess(filePaths: [filePath], customKey: key);
   }
 
   void _processFiles() {
@@ -102,10 +128,18 @@ class _ProvidedBasicEncryptionPageState
         .toList();
 
     if (filesToEncrypt.isNotEmpty) {
-      encryptionCubit.addFilesToProcess(
+      final isQueued = encryptionCubit.addFilesToProcess(
         filePaths: filesToEncrypt,
         customKey: key,
       );
+      if (!isQueued) {
+        // The selection stays, so a stronger password can be typed.
+        FuzzzyToast.show(
+          context,
+          message: _localizeFailureMessage(context, 'basicsPasswordTooWeak'),
+        );
+        return;
+      }
     }
     if (filesToDecrypt.isNotEmpty) {
       decryptionCubit.addFilesToProcess(
@@ -135,6 +169,8 @@ class _ProvidedBasicEncryptionPageState
             .fuzzzyInkLocalizations.decryptionFailedCheckYourKeyOrEncryptedText;
       case 'basicsWrongPassword':
         return context.fuzzzyInkLocalizations.basicsWrongPassword;
+      case 'basicsPasswordTooWeak':
+        return context.fuzzzyInkLocalizations.chatAuthPasswordTooWeak;
       case 'corruptBlob':
         return context.fuzzzyInkLocalizations.corruptBlob;
       default:
@@ -151,6 +187,7 @@ class _ProvidedBasicEncryptionPageState
             if (state.status.isSuccess) {
               setState(() {
                 _resultText = state.result ?? '';
+                _isResultSealed = state.isResultSealed;
               });
             } else if (state.status.isFailed) {
               setState(() {
@@ -166,8 +203,11 @@ class _ProvidedBasicEncryptionPageState
         ),
         BlocListener<CustomFileProcessingCubit<FileEncryptionOption>,
             CustomFileProcessingState>(
+          listenWhen: (previous, current) =>
+              previous.processedFiles.length != current.processedFiles.length,
           listener: (context, state) {
-            // print encryption $state
+            // A finished container is listed with the kept ones.
+            context.read<BasicsFuzzedFilesCubit>().load();
           },
         ),
         BlocListener<CustomFileProcessingCubit<FileDecryptionOption>,
@@ -183,9 +223,11 @@ class _ProvidedBasicEncryptionPageState
           keyController: _keyController,
           textController: _textController,
           resultText: _resultText,
+          isResultSealed: _isResultSealed,
           selectedFilePaths: _selectedFilePaths,
           onFilesSelected: _onFilesSelected,
           onProcessFiles: _processFiles,
+          onOpenFuzzedFile: _openFuzzedFile,
         ),
       ),
     );

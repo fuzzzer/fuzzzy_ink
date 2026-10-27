@@ -8,8 +8,13 @@ environment:
 
 dependencies:
   app_links: ^7.0.0
+  # Imported directly (vault export); was only arriving through another package.
+  archive: 4.0.9
   biometric_storage: ^5.0.1
   bloc: ^8.1.2
+  # The open padlock for Open and opened history (CupertinoIcons.lock_open):
+  # Material's open lock reads as closed at row size (final regression 2026-10-26).
+  cupertino_icons: 1.0.8
   desktop_drop: ^0.6.0
   file_picker: ^8.0.5
   flutter:
@@ -19,9 +24,16 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_rust_bridge: 2.13.0
-  flutter_secure_storage: ^9.2.2
+  flutter_secure_storage: 10.3.4
   fuzzy_crypto_core:
     path: rust_builder
+  # The Fuzzzy Cast drawn in code (Fuzzz only is used): no assets, no network
+  # code, no other packages. Pinned to the commit the other apps use.
+  fuzzzy_cast:
+    git:
+      url: https://github.com/fuzzzy-bot/fuzzzy_assets.git
+      path: packages/fuzzzy_cast
+      ref: 67b05440fee3fddb31f4cb6ac78614a4912572ff
   fuzzzy_ui_kit:
     git:
       url: https://github.com/fuzzzy-bot/fuzzy_design.git
@@ -29,14 +41,14 @@ dependencies:
   get_it: ^8.0.0
   go_router: ^13.0.1
   google_fonts: ^6.3.2
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
+  isar_community: 3.4.1
+  isar_community_flutter_libs: 3.4.1
   logger: ^2.4.0
   marionette_flutter: ^0.6.0
   package_info_plus: ^8.3.0
   path: ^1.9.0
   path_provider: ^2.0.11
-  permission_handler: ^12.0.0
+  qr: 3.0.2
   share_plus: ^10.1.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
@@ -66,4 +78,11 @@ flutter:
     - assets/fonts/Inter/
     - assets/fonts/SpaceGrotesk/
     - assets/fonts/SpaceMono/
+    # The Fuzzzy Ink mark for in-app use (sun and drop on a transparent ground, 1x/2x/3x).
+    # ink_mark (night look, red #b2261d) and ink_mark_paper (light look, paper red #a32218): the
+    # drop is solid brand black #0b0c0f on both (owner, 2026-10-27). Vector masters beside them
+    # in assets/logo/; ink_mark_solid (the same as ink_mark) is not used by the app, so it is not
+    # bundled (the brand bundle keeps it).
+    - assets/logo/ink_mark.png
+    - assets/logo/ink_mark_paper.png
 

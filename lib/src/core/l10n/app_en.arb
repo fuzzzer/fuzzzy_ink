@@ -1,142 +1,52 @@
 {
   "@@locale": "en",
-  "chat": "Chat",
-  "@chat": {},
   "fuzzzyInk": "Fuzzzy Ink",
   "@fuzzzyInk": {},
-  "failedToLoadChats": "Failed to load chats.",
-  "@failedToLoadChats": {},
-  "newChat": "New Chat",
-  "@newChat": {},
-  "acceptInvitation": "Accept Invitation",
-  "@acceptInvitation": {},
-  "createANewChat": "Create a New Chat",
-  "@createANewChat": {},
-  "enterChatName": "Enter Chat Name",
-  "@enterChatName": {},
-  "eg": "e.g.",
-  "@eg": {},
   "back": "Back",
   "@back": {},
-  "create": "Create",
-  "@create": {},
-  "chatWithAlice": "Chat with Alice",
-  "@chatWithAlice": {},
-  "failedToCreateChat": "Failed to create chat.",
+  "failedToCreateChat": "Couldn't add the person. Try again.",
   "@failedToCreateChat": {},
-  "pleaseEnterAChatName": "Please enter a chat name.",
-  "@pleaseEnterAChatName": {},
-  "pleasePasteTheAcceptanceContent": "Please paste the acceptance content.",
-  "@pleasePasteTheAcceptanceContent": {},
-  "failedToCompleteHandshake": "Failed to complete handshake.",
-  "@failedToCompleteHandshake": {},
-  "sendInvitation": "Send Invitation",
-  "@sendInvitation": {},
-  "copyInvitation": "Copy Invitation",
-  "@copyInvitation": {},
-  "invitationCopiedToClipboard": "Invitation copied to clipboard.",
-  "@invitationCopiedToClipboard": {},
-  "provideAcceptance": "Provide Acceptance",
-  "@provideAcceptance": {},
-  "pasteAcceptanceText": "Paste Acceptance Text",
-  "@pasteAcceptanceText": {},
-  "accept": "Accept",
-  "@accept": {},
-  "unexpectedFailureOccuredPleaseContactUs": "Unexpected failure occurred, please contact us.",
-  "@unexpectedFailureOccuredPleaseContactUs": {},
-  "failedToGenerateInvitation": "Failed to generate invitation.",
-  "@failedToGenerateInvitation": {},
-  "inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages": "To start a chat with someone, they must first import the invitation and provide the acceptance text generated in their chat. This will allow them to send and unlock messages.",
-  "@inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages": {},
-  "theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere": "The acceptance that you get from the invited person should be pasted here:",
-  "@theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere": {},
-  "failedToAcceptInvitation": "Failed to accept invitation.",
-  "@failedToAcceptInvitation": {},
-  "pleaseProvideInvitationTextAndChatName": "Please provide invitation text and chat name.",
-  "@pleaseProvideInvitationTextAndChatName": {},
-  "acceptChatInvitation": "Accept Chat Invitation",
-  "@acceptChatInvitation": {},
-  "pasteInvitationText": "Paste Invitation Text",
-  "@pasteInvitationText": {},
-  "failedToGenerateAcceptance": "Failed to generate acceptance.",
-  "@failedToGenerateAcceptance": {},
-  "failedToReadAcceptance": "Failed to read acceptance.",
+  "failedToReadAcceptance": "Couldn't read the reply.",
   "@failedToReadAcceptance": {},
-  "goToChat": "Go to Chat",
-  "@goToChat": {},
-  "copyAcceptance": "Copy Acceptance",
-  "@copyAcceptance": {},
-  "yourAcceptanceHasBeenGeneratedSuccessfully": "Your acceptance has been generated successfully.",
-  "@yourAcceptanceHasBeenGeneratedSuccessfully": {},
-  "exportAcceptance": "Export Acceptance",
-  "@exportAcceptance": {},
-  "acceptanceCopiedToClipboard": "Acceptance copied to clipboard.",
-  "@acceptanceCopiedToClipboard": {},
-  "tapToViewChat": "Tap to view chat.",
-  "@tapToViewChat": {},
-  "waitingForAcceptance": "Waiting for acceptance.",
-  "@waitingForAcceptance": {},
-  "deleteChat": "Delete Chat",
+  "deleteChat": "Remove person",
   "@deleteChat": {},
-  "areYouSureYouWantToDeleteThisChat": "Are you sure you want to delete this chat?",
-  "@areYouSureYouWantToDeleteThisChat": {},
   "cancel": "Cancel",
   "@cancel": {},
   "delete": "Delete",
   "@delete": {},
-  "textGoesHere": "Text goes here.",
-  "@textGoesHere": {},
-  "encrypting": "Encrypting",
-  "@encrypting": {},
-  "decrypting": "Decrypting",
-  "@decrypting": {},
   "copiedToTheClipboard": "Copied to the clipboard.",
   "@copiedToTheClipboard": {},
   "copy": "Copy",
   "@copy": {},
   "share": "Share",
   "@share": {},
-  "areYouSureYouWantToDeleteChatWith": "Are you sure you want to delete chat with {personName}",
+  "areYouSureYouWantToDeleteChatWith": "Remove {personName}?",
   "@areYouSureYouWantToDeleteChatWith": {
     "placeholders": {
       "personName": {}
     }
   },
-  "failedToGetAcceptance": "Failed to get acceptance",
+  "failedToGetAcceptance": "Couldn't get the reply.",
   "@failedToGetAcceptance": {},
-  "storagePermissionDenied": "Storage permission denied.",
-  "@storagePermissionDenied": {},
   "errorPickingFiles": "Error picking files.",
   "@errorPickingFiles": {},
   "loading": "Loading",
   "@loading": {},
-  "fuzz": "Fuzz",
-  "@fuzz": {},
-  "defuzz": "Defuzz",
-  "@defuzz": {},
   "failedToProcessFiles": "Failed to process files",
   "@failedToProcessFiles": {},
-  "chatWithIndicatedNameAlreadyExists": "Chat with indicated name already exists",
+  "chatWithIndicatedNameAlreadyExists": "You already have someone with this name.",
   "@chatWithIndicatedNameAlreadyExists": {},
-  "reveal": "Reveal",
-  "@reveal": {},
-  "show": "Show",
-  "@show": {},
   "open": "Open",
   "@open": {},
   "dropFilesHere": "Drop files here",
   "@dropFilesHere": {},
-  "shareInvitation": "Share invitation",
-  "@shareInvitation": {},
-  "acceptanceText": "Acceptance Text",
-  "@acceptanceText": {},
   "basicEncryption": "Basic Encryption",
   "@basicEncryption": {},
   "customKey": "Custom Key",
   "@customKey": {},
   "enterYourSecretKey": "Enter your secret key",
   "@enterYourSecretKey": {},
-  "textToEncryptDecrypt": "Text to Encrypt Decrypt",
+  "textToEncryptDecrypt": "Text to encrypt or decrypt",
   "@textToEncryptDecrypt": {},
   "encryptText": "Encrypt Text",
   "@encryptText": {},
@@ -158,217 +68,44 @@
   "@encryptionFailed": {},
   "encryptedTextAndKeyCannotBeEmpty": "Encrypted text and key cannot be empty",
   "@encryptedTextAndKeyCannotBeEmpty": {},
-  "decryptionFailedCheckYourKeyOrEncryptedText": "Decryption failed check your key or encrypted text",
+  "decryptionFailedCheckYourKeyOrEncryptedText": "Decryption failed. Check your key or the encrypted text.",
   "@decryptionFailedCheckYourKeyOrEncryptedText": {},
-  "welcomeToFuzzzyInk": "Welcome to Fuzzzy Ink",
-  "@welcomeToFuzzzyInk": {},
-  "offlineEncryptedClipboard": "Offline Encrypted Clipboard",
-  "@offlineEncryptedClipboard": {},
-  "yourDataNeverLeavesYourDeviceNoServersNoTracking": "Your data never leaves your device. No servers, no tracking.",
-  "@yourDataNeverLeavesYourDeviceNoServersNoTracking": {},
-  "secureHandshake": "Secure Handshake",
-  "@secureHandshake": {},
-  "connectWithOthersUsingASecureOfflineCodeExchange": "Connect with others using a secure, offline code exchange.",
-  "@connectWithOthersUsingASecureOfflineCodeExchange": {},
-  "getStarted": "Get Started",
-  "@getStarted": {},
   "next": "Next",
   "@next": {},
-  "noOngoingChats": "No Ongoing Chats",
-  "@noOngoingChats": {},
-  "tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation": "Tap the button below to create a new secure handshake or accept an invitation.",
-  "@tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation": {},
-  "stepSendYourInviteCode": "Step 1: Send Your Invite Code",
-  "@stepSendYourInviteCode": {},
-  "sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel": "Send this code to the person you want to chat with using any secure channel.",
-  "@sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel": {},
-  "stepPasteTheirAcceptanceCode": "Step 2: Paste Their Acceptance Code",
-  "@stepPasteTheirAcceptanceCode": {},
-  "onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow": "Once they accept your invite, they will send a code back. Paste it below.",
-  "@onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow": {},
-  "stepPasteTheirInviteCode": "Step 1: Paste Their Invite Code",
-  "@stepPasteTheirInviteCode": {},
-  "askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow": "Ask your contact to share their invite code securely and paste it below.",
-  "@askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow": {},
-  "stepNameThisChat": "Step 2: Name This Chat",
-  "@stepNameThisChat": {},
-  "chooseALocalNameForThisChatThisIsOnlyVisibleToYou": "Choose a local name for this chat. This is only visible to you.",
-  "@chooseALocalNameForThisChatThisIsOnlyVisibleToYou": {},
-  "securityWarning": "Security Warning",
-  "@securityWarning": {},
-  "areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": "Are you sure you want to copy unencrypted data to your clipboard? This could compromise your secure chat.",
-  "@areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat": {},
-  "copyFuzz": "Copy Fuzz",
-  "@copyFuzz": {},
-  "copyPlaintext": "Copy Plaintext",
-  "@copyPlaintext": {},
-  "firstEncryption": "First Encryption",
-  "@firstEncryption": {},
-  "typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": "Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.",
-  "@typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText": {},
   "settings": "Settings",
   "@settings": {},
-  "securityLevel": "Security Level",
-  "@securityLevel": {},
-  "strict": "Strict",
-  "@strict": {},
-  "moderate": "Moderate",
-  "@moderate": {},
-  "strictSecurityDescription": "Shows a confirmation dialog before copying any decrypted text. Recommended for maximum privacy.",
-  "@strictSecurityDescription": {},
-  "moderateSecurityDescription": "Received messages are selectable and can be copied directly without a warning.",
-  "@moderateSecurityDescription": {},
-  "shareAsLink": "Share as Link",
-  "@shareAsLink": {},
-  "copyAsLink": "Copy as Link",
-  "@copyAsLink": {},
-  "linkCopiedToClipboard": "Link copied to clipboard.",
-  "@linkCopiedToClipboard": {},
-  "shareAcceptance": "Share acceptance",
-  "@shareAcceptance": {},
-  "linkExpired": "This link has expired.",
-  "@linkExpired": {},
-  "linkShared": "Link shared.",
-  "@linkShared": {},
   "invalidLink": "This link is invalid or corrupted.",
   "@invalidLink": {},
-  "noMatchingChat": "No matching chat found.",
-  "@noMatchingChat": {},
   "alreadyConnected": "Already connected!",
   "@alreadyConnected": {},
-  "updateRequired": "This link requires a newer version of Fuzzzy Ink.",
-  "@updateRequired": {},
-  "cantAcceptOwnInvitation": "You can't accept your own invitation.",
+  "cantAcceptOwnInvitation": "You can't accept your own invite.",
   "@cantAcceptOwnInvitation": {},
-  "connectionComplete": "Connection established!",
-  "@connectionComplete": {},
-  "incomingInvitation": "Incoming invitation detected.",
-  "@incomingInvitation": {},
-  "invitationLinkExpired": "This invitation link has expired.",
-  "@invitationLinkExpired": {},
-  "acceptanceLinkExpired": "This acceptance link has expired.",
-  "@acceptanceLinkExpired": {},
-  "chatNotFoundForAcceptance": "Chat not found for this acceptance link.",
+  "chatNotFoundForAcceptance": "This reply doesn't match any invite you sent.",
   "@chatNotFoundForAcceptance": {},
-  "failedToProcessAcceptance": "Failed to process acceptance link.",
+  "failedToProcessAcceptance": "Couldn't read this reply link.",
   "@failedToProcessAcceptance": {},
-  "chatNotFoundForMessage": "Chat not found for this message link.",
-  "@chatNotFoundForMessage": {},
-  "failedToProcessMessage": "Failed to process message link.",
-  "@failedToProcessMessage": {},
-  "shareFile": "Share File",
-  "@shareFile": {},
   "vaultUntitled": "Untitled",
   "@vaultUntitled": {},
-  "vaultNewPassword": "New Password",
-  "@vaultNewPassword": {},
-  "vaultNewNote": "New Note",
-  "@vaultNewNote": {},
-  "vaultEditItem": "Edit Item",
-  "@vaultEditItem": {},
-  "vaultTitle": "Title",
-  "@vaultTitle": {},
-  "vaultUsernameEmail": "Username / Email",
-  "@vaultUsernameEmail": {},
-  "vaultUrlWebsite": "URL (Website)",
-  "@vaultUrlWebsite": {},
-  "vaultNotesOptional": "Notes (Optional)",
-  "@vaultNotesOptional": {},
-  "vaultSecureNote": "Secure Note",
-  "@vaultSecureNote": {},
   "vaultSave": "Save",
   "@vaultSave": {},
   "vaultPasswords": "Passwords",
   "@vaultPasswords": {},
   "vaultNotes": "Notes",
-  "vaultFiles": "Files",
-  "vaultNoFilesYet": "No files yet",
-  "vaultFileLabel": "File",
   "@vaultNotes": {},
+  "vaultFiles": "Files",
+  "vaultFileLabel": "File",
   "vaultAll": "All",
   "@vaultAll": {},
-  "vaultAddGroup": "Add Group",
-  "@vaultAddGroup": {},
-  "vaultNewGroup": "New Group",
-  "@vaultNewGroup": {},
-  "vaultGroupName": "Group name",
-  "@vaultGroupName": {},
-  "vaultMoveToGroup": "Move to Group",
-  "@vaultMoveToGroup": {},
-  "vaultNoOtherGroups": "No other groups available",
-  "@vaultNoOtherGroups": {},
-  "vaultNoResultsFound": "No results found.",
-  "@vaultNoResultsFound": {},
-  "vaultNoPasswordsYet": "No passwords yet.\nTap + to add one.",
-  "@vaultNoPasswordsYet": {},
-  "vaultNoNotesYet": "No notes yet.\nTap + to add one.",
-  "@vaultNoNotesYet": {},
-  "vaultIsEmpty": "Vault is empty.\nAdd a password or note.",
-  "@vaultIsEmpty": {},
   "vaultPasswordLabel": "Password",
   "@vaultPasswordLabel": {},
   "vaultNoteLabel": "Note",
   "@vaultNoteLabel": {},
-  "vaultCopyingNotImplemented": "Copying not fully implemented yet.",
-  "@vaultCopyingNotImplemented": {},
-  "vaultFailedToLoadItem": "Failed to load item",
-  "@vaultFailedToLoadItem": {},
-  "vaultSearchHint": "Search passwords & notes",
-  "@vaultSearchHint": {},
-  "vaultCreateYourVault": "Create Your Vault",
-  "@vaultCreateYourVault": {},
-  "vaultCreateDescription": "Your vault encrypts all passwords and notes locally on your device.\nChoose a strong master password.",
-  "@vaultCreateDescription": {},
-  "vaultPassword": "Vault Password",
-  "@vaultPassword": {},
-  "vaultConfirmPassword": "Confirm Password",
-  "@vaultConfirmPassword": {},
-  "vaultPasswordsDoNotMatch": "Passwords do not match",
-  "@vaultPasswordsDoNotMatch": {},
-  "vaultPasswordCannotBeReset": "This password cannot be reset. If you forget it, your data will be permanently lost.",
-  "@vaultPasswordCannotBeReset": {},
-  "vaultCreateVault": "Create Vault",
-  "@vaultCreateVault": {},
-  "vaultFailedToCreate": "Failed to create vault: {failureType}",
-  "@vaultFailedToCreate": {
-    "placeholders": {
-      "failureType": {}
-    }
-  },
-  "vaultUnlockVault": "Unlock Vault",
-  "@vaultUnlockVault": {},
   "vaultIncorrectPassword": "Incorrect password",
   "@vaultIncorrectPassword": {},
-  "vaultUnlock": "Unlock",
-  "@vaultUnlock": {},
   "vaultForgotPassword": "Forgot password? Your data is encrypted and cannot be recovered.",
   "@vaultForgotPassword": {},
-  "vaultUnlockFailed": "Unlock failed: {failureType}",
-  "@vaultUnlockFailed": {
-    "placeholders": {
-      "failureType": {}
-    }
-  },
-  "vaultPasswordStrength": "Password Strength",
-  "@vaultPasswordStrength": {},
-  "fuzzyVault": "Fuzzy Vault",
-  "@fuzzyVault": {},
-  "menu": "Menu",
-  "@menu": {},
-  "fuzzyUserAuth": "Fuzzy User Auth",
-  "@fuzzyUserAuth": {},
-  "authError": "Error: {errorMessage}",
-  "@authError": {
-    "placeholders": {
-      "errorMessage": {}
-    }
-  },
   "unknownError": "Unknown error",
   "@unknownError": {},
-  "noDataFoundPleaseSetYourData": "No data found. Please set your data.",
-  "@noDataFoundPleaseSetYourData": {},
-  "lastUpdated": "Last Updated:",
-  "@lastUpdated": {},
   "keyStrengthWeak": "Weak (Too short)",
   "@keyStrengthWeak": {},
   "keyStrengthModerate": "Moderate (Consider adding numbers or letters)",
@@ -388,47 +125,15 @@
   "@processingFailed": {},
   "chatUnlockTitle": "Unlock Fuzzzy Ink",
   "@chatUnlockTitle": {},
-  "chatUnlockSubtitle": "Enter your password to access your chats.",
-  "@chatUnlockSubtitle": {},
-  "chatAuthPassword": "Password",
-  "@chatAuthPassword": {},
   "chatAuthIncorrectPassword": "Incorrect password",
   "@chatAuthIncorrectPassword": {},
   "chatAuthUnlock": "Unlock",
   "@chatAuthUnlock": {},
-  "chatAuthForgotPassword": "Forgot password? Your encrypted data cannot be recovered without it.",
-  "@chatAuthForgotPassword": {},
-  "chatAuthSetupTitle": "Protect Your Chats",
-  "@chatAuthSetupTitle": {},
-  "chatAuthSetupDescription": "Set a password to encrypt your chat keys. This adds an extra layer of security to your conversations.",
-  "@chatAuthSetupDescription": {},
-  "chatAuthSetPassword": "Set Password",
-  "@chatAuthSetPassword": {},
-  "chatAuthConfirmPassword": "Confirm Password",
-  "@chatAuthConfirmPassword": {},
-  "chatAuthPasswordsDoNotMatch": "Passwords do not match",
-  "@chatAuthPasswordsDoNotMatch": {},
-  "chatAuthEnabled": "Chat Protection Enabled",
-  "@chatAuthEnabled": {},
-  "chatAuthDisabled": "Chat Protection Disabled",
-  "@chatAuthDisabled": {},
-  "chatAuthEnableProtection": "Enable Chat Protection",
-  "@chatAuthEnableProtection": {},
-  "chatAuthDisableProtection": "Disable Chat Protection",
-  "@chatAuthDisableProtection": {},
-  "chatAuthProtectionDescription": "When enabled, you must enter a password to access your chats. Your keys will be encrypted with this password.",
-  "@chatAuthProtectionDescription": {},
-  "chatAuthMigratingKeys": "Encrypting your keys...",
-  "@chatAuthMigratingKeys": {},
   "chatAuthResecuringKeys": "Re-securing your keys…",
   "@chatAuthResecuringKeys": {},
-  "chatAuthentication": "Chat Authentication",
-  "@chatAuthentication": {},
-  "chatAuthenticationDescription": "Manage chat password protection",
-  "@chatAuthenticationDescription": {},
-  "benchmarkFileEncryption": "Benchmark file encryption (dev)",
+  "benchmarkFileEncryption": "Benchmark locking files (dev)",
   "@benchmarkFileEncryption": {},
-  "benchmarkFileEncryptionDescription": "Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s",
+  "benchmarkFileEncryptionDescription": "Locks and opens a 64 MiB test file and reports MB/s",
   "@benchmarkFileEncryptionDescription": {},
   "benchmarkResult": "Benchmark result",
   "@benchmarkResult": {},
@@ -446,183 +151,2650 @@
   },
   "close": "Close",
   "@close": {},
-  "chatAuthBiometricUnlock": "Unlock with biometrics",
-  "@chatAuthBiometricUnlock": {},
-  "chatAuthBiometricEnable": "Enable Biometric Unlock",
-  "@chatAuthBiometricEnable": {},
-  "chatAuthBiometricDisable": "Disable Biometric Unlock",
-  "@chatAuthBiometricDisable": {},
-  "chatAuthBiometricEnabled": "Biometric Unlock Enabled",
-  "@chatAuthBiometricEnabled": {},
-  "chatAuthBiometricDescription": "Enter your password to confirm, then unlock with fingerprint or Face ID.",
-  "@chatAuthBiometricDescription": {},
-  "chatAuthBiometricUnavailable": "Biometric authentication is not available on this device.",
-  "@chatAuthBiometricUnavailable": {},
-  "chatAuthBiometricFailed": "Biometric authentication failed.",
-  "@chatAuthBiometricFailed": {},
-  "chatAuthBiometricInvalidated": "Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.",
-  "@chatAuthBiometricInvalidated": {},
-  "vaultBiometricUnlock": "Unlock with biometrics",
-  "@vaultBiometricUnlock": {},
-  "vaultBiometricEnable": "Enable Biometric Unlock",
-  "@vaultBiometricEnable": {},
-  "vaultBiometricDisable": "Disable Biometric Unlock",
-  "@vaultBiometricDisable": {},
-  "vaultBiometricEnabled": "Biometric Unlock Enabled",
-  "@vaultBiometricEnabled": {},
-  "vaultBiometricDescription": "Confirm with your master password to enable biometric unlock for this vault.",
-  "@vaultBiometricDescription": {},
-  "vaultBiometricUnavailable": "Biometric authentication is not available on this device.",
-  "@vaultBiometricUnavailable": {},
-  "vaultBiometricSettings": "Biometric Settings",
-  "@vaultBiometricSettings": {},
-  "vaultBiometricInvalidPassword": "Incorrect vault password.",
-  "@vaultBiometricInvalidPassword": {},
-  "vaultBiometricInvalidated": "Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.",
+  "chatAuthPasswordTooWeak": "Password is too weak. Use a longer one with letters, numbers and symbols.",
+  "@chatAuthPasswordTooWeak": {},
+  "biometricNotStrongEnough": "Fingerprint or face unlock on this device isn't strong enough to protect your password. Keep unlocking with your password.",
+  "@biometricNotStrongEnough": {},
+  "biometricNotTurnedOn": "Quick unlock was not turned on.",
+  "@biometricNotTurnedOn": {},
+  "vaultBiometricInvalidated": "Your fingerprint or face changed, so quick unlock was turned off. Turn it on again in Settings.",
   "@vaultBiometricInvalidated": {},
-  "vaultAuthentication": "Vault Authentication",
-  "@vaultAuthentication": {},
-  "vaultAuthenticationDescription": "Manage vault biometric unlock",
-  "@vaultAuthenticationDescription": {},
-  "vaultNotCreated": "Create a vault first to enable biometric unlock.",
-  "@vaultNotCreated": {},
-  "vaultLockVault": "Lock Vault",
-  "@vaultLockVault": {},
-  "chatAuthCurrentPassword": "Current Password",
-  "@chatAuthCurrentPassword": {},
-  "chatAuthNewPassword": "New Password",
-  "@chatAuthNewPassword": {},
-  "chatAuthEnterPassword": "Please enter your current password",
-  "@chatAuthEnterPassword": {},
-  "chatAuthPasswordChanged": "Chat Password Changed",
-  "@chatAuthPasswordChanged": {},
-  "vaultFileSaveWarning": "⚠️ The original file is NOT auto-deleted. After a successful save, the user's source file remains on disk untouched. The app currently doesn't warn about this.",
-  "@vaultFileSaveWarning": {},
-  "invitationAlreadyUsed": "This invitation was already used.",
+  "invitationAlreadyUsed": "This invite was already used.",
   "@invitationAlreadyUsed": {},
-  "invalidInvitation": "This invitation is invalid or damaged.",
+  "invalidInvitation": "This invite is not valid or is damaged.",
   "@invalidInvitation": {},
-  "invalidAcceptance": "This acceptance is invalid or damaged.",
+  "invalidAcceptance": "This reply is not valid or is damaged.",
   "@invalidAcceptance": {},
-  "wrongChatBlob": "This code belongs to a different chat.",
+  "wrongChatBlob": "This belongs to a different person.",
   "@wrongChatBlob": {},
-  "alreadyUnfuzzed": "This message was already unfuzzed on this device.",
-  "@alreadyUnfuzzed": {},
-  "blobTooOld": "This message is too old to unfuzz — too many newer messages were unfuzzed first.",
-  "@blobTooOld": {},
-  "corruptBlob": "This is not a valid fuzzed message.",
+  "corruptBlob": "This is not a valid locked message.",
   "@corruptBlob": {},
   "safetyNumberTitle": "Safety number",
   "@safetyNumberTitle": {},
-  "safetyNumberExplanation": "Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.",
-  "@safetyNumberExplanation": {},
-  "safetyNumberMarkVerified": "Mark as verified",
-  "@safetyNumberMarkVerified": {},
-  "safetyNumberUnmark": "Unmark",
-  "@safetyNumberUnmark": {},
-  "safetyNumberVerifiedBadge": "Verified",
-  "@safetyNumberVerifiedBadge": {},
-  "verifySafetyNumberCta": "Verify safety number",
-  "@verifySafetyNumberCta": {},
-  "wrongPasswordFile": "Wrong password — this file cannot be unfuzzed with it.",
+  "safetyNumberVersion": "Version {version}. If the other person sees another version, or none, update both apps before comparing.",
+  "@safetyNumberVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "wrongPasswordFile": "Wrong password — this file doesn't open with it.",
   "@wrongPasswordFile": {},
   "fileStillArriving": "This file is still being written — wait until it has fully arrived, then try again.",
   "@fileStillArriving": {},
   "fileCannotBeOpenedAskToResend": "This file cannot be opened; ask the sender to send it again.",
   "@fileCannotBeOpenedAskToResend": {},
-  "basicsWrongPassword": "Incorrect key — this text cannot be unfuzzed with it.",
+  "basicsWrongPassword": "Incorrect key — this text doesn't open with it.",
   "@basicsWrongPassword": {},
-  "forwardSecrecyTitle": "Unfuzzed once, on this device",
+  "forwardSecrecyTitle": "Opened once, on this device",
   "@forwardSecrecyTitle": {},
-  "forwardSecrecyNotice": "Each fuzzed message can be unfuzzed once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot re-read old blobs.",
+  "forwardSecrecyNotice": "Each locked message can be opened once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot read old messages.",
   "@forwardSecrecyNotice": {},
   "aboutEncryptionTitle": "About encryption",
   "@aboutEncryptionTitle": {},
-  "aboutEncryptionDescription": "What single-use unfuzzing means, and how your history is kept",
-  "@aboutEncryptionDescription": {},
   "aboutEncryptionHistoryTitle": "Your history on this device",
   "@aboutEncryptionHistoryTitle": {},
-  "aboutEncryptionBodyHistory": "Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Unfuzzed files are different: they are saved as ordinary files in this chat’s folder on the device and are not sealed or locked by the app — anyone who can read the device’s storage can open them, so protect them like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.",
+  "aboutEncryptionBodyHistory": "Every text you lock or open is kept in the app, sealed per person under a key only this device holds. Your master password protects every key: without it, or your recovery key, nothing kept here can be opened. My safe opens with the master password or with a password of its own; giving it its own password also gives it a new key and a new recovery key. Files are kept the same way: the app keeps only the sealed file and unlocks it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. The app locks itself after the idle time you choose, and when it has been in the background for a while. If you turn on fingerprint or face unlock, your password is stored on this device so your fingerprint or face can release it.",
   "@aboutEncryptionBodyHistory": {},
-  "aboutEncryptionWindowTitle": "Unfuzz in order",
+  "aboutEncryptionWindowTitle": "Open in order",
   "@aboutEncryptionWindowTitle": {},
-  "aboutEncryptionBodyWindow": "The app keeps keys for skipped messages, but not without limit. A blob more than 63 messages behind the newest one you already read in that chat can no longer be unfuzzed — the app says it is too old — and no more than 40 skipped messages are kept at once. Your own sent blobs cannot be unfuzzed by you either; that is why the app keeps what you sent.",
+  "aboutEncryptionBodyWindow": "The app keeps keys for skipped messages, but not without limit. A message more than 63 behind the newest one you already opened from that person can no longer be opened — the app says it is too old — and no more than 40 skipped messages are kept at once. You cannot open your own sent messages either; that is why the app keeps what you sent.",
   "@aboutEncryptionBodyWindow": {},
   "aboutEncryptionLinksTitle": "Message links",
   "@aboutEncryptionLinksTitle": {},
-  "aboutEncryptionBodyLinks": "A message copied or shared as a link carries the chat’s id next to the blob, so tapping the link opens the right chat. The id is not part of the secret, but anyone who sees the link can tell which chat it belongs to. The blob itself carries no chat id.",
+  "aboutEncryptionBodyLinks": "A link carries only the locked message, after the # — the part a browser never sends to any server. A link never opens anything by itself: the app shows who it is from and opens it only when you tap Open. A reply link connects you only when you tap Connect.",
   "@aboutEncryptionBodyLinks": {},
   "aboutEncryptionErrorsTitle": "What the errors mean",
   "@aboutEncryptionErrorsTitle": {},
-  "aboutEncryptionBodyErrors": "“Already unfuzzed”: this blob was unfuzzed on this device before and cannot be read a second time. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: too many newer messages were unfuzzed first. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.",
+  "aboutEncryptionBodyErrors": "“Already opened”: this message was opened on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the conversation has moved on several rounds since — so it can never be read here. “Not a valid locked message”: it is damaged, incomplete, or belongs to a different person — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already opened from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.",
   "@aboutEncryptionBodyErrors": {},
-  "aboutEncryptionBodySafetyNumber": "Every chat has a 60-digit safety number, computed from both devices’ identity keys. Compare it with your partner by voice or in person: if the digits match, nobody sat in the middle when you paired. “Verified” is your own note that you did this — the app cannot check it for you.",
+  "aboutEncryptionBodySafetyNumber": "Each person you connect with has a 60-digit safety number, computed from both devices’ identity keys. Compare it with them by voice or in person: if the digits match, nobody sat in the middle when you connected. “Checked” is your own note that you did this — the app cannot check it for you.",
   "@aboutEncryptionBodySafetyNumber": {},
   "aboutEncryptionUnderTheHoodTitle": "Under the hood",
   "@aboutEncryptionUnderTheHoodTitle": {},
-  "aboutEncryptionBodyUnderTheHood": "Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a blob single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.",
+  "aboutEncryptionBodyUnderTheHood": "Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a locked message single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.",
   "@aboutEncryptionBodyUnderTheHood": {},
-  "alreadyReceived": "This file was already received on this device — it cannot be unfuzzed a second time.",
+  "alreadyReceived": "This file was already received on this device — it can't be opened a second time.",
   "@alreadyReceived": {},
-  "fileTooOld": "This file is too old to unfuzz — too many newer messages were unfuzzed first.",
+  "fileTooOld": "This file is too old to open — many newer messages were opened first.",
   "@fileTooOld": {},
-  "fileCorrupt": "This is not a valid fuzzed file — it is damaged, incomplete, or from a different chat.",
+  "fileCorrupt": "This is not a valid locked file — it is damaged, incomplete, or from a different person.",
   "@fileCorrupt": {},
-  "fileCancelled": "Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.",
+  "fileCancelled": "Receiving was cancelled — this file can't be opened on this device now; ask the sender to send it again.",
   "@fileCancelled": {},
-  "exportChatArchive": "Export chat archive",
-  "@exportChatArchive": {},
-  "exportChatArchiveDescription": "Seals this chat's history into a password-protected file (one message per line). Open it later in Basic Encryption → file decryption with the same password.",
-  "@exportChatArchiveDescription": {},
-  "exportChatArchivePassword": "Archive password",
-  "@exportChatArchivePassword": {},
-  "exportChatArchiveDone": "Chat archive exported.",
-  "@exportChatArchiveDone": {},
-  "exportChatArchiveFailed": "Failed to export the chat archive.",
+  "exportChatArchiveFailed": "Couldn't save the history as a file.",
   "@exportChatArchiveFailed": {},
-  "exportChatArchiveNothingToExport": "This chat has no messages to export.",
+  "exportChatArchiveNothingToExport": "There is no history to save yet.",
   "@exportChatArchiveNothingToExport": {},
   "exportChatArchiveStoreLocked": "Unlock Fuzzzy Ink first — your history cannot be read while it is locked.",
   "@exportChatArchiveStoreLocked": {},
-  "export": "Export",
-  "@export": {},
   "couldNotOpenFile": "Could not open file.",
   "@couldNotOpenFile": {},
-  "legalAndSupport": "Legal and support",
-  "@legalAndSupport": {},
-  "legalAndSupportDescription": "These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.",
-  "@legalAndSupportDescription": {},
   "privacyPolicy": "Privacy policy",
   "@privacyPolicy": {},
-  "privacyPolicyDescription": "What the app keeps, and where",
-  "@privacyPolicyDescription": {},
   "termsOfUse": "Terms of use",
   "@termsOfUse": {},
-  "termsOfUseDescription": "The rules for using Fuzzzy Ink",
-  "@termsOfUseDescription": {},
   "support": "Support",
   "@support": {},
-  "supportDescription": "Help, questions and reporting a problem",
-  "@supportDescription": {},
   "dataDeletion": "Deleting your data",
   "@dataDeletion": {},
-  "dataDeletionDescription": "How to remove everything the app keeps",
-  "@dataDeletionDescription": {},
   "couldNotOpenLink": "Could not open the link.",
   "@couldNotOpenLink": {},
-  "appVersion": "Version {version} (build {build})",
-  "@appVersion": {
-    "placeholders": {
-      "version": {},
-      "build": {}
-    }
-  },
-  "biometricUnlockChats": "Authenticate to unlock chats",
+  "biometricUnlockChats": "Confirm it's you to unlock Fuzzzy Ink",
   "@biometricUnlockChats": {},
-  "biometricUnlockVault": "Authenticate to unlock vault",
+  "biometricUnlockVault": "Confirm it's you to open My safe",
   "@biometricUnlockVault": {},
-  "biometricUnlockVaultTitle": "Unlock Fuzzy Vault",
+  "biometricUnlockVaultTitle": "Open My safe",
   "@biometricUnlockVaultTitle": {},
   "biometricSavePassword": "Authenticate to save password",
-  "@biometricSavePassword": {}
+  "@biometricSavePassword": {},
+  "vaultMoveUnfinishedTitle": "My safe wasn't moved",
+  "@vaultMoveUnfinishedTitle": {},
+  "vaultMoveUnfinishedMessage": "My safe couldn't be moved to its protected place in the app. Nothing was deleted. Close and reopen the app to try again.",
+  "@vaultMoveUnfinishedMessage": {},
+  "copyRefused": "Only sealed text can be copied.",
+  "@copyRefused": {},
+  "vaultCopyPassword": "Copy password",
+  "@vaultCopyPassword": {},
+  "saveFile": "Save",
+  "@saveFile": {},
+  "fileSaved": "Saved.",
+  "@fileSaved": {},
+  "couldNotSaveFile": "Could not save the file.",
+  "@couldNotSaveFile": {},
+  "unfuzzingFile": "Opening…",
+  "@unfuzzingFile": {},
+  "fileNoPreview": "This file cannot be shown in the app. Save it to open it with another app.",
+  "@fileNoPreview": {},
+  "basicsFuzzedFilesTitle": "Locked files kept in the app",
+  "@basicsFuzzedFilesTitle": {},
+  "masterPassword": "Master password",
+  "@masterPassword": {},
+  "masterPasswordPreviousData": "This version uses a master password. People, history and My safe from the earlier test version can't be opened with it, so they will be removed. Files you saved stay where they are.",
+  "@masterPasswordPreviousData": {},
+  "accessSetupInterrupted": "Setup didn't finish last time. A recovery key you saw then won't work. You'll get a new one.",
+  "@accessSetupInterrupted": {},
+  "masterPasswordFailed": "Your keys could not be created. Try again.",
+  "@masterPasswordFailed": {},
+  "recoveryKeyTitle": "Recovery key",
+  "@recoveryKeyTitle": {},
+  "recoveryKeySaveFailed": "The recovery key was not saved.",
+  "@recoveryKeySaveFailed": {},
+  "recoveryKeyFileText": "Fuzzzy Ink recovery key\n\n{key}\n\nIf you forget your master password, this key lets you set a new one. Keep it somewhere safe, away from the device. Without your password or this recovery key, nobody — not even us — can get your data back.\n",
+  "@recoveryKeyFileText": {
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryKeyField": "Recovery key",
+  "@recoveryKeyField": {},
+  "recoveryKeyTypo": "This recovery key has a typo. Check each group of four.",
+  "@recoveryKeyTypo": {},
+  "recoveryKeyWrong": "This recovery key does not open this app.",
+  "@recoveryKeyWrong": {},
+  "chatUnlockErase": "Erase everything and start over",
+  "@chatUnlockErase": {},
+  "eraseTitle": "Erase everything?",
+  "@eraseTitle": {},
+  "eraseMessage": "Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.",
+  "@eraseMessage": {},
+  "eraseConfirm": "Erase everything",
+  "@eraseConfirm": {},
+  "storageUnavailable": "Fuzzzy Ink can't read this device's secure key storage, so it stays locked. Try again; if it keeps happening, restart the device.",
+  "@storageUnavailable": {},
+  "tryAgain": "Try again",
+  "@tryAgain": {},
+  "appLockNow": "Lock Fuzzzy Ink",
+  "@appLockNow": {},
+  "autoLockSaveFailed": "The setting was not saved.",
+  "@autoLockSaveFailed": {},
+  "vaultRecoveryUseMasterPassword": "Open My safe with my master password",
+  "@vaultRecoveryUseMasterPassword": {},
+  "vaultRecoverySubmit": "Open My safe",
+  "@vaultRecoverySubmit": {},
+  "tabHome": "Home",
+  "@tabHome": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "tabMySafe": "My safe",
+  "@tabMySafe": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "tabSettings": "Settings",
+  "@tabSettings": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeLockTitle": "Lock",
+  "@homeLockTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeLockSubtitle": "For one person",
+  "@homeLockSubtitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeOpenTitle": "Open",
+  "@homeOpenTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeOpenSubtitle": "What you got",
+  "@homeOpenSubtitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homePeople": "People",
+  "@homePeople": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homePeopleCount": "People · {count}",
+  "@homePeopleCount": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeAdd": "Add",
+  "@homeAdd": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeAddPerson": "Add a person",
+  "@homeAddPerson": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeNoOneYet": "No one yet",
+  "@homeNoOneYet": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "homeLoadError": "Couldn't load your people. Close and open the app again.",
+  "@homeLoadError": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "stepYouSendInvite": "You send an invite",
+  "@stepYouSendInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "stepTheyReply": "They reply",
+  "@stepTheyReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "stepInviteSent": "Invite sent",
+  "@stepInviteSent": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "stepNameReplies": "{name} replies",
+  "@stepNameReplies": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stepLockForEachOther": "Lock for each other",
+  "@stepLockForEachOther": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "stepsProgress": "Step {step} of {total}",
+  "@stepsProgress": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "stepsProgressWithLabel": "Step {step} of {total} · {label}",
+  "@stepsProgressWithLabel": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "stepDone": "Done: {step}",
+  "@stepDone": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "stepNext": "Next: {step}",
+  "@stepNext": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "addSendInvite": "Send an invite",
+  "@addSendInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "addYouStart": "You start",
+  "@addYouStart": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "addGotInvite": "I got an invite",
+  "@addGotInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "addTheyStarted": "They started",
+  "@addTheyStarted": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "chipWaitingForReply": "Waiting for reply",
+  "@chipWaitingForReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "chipChecked": "Checked",
+  "@chipChecked": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "chipNotChecked": "Not checked",
+  "@chipNotChecked": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "personRowWaitingLine": "Then you can lock for each other",
+  "@personRowWaitingLine": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "waitNoteReply": "Once {name} replies, you can lock messages for each other.",
+  "@waitNoteReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitNoteAnyWay": "Send the invite any way, even publicly. It stays safe.",
+  "@waitNoteAnyWay": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "linkWhy": "Why?",
+  "@linkWhy": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "linkHow": "How?",
+  "@linkHow": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "linkMore": "More",
+  "@linkMore": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "linkOpensExplanation": "Opens an explanation",
+  "@linkOpensExplanation": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "gotIt": "Got it",
+  "@gotIt": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoResetTitle": "Why no reset?",
+  "@infoNoResetTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoResetLine1": "Your password never leaves this phone.",
+  "@infoNoResetLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoResetLine2": "We can't see it, so no one can reset it.",
+  "@infoNoResetLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoResetLine3": "Your recovery key is the only spare.",
+  "@infoNoResetLine3": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoRecoveryKeyTitle": "Your recovery key",
+  "@infoRecoveryKeyTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoRecoveryKeyLine1": "Your spare if you forget the password.",
+  "@infoRecoveryKeyLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoRecoveryKeyLine2": "It opens Fuzzzy Ink, and My safe too.",
+  "@infoRecoveryKeyLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoRecoveryKeyLine3": "Print it or save it off this phone. Anyone with it and your phone can open everything.",
+  "@infoRecoveryKeyLine3": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoOpensOnceTitle": "Why only once?",
+  "@infoOpensOnceTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoOpensOnceLine1": "Each locked thing has its own key.",
+  "@infoOpensOnceLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoOpensOnceLine2": "Opening it uses the key up, on any phone.",
+  "@infoOpensOnceLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoOpensOnceLine3": "A copy stays in your history, locked.",
+  "@infoOpensOnceLine3": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafeAnywhereTitle": "Safe to send anywhere",
+  "@infoSafeAnywhereTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafeAnywhereLine1": "An invite can't open anything.",
+  "@infoSafeAnywhereLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafeAnywhereLine2": "Only their reply connects you two.",
+  "@infoSafeAnywhereLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafeAnywhereLine3": "Then you check numbers together, so you know it's them.",
+  "@infoSafeAnywhereLine3": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoCheckNumbersTitle": "Why check numbers?",
+  "@infoCheckNumbersTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoCheckNumbersLine1": "Anyone who saw your invite could answer it.",
+  "@infoCheckNumbersLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoCheckNumbersLine2": "Same numbers on both phones: nobody got in between.",
+  "@infoCheckNumbersLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoFilesTitle": "Where do files go?",
+  "@infoFilesTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoFilesLine1": "Fuzzzy Ink keeps only the locked copy.",
+  "@infoFilesLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoFilesLine2": "Open shows it here. Nothing is saved.",
+  "@infoFilesLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoFilesLine3": "Save gives you a normal copy. From then on it's yours to protect.",
+  "@infoFilesLine3": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoCopyingTitle": "Why no copying?",
+  "@infoNoCopyingTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoCopyingLine1": "What you open stays inside Fuzzzy Ink.",
+  "@infoNoCopyingLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoNoCopyingLine2": "Only locked text can be copied. It is safe anywhere.",
+  "@infoNoCopyingLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoPasswordLockingTitle": "Locking with a password",
+  "@infoPasswordLockingTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoPasswordLockingLine1": "Anyone with the password can open it.",
+  "@infoPasswordLockingLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoPasswordLockingLine2": "Say the password. Never send it with the locked thing.",
+  "@infoPasswordLockingLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafePasswordTitle": "My safe's own password",
+  "@infoSafePasswordTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafePasswordLine1": "One more password to remember.",
+  "@infoSafePasswordLine1": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "infoSafePasswordLine2": "Forgot it? Your recovery key opens My safe too.",
+  "@infoSafePasswordLine2": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "tagNoCopyNoScreenshots": "No copy · no screenshots",
+  "@tagNoCopyNoScreenshots": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "tagNoCopy": "No copy",
+  "@tagNoCopy": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockWhoTitle": "Who's it for?",
+  "@lockWhoTitle": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockWithPassword": "Lock with a password",
+  "@lockWithPassword": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockNoInviteNeeded": "No invite needed",
+  "@lockNoInviteNeeded": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockAddPersonFirst": "Add a person first",
+  "@lockAddPersonFirst": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "orDivider": "or",
+  "@orDivider": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openWhatYouGot": "Open what you got",
+  "@openWhatYouGot": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openPasteIt": "Paste it",
+  "@openPasteIt": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openPasteItHint": "Locked text, invite or reply",
+  "@openPasteItHint": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openLinksTip": "Links and QR codes come here. Nothing opens until you tap Open.",
+  "@openLinksTip": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openNothingToPaste": "Nothing to paste. Copy the locked text first.",
+  "@openNothingToPaste": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "openLockedWithPassword": "Locked with a password",
+  "@openLockedWithPassword": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockStepWho": "Who",
+  "@lockStepWho": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStepWhat": "What",
+  "@lockStepWhat": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockForName": "Lock for {name}",
+  "@lockForName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockKindMessage": "Message",
+  "@lockKindMessage": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockKindFile": "File",
+  "@lockKindFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockWriteMessageHint": "Write your message…",
+  "@lockWriteMessageHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockOnlyNameOnce": "Only {name} can open it, once.",
+  "@lockOnlyNameOnce": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockChooseFile": "Choose a file",
+  "@lockChooseFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockDropHint": "Or drop it here on a computer",
+  "@lockDropHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockChangeFile": "Change",
+  "@lockChangeFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockPasswordLabel": "Password for this",
+  "@lockPasswordLabel": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockSayPassword": "Say the password. Don't send it.",
+  "@lockSayPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockAction": "Lock",
+  "@lockAction": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockWriteSomethingFirst": "Write something first.",
+  "@lockWriteSomethingFirst": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockChooseFileFirst": "Choose a file first.",
+  "@lockChooseFileFirst": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockPasswordNotGood": "It needs to reach Good.",
+  "@lockPasswordNotGood": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockFailed": "Couldn't lock it. Try again.",
+  "@lockFailed": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockStoppedNothingKept": "Stopped. Nothing was kept.",
+  "@lockStoppedNothingKept": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingLocking": "Locking",
+  "@workingLocking": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingOpening": "Opening",
+  "@workingOpening": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingStarting": "Starting…",
+  "@workingStarting": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingPause": "Pause",
+  "@workingPause": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingGoOn": "Go on",
+  "@workingGoOn": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "workingPaused": "Paused",
+  "@workingPaused": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedForName": "Locked for {name}",
+  "@lockedForName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lockedWithPassword": "Locked with a password",
+  "@lockedWithPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedNowSendIt": "Now send it.",
+  "@lockedNowSendIt": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedSentToShareMenu": "Sent to your share menu.",
+  "@lockedSentToShareMenu": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedShareAgain": "Share again",
+  "@lockedShareAgain": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedCopyText": "Copy locked text",
+  "@lockedCopyText": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "lockedSaveFile": "Save locked file",
+  "@lockedSaveFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "flowDone": "Done",
+  "@flowDone": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openChooseFile": "Choose a file",
+  "@openChooseFile": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openChooseFileHint": "A .fuzz file",
+  "@openChooseFileHint": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openReading": "Reading…",
+  "@openReading": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openLinkTitle": "Open the message from {name}?",
+  "@openLinkTitle": {
+    "description": "A message came by link: nothing is opened until the person taps Open (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openArrivedFileTitle": "Open the file from {name}?",
+  "@openArrivedFileTitle": {
+    "description": "A person's locked file another app handed over: nothing is opened until the person taps Open (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openLinkLine": "It opens once, then it stays in your history with them.",
+  "@openLinkLine": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "openLinkOpen": "Open",
+  "@openLinkOpen": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "openLinkNotNow": "Not now",
+  "@openLinkNotNow": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "replyLinkTitle": "Connect with {name}?",
+  "@replyLinkTitle": {
+    "description": "A reply to your invite came by link: nothing connects until the person taps Connect (security review 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkLine": "Connect only if {name} sent you this reply.",
+  "@replyLinkLine": {
+    "description": "Security review fixes 2026-10-26.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replyLinkConnect": "Connect",
+  "@replyLinkConnect": {
+    "description": "Security review fixes 2026-10-26."
+  },
+  "linkWaitsForSafe": "A link is waiting. It opens when you leave this safe item.",
+  "@linkWaitsForSafe": {
+    "description": "A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26)."
+  },
+  "fileWaitsForSafe": "A file is waiting. It opens when you leave this safe item.",
+  "@fileWaitsForSafe": {
+    "description": "Toast: a .fuzz file arrived while My safe's editor is open; it opens when the editor closes (the file version of linkWaitsForSafe)."
+  },
+  "openedFromName": "From {name}",
+  "@openedFromName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedKeptInHistory": "Just now · kept in {name}'s history",
+  "@openedKeptInHistory": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedWithPassword": "Opened with a password",
+  "@openedWithPassword": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openedNotKept": "Just now · not kept",
+  "@openedNotKept": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openedInHistoryNow": "In {name}'s history now.",
+  "@openedInHistoryNow": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openedSaveTip": "Save gives you a normal copy. Then it's yours.",
+  "@openedSaveTip": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordTitle": "What's the password?",
+  "@openPasswordTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordLabel": "Password",
+  "@openPasswordLabel": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openPasswordWrong": "That doesn't open it. Check it and try again.",
+  "@openPasswordWrong": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorAlreadyTitle": "Already opened",
+  "@openErrorAlreadyTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorAlreadyLine": "Each locked thing opens once. It's in {name}'s history.",
+  "@openErrorAlreadyLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNotYoursTitle": "Not from your people",
+  "@openErrorNotYoursTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNotYoursLine": "Ask them for an invite first.",
+  "@openErrorNotYoursLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorDamagedTitle": "Can't open this",
+  "@openErrorDamagedTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorDamagedLine": "It may be cut off or for someone else. Ask them to send it again.",
+  "@openErrorDamagedLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOldTitle": "Too old to open",
+  "@openErrorOldTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOldLine": "Ask {name} to lock it again.",
+  "@openErrorOldLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNewerTitle": "Needs a newer Fuzzzy Ink",
+  "@openErrorNewerTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNewerLine": "Update the app, then try again.",
+  "@openErrorNewerLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOwnTitle": "That's your own invite",
+  "@openErrorOwnTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorOwnLine": "Send it to the other person.",
+  "@openErrorOwnLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorConnectedTitle": "Already connected",
+  "@openErrorConnectedTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorConnectedLine": "You and {name} are connected already.",
+  "@openErrorConnectedLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorNotFuzzzyTitle": "This isn't from Fuzzzy Ink",
+  "@openErrorNotFuzzzyTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorNotFuzzzyLine": "Open locked text, an invite or a reply.",
+  "@openErrorNotFuzzzyLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorArrivingTitle": "Still arriving",
+  "@openErrorArrivingTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorArrivingLine": "Wait until the file has fully arrived, then try again.",
+  "@openErrorArrivingLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorResendTitle": "This file didn't open",
+  "@openErrorResendTitle": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorResendLine": "It can't open on this phone now. Ask them to send it again.",
+  "@openErrorResendLine": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openErrorGoToName": "Go to {name}",
+  "@openErrorGoToName": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "openErrorOk": "OK",
+  "@openErrorOk": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "openFailed": "Couldn't open it. Try again.",
+  "@openFailed": {
+    "description": "Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table)."
+  },
+  "shareTitleInvite": "Share invite",
+  "@shareTitleInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareTitleReply": "Share reply",
+  "@shareTitleReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareTitleMessage": "Share locked message",
+  "@shareTitleMessage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareTitleFile": "Share locked file",
+  "@shareTitleFile": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareLineInvite": "Any way. Even publicly.",
+  "@shareLineInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareLineReply": "Any way you like.",
+  "@shareLineReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareLineForName": "Only {name} can open it.",
+  "@shareLineForName": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shareLinePassword": "They need the password.",
+  "@shareLinePassword": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareSendLink": "Send a link",
+  "@shareSendLink": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareSendLinkHint": "Opens in the app",
+  "@shareSendLinkHint": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareShowQr": "Show a QR code",
+  "@shareShowQr": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareShowQrHint": "They scan it",
+  "@shareShowQrHint": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareSendFile": "Send as a file",
+  "@shareSendFile": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareSendFileHint": "A small file",
+  "@shareSendFileHint": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareCopyText": "Copy as text",
+  "@shareCopyText": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareCopyTextHint": "Stays locked anywhere",
+  "@shareCopyTextHint": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareTooBig": "Too big. Send it as a file.",
+  "@shareTooBig": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "shareCopiedStaysLocked": "Copied. It stays locked.",
+  "@shareCopiedStaysLocked": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrLabelInvite": "Your invite",
+  "@qrLabelInvite": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrLabelReply": "Your reply",
+  "@qrLabelReply": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrLabelMessage": "Locked message",
+  "@qrLabelMessage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrLetNameScan": "Let {name} scan this.",
+  "@qrLetNameScan": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "qrLetThemScan": "Let them scan this.",
+  "@qrLetThemScan": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrSafeToShowAnyone": "Safe to show anyone. Only their reply connects you.",
+  "@qrSafeToShowAnyone": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "qrOnlyRightPerson": "Only show it to the right person.",
+  "@qrOnlyRightPerson": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "historyYouLockedMessage": "You locked a message",
+  "@historyYouLockedMessage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "historyYouOpenedMessage": "You opened a message",
+  "@historyYouOpenedMessage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "historyYouLockedFile": "You locked {file}",
+  "@historyYouLockedFile": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "historyYouOpenedFile": "You opened {file}",
+  "@historyYouOpenedFile": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "historyTapToRead": "tap to read",
+  "@historyTapToRead": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "historyTapToSee": "tap to see",
+  "@historyTapToSee": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "fileCardLocked": "Locked",
+  "@fileCardLocked": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "fileCardKeptInSafe": "Kept locked in My safe",
+  "@fileCardKeptInSafe": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockedPreviewLabel": "Locked version · safe to send",
+  "@lockedPreviewLabel": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "confirmCopied": "Copied",
+  "@confirmCopied": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "confirmHandedOver": "Handed over",
+  "@confirmHandedOver": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "safetyGridLabel": "Safety numbers",
+  "@safetyGridLabel": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lockoutWaitLeft": "Wait {time}",
+  "@lockoutWaitLeft": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLookAndLanguage": "Look and language",
+  "@settingsLookAndLanguage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "settingsLook": "Look",
+  "@settingsLook": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lookLikeMyPhone": "Like my phone",
+  "@lookLikeMyPhone": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lookLight": "Light",
+  "@lookLight": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "lookDark": "Dark",
+  "@lookDark": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "languageGeorgian": "ქართული",
+  "@languageGeorgian": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "fuzzzyCast": "Fuzzzy Cast",
+  "@fuzzzyCast": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "fuzzzyCastLine": "Mini characters guard your safe and locks. Just for fun.",
+  "@fuzzzyCastLine": {
+    "description": "The Fuzzzy Cast switch line (Settings and the first-run You're ready card); owner wording, 2026-10-27."
+  },
+  "fuzzzyCastOn": "Fuzzzy Cast is on. Your guards are on watch.",
+  "@fuzzzyCastOn": {
+    "description": "Toast after turning Fuzzzy Cast on (owner, 2026-10-27: mini characters that guard, just for fun)."
+  },
+  "softSounds": "Soft sounds",
+  "@softSounds": {
+    "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
+  },
+  "safeLockedTitle": "My safe is locked",
+  "@safeLockedTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeLockButton": "Lock My safe",
+  "@safeLockButton": {
+    "description": "Fuzzzy Ink redesign, My safe header lock button (prototype aria-label, DESIGN.md section 4.11)."
+  },
+  "safeOpensWithMaster": "Opens with your master password.",
+  "@safeOpensWithMaster": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpensWithOwn": "Opens with your safe password.",
+  "@safeOpensWithOwn": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpenWithFingerprint": "{kind, select, faceId{Open with Face ID} touchId{Open with Touch ID} fingerprint{Open with fingerprint} face{Open with face unlock} other{Open with fingerprint or face}}",
+  "@safeOpenWithFingerprint": {
+    "description": "My safe's unlock screen button. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "safeUseMasterPassword": "Use master password",
+  "@safeUseMasterPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUseSafePassword": "Use safe password",
+  "@safeUseSafePassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safePasswordField": "Safe password",
+  "@safePasswordField": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOpenButton": "Open My safe",
+  "@safeOpenButton": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUseRecoveryKey": "Use recovery key",
+  "@safeUseRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeWrongPassword": "Not right. Try again.",
+  "@safeWrongPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTooManyTries": "Too many tries.",
+  "@safeTooManyTries": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCouldNotOpen": "Couldn't open My safe. Try again.",
+  "@safeCouldNotOpen": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryTitle": "Type your recovery key",
+  "@safeRecoveryTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryLine": "Spaces and capitals don't matter.",
+  "@safeRecoveryLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryNoKey": "No key? Then nothing can open it.",
+  "@safeRecoveryNoKey": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeRecoveryNewPassword": "New safe password",
+  "@safeRecoveryNewPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSearch": "Search",
+  "@safeSearch": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAllGroups": "All groups",
+  "@safeAllGroups": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewGroup": "New group",
+  "@safeNewGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEmptyTitle": "Nothing here yet",
+  "@safeEmptyTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEmptyLine": "Tap Add.",
+  "@safeEmptyLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNothingFound": "Nothing found",
+  "@safeNothingFound": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTryAnotherWord": "Try another word.",
+  "@safeTryAnotherWord": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeLoadError": "Couldn't load My safe. Lock it and open it again.",
+  "@safeLoadError": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAutoLockTip": "Locks itself after {minutes} minutes away",
+  "@safeAutoLockTip": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "safeAdd": "Add",
+  "@safeAdd": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAddTitle": "Add to My safe",
+  "@safeAddTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeUsername": "Username or email",
+  "@safeUsername": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeWebsite": "Website",
+  "@safeWebsite": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNotes": "Notes",
+  "@safeNotes": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeShowPassword": "Show password",
+  "@safeShowPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeHidePassword": "Hide password",
+  "@safeHidePassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCopiedClearsIn": "Copied · clears in {seconds} s",
+  "@safeCopiedClearsIn": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "safeCopyRule": "Copied passwords clear after {seconds} seconds.",
+  "@safeCopyRule": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "safeCleared": "Cleared.",
+  "@safeCleared": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeCopyOff": "Copying is off in Settings.",
+  "@safeCopyOff": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroup": "Group",
+  "@safeGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNoGroup": "No group",
+  "@safeNoGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMove": "Move",
+  "@safeMove": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeEdit": "Edit",
+  "@safeEdit": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMoreFor": "More for {title}",
+  "@safeMoreFor": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "safeSaveTip": "Save gives you a normal copy. Then it's yours.",
+  "@safeSaveTip": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMoveToGroup": "Move to a group",
+  "@safeMoveToGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeDeleteTitle": "Delete {title}?",
+  "@safeDeleteTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "safeDeleteLine": "It leaves My safe for good. No undo.",
+  "@safeDeleteLine": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeDeleted": "Deleted from My safe.",
+  "@safeDeleted": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeMovedTo": "Moved to {group}.",
+  "@safeMovedTo": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).",
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "safeMovedOut": "Removed from its group.",
+  "@safeMovedOut": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSaved": "Saved in My safe.",
+  "@safeSaved": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeItemLoadFailed": "Couldn't open this. Try again.",
+  "@safeItemLoadFailed": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeSaveFailed": "Couldn't save. Try again.",
+  "@safeSaveFailed": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroupName": "Group name",
+  "@safeGroupName": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeGroupHint": "e.g. Family",
+  "@safeGroupHint": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeAddGroup": "Add group",
+  "@safeAddGroup": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewPasswordTitle": "New password",
+  "@safeNewPasswordTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewNoteTitle": "New note",
+  "@safeNewNoteTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNewFileTitle": "New file",
+  "@safeNewFileTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitle": "Title",
+  "@safeTitle": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintPassword": "e.g. Bank app",
+  "@safeTitleHintPassword": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintNote": "e.g. Passport number",
+  "@safeTitleHintNote": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeTitleHintFile": "e.g. Home insurance",
+  "@safeTitleHintFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOptional": "optional",
+  "@safeOptional": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeNoteHint": "Anything to keep safe",
+  "@safeNoteHint": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChooseFile": "Choose a file",
+  "@safeChooseFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeOriginalStays": "Your original stays where it is.",
+  "@safeOriginalStays": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChangeFile": "Change",
+  "@safeChangeFile": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "safeChooseFileFirst": "Choose a file first.",
+  "@safeChooseFileFirst": {
+    "description": "Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7)."
+  },
+  "accessWelcomeLine": "Lock it. Only they can open it.",
+  "@accessWelcomeLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWelcomeTag": "No accounts · nothing goes online",
+  "@accessWelcomeTag": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStart": "Start",
+  "@accessStart": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowItWorks": "How it works",
+  "@accessHowItWorks": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowAddPerson": "Add a person",
+  "@accessHowAddPerson": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLockForThem": "Lock for them",
+  "@accessHowLockForThem": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowTheyOpenOnce": "They open it, once",
+  "@accessHowTheyOpenOnce": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWhyOnce": "Why once?",
+  "@accessWhyOnce": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowTip": "One master password guards it all. You make it next.",
+  "@accessHowTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessContinue": "Continue",
+  "@accessContinue": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStepPassword": "Password",
+  "@accessStepPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeMasterPassword": "Make a master password",
+  "@accessMakeMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTypeItAgain": "Type it again",
+  "@accessTypeItAgain": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoResetBold": "No reset.",
+  "@accessNoResetBold": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoResetLine": "Lose it and your recovery key, and everything is gone.",
+  "@accessNoResetLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessUnderstandNoAccess": "I understand: no password and no key means no access.",
+  "@accessUnderstandNoAccess": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPasswordsDontMatch": "They don't match yet.",
+  "@accessPasswordsDontMatch": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthWeak": "Weak",
+  "@accessStrengthWeak": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthFair": "Fair",
+  "@accessStrengthFair": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthGood": "Good",
+  "@accessStrengthGood": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthStrong": "Strong",
+  "@accessStrengthStrong": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintEmpty": "Tip: a few random words.",
+  "@accessStrengthHintEmpty": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintWeak": "Make it longer.",
+  "@accessStrengthHintWeak": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintFair": "Add a few more words.",
+  "@accessStrengthHintFair": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintGood": "Hard to guess.",
+  "@accessStrengthHintGood": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthHintStrong": "Very hard to guess.",
+  "@accessStrengthHintStrong": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStrengthLabel": "Password strength: {level}",
+  "@accessStrengthLabel": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "accessShowPassword": "Show password",
+  "@accessShowPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHidePassword": "Hide password",
+  "@accessHidePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessYourRecoveryKey": "Your recovery key",
+  "@accessYourRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoverySpare": "Your spare, if you forget the password.",
+  "@accessRecoverySpare": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrint": "Print",
+  "@accessPrint": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaveAsFile": "Save as file",
+  "@accessSaveAsFile": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaved": "Saved",
+  "@accessSaved": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeepOffPhone": "Keep it off this phone. Anyone with it can open everything.",
+  "@accessKeepOffPhone": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeptItSafe": "I've kept it safe",
+  "@accessKeptItSafe": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipForNow": "Skip for now",
+  "@accessSkipForNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyTitle": "Skip the recovery key?",
+  "@accessSkipKeyTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyMessage": "Forget your password without it, and everything is lost. You can make one later in Settings.",
+  "@accessSkipKeyMessage": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyKeep": "Keep it now",
+  "@accessSkipKeyKeep": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSkipKeyAnyway": "Skip anyway",
+  "@accessSkipKeyAnyway": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintPreview": "Print preview",
+  "@accessPrintPreview": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintSheetTitle": "Fuzzzy Ink · recovery key",
+  "@accessPrintSheetTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine1": "Opens Fuzzzy Ink and My safe if you forget your password.",
+  "@accessPrintLine1": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine2": "Anyone with this key and your phone can open everything. Keep it away from your phone.",
+  "@accessPrintLine2": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintLine3": "Lose your password and this key, and nothing can be recovered.",
+  "@accessPrintLine3": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintMade": "Made {date}. A new key from Settings stops this one.",
+  "@accessPrintMade": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "accessPrintHint": "Your phone's share menu opens. Choose Print there, not Save to Photos or a cloud app.",
+  "@accessPrintHint": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrintHintIos": "Choose a printer. The key goes straight to it, with no copy saved.",
+  "@accessPrintHintIos": {
+    "description": "Recovery key print preview, iPhone: the printer list opens and the sheet prints directly (no print options sheet, no share button)."
+  },
+  "accessPrintHintMac": "The print window opens. Choose your printer, not Save as PDF.",
+  "@accessPrintHintMac": {
+    "description": "Recovery key print preview, Mac: the system print panel opens; its PDF menu could save the key."
+  },
+  "accessPrintFailed": "The print sheet could not be made. Try Save as file.",
+  "@accessPrintFailed": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessStepQuickUnlock": "Quick unlock",
+  "@accessStepQuickUnlock": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioTitle": "{kind, select, faceId{Unlock with Face ID?} touchId{Unlock with Touch ID?} fingerprint{Unlock with your fingerprint?} face{Unlock with your face?} other{Unlock with your fingerprint or face?}}",
+  "@accessBioTitle": {
+    "description": "First run, quick-unlock step title. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessBioLine": "Your password always works too.",
+  "@accessBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioTip": "Locks itself after 5 minutes away",
+  "@accessBioTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessUseBio": "{kind, select, faceId{Use Face ID} touchId{Use Touch ID} fingerprint{Use fingerprint} face{Use face unlock} other{Use fingerprint or face}}",
+  "@accessUseBio": {
+    "description": "Button on the quick-unlock step and the lock screen. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessNotNow": "Not now",
+  "@accessNotNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessReadyTitle": "You're ready",
+  "@accessReadyTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessAddFirstPerson": "Add your first person",
+  "@accessAddFirstPerson": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLookAround": "Look around first",
+  "@accessLookAround": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockedTitle": "Fuzzzy Ink is locked",
+  "@accessLockedTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessWrongPassword": "Not right. Try again.",
+  "@accessWrongPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTooManyTries": "Too many tries.",
+  "@accessTooManyTries": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessForgotPassword": "Forgot your password?",
+  "@accessForgotPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLinkWaiting": "A link is waiting. Unlock to open it.",
+  "@accessLinkWaiting": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFileWaiting": "A file is waiting. Unlock to open it.",
+  "@accessFileWaiting": {
+    "description": "Lock screen: a .fuzz file another app handed over waits for the unlock (the file version of accessLinkWaiting)."
+  },
+  "accessBioChanged": "{kind, select, faceId{Face ID changed, so quick unlock is off. Turn it on again in Settings.} touchId{Touch ID changed, so quick unlock is off. Turn it on again in Settings.} fingerprint{Your fingerprints changed, so quick unlock is off. Turn it on again in Settings.} face{Your face unlock changed, so quick unlock is off. Turn it on again in Settings.} other{Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.}}",
+  "@accessBioChanged": {
+    "description": "Lock screen note: the device's enrolled biometrics changed. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessBioReset": "An update turned quick unlock off to make it safer. Turn it on again in Settings.",
+  "@accessBioReset": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoveryKeyHeader": "Recovery key",
+  "@accessRecoveryKeyHeader": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTypeRecoveryKey": "Type your recovery key",
+  "@accessTypeRecoveryKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSpacesDontMatter": "Spaces and capitals don't matter.",
+  "@accessSpacesDontMatter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoKeyNothing": "No key? Then nothing can open it.",
+  "@accessNoKeyNothing": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyTooShort": "A recovery key has 8 groups of 4.",
+  "@accessKeyTooShort": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyDoesntMatch": "That key doesn't match. Check each group.",
+  "@accessKeyDoesntMatch": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewMasterPassword": "New master password",
+  "@accessNewMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessKeyAccepted": "Key accepted.",
+  "@accessKeyAccepted": {},
+  "accessSaveNewPassword": "Save new password",
+  "@accessSaveNewPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewPasswordSaved": "New master password saved.",
+  "@accessNewPasswordSaved": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSettingsKeepingSafe": "Keeping it safe",
+  "@accessSettingsKeepingSafe": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangeIt": "Change it",
+  "@accessChangeIt": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeNewOne": "Make a new one",
+  "@accessMakeNewOne": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoKeyYet": "None yet",
+  "@accessNoKeyYet": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFingerprintOrFace": "{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{Fingerprint} face{Face unlock} other{Fingerprint or face}}",
+  "@accessFingerprintOrFace": {
+    "description": "Settings row title for quick unlock. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessNotOnThisDevice": "Not on this device",
+  "@accessNotOnThisDevice": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockTheApp": "Lock the app",
+  "@accessLockTheApp": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockAfter": "After {time}",
+  "@accessLockAfter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "accessLockNow": "Lock now",
+  "@accessLockNow": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessLockAfterTitle": "Lock the app after",
+  "@accessLockAfterTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRightAway": "Right away",
+  "@accessRightAway": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneMinute": "1 minute",
+  "@accessOneMinute": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFiveMinutes": "5 minutes",
+  "@accessFiveMinutes": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessFifteenMinutes": "15 minutes",
+  "@accessFifteenMinutes": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneHour": "1 hour",
+  "@accessOneHour": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecommended": "recommended",
+  "@accessRecommended": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOpensWith": "Opens with",
+  "@accessOpensWith": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessItsOwnPassword": "Its own password",
+  "@accessItsOwnPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessCopyPasswords": "Copy passwords",
+  "@accessCopyPasswords": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessClearsAfter30": "Clears after 30 seconds",
+  "@accessClearsAfter30": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOff": "Off",
+  "@accessOff": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSoftSoundsSoon": "Coming in an update",
+  "@accessSoftSoundsSoon": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHelp": "Help",
+  "@accessHelp": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFuzzzyInkWorks": "How Fuzzzy Ink works",
+  "@accessHowFuzzzyInkWorks": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessPrivacyTermsSupport": "Privacy, terms and support",
+  "@accessPrivacyTermsSupport": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOpensYourBrowser": "Opens your browser",
+  "@accessOpensYourBrowser": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBrowserTip": "Opens your browser. The app itself never goes online.",
+  "@accessBrowserTip": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessDeveloper": "Developer",
+  "@accessDeveloper": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessVersionFooter": "Fuzzzy Ink · version {version} (build {build})",
+  "@accessVersionFooter": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "accessTurnOnBioTitle": "{kind, select, faceId{Turn on Face ID} touchId{Turn on Touch ID} fingerprint{Turn on fingerprint} face{Turn on face unlock} other{Turn on fingerprint or face}}",
+  "@accessTurnOnBioTitle": {
+    "description": "Settings sheet title: turn quick unlock on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessTurnOnBioLine": "Type your master password once.",
+  "@accessTurnOnBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOnSafeBioTitle": "{kind, select, faceId{Face ID for My safe} touchId{Touch ID for My safe} fingerprint{Fingerprint for My safe} face{Face unlock for My safe} other{Fingerprint or face for My safe}}",
+  "@accessTurnOnSafeBioTitle": {
+    "description": "Settings row and sheet title: quick unlock for My safe. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessTurnOnSafeBioLine": "Type My safe's own password once.",
+  "@accessTurnOnSafeBioLine": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessTurnOn": "Turn on",
+  "@accessTurnOn": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessBioOn": "{kind, select, faceId{Face ID is on.} touchId{Touch ID is on.} fingerprint{Fingerprint is on.} face{Face unlock is on.} other{Fingerprint or face is on.}}",
+  "@accessBioOn": {
+    "description": "Toast after quick unlock was turned on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "accessMySafePassword": "My safe's password",
+  "@accessMySafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangeMasterPassword": "Change master password",
+  "@accessChangeMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessCurrentPassword": "Current password",
+  "@accessCurrentPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewPassword": "New password",
+  "@accessNewPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessRecoveryKeepsWorking": "Your recovery key keeps working.",
+  "@accessRecoveryKeepsWorking": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessChangePassword": "Change password",
+  "@accessChangePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMasterPasswordChanged": "Master password changed.",
+  "@accessMasterPasswordChanged": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMakeNewKey": "Make a new key",
+  "@accessMakeNewKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOldKeyStops": "The old key stops working.",
+  "@accessOldKeyStops": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafePasswordToo": "My safe has its own password. Type it too, so the new key opens My safe.",
+  "@accessSafePasswordToo": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessYourNewKey": "Your new key",
+  "@accessYourNewKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNoPasswordNoKey": "No password and no key means no access.",
+  "@accessNoPasswordNoKey": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessNewKeyKept": "Your new recovery key is set.",
+  "@accessNewKeyKept": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeOpensWith": "My safe opens with",
+  "@accessSafeOpensWith": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSimplestRecommended": "Simplest. Recommended.",
+  "@accessSimplestRecommended": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessOneMoreToRemember": "One more to remember",
+  "@accessOneMoreToRemember": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafePassword": "Safe password",
+  "@accessSafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSaveSafePassword": "Save safe password",
+  "@accessSaveSafePassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeHasOwnPassword": "My safe now has its own password.",
+  "@accessSafeHasOwnPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeGetsNewKey": "Next you get a new recovery key. It opens My safe, and the old key stops working.",
+  "@accessSafeGetsNewKey": {
+    "description": "Safe gets its own password: a new safe key and a new recovery key are made in the same step (security review 2026-10-26)."
+  },
+  "accessUseMasterPassword": "Use master password",
+  "@accessUseMasterPassword": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeUsesMaster": "My safe opens with your master password again.",
+  "@accessSafeUsesMaster": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessSafeNotMadeYet": "My safe isn't made yet. Open it once from its tab.",
+  "@accessSafeNotMadeYet": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMasterPasswordToConfirm": "Your master password, to confirm",
+  "@accessMasterPasswordToConfirm": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOnceTitle": "Each thing opens once",
+  "@accessHowOnceTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOnceBody": "Opening uses its key up. A copy stays in your history.",
+  "@accessHowOnceBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHistoryTitle": "History stays on this phone",
+  "@accessHowHistoryTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHistoryBody": "Locked with your master password. A new phone can't read it. Save a person's history as a file to keep a copy.",
+  "@accessHowHistoryBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOrderTitle": "Open things in order",
+  "@accessHowOrderTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowOrderBody": "A very old message may be too old to open. Then ask them to lock it again.",
+  "@accessHowOrderBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowCheckTitle": "Checking a person",
+  "@accessHowCheckTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowCheckBody": "Same numbers on both phones: nobody got in between. \"Checked\" is your own note.",
+  "@accessHowCheckBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLinksTitle": "Links",
+  "@accessHowLinksTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowLinksBody": "What comes after the # never reaches our website.",
+  "@accessHowLinksBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFilesTitle": "Files you save",
+  "@accessHowFilesTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowFilesBody": "The app keeps only locked files. A saved copy is yours to protect.",
+  "@accessHowFilesBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHoodTitle": "Under the hood",
+  "@accessHowHoodTitle": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessHowHoodBody": "Messages use the Olm double ratchet (vodozemac, independently audited): a new key for every message. Files are sealed with XChaCha20-Poly1305 in pieces. Passwords go through Argon2id. Keys live in the app's native core and are never sent anywhere.",
+  "@accessHowHoodBody": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "accessMoreAboutEncryption": "More about encryption",
+  "@accessMoreAboutEncryption": {
+    "description": "Fuzzzy Ink redesign, access screens (DESIGN.md copy table)."
+  },
+  "personMoreFor": "More for {name}",
+  "@personMoreFor": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "personNotCheckedLead": "Not checked yet.",
+  "@personNotCheckedLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personNotCheckedAction": "Check numbers.",
+  "@personNotCheckedAction": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterAll": "All",
+  "@historyFilterAll": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterLocked": "Locked",
+  "@historyFilterLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyFilterOpened": "Opened",
+  "@historyFilterOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyToday": "Today",
+  "@historyToday": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyYesterday": "Yesterday",
+  "@historyYesterday": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmpty": "Nothing here yet.",
+  "@historyEmpty": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmptyLocked": "Nothing locked yet.",
+  "@historyEmptyLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyEmptyOpened": "Nothing opened yet.",
+  "@historyEmptyOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyStaysLocked": "History stays locked on this phone.",
+  "@historyStaysLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "historyLoadError": "Couldn't load the history.",
+  "@historyLoadError": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "waitingCardTitle": "Waiting for {name}'s reply",
+  "@waitingCardTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waitingShareInviteAgain": "Share invite again",
+  "@waitingShareInviteAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "waitingGotReply": "I got the reply",
+  "@waitingGotReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuCheckNumbers": "Check numbers",
+  "@personMenuCheckNumbers": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuNotCheckedYet": "Not checked yet",
+  "@personMenuNotCheckedYet": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSendReplyAgain": "Send my reply again",
+  "@personMenuSendReplyAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSaveHistory": "Save history as a file",
+  "@personMenuSaveHistory": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuSaveHistoryHint": "Locked with a password",
+  "@personMenuSaveHistoryHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "personMenuRemove": "Remove {name}",
+  "@personMenuRemove": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonTitle": "Remove {name}?",
+  "@removePersonTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonBody": "Their history and files leave this phone. No undo.",
+  "@removePersonBody": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "removePersonConfirm": "Remove",
+  "@removePersonConfirm": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "removePersonDone": "{name} was removed.",
+  "@removePersonDone": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePersonFailed": "Couldn't remove {name}. Try again.",
+  "@removePersonFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryTitle": "Save {name}'s history",
+  "@exportHistoryTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "exportHistoryLine": "One file, locked with this password.",
+  "@exportHistoryLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistoryPassword": "Password for the file",
+  "@exportHistoryPassword": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistorySave": "Save file",
+  "@exportHistorySave": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "exportHistorySaved": "History saved as a file.",
+  "@exportHistorySaved": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemForName": "For {name}",
+  "@itemForName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemYouLockedWhen": "You locked this · {day} · {time}",
+  "@itemYouLockedWhen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemOpenedWhen": "Opened {day} · {time}",
+  "@itemOpenedWhen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "itemShareAgain": "Share again",
+  "@itemShareAgain": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemCopyLocked": "Copy locked",
+  "@itemCopyLocked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemOnlyLockedKept": "Only the locked copy is kept.",
+  "@itemOnlyLockedKept": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemSave": "Save",
+  "@itemSave": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemUnreadable": "This message can't be read on this phone.",
+  "@itemUnreadable": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "itemDone": "Done",
+  "@itemDone": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteStepName": "Name",
+  "@inviteStepName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteStepSend": "Send",
+  "@inviteStepSend": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteWhoFor": "Who's it for?",
+  "@inviteWhoFor": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteTheirName": "Their name",
+  "@inviteTheirName": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNameHint": "e.g. Tamar",
+  "@inviteNameHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteOnlyYouSee": "Only you see it.",
+  "@inviteOnlyYouSee": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteMake": "Make the invite",
+  "@inviteMake": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNameTaken": "You already have someone with this name.",
+  "@inviteNameTaken": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteMakeFailed": "Couldn't make the invite. Try again.",
+  "@inviteMakeFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteSendTo": "Send it to {name}",
+  "@inviteSendTo": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteDoneForNow": "Done for now",
+  "@inviteDoneForNow": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteGotNameReply": "I got {name}'s reply",
+  "@inviteGotNameReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSharedLine": "Sent to your share menu.",
+  "@inviteSharedLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteConnecting": "Connecting…",
+  "@inviteConnecting": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteLoadFailed": "Couldn't read the invite. Close and open it again.",
+  "@inviteLoadFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyOpenTitle": "Open the reply",
+  "@replyOpenTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "pasteItHint": "Copied text or link",
+  "@pasteItHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "chooseFile": "Choose a file",
+  "@chooseFile": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "chooseFileHint": "The file they sent",
+  "@chooseFileHint": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyNothingToPaste": "Nothing to paste. Copy the reply first.",
+  "@replyNothingToPaste": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "inviteNothingToPaste": "Nothing to paste. Copy the invite first.",
+  "@inviteNothingToPaste": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "notAReply": "That isn't a reply. Check what you pasted.",
+  "@notAReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "couldNotReadFile": "Couldn't read that file.",
+  "@couldNotReadFile": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyNotConnected": "That reply didn't connect you. Ask for it again.",
+  "@replyNotConnected": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotStepOpen": "Open it",
+  "@gotStepOpen": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotStepReply": "Reply",
+  "@gotStepReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOpenTitle": "Open the invite",
+  "@gotOpenTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotInviteGood": "The invite is good.",
+  "@gotInviteGood": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotWhoSent": "Who sent it?",
+  "@gotWhoSent": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAccept": "Accept",
+  "@gotAccept": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOwnInviteTitle": "That's your own invite",
+  "@gotOwnInviteTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotOwnInviteLine": "Send it to the other person.",
+  "@gotOwnInviteLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAlreadyTitle": "You're already connected",
+  "@gotAlreadyTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAlreadyLine": "This invite is already open on this phone.",
+  "@gotAlreadyLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotDamagedTitle": "Can't open this",
+  "@gotDamagedTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotDamagedLine": "It may be cut off or for someone else. Ask them to send it again.",
+  "@gotDamagedLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "gotAcceptFailed": "Couldn't accept the invite. Try again.",
+  "@gotAcceptFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replySendTo": "Send your reply to {name}",
+  "@replySendTo": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "replySameWay": "The same way the invite came.",
+  "@replySameWay": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "replyCheckTip": "Then check numbers together.",
+  "@replyCheckTip": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "stepInviteOpened": "Invite opened",
+  "@stepInviteOpened": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "stepYouReply": "You reply",
+  "@stepYouReply": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "connectedWith": "Connected with {name}",
+  "@connectedWith": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "isItReally": "Is it really {name}?",
+  "@isItReally": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkTogether": "Check numbers together.",
+  "@checkTogether": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkNow": "Check now",
+  "@checkNow": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkLater": "Later",
+  "@checkLater": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceTitle": "Someone else may have answered",
+  "@twiceTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceLine": "Your invite to {name} got two replies.",
+  "@twiceLine": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteLead": "Don't lock anything for {name} yet.",
+  "@twiceNoteLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "twiceNoteRest": "Check numbers first.",
+  "@twiceNoteRest": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "twiceRemove": "Remove {name}, invite again",
+  "@twiceRemove": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyCompare": "Compare on a call, or side by side.",
+  "@safetyCompare": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetySame": "Same numbers",
+  "@safetySame": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyDifferent": "Different numbers",
+  "@safetyDifferent": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyMarkNotChecked": "Mark as not checked",
+  "@safetyMarkNotChecked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetyCheckedBefore": "You checked {name} before.",
+  "@safetyCheckedBefore": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyNowNotChecked": "{name} is now Not checked.",
+  "@safetyNowNotChecked": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "safetyLoadFailed": "Couldn't read the numbers. Close and open them again.",
+  "@safetyLoadFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "safetySaveFailed": "Couldn't save that. Try again.",
+  "@safetySaveFailed": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "mismatchLead": "Don't send {name} anything.",
+  "@mismatchLead": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mismatchRest": "Someone may be in between. Remove and add them again, best in person.",
+  "@mismatchRest": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table)."
+  },
+  "checkedTitle": "It's really {name}",
+  "@checkedTitle": {
+    "description": "Fuzzzy Ink redesign, People screens (DESIGN.md copy table).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "incomingFileUnreadable": "Couldn't read that file. Open it again from where it is.",
+  "@incomingFileUnreadable": {
+    "description": "A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission)."
+  }
 }

@@ -1,16 +1,20 @@
-//! Key hygiene — the wrapped store key, the sealed per-chat state files and the
-//! per-chat local seal of message history (plan §A.2, §B.6, §D; owner decision
-//! D-1). Every secret lives in a `Zeroizing` buffer or a `ZeroizeOnDrop` struct;
-//! nothing here returns key bytes.
+//! Key hygiene — the 0x10 key-wrapping construction, the sealed per-chat state
+//! files, the per-chat local seal of message history (plan §A.2, §B.6, §D;
+//! owner decision D-1) and the sealed app settings. Every secret lives in a
+//! `Zeroizing` buffer or a `ZeroizeOnDrop` struct; nothing here returns key
+//! bytes. The keys above the store key — the master key, its password and
+//! recovery wraps — live in `master`.
 //!
 //! Layouts are the codec's (`formats::WrappedStoreKey` 0x10, `formats::LocalSeal`
 //! 0x20); this module only adds the crypto around them.
 
 use std::collections::HashMap;
-use std::fs::{self, File};
+use std::fs::{self, File, TryLockError};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex, Weak};
+use std::thread;
+use std::time::Duration;
 
 use argon2::{Algorithm, Argon2, Params, Version};
 use chacha20poly1305::aead::{Aead, Payload};
@@ -19,6 +23,7 @@ use zeroize::{ZeroizeOnDrop, Zeroizing};
 
 use crate::error::CoreError;
 use crate::formats::{Argon2Params, LocalSeal, WrappedStoreKey, WRAPPED_STORE_KEY_CT_LEN};
+use crate::master::RECOVERY_LOCK_AAD;
 use crate::state::{serialize_exact, ChatState, STATE_FORMAT_VERSION};
 
 /// Directory under the app's support dir that holds every `<chat_id>.state`.
@@ -38,9 +43,11 @@ const MAX_ARGON2_M_COST: u32 = 256 * 1024;
 /// the app for minutes (F2-2 review R2). Our own `ARGON2_PARAMS` uses 4.
 const MAX_ARGON2_T_COST: u32 = 16;
 
-const STORE_KEY_AAD: &[u8] = b"store-key";
 const STATE_AAD_PREFIX: &[u8] = b"chat-state";
 const LOCAL_SEAL_AAD_PREFIX: &[u8] = b"local-seal";
+const APP_SETTING_AAD_PREFIX: &[u8] = b"app-setting";
+/// Longest setting name: names are short constants chosen by the app.
+const MAX_SETTING_NAME_LEN: usize = 64;
 const STATE_EXTENSION: &str = "state";
 const STATE_TMP_EXTENSION: &str = "state.tmp";
 
@@ -131,31 +138,10 @@ pub(crate) fn derive_kek(
 // Wrapped store key (0x10)
 // ---------------------------------------------------------------------------
 
-/// Wraps `store_key` under `password` with a fresh salt and nonce.
-pub fn wrap_store_key(store_key: &[u8; 32], password: &[u8]) -> Result<Vec<u8>, CoreError> {
-    wrap_store_key_with(store_key, password, random_array()?, random_array()?)
-}
-
-/// [`wrap_store_key`] with the randomness supplied — the golden test pins its output.
-pub fn wrap_store_key_with(
-    store_key: &[u8; 32],
-    password: &[u8],
-    salt: [u8; 16],
-    nonce: [u8; 24],
-) -> Result<Vec<u8>, CoreError> {
-    wrap_key_with(store_key, password, STORE_KEY_AAD, salt, nonce)
-}
-
-/// Inverse of [`wrap_store_key`]. A tag failure is `WrongPassword` — the AEAD
-/// cannot tell a wrong password from a tampered blob, and the password is the
-/// only input the user controls.
-pub fn unwrap_store_key(blob: &[u8], password: &[u8]) -> Result<Key32, CoreError> {
-    unwrap_key(blob, password, STORE_KEY_AAD)
-}
-
 /// The 0x10 construction for any 32-byte key: the `aad` names the key's role
-/// (`store-key` for the app lock, `vault-key` for the vault), so a blob
-/// wrapped for one role never unwraps as the other (F4-1 review N2).
+/// (`master-key` and `master-key-recovery` for the master key, `vault-key` for
+/// a vault under its own password), so a blob wrapped for one role never
+/// unwraps as another (F4-1 review N2).
 pub(crate) fn wrap_key_with(
     key: &[u8; 32],
     password: &[u8],
@@ -176,7 +162,9 @@ pub(crate) fn wrap_key_with(
     .encode())
 }
 
-/// Inverse of [`wrap_key_with`] under the same `aad`; tag failure is `WrongPassword`.
+/// Inverse of [`wrap_key_with`] under the same `aad`. A tag failure is
+/// `WrongPassword` — the AEAD cannot tell a wrong password from a tampered
+/// blob, and the password is the only input the user controls.
 pub(crate) fn unwrap_key(blob: &[u8], password: &[u8], aad: &[u8]) -> Result<Key32, CoreError> {
     let wrapped = WrappedStoreKey::decode(blob)?;
     let kek = derive_kek(password, &wrapped.salt, wrapped.params)?;
@@ -184,12 +172,12 @@ pub(crate) fn unwrap_key(blob: &[u8], password: &[u8], aad: &[u8]) -> Result<Key
         open(&kek, &wrapped.nonce, aad, &wrapped.ciphertext)
             .map_err(|_| CoreError::WrongPassword)?,
     );
-    let mut store_key = Zeroizing::new([0u8; 32]);
-    if plain.len() != store_key.len() {
+    let mut key = Zeroizing::new([0u8; 32]);
+    if plain.len() != key.len() {
         return Err(CoreError::Corrupt);
     }
-    store_key.copy_from_slice(&plain);
-    Ok(store_key)
+    key.copy_from_slice(&plain);
+    Ok(key)
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +185,7 @@ pub(crate) fn unwrap_key(blob: &[u8], password: &[u8], aad: &[u8]) -> Result<Key
 // ---------------------------------------------------------------------------
 
 /// `prefix ‖ chat_id` (no separator — the chat id is fixed-length): the AAD of
-/// a state file (`chat-state`) or of a history seal (`local-seal`).
+/// a state file (`chat-state`).
 fn chat_aad(prefix: &[u8], chat_id: &str) -> Vec<u8> {
     let mut aad = Vec::with_capacity(prefix.len() + chat_id.len());
     aad.extend_from_slice(prefix);
@@ -205,44 +193,97 @@ fn chat_aad(prefix: &[u8], chat_id: &str) -> Vec<u8> {
     aad
 }
 
-/// Seals `bytes` of `chat_id`'s history under that chat's `history_key` with a
-/// random nonce (owner decision D-1: a per-chat key, not the store key).
+/// `local-seal ‖ chat_id ‖ row`: a history seal is bound to its chat and to
+/// the row it belongs to (the app passes the row's direction byte and its
+/// `Fuzz/` blob text), so a seal copied onto another row — of this chat or
+/// another — does not open (security review 2026-10-22). The chat id is
+/// fixed-length, so the row needs no separator.
+fn local_seal_aad(chat_id: &str, row: &[u8]) -> Vec<u8> {
+    let mut aad = chat_aad(LOCAL_SEAL_AAD_PREFIX, chat_id);
+    aad.extend_from_slice(row);
+    aad
+}
+
+/// Seals `bytes` of one `row` of `chat_id`'s history under that chat's
+/// `history_key` with a random nonce (owner decision D-1: a per-chat key, not
+/// the store key).
 pub fn seal_local(
     history_key: &[u8; 32],
     chat_id: &str,
+    row: &[u8],
     bytes: &[u8],
 ) -> Result<Vec<u8>, CoreError> {
-    seal_local_with(history_key, chat_id, bytes, random_array()?)
+    seal_local_with(history_key, chat_id, row, bytes, random_array()?)
 }
 
 /// [`seal_local`] with the nonce supplied — the test vectors pin its output.
 pub(crate) fn seal_local_with(
     history_key: &[u8; 32],
     chat_id: &str,
+    row: &[u8],
     bytes: &[u8],
     nonce: [u8; 24],
 ) -> Result<Vec<u8>, CoreError> {
-    let ciphertext = seal(
-        history_key,
-        &nonce,
-        &chat_aad(LOCAL_SEAL_AAD_PREFIX, chat_id),
-        bytes,
-    )?;
+    let ciphertext = seal(history_key, &nonce, &local_seal_aad(chat_id, row), bytes)?;
     Ok(LocalSeal { nonce, ciphertext }.encode())
 }
 
-/// Inverse of [`seal_local`]; a tag failure — another chat's key or id, or a
-/// tampered blob — is `Corrupt`.
+/// Inverse of [`seal_local`]; a tag failure — another chat's key or id,
+/// another row, or a tampered blob — is `Corrupt`.
 pub fn open_local(
     history_key: &[u8; 32],
     chat_id: &str,
+    row: &[u8],
     blob: &[u8],
 ) -> Result<Vec<u8>, CoreError> {
     let sealed = LocalSeal::decode(blob)?;
     open(
         history_key,
         &sealed.nonce,
-        &chat_aad(LOCAL_SEAL_AAD_PREFIX, chat_id),
+        &local_seal_aad(chat_id, row),
+        &sealed.ciphertext,
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Sealed app settings (0x20 under the store key)
+// ---------------------------------------------------------------------------
+
+/// `app-setting ‖ name`; a name is 1..=64 bytes chosen by the app.
+fn setting_aad(name: &str) -> Result<Vec<u8>, CoreError> {
+    if name.is_empty() || name.len() > MAX_SETTING_NAME_LEN {
+        return Err(CoreError::Corrupt);
+    }
+    let mut aad = Vec::with_capacity(APP_SETTING_AAD_PREFIX.len() + name.len());
+    aad.extend_from_slice(APP_SETTING_AAD_PREFIX);
+    aad.extend_from_slice(name.as_bytes());
+    Ok(aad)
+}
+
+/// Seals the setting `name` under the store key, so a setting that guards the
+/// app (the auto-lock times) cannot be changed by editing a file.
+pub(crate) fn seal_setting_with(
+    store_key: &[u8; 32],
+    name: &str,
+    bytes: &[u8],
+    nonce: [u8; 24],
+) -> Result<Vec<u8>, CoreError> {
+    let ciphertext = seal(store_key, &nonce, &setting_aad(name)?, bytes)?;
+    Ok(LocalSeal { nonce, ciphertext }.encode())
+}
+
+/// Inverse of [`seal_setting_with`]; another name, another store or a
+/// tampered blob is `Corrupt`.
+pub(crate) fn open_setting(
+    store_key: &[u8; 32],
+    name: &str,
+    blob: &[u8],
+) -> Result<Vec<u8>, CoreError> {
+    let sealed = LocalSeal::decode(blob)?;
+    open(
+        store_key,
+        &sealed.nonce,
+        &setting_aad(name)?,
         &sealed.ciphertext,
     )
 }
@@ -353,8 +394,97 @@ fn write_atomically(path: &Path, bytes: &[u8]) -> Result<(), CoreError> {
     written.map_err(|_| CoreError::Io)
 }
 
+/// Extension of the lock file beside the store directory
+/// (`<store_dir>/fuzzy_crypto_store.lock`).
+const LOCK_EXTENSION: &str = "lock";
+/// How long `open` waits for another holder of the lock to let go (a copy of
+/// the app that is just quitting) before it answers `Io`.
+const LOCK_ATTEMPTS: u32 = 20;
+const LOCK_RETRY: Duration = Duration::from_millis(50);
+
+/// The exclusive OS lock on one store directory, held for as long as any
+/// handle of this process has the store open. Two processes on one store would
+/// each cache a chat's state and write it back over the other's — a counter or
+/// a message key could be used twice (PROTOCOL.md §17). The OS releases the lock
+/// when the file closes: on the last handle's drop, or when the process dies.
+struct StoreLock {
+    _file: File,
+}
+
+/// The store directories this process has locked. A second handle on the same
+/// directory in the same process (the app opens the new handle before closing
+/// the old one) shares the lock instead of colliding with it: an OS file lock
+/// is per open file, so a second lock from this process would refuse itself.
+static HELD_LOCKS: Mutex<Vec<(PathBuf, Weak<StoreLock>)>> = Mutex::new(Vec::new());
+
+/// Takes (or shares, within this process) the exclusive lock on `root`. Another
+/// process that holds it makes this `Io` after about a second of retries.
+fn lock_store(root: &Path) -> Result<Arc<StoreLock>, CoreError> {
+    let mut held = HELD_LOCKS.lock().map_err(|_| CoreError::Internal)?;
+    held.retain(|(_, lock)| lock.strong_count() > 0);
+    if let Some(lock) = held
+        .iter()
+        .find(|(path, _)| path == root)
+        .and_then(|(_, lock)| lock.upgrade())
+    {
+        return Ok(lock);
+    }
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(root.with_extension(LOCK_EXTENSION))
+        .map_err(|_| CoreError::Io)?;
+    let mut attempt = 1;
+    loop {
+        match file.try_lock() {
+            Ok(()) => break,
+            Err(TryLockError::WouldBlock) if attempt < LOCK_ATTEMPTS => {
+                attempt += 1;
+                thread::sleep(LOCK_RETRY);
+            }
+            Err(_) => return Err(CoreError::Io),
+        }
+    }
+    let lock = Arc::new(StoreLock { _file: file });
+    held.push((root.to_path_buf(), Arc::downgrade(&lock)));
+    Ok(lock)
+}
+
+/// Best effort: writes zeros over every byte of the regular file at `path`
+/// **in place** — opened without truncation, so the file system reuses the
+/// blocks that held the ciphertext instead of freeing them and writing the
+/// zeros elsewhere — and syncs. On a copy-on-write file system (APFS, Btrfs)
+/// or flash with wear levelling the old blocks may still survive; there the
+/// guarantee is the platform's disk encryption (PROTOCOL.md §10.3). A missing
+/// file, a link or any error is ignored: the unlink that follows still runs.
+fn overwrite_in_place(path: &Path) {
+    let Ok(metadata) = fs::symlink_metadata(path) else {
+        return;
+    };
+    if !metadata.is_file() {
+        return;
+    }
+    let _ = fs::OpenOptions::new()
+        .write(true)
+        .truncate(false)
+        .open(path)
+        .and_then(|mut file| {
+            let zeros = [0u8; 4096];
+            let mut left = metadata.len();
+            while left > 0 {
+                let step = usize::try_from(left.min(zeros.len() as u64)).unwrap_or(zeros.len());
+                file.write_all(&zeros[..step])?;
+                left -= step as u64;
+            }
+            file.sync_all()
+        });
+}
+
 /// An unlocked store: the store key, its directory and the lazily loaded states.
 /// The cache only ever holds states that are on disk — any failure evicts.
+/// While it exists, no other process can open the same store.
 #[derive(ZeroizeOnDrop)]
 pub struct OpenStore {
     store_key: Key32,
@@ -362,18 +492,24 @@ pub struct OpenStore {
     root: PathBuf,
     #[zeroize(skip)]
     cache: HashMap<String, ChatState>,
+    #[zeroize(skip)]
+    _lock: Arc<StoreLock>,
 }
 
 impl OpenStore {
-    /// Creates `<store_dir>/fuzzy_crypto_store/` if missing and takes ownership of the key.
+    /// Creates `<store_dir>/fuzzy_crypto_store/` if missing, takes the store's
+    /// exclusive lock (`Io` while another process — a second copy of the app —
+    /// has it open) and takes ownership of the key.
     pub fn open(store_dir: &Path, store_key: Key32) -> Result<Self, CoreError> {
         let root = store_dir.join(STORE_SUBDIR);
         fs::create_dir_all(&root).map_err(|_| CoreError::Io)?;
         let root = fs::canonicalize(root).map_err(|_| CoreError::Io)?;
+        let lock = lock_store(&root)?;
         Ok(Self {
             store_key,
             root,
             cache: HashMap::new(),
+            _lock: lock,
         })
     }
 
@@ -439,24 +575,37 @@ impl OpenStore {
         saved
     }
 
-    /// Overwrites the state file with zeros (best effort), unlinks it and evicts
-    /// the cache. A chat with no state file is already deleted.
+    /// Loads (lazily) and reads `chat_id`'s state without changing it: nothing
+    /// is written, so the file on disk stays byte-identical. Missing →
+    /// `UnknownChat`.
+    pub fn with_state<T>(
+        &mut self,
+        chat_id: &str,
+        read: impl FnOnce(&ChatState) -> T,
+    ) -> Result<T, CoreError> {
+        if !self.cache.contains_key(chat_id) {
+            let state = self.load_state(chat_id)?;
+            self.cache.insert(chat_id.to_string(), state);
+        }
+        self.cache.get(chat_id).map(read).ok_or(CoreError::Internal)
+    }
+
+    /// Overwrites the state file with zeros in place (best effort), unlinks it
+    /// and evicts the cache. A chat with no state file is already deleted.
     pub fn delete_chat(&mut self, chat_id: &str) -> Result<(), CoreError> {
         let path = self.state_path(chat_id)?;
         self.cache.remove(chat_id);
         // Sweep a `.state.tmp` left by a crash between write and rename (F2-2
-        // review nit) — harmless ciphertext, but "delete" should leave nothing.
-        let _ = fs::remove_file(path.with_extension(STATE_TMP_EXTENSION));
-        let existing = match fs::metadata(&path) {
-            Ok(metadata) => metadata,
+        // review nit) — ciphertext, but "delete" should leave nothing.
+        let tmp = path.with_extension(STATE_TMP_EXTENSION);
+        overwrite_in_place(&tmp);
+        let _ = fs::remove_file(tmp);
+        match fs::symlink_metadata(&path) {
+            Ok(_) => {}
             Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
             Err(_) => return Err(CoreError::Io),
-        };
-        let zeros = vec![0u8; usize::try_from(existing.len()).unwrap_or(0)];
-        let _ = File::create(&path).and_then(|mut file| {
-            file.write_all(&zeros)?;
-            file.sync_all()
-        });
+        }
+        overwrite_in_place(&path);
         fs::remove_file(&path).map_err(|_| CoreError::Io)
     }
 
@@ -471,21 +620,124 @@ impl OpenStore {
         Ok(key)
     }
 
-    /// Seals `bytes` of `chat_id`'s message history under that chat's key.
-    pub fn seal_local(&self, chat_id: &str, bytes: &[u8]) -> Result<Vec<u8>, CoreError> {
-        seal_local(&*self.history_key(chat_id)?, chat_id, bytes)
+    /// Seals `bytes` of one `row` of `chat_id`'s message history under that
+    /// chat's key.
+    pub fn seal_local(
+        &self,
+        chat_id: &str,
+        row: &[u8],
+        bytes: &[u8],
+    ) -> Result<Vec<u8>, CoreError> {
+        seal_local(&*self.history_key(chat_id)?, chat_id, row, bytes)
     }
 
-    /// Inverse of [`OpenStore::seal_local`] for the same chat; another chat's
-    /// blob is `Corrupt`, a deleted chat's is `UnknownChat`.
-    pub fn open_local(&self, chat_id: &str, blob: &[u8]) -> Result<Vec<u8>, CoreError> {
-        open_local(&*self.history_key(chat_id)?, chat_id, blob)
+    /// Inverse of [`OpenStore::seal_local`] for the same chat and row; another
+    /// chat's or row's blob is `Corrupt`, a deleted chat's is `UnknownChat`.
+    pub fn open_local(&self, chat_id: &str, row: &[u8], blob: &[u8]) -> Result<Vec<u8>, CoreError> {
+        open_local(&*self.history_key(chat_id)?, chat_id, row, blob)
+    }
+
+    /// Seals the app setting `name` under the store key with a fresh nonce.
+    pub fn seal_setting(&self, name: &str, bytes: &[u8]) -> Result<Vec<u8>, CoreError> {
+        seal_setting_with(&self.store_key, name, bytes, random_array()?)
+    }
+
+    /// Inverse of [`OpenStore::seal_setting`].
+    pub fn open_setting(&self, name: &str, blob: &[u8]) -> Result<Vec<u8>, CoreError> {
+        open_setting(&self.store_key, name, blob)
+    }
+
+    /// Seals the recovery lock — a public key, so this is for integrity only —
+    /// under the store key: a 0x20 with AAD `recovery-lock`. A lock swapped in
+    /// the secure storage then does not open, so nobody without the store key
+    /// can make the app seal a vault key to a lock of theirs.
+    pub fn seal_recovery_lock(&self, lock: &[u8; 32]) -> Result<Vec<u8>, CoreError> {
+        let nonce = random_array()?;
+        let ciphertext = seal(&self.store_key, &nonce, RECOVERY_LOCK_AAD, lock)?;
+        Ok(LocalSeal { nonce, ciphertext }.encode())
+    }
+
+    /// Inverse of [`OpenStore::seal_recovery_lock`]; another store's lock, a
+    /// tampered blob or a body that is not 32 bytes is `Corrupt`.
+    pub fn open_recovery_lock(&self, blob: &[u8]) -> Result<[u8; 32], CoreError> {
+        let sealed = LocalSeal::decode(blob)?;
+        let plain = open(
+            &self.store_key,
+            &sealed.nonce,
+            RECOVERY_LOCK_AAD,
+            &sealed.ciphertext,
+        )?;
+        plain.try_into().map_err(|_| CoreError::Corrupt)
+    }
+
+    /// Seals a received file's key under `chat_id`'s history key.
+    pub fn seal_kept_file_key(
+        &self,
+        chat_id: &str,
+        file_key: &[u8; 32],
+    ) -> Result<Vec<u8>, CoreError> {
+        seal_kept_file_key(&*self.history_key(chat_id)?, chat_id, file_key)
+    }
+
+    /// Inverse of [`OpenStore::seal_kept_file_key`]; a deleted chat's blob is
+    /// `UnknownChat`.
+    pub fn open_kept_file_key(&self, chat_id: &str, blob: &[u8]) -> Result<Key32, CoreError> {
+        open_kept_file_key(&*self.history_key(chat_id)?, chat_id, blob)
     }
 
     #[cfg(test)]
     fn is_cached(&self, chat_id: &str) -> bool {
         self.cache.contains_key(chat_id)
     }
+}
+
+// ---------------------------------------------------------------------------
+// Kept file keys (0x20) — a received file the app keeps, under the history key
+// ---------------------------------------------------------------------------
+
+const KEPT_FILE_KEY_AAD_PREFIX: &[u8] = b"kept-file-key";
+
+/// Seals the file key of a received chat-mode container the app keeps, under
+/// the chat's `history_key` with a random nonce: a 0x20 blob with AAD
+/// `kept-file-key` ‖ chat id, so a history seal never opens as a file key and
+/// a file key never as history. The container's key message is single-use;
+/// this seal is what lets the kept container be opened again (`PROTOCOL.md`
+/// §9.6).
+pub fn seal_kept_file_key(
+    history_key: &[u8; 32],
+    chat_id: &str,
+    file_key: &[u8; 32],
+) -> Result<Vec<u8>, CoreError> {
+    let nonce = random_array()?;
+    let ciphertext = seal(
+        history_key,
+        &nonce,
+        &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, chat_id),
+        file_key,
+    )?;
+    Ok(LocalSeal { nonce, ciphertext }.encode())
+}
+
+/// Inverse of [`seal_kept_file_key`]; a tag failure (another chat's key or id,
+/// a history seal, a tampered blob) or a body that is not 32 bytes is `Corrupt`.
+pub fn open_kept_file_key(
+    history_key: &[u8; 32],
+    chat_id: &str,
+    blob: &[u8],
+) -> Result<Key32, CoreError> {
+    let sealed = LocalSeal::decode(blob)?;
+    let plain = Zeroizing::new(open(
+        history_key,
+        &sealed.nonce,
+        &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, chat_id),
+        &sealed.ciphertext,
+    )?);
+    let mut file_key = Zeroizing::new([0u8; 32]);
+    if plain.len() != file_key.len() {
+        return Err(CoreError::Corrupt);
+    }
+    file_key.copy_from_slice(&plain);
+    Ok(file_key)
 }
 
 #[cfg(test)]
@@ -537,161 +789,9 @@ pub(crate) mod test_support {
 mod tests {
     use super::*;
 
-    const PASSWORD: &[u8] = b"pw";
     const STORE_KEY: [u8; 32] = [0x33; 32];
     const HISTORY_KEY: [u8; 32] = [0x55; 32];
     const LOCAL_CHAT_ID: &str = "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d";
-
-    mod store_key {
-        use super::*;
-
-        #[test]
-        fn wrong_password_rejected() {
-            let blob = wrap_store_key(&STORE_KEY, PASSWORD).unwrap();
-
-            assert_eq!(
-                unwrap_store_key(&blob, b"px").unwrap_err(),
-                CoreError::WrongPassword
-            );
-            assert_eq!(
-                unwrap_store_key(&blob, b"").unwrap_err(),
-                CoreError::WrongPassword
-            );
-            assert_eq!(*unwrap_store_key(&blob, PASSWORD).unwrap(), STORE_KEY);
-        }
-
-        #[test]
-        fn tampered_blob_is_wrong_password_not_a_panic() {
-            let blob = wrap_store_key(&STORE_KEY, PASSWORD).unwrap();
-
-            // One byte of the salt, the nonce, the ciphertext and the tag (the Argon2
-            // parameter bytes are a different KDF, not a tag failure — covered below).
-            for index in [6, 31, 55, 102] {
-                let mut tampered = blob.clone();
-                tampered[index] ^= 0x01;
-                assert_eq!(
-                    unwrap_store_key(&tampered, PASSWORD).unwrap_err(),
-                    CoreError::WrongPassword,
-                    "byte {index}"
-                );
-            }
-        }
-
-        #[test]
-        fn rewrap_round_trip() {
-            let old_blob = wrap_store_key(&STORE_KEY, PASSWORD).unwrap();
-            let key = unwrap_store_key(&old_blob, PASSWORD).unwrap();
-            let new_blob = wrap_store_key(&key, b"new").unwrap();
-
-            assert_ne!(old_blob, new_blob, "fresh salt and nonce every time");
-            assert_eq!(*unwrap_store_key(&old_blob, PASSWORD).unwrap(), STORE_KEY);
-            assert_eq!(
-                unwrap_store_key(&old_blob, b"new").unwrap_err(),
-                CoreError::WrongPassword
-            );
-            assert_eq!(*unwrap_store_key(&new_blob, b"new").unwrap(), STORE_KEY);
-            assert_eq!(
-                unwrap_store_key(&new_blob, PASSWORD).unwrap_err(),
-                CoreError::WrongPassword
-            );
-        }
-
-        #[test]
-        fn wrapped_blob_format_exact_bytes() {
-            // Generated from the spec tables with argon2-cffi + pycryptodome (log §2),
-            // not from this crate: FUZZ 01 10 · salt16 · m u32 · t u32 · p u8 · nonce24 · ct+tag48.
-            let golden = hex(concat!(
-                "46555a5a0110",
-                "11111111111111111111111111111111",
-                "00010000",
-                "00000004",
-                "01",
-                "222222222222222222222222222222222222222222222222",
-                "ca92d2caa5a5120ca9b162dab36620db05f2829d86e6df4fefe299cbb96637a4",
-                "0343f644cbf09c412a250cb69e1550bd",
-            ));
-
-            let blob = wrap_store_key_with(&STORE_KEY, PASSWORD, [0x11; 16], [0x22; 24]).unwrap();
-
-            assert_eq!(blob.len(), 103);
-            assert_eq!(blob, golden);
-            assert_eq!(*unwrap_store_key(&golden, PASSWORD).unwrap(), STORE_KEY);
-        }
-
-        #[test]
-        fn empty_password_is_valid() {
-            let blob = wrap_store_key(&STORE_KEY, b"").unwrap();
-
-            assert_eq!(*unwrap_store_key(&blob, b"").unwrap(), STORE_KEY);
-            assert_eq!(
-                unwrap_store_key(&blob, b"x").unwrap_err(),
-                CoreError::WrongPassword
-            );
-        }
-
-        #[test]
-        fn foreign_or_broken_blobs_are_errors_not_panics() {
-            let blob = wrap_store_key(&STORE_KEY, PASSWORD).unwrap();
-
-            let local = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, b"x").unwrap();
-            assert_eq!(
-                unwrap_store_key(&local, PASSWORD).unwrap_err(),
-                CoreError::UnsupportedFormat
-            );
-            assert_eq!(
-                unwrap_store_key(&blob[..blob.len() - 1], PASSWORD).unwrap_err(),
-                CoreError::Corrupt
-            );
-            assert_eq!(
-                unwrap_store_key(&[], PASSWORD).unwrap_err(),
-                CoreError::UnsupportedFormat
-            );
-            // An absurd memory cost in the header is refused before any allocation.
-            let mut huge = blob.clone();
-            huge[22..26].copy_from_slice(&u32::MAX.to_be_bytes());
-            assert_eq!(
-                unwrap_store_key(&huge, PASSWORD).unwrap_err(),
-                CoreError::Corrupt
-            );
-            let mut zero_lanes = blob.clone();
-            zero_lanes[30] = 0;
-            assert_eq!(
-                unwrap_store_key(&zero_lanes, PASSWORD).unwrap_err(),
-                CoreError::Corrupt
-            );
-        }
-
-        #[test]
-        fn tightened_header_caps_reject_oversized_argon2_params() {
-            use crate::formats::{Argon2Params, WrappedStoreKey, WRAPPED_STORE_KEY_CT_LEN};
-
-            let make = |m_cost: u32, t_cost: u32| {
-                WrappedStoreKey {
-                    salt: [0x11; 16],
-                    params: Argon2Params {
-                        m_cost,
-                        t_cost,
-                        p_cost: 1,
-                    },
-                    nonce: [0x22; 24],
-                    ciphertext: [0; WRAPPED_STORE_KEY_CT_LEN],
-                }
-                .encode()
-            };
-
-            // 256 MiB and 16 passes are the ceilings for an attacker-controlled
-            // header (F2-2 review R2); one past either is `Corrupt`, refused
-            // before a single Argon2 block is allocated.
-            assert_eq!(
-                unwrap_store_key(&make((256 * 1024) + 1, 1), PASSWORD).unwrap_err(),
-                CoreError::Corrupt
-            );
-            assert_eq!(
-                unwrap_store_key(&make(1024, 17), PASSWORD).unwrap_err(),
-                CoreError::Corrupt
-            );
-        }
-    }
 
     mod state {
         use super::test_support::{err_of, fresh_state, temp_dir};
@@ -829,7 +929,11 @@ mod tests {
             fs::write(&path, &good[..20]).unwrap();
             assert_eq!(err_of(store.load_state(CHAT_ID)), CoreError::Corrupt);
 
-            fs::write(&path, wrap_store_key(&STORE_KEY, PASSWORD).unwrap()).unwrap();
+            fs::write(
+                &path,
+                crate::master::wrap_with_password(&STORE_KEY, b"pw").unwrap(),
+            )
+            .unwrap();
             assert_eq!(
                 err_of(store.load_state(CHAT_ID)),
                 CoreError::UnsupportedFormat
@@ -956,6 +1060,128 @@ mod tests {
             let _ = fs::remove_dir_all(dir);
         }
 
+        /// The zeros go over the ciphertext's own bytes: a second name for the
+        /// same file (a hard link) sees them, at the full original length —
+        /// for the state file and for a stale `.state.tmp` alike.
+        #[test]
+        fn delete_chat_overwrites_in_place_before_unlinking() {
+            let dir = temp_dir();
+            let mut store = open_store(&dir, STORE_KEY);
+            store.put_state(fresh_state(CHAT_ID)).unwrap();
+            let state = store.root.join(format!("{CHAT_ID}.state"));
+            let tmp = store.root.join(format!("{CHAT_ID}.state.tmp"));
+            fs::write(&tmp, [0xAB; 1000]).unwrap();
+            let state_len = fs::metadata(&state).unwrap().len();
+            assert!(fs::read(&state).unwrap().iter().any(|byte| *byte != 0));
+
+            let state_twin = dir.join("state.twin");
+            let tmp_twin = dir.join("tmp.twin");
+            fs::hard_link(&state, &state_twin).unwrap();
+            fs::hard_link(&tmp, &tmp_twin).unwrap();
+
+            store.delete_chat(CHAT_ID).unwrap();
+
+            assert!(!state.exists() && !tmp.exists());
+            let state_bytes = fs::read(&state_twin).unwrap();
+            assert_eq!(state_bytes.len() as u64, state_len);
+            assert!(state_bytes.iter().all(|byte| *byte == 0));
+            let tmp_bytes = fs::read(&tmp_twin).unwrap();
+            assert_eq!(tmp_bytes.len(), 1000);
+            assert!(tmp_bytes.iter().all(|byte| *byte == 0));
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        /// The lock file a store holds, opened the way another process would.
+        fn foreign_handle(store_dir: &Path) -> File {
+            fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(store_dir.join(format!("{STORE_SUBDIR}.{LOCK_EXTENSION}")))
+                .unwrap()
+        }
+
+        /// Two handles in one process share the lock (the app opens the new
+        /// one before it closes the old one); it is released with the last.
+        #[test]
+        fn handles_in_one_process_share_the_lock_until_the_last_closes() {
+            let dir = temp_dir();
+            let first = open_store(&dir, STORE_KEY);
+            let second = open_store(&dir, STORE_KEY);
+            let probe = foreign_handle(&dir);
+            assert!(matches!(probe.try_lock(), Err(TryLockError::WouldBlock)));
+            drop(first);
+            assert!(matches!(probe.try_lock(), Err(TryLockError::WouldBlock)));
+            drop(second);
+            probe.try_lock().expect("released with the last handle");
+            drop(probe);
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        /// Whoever holds the lock first wins: an open while another holder has
+        /// it is `Io` and touches nothing; once it is released the open works.
+        #[test]
+        fn open_is_refused_while_another_holder_has_the_lock() {
+            let dir = temp_dir();
+            drop(open_store(&dir, STORE_KEY)); // creates the directory and lock file
+            let other = foreign_handle(&dir);
+            other.try_lock().unwrap();
+            assert_eq!(
+                err_of(OpenStore::open(&dir, Zeroizing::new(STORE_KEY))),
+                CoreError::Io
+            );
+            drop(other);
+            drop(open_store(&dir, STORE_KEY));
+            let _ = fs::remove_dir_all(dir);
+        }
+
+        const CHILD_DIR_ENV: &str = "FUZZY_STORE_LOCK_CHILD_DIR";
+        const CHILD_EXPECT_ENV: &str = "FUZZY_STORE_LOCK_CHILD_EXPECT";
+
+        /// Only does something when [`a_second_copy_of_the_app_cannot_open_the_store`]
+        /// runs this test binary again as a second process: it opens the store
+        /// and exits 0 when the result is the one the parent expects.
+        #[test]
+        fn second_process_probe() {
+            let (Some(dir), Some(expect)) = (
+                std::env::var_os(CHILD_DIR_ENV),
+                std::env::var_os(CHILD_EXPECT_ENV),
+            ) else {
+                return;
+            };
+            let outcome = match OpenStore::open(Path::new(&dir), Zeroizing::new(STORE_KEY)) {
+                Ok(_) => "opened",
+                Err(CoreError::Io) => "refused",
+                Err(_) => "other",
+            };
+            std::process::exit(if expect == outcome { 0 } else { 1 });
+        }
+
+        /// A real second process — a second copy of the app — is refused while
+        /// the first has the store open, and can open it once the first lets go.
+        #[test]
+        fn a_second_copy_of_the_app_cannot_open_the_store() {
+            let dir = temp_dir();
+            let second_process = |expect: &str| {
+                std::process::Command::new(std::env::current_exe().unwrap())
+                    .args([
+                        "--exact",
+                        "store::tests::state::second_process_probe",
+                        "--test-threads=1",
+                    ])
+                    .env(CHILD_DIR_ENV, &dir)
+                    .env(CHILD_EXPECT_ENV, expect)
+                    .stdout(std::process::Stdio::null())
+                    .status()
+                    .unwrap()
+                    .success()
+            };
+            let first = open_store(&dir, STORE_KEY);
+            assert!(second_process("refused"), "a second process got the store");
+            drop(first);
+            assert!(second_process("opened"), "the lock outlived the store");
+            let _ = fs::remove_dir_all(dir);
+        }
+
         #[test]
         fn state_body_is_exactly_sized_with_full_skipped_key_stores() {
             use vodozemac::olm::{Account, OlmMessage, SessionConfig};
@@ -1022,76 +1248,223 @@ mod tests {
         use super::*;
 
         const OTHER_CHAT_ID: &str = "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
+        /// A row's binding as the app forms it: direction byte ‖ blob text.
+        const ROW: &[u8] = b"\x01Fuzz/RlVaWgEDAd6tvu8";
+        const OTHER_ROW: &[u8] = b"\x00Fuzz/RlVaWgEDAd6tvu8";
 
         #[test]
         fn seal_open_round_trip() {
             for message in [&b""[..], b"hi", &[0u8; 4096]] {
-                let blob = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, message).unwrap();
+                let blob = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, message).unwrap();
                 assert_eq!(&blob[..6], b"FUZZ\x01\x20");
                 assert_eq!(blob.len(), 6 + 24 + message.len() + 16);
                 assert_eq!(
-                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap(),
+                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, &blob).unwrap(),
                     message
                 );
             }
 
-            let first = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, b"same").unwrap();
-            let second = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, b"same").unwrap();
+            let first = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, b"same").unwrap();
+            let second = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, b"same").unwrap();
             assert_ne!(first[6..30], second[6..30], "fresh nonce per seal");
         }
 
         #[test]
         fn tamper_detected() {
-            let blob = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, b"history entry").unwrap();
+            let blob = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, b"history entry").unwrap();
 
             for index in 6..blob.len() {
                 let mut tampered = blob.clone();
                 tampered[index] ^= 0x01;
                 assert_eq!(
-                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &tampered).unwrap_err(),
+                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, &tampered).unwrap_err(),
                     CoreError::Corrupt,
                     "byte {index}"
                 );
             }
             // Another chat's key, and the right key under another chat's id (the AAD).
             assert_eq!(
-                open_local(&[0x44; 32], LOCAL_CHAT_ID, &blob).unwrap_err(),
+                open_local(&[0x44; 32], LOCAL_CHAT_ID, ROW, &blob).unwrap_err(),
                 CoreError::Corrupt
             );
             assert_eq!(
-                open_local(&HISTORY_KEY, OTHER_CHAT_ID, &blob).unwrap_err(),
+                open_local(&HISTORY_KEY, OTHER_CHAT_ID, ROW, &blob).unwrap_err(),
                 CoreError::Corrupt
             );
             assert_eq!(
-                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &blob[..blob.len() - 1]).unwrap_err(),
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, &blob[..blob.len() - 1]).unwrap_err(),
                 CoreError::Corrupt
             );
-            let wrapped = wrap_store_key(&STORE_KEY, PASSWORD).unwrap();
+            let wrapped = crate::master::wrap_with_password(&STORE_KEY, b"pw").unwrap();
             assert_eq!(
-                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &wrapped).unwrap_err(),
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, &wrapped).unwrap_err(),
                 CoreError::UnsupportedFormat
+            );
+        }
+
+        /// Security review 2026-10-22: a seal moved to another row — another
+        /// message, or the same blob shown in the other direction — does not open.
+        #[test]
+        fn seal_is_bound_to_its_row() {
+            let blob = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, b"mine").unwrap();
+            assert_eq!(
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, OTHER_ROW, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, b"", &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &ROW[..ROW.len() - 1], &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+        }
+
+        #[test]
+        fn kept_file_key_round_trip_and_domain_separation() {
+            let file_key = [0x66u8; 32];
+            let blob = seal_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &file_key).unwrap();
+            assert_eq!(&blob[..6], b"FUZZ\x01\x20");
+            assert_eq!(blob.len(), 6 + 24 + 32 + 16);
+            assert_eq!(
+                *open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap(),
+                file_key
+            );
+
+            // A file key never opens as history, and history never as a file key,
+            // whatever row the history seal is bound to (an empty row leaves only
+            // the label to tell them apart).
+            for row in [&b""[..], &b"\x00Fuzz/row"[..]] {
+                assert_eq!(
+                    open_local(&HISTORY_KEY, LOCAL_CHAT_ID, row, &blob).unwrap_err(),
+                    CoreError::Corrupt
+                );
+                let history = seal_local(&HISTORY_KEY, LOCAL_CHAT_ID, row, &file_key).unwrap();
+                assert_eq!(
+                    open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &history).unwrap_err(),
+                    CoreError::Corrupt
+                );
+            }
+            // Another chat's id or key, a tampered byte, a short blob.
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, OTHER_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                open_kept_file_key(&[0x44; 32], LOCAL_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            for index in 6..blob.len() {
+                let mut tampered = blob.clone();
+                tampered[index] ^= 0x01;
+                assert_eq!(
+                    open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &tampered).unwrap_err(),
+                    CoreError::Corrupt,
+                    "byte {index}"
+                );
+            }
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob[..blob.len() - 1])
+                    .unwrap_err(),
+                CoreError::Corrupt
+            );
+        }
+
+        #[test]
+        fn kept_file_key_must_be_32_bytes() {
+            // A blob under the kept-file AAD whose body is not a key.
+            let nonce = [0x11u8; 24];
+            let ciphertext = seal(
+                &HISTORY_KEY,
+                &nonce,
+                &chat_aad(KEPT_FILE_KEY_AAD_PREFIX, LOCAL_CHAT_ID),
+                b"short",
+            )
+            .unwrap();
+            let blob = LocalSeal { nonce, ciphertext }.encode();
+            assert_eq!(
+                open_kept_file_key(&HISTORY_KEY, LOCAL_CHAT_ID, &blob).unwrap_err(),
+                CoreError::Corrupt
             );
         }
 
         #[test]
         fn opens_the_golden_blob() {
-            // XChaCha20-Poly1305(history key 0x55*32, nonce 0x44*24, AAD "local-seal" ‖ chat id,
-            // "hello"), computed with pycryptodome from the spec (F2-12 log §2) — the
-            // `local_seal_chat` vector.
+            // XChaCha20-Poly1305(history key 0x55*32, nonce 0x44*24, AAD "local-seal" ‖
+            // chat id ‖ 0x01 ‖ "Fuzz/RlVaWgEDAd6tvu8", "hello"), computed with
+            // pycryptodome from the spec — the `local_seal_chat` vector.
             let golden = hex(concat!(
                 "46555a5a0120",
                 "444444444444444444444444444444444444444444444444",
                 "a5610b8a8e",
-                "42655bf221e8d97fd32a97051c968bda",
+                "447cd8ea5654bc53ae6942bd3a999d71",
             ));
 
             assert_eq!(
-                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, &golden).unwrap(),
+                open_local(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, &golden).unwrap(),
                 b"hello"
             );
             assert_eq!(
-                seal_local_with(&HISTORY_KEY, LOCAL_CHAT_ID, b"hello", [0x44; 24]).unwrap(),
+                seal_local_with(&HISTORY_KEY, LOCAL_CHAT_ID, ROW, b"hello", [0x44; 24]).unwrap(),
                 golden
+            );
+        }
+    }
+
+    mod settings {
+        use super::*;
+
+        #[test]
+        fn seal_open_round_trip_and_golden() {
+            // XChaCha20-Poly1305(store key 0x33*32, nonce 0x44*24, AAD "app-setting" ‖
+            // "auto-lock", "{}"), computed with pycryptodome from the spec.
+            let golden = hex(concat!(
+                "46555a5a0120",
+                "444444444444444444444444444444444444444444444444",
+                "63db",
+                "e1d5670b9abea7b876bb726bd2518c55",
+            ));
+            assert_eq!(
+                seal_setting_with(&STORE_KEY, "auto-lock", b"{}", [0x44; 24]).unwrap(),
+                golden
+            );
+            assert_eq!(
+                open_setting(&STORE_KEY, "auto-lock", &golden).unwrap(),
+                b"{}"
+            );
+        }
+
+        #[test]
+        fn another_name_store_or_tampering_is_corrupt() {
+            let blob = seal_setting_with(&STORE_KEY, "auto-lock", b"{}", [0x44; 24]).unwrap();
+            assert_eq!(
+                open_setting(&STORE_KEY, "auto-lock-x", &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                open_setting(&[0x34; 32], "auto-lock", &blob).unwrap_err(),
+                CoreError::Corrupt
+            );
+            let mut flipped = blob.clone();
+            flipped[31] ^= 1;
+            assert_eq!(
+                open_setting(&STORE_KEY, "auto-lock", &flipped).unwrap_err(),
+                CoreError::Corrupt
+            );
+            // A history seal under the same key is not a setting.
+            let history = seal_local(&STORE_KEY, LOCAL_CHAT_ID, b"", b"{}").unwrap();
+            assert_eq!(
+                open_setting(&STORE_KEY, "auto-lock", &history).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                seal_setting_with(&STORE_KEY, "", b"{}", [0x44; 24]).unwrap_err(),
+                CoreError::Corrupt
+            );
+            assert_eq!(
+                seal_setting_with(&STORE_KEY, &"n".repeat(65), b"{}", [0x44; 24]).unwrap_err(),
+                CoreError::Corrupt
             );
         }
     }

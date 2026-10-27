@@ -1,73 +1,36 @@
-import 'dart:convert';
-
+import '../../constants/default_constants.dart';
 import 'components/components.dart';
+import 'fuzzy_link_parser.dart';
 
+/// Writes the links [FuzzyLinkParser] reads. Each answer is `null` when the
+/// content cannot travel as a link: not a `Fuzz/` blob, or longer than
+/// [FuzzyLinkParser.maxPayloadLength]. A sealed file never becomes a link; it
+/// is shared as the file itself.
 class FuzzyLinkGenerator {
-  static const _scheme = 'fuzzylink';
-  static const _expirationDuration = Duration(hours: 24);
+  /// [invitationContent] is the core's `Fuzz/` text.
+  static String? generateInvitationLink(String invitationContent) =>
+      _link(FuzzyLinkType.invitation, _blobBody(invitationContent));
 
-  /// [invitationContent] is the opaque `Fuzz/` blob, carried as one field.
-  static String generateInvitationLink(String invitationContent) {
-    final payload = jsonEncode({
-      'v': FuzzyLinkPayload.currentVersion,
-      't': FuzzyLinkType.invitation.payloadCode,
-      'b': invitationContent,
-      'exp': _generateExpirationTimestamp(),
-    });
-    final encoded = _encodePayload(payload);
-    return '$_scheme://invite/$encoded';
+  /// [acceptanceContent] is the core's `Fuzz/` text.
+  static String? generateAcceptanceLink(String acceptanceContent) =>
+      _link(FuzzyLinkType.acceptance, _blobBody(acceptanceContent));
+
+  /// [encryptedMessage] is a message blob, with or without its `Fuzz/`
+  /// prefix. Nothing else rides along: the receiving app finds the chat with
+  /// the core's peek.
+  static String? generateFuzzLink(String encryptedMessage) =>
+      _link(FuzzyLinkType.message, _blobBody(encryptedMessage));
+
+  static String _blobBody(String text) {
+    final compact = text.replaceAll(RegExp(r'\s'), '');
+    return compact.startsWith(fuzzIdentificator)
+        ? compact.substring(fuzzIdentificator.length)
+        : compact;
   }
 
-  static String generateAcceptanceLink(String acceptanceContent) {
-    final payload = jsonEncode({
-      'v': FuzzyLinkPayload.currentVersion,
-      't': FuzzyLinkType.acceptance.payloadCode,
-      'b': acceptanceContent,
-      'exp': _generateExpirationTimestamp(),
-    });
-    final encoded = _encodePayload(payload);
-    return '$_scheme://accept/$encoded';
-  }
-
-  static String generateFuzzLink(String chatId, String encryptedMessage) {
-    final payload = jsonEncode({
-      'v': FuzzyLinkPayload.currentVersion,
-      't': FuzzyLinkType.fuzz.payloadCode,
-      'c': chatId,
-      'm': encryptedMessage,
-    });
-    final encoded = _encodePayload(payload);
-    return '$_scheme://fuzz/$encoded';
-  }
-
-  static String generateShareableContent({
-    required String link,
-    required String rawFuzz,
-    required FuzzyLinkType type,
-  }) {
-    final typeLabel = switch (type) {
-      FuzzyLinkType.invitation => 'Invitation',
-      FuzzyLinkType.acceptance => 'Acceptance',
-      FuzzyLinkType.fuzz => 'Encrypted Message',
-    };
-
-    return '🔐 Fuzzzy Ink $typeLabel\n'
-        '\n'
-        'Tap the link to open in Fuzzzy Ink:\n'
-        '$link\n'
-        '\n'
-        '────────────────────\n'
-        "Can't tap? Copy the text below and paste into Fuzzzy Ink:\n"
-        '$rawFuzz';
-  }
-
-  static int _generateExpirationTimestamp() {
-    return DateTime.now().add(_expirationDuration).millisecondsSinceEpoch ~/
-        1000;
-  }
-
-  static String _encodePayload(String json) {
-    final bytes = utf8.encode(json);
-    return base64Url.encode(bytes);
+  static String? _link(FuzzyLinkType type, String fragment) {
+    final link = '${FuzzyLinkParser.scheme}://${FuzzyLinkParser.host}'
+        '${type.path}#$fragment';
+    return FuzzyLinkParser.parseText(link) == null ? null : link;
   }
 }

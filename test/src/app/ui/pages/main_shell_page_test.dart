@@ -1,0 +1,385 @@
+import 'dart:async';
+
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fuzzzy_ink/src/src.dart';
+import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class _MockVaultAuthCubit extends MockCubit<VaultAuthState>
+    implements VaultAuthCubit {}
+
+class _MockPeople extends MockCubit<ChatGeneralDataListState>
+    implements ChatGeneralDataListCubit {}
+
+class _MockAuthStore extends MockCubit<FuzzyAuthState>
+    implements FuzzyAuthStore {}
+
+void main() {
+  late PreferencesService preferences;
+  late _MockVaultAuthCubit vault;
+  late _MockPeople people;
+  late _MockAuthStore authStore;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    preferences = PreferencesService(await SharedPreferences.getInstance());
+    vault = _MockVaultAuthCubit();
+    when(() => vault.state).thenReturn(
+      const VaultAuthState(authState: VaultAuthEnum.unlocked),
+    );
+    when(() => vault.lock()).thenAnswer((_) async {});
+    people = _MockPeople();
+    when(() => people.state).thenReturn(
+      const ChatGeneralDataListState(status: StateStatus.success, chatList: []),
+    );
+    authStore = _MockAuthStore();
+    when(() => authStore.lock(byUser: any(named: 'byUser')))
+        .thenAnswer((_) async {});
+  });
+
+  Future<GoRouter> pumpShell(
+    WidgetTester tester, {
+    Size size = const Size(390, 844),
+    FuzzzySkin skin = FuzzzySkin.night,
+    bool reduceMotion = false,
+    double textScale = 1,
+    Locale locale = const Locale('en'),
+  }) async {
+    tester.view.physicalSize = size * tester.view.devicePixelRatio;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final rootKey = GlobalKey<NavigatorState>();
+    final router = GoRouter(
+      navigatorKey: rootKey,
+      routes: [
+        StatefulShellRoute(
+          builder: (_, __, navigationShell) => MainShellPage(
+            preferencesService: preferences,
+            navigationShell: navigationShell,
+          ),
+          navigatorContainerBuilder: MainShellPage.tabStack,
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.home,
+                  builder: (_, __) => const _Counter('home tab'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.vaultHome,
+                  builder: (_, __) => const Text('safe tab'),
+                  routes: [
+                    GoRoute(
+                      path: 'item',
+                      builder: (_, __) => const Text('safe item'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRouter.settings,
+                  builder: (_, __) => const Text('settings tab'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: AppRouter.chatCreate,
+          builder: (_, __) => const Text('full screen flow'),
+        ),
+        GoRoute(
+          path: AppRouter.open,
+          builder: (_, __) => const Text('open flow'),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<VaultAuthCubit>.value(value: vault),
+          BlocProvider<ChatGeneralDataListCubit>.value(value: people),
+          BlocProvider<FuzzyAuthStore>.value(value: authStore),
+        ],
+        child: MaterialApp.router(
+          theme: FuzzzyTheme.build(inkPack, skin),
+          locale: locale,
+          localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+          supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+          routerConfig: router,
+          builder: (context, app) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              disableAnimations: reduceMotion,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: app!,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    return router;
+  }
+
+  for (final skin in [FuzzzySkin.paper, FuzzzySkin.night]) {
+    testWidgets('phone: three tabs at the bottom, each remembered ($skin)',
+        (tester) async {
+      await pumpShell(tester, skin: skin);
+      expect(find.byType(FuzzzyBottomNav), findsOneWidget);
+      expect(find.byType(FuzzzySideNav), findsNothing);
+      expect(find.text('HOME'), findsOneWidget);
+      expect(find.text('MY SAFE'), findsOneWidget);
+      expect(find.text('SETTINGS'), findsOneWidget);
+      expect(find.text('home tab 0'), findsOneWidget);
+
+      await tester.tap(find.text('MY SAFE'));
+      await tester.pumpAndSettle();
+      expect(find.text('safe tab'), findsOneWidget);
+      expect(preferences.lastSelectedTab, AppRouter.vaultHome);
+
+      await tester.tap(find.text('SETTINGS'));
+      await tester.pumpAndSettle();
+      expect(find.text('settings tab'), findsOneWidget);
+      expect(preferences.lastSelectedTab, AppRouter.settings);
+    });
+  }
+
+  for (final (locale, l10n) in [
+    (const Locale('en'), FuzzzyInkLocalizationsEn()),
+    (const Locale('ka'), FuzzzyInkLocalizationsKa()),
+  ]) {
+    for (final size in [const Size(320, 640), const Size(390, 844)]) {
+      testWidgets(
+          'large text: no tab word breaks mid-word '
+          '(${locale.languageCode}, ${size.width.toInt()} wide)',
+          (tester) async {
+        await pumpShell(tester, size: size, textScale: 3.1, locale: locale);
+        expect(tester.takeException(), isNull);
+        for (final label in [
+          l10n.tabHome,
+          l10n.tabMySafe,
+          l10n.tabSettings,
+        ]) {
+          final text = label.toUpperCase();
+          final paragraph =
+              tester.renderObject<RenderParagraph>(find.text(text));
+          var start = 0;
+          for (final word in text.split(' ')) {
+            final boxes = paragraph.getBoxesForSelection(
+              TextSelection(
+                baseOffset: start,
+                extentOffset: start + word.length,
+              ),
+            );
+            final lines = boxes.map((box) => box.top.round()).toSet();
+            expect(lines, hasLength(1), reason: '"$word" on one line');
+            start += word.length + 1;
+          }
+        }
+      });
+    }
+  }
+
+  testWidgets('My safe has its own header with the lock while it is open',
+      (tester) async {
+    final router = await pumpShell(tester);
+    router.go(AppRouter.vaultHome);
+    await tester.pumpAndSettle();
+    expect(find.text('My safe'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('iconbtn.mySafe.lock')));
+    verify(() => vault.lock()).called(1);
+  });
+
+  testWidgets('wide screens get the side rail instead, with the mark',
+      (tester) async {
+    await pumpShell(tester, size: const Size(1024, 768));
+    expect(find.byType(FuzzzySideNav), findsOneWidget);
+    expect(find.byType(FuzzzyBottomNav), findsNothing);
+    expect(find.byType(InkMark), findsOneWidget);
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('settings tab'), findsOneWidget);
+  });
+
+  testWidgets('a tab keeps its place while another shows', (tester) async {
+    await pumpShell(tester);
+    await tester.tap(find.text('home tab 0'));
+    await tester.pump();
+    await tester.tap(find.text('home tab 1'));
+    await tester.pump();
+    expect(find.text('home tab 2'), findsOneWidget);
+
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pumpAndSettle();
+    expect(find.text('settings tab'), findsOneWidget);
+    expect(find.textContaining('home tab'), findsNothing);
+
+    await tester.tap(find.text('HOME'));
+    await tester.pumpAndSettle();
+    expect(find.text('home tab 2'), findsOneWidget);
+  });
+
+  testWidgets('the chosen tab fades in over the last one', (tester) async {
+    await pumpShell(tester);
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+    final fades = tester.widgetList<FadeTransition>(
+      find.descendant(
+        of: find.byType(TabFade),
+        matching: find.byType(FadeTransition),
+      ),
+    );
+    expect(
+      fades.map((fade) => fade.opacity.value),
+      contains(inExclusiveRange(0, 1)),
+    );
+    // The last tab still shows under it while it fades in.
+    expect(find.text('home tab 0'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.text('home tab 0'), findsNothing);
+  });
+
+  testWidgets('with reduced motion the chosen tab shows at once',
+      (tester) async {
+    await pumpShell(tester, reduceMotion: true);
+    await tester.tap(find.text('SETTINGS'));
+    await tester.pump();
+    expect(find.text('settings tab'), findsOneWidget);
+    expect(find.text('home tab 0'), findsNothing);
+  });
+
+  testWidgets('choosing the tab already shown goes back to its first screen',
+      (tester) async {
+    final router = await pumpShell(tester);
+    router.go('/vault/item');
+    await tester.pumpAndSettle();
+    expect(find.text('safe item'), findsOneWidget);
+
+    await tester.tap(find.text('HOME'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('MY SAFE'));
+    await tester.pumpAndSettle();
+    expect(find.text('safe item'), findsOneWidget);
+
+    await tester.tap(find.text('MY SAFE'));
+    await tester.pumpAndSettle();
+    expect(find.text('safe tab'), findsOneWidget);
+  });
+
+  testWidgets('full-screen flows sit outside the tabs', (tester) async {
+    final router = await pumpShell(tester);
+    unawaited(router.push(AppRouter.chatCreate));
+    await tester.pumpAndSettle();
+    expect(find.text('full screen flow'), findsOneWidget);
+    expect(find.byType(FuzzzyBottomNav), findsNothing);
+  });
+
+  testWidgets('the content lifts in once; not with reduced motion',
+      (tester) async {
+    await pumpShell(tester, reduceMotion: true);
+    expect(find.byType(LiftIn), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  test('every location maps to its tab', () {
+    expect(MainShellPage.indexOf('/'), 0);
+    expect(MainShellPage.indexOf('/vault'), 1);
+    expect(MainShellPage.indexOf('/vault/editor'), 1);
+    expect(MainShellPage.indexOf('/settings'), 2);
+  });
+
+  group('computer keys (DESIGN.md section 6)', () {
+    Future<void> press(
+      WidgetTester tester,
+      LogicalKeyboardKey key, {
+      bool shift = false,
+    }) async {
+      final modifier = defaultTargetPlatform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.sendKeyDownEvent(modifier);
+      if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(key);
+      if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('⌘/Ctrl + O opens Open',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyO);
+      expect(find.text('open flow'), findsOneWidget);
+    });
+
+    testWidgets('⌘/Ctrl + , goes to Settings',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.comma);
+      expect(find.text('settings tab'), findsOneWidget);
+      expect(preferences.lastSelectedTab, AppRouter.settings);
+    });
+
+    testWidgets('⌘/Ctrl + L asks who it is for, as the Lock tile does',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyL);
+      expect(find.byKey(const Key('sheet.lockWho')), findsOneWidget);
+    });
+
+    testWidgets('⌘/Ctrl + Shift + L locks the app',
+        variant: TargetPlatformVariant.desktop(), (tester) async {
+      await pumpShell(tester, size: const Size(1024, 768));
+      await press(tester, LogicalKeyboardKey.keyL, shift: true);
+      verify(() => authStore.lock(byUser: true)).called(1);
+      expect(find.byKey(const Key('sheet.lockWho')), findsNothing);
+    });
+
+    testWidgets('a phone has none', variant: TargetPlatformVariant.mobile(),
+        (tester) async {
+      await pumpShell(tester);
+      await press(tester, LogicalKeyboardKey.keyO);
+      expect(find.text('open flow'), findsNothing);
+    });
+  });
+}
+
+/// A tab with state of its own: "<label> <taps>".
+class _Counter extends StatefulWidget {
+  const _Counter(this.label);
+
+  final String label;
+
+  @override
+  State<_Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<_Counter> {
+  int _taps = 0;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: () => setState(() => _taps++),
+        child: Text('${widget.label} $_taps'),
+      );
+}

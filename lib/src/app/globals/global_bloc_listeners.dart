@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
@@ -92,14 +94,26 @@ class GlobalBlocListeners extends StatelessWidget {
           listenWhen: (previous, current) =>
               !previous.status.hasAccess && current.status.hasAccess,
           listener: (context, __) {
+            // Unlocked: one light buzz; the shell lifts in (LiftIn).
+            unawaited(InkHaptics.light());
             final router = AppRouter.routerInstance;
             if (router != null) {
               final currentLocation =
                   router.routerDelegate.currentConfiguration.uri.toString();
-              if (currentLocation == AppRouter.chatUnlock) {
+              if (currentLocation == AppRouter.chatUnlock ||
+                  currentLocation == AppRouter.recover) {
+                // Back where the app locked (private screens aside).
+                AppRouter.returnAfterUnlock(router);
+              } else if (currentLocation == AppRouter.setup) {
+                AppRouter.forgetReturnPlace();
                 router.go(AppRouter.home);
               }
             }
+
+            // Verified flags live in the store, which only now is open.
+            context.read<ChatGeneralDataListCubit>().refreshVerification();
+            // A first run, a recovery or an erase may have changed the vault.
+            context.read<VaultAuthCubit>().checkVaultStatus();
 
             final handler = sl.get<FuzzyLinkHandler>();
             if (handler.hasPendingPayload) {
@@ -109,10 +123,44 @@ class GlobalBlocListeners extends StatelessWidget {
         ),
         BlocListener<FuzzyAuthStore, FuzzyAuthState>(
           listenWhen: (previous, current) =>
-              !previous.status.isLocked && current.status.isLocked,
+              previous.status.hasAccess && !current.status.hasAccess,
+          // The whole app locks: the vault's key is wiped with the store's,
+          // the app's copy leaves the clipboard and every plain hand-off or
+          // picker copy goes (security review 2026-10-26).
           listener: (context, __) {
+            context.read<VaultAuthCubit>().lock();
+            // Before the Open screen goes: a .fuzz file still waiting there
+            // waits for the unlock instead.
+            if (sl.isRegistered<FuzzyLinkHandler>()) {
+              sl.get<FuzzyLinkHandler>().keepWaitingFileAtLock();
+            }
+            unawaited(CopyGuard.clearOnLock());
+            if (sl.isRegistered<UserFileStore>()) {
+              unawaited(sl.get<UserFileStore>().wipeAtLock());
+            }
+          },
+        ),
+        BlocListener<FuzzyAuthStore, FuzzyAuthState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              (current.status.isLocked ||
+                  current.status.isStorageUnavailable ||
+                  current.status.isSetupRequired),
+          listener: (context, state) {
             final router = AppRouter.routerInstance;
-            if (router != null) {
+            if (router == null) return;
+            if (state.status.isSetupRequired) {
+              AppRouter.forgetReturnPlace();
+              RecentHistoryRow.forgetAll();
+              context.read<VaultAuthCubit>().checkVaultStatus();
+              router.go(AppRouter.setup);
+              return;
+            }
+            if (state.status.isLocked) AppRouter.rememberReturnPlace(router);
+            final currentLocation =
+                router.routerDelegate.currentConfiguration.uri.toString();
+            // The recovery page is the locked app's own way in.
+            if (currentLocation != AppRouter.recover) {
               router.go(AppRouter.chatUnlock);
             }
           },

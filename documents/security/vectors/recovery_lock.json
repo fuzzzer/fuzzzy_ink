@@ -1,0 +1,5 @@
+{
+  "derivation": "X25519(SHA-256(recovery key bytes ‖ 00000001 ‖ \"fuzzy-recovery-lock-v1\"), 9)",
+  "recovery_key": "AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ",
+  "recovery_key_bytes": "000102030405060708090a0b0c0d0e0f10111219"
+}

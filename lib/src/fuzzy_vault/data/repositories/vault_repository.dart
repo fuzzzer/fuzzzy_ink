@@ -33,10 +33,11 @@ class VaultRepository {
           verificationToken: jsonMap['verificationToken'] as String,
           createdAt: DateTime.parse(jsonMap['createdAt'] as String),
           lastUnlockedAt: DateTime.parse(jsonMap['lastUnlockedAt'] as String),
-          autoLockMinutes: jsonMap['autoLockMinutes'] as int,
           customDirectoryPath: jsonMap['customDirectoryPath'] as String?,
         ),
       );
+    } on VaultMoveUnfinishedException {
+      return const VaultFailure(VaultFailureType.vaultMoveUnfinished);
     } catch (e) {
       return VaultFailure(
         VaultFailureType.storageReadError,
@@ -47,16 +48,7 @@ class VaultRepository {
 
   Future<VaultResponse<void>> saveMetadata(VaultMetadata metadata) async {
     try {
-      final jsonMap = {
-        'vaultId': metadata.vaultId,
-        'verificationToken': metadata.verificationToken,
-        'createdAt': metadata.createdAt.toIso8601String(),
-        'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
-        'autoLockMinutes': metadata.autoLockMinutes,
-        'customDirectoryPath': metadata.customDirectoryPath,
-      };
-      final bytes = utf8.encode(jsonEncode(jsonMap));
-      await fileDataSource.writeMetaAtomic(bytes);
+      await fileDataSource.writeMetaAtomic(_metaBytes(metadata));
       return const VaultSuccess(null);
     } catch (e) {
       return VaultFailure(
@@ -64,6 +56,207 @@ class VaultRepository {
         message: e.toString(),
       );
     }
+  }
+
+  static List<int> _metaBytes(VaultMetadata metadata) => utf8.encode(
+        jsonEncode({
+          'vaultId': metadata.vaultId,
+          'verificationToken': metadata.verificationToken,
+          'createdAt': metadata.createdAt.toIso8601String(),
+          'lastUnlockedAt': metadata.lastUnlockedAt.toIso8601String(),
+          'customDirectoryPath': metadata.customDirectoryPath,
+        }),
+      );
+
+  /// Moves the vault to a new key (its own password, security review
+  /// 2026-10-26): every item is re-sealed from [previous] to [key] beside its
+  /// old file, [beforeCommit] runs (a failure there stops the move), and one
+  /// rename then puts [metadata] — the new key's wrapping — in place, after
+  /// which the copies replace the old files. A stop before that rename keeps
+  /// the old vault whole; a stop after it is finished at the next read of the
+  /// metadata. An item with a password of its own (no screen makes one any
+  /// more) cannot be re-sealed without that password, so the move is refused
+  /// (`fileCorrupted`).
+  ///
+  /// No list label stays under the old key: a label that did not move, for
+  /// whatever reason (it did not open, a file step failed, its item file is
+  /// missing, it has no row), is deleted before the commit, and a failed
+  /// delete stops the move (security review 2026-10-26).
+  Future<VaultResponse<void>> rekey({
+    required VaultKey previous,
+    required VaultKey key,
+    required VaultMetadata metadata,
+    Future<VaultFailureType?> Function()? beforeCommit,
+  }) async {
+    var committed = false;
+    try {
+      final items = await itemDataSource.getAllItems();
+      if (items.any((item) => item.hasCustomPassword)) {
+        return const VaultFailure(
+          VaultFailureType.fileCorrupted,
+          message: 'An item with its own password cannot be moved',
+        );
+      }
+      await fileDataSource.beginRekey(_metaBytes(metadata));
+      for (final item in items) {
+        final bytes = await fileDataSource.readItem(item.itemId);
+        if (bytes == null) continue;
+        final resealRes = await cryptoRepository.reseal(
+          from: previous,
+          to: key,
+          itemId: item.itemId,
+          version: item.contentVersion,
+          blob: Uint8List.fromList(bytes),
+        );
+        if (resealRes is VaultFailure<Uint8List>) {
+          await fileDataSource.abandonRekey();
+          return VaultFailure(resealRes.type, message: resealRes.message);
+        }
+        await fileDataSource.stageRekeyedItem(
+          item.itemId,
+          (resealRes as VaultSuccess<Uint8List>).data,
+        );
+        await _restageLabel(previous, key, item);
+      }
+      // Before [beforeCommit], so a failed delete stops the move before
+      // anything outside the vault folder changed.
+      await fileDataSource.deleteUnmovedLabels();
+      final stop = await beforeCommit?.call();
+      if (stop != null) {
+        await fileDataSource.abandonRekey();
+        return VaultFailure(stop);
+      }
+      committed = true;
+      await fileDataSource.commitRekey();
+      fuzzyHub.sendSignal(const VaultDataUpdated());
+      return const VaultSuccess(null);
+    } on VaultMoveUnfinishedException {
+      return const VaultFailure(VaultFailureType.vaultMoveUnfinished);
+    } catch (e) {
+      // Before the commit the old vault stays. After it, the move is finished
+      // now if it can be, else at the next read of the metadata.
+      try {
+        if (!committed) {
+          await fileDataSource.abandonRekey();
+        } else if (await fileDataSource.finishInterruptedRekey()) {
+          fuzzyHub.sendSignal(const VaultDataUpdated());
+          return const VaultSuccess(null);
+        }
+      } catch (_) {}
+      return VaultFailure(
+        VaultFailureType.storageWriteError,
+        message: e.toString(),
+      );
+    }
+  }
+
+  /// The item's label moves to the new key with it. A label that does not
+  /// move (it does not open — a stop left it a version behind — or a file
+  /// step fails) is not staged, so [VaultFileDataSource.deleteUnmovedLabels]
+  /// deletes it before the commit: the list then shows the item's type until
+  /// the item is saved again. Never stops the move by itself.
+  Future<void> _restageLabel(
+    VaultKey previous,
+    VaultKey key,
+    StoredVaultItem item,
+  ) async {
+    try {
+      final bytes = await fileDataSource.readLabel(item.itemId);
+      if (bytes == null) return;
+      final resealRes = await cryptoRepository.resealLabel(
+        from: previous,
+        to: key,
+        itemId: item.itemId,
+        version: item.contentVersion,
+        blob: Uint8List.fromList(bytes),
+      );
+      if (resealRes is VaultSuccess<Uint8List>) {
+        await fileDataSource.stageRekeyedLabel(item.itemId, resealRes.data);
+      }
+    } catch (e) {
+      logger.w('VAULT: list label not moved: $e');
+    }
+  }
+
+  /// What My safe's list shows under an item's title, never a secret: a
+  /// password's username, a file's name; a note has none.
+  @visibleForTesting
+  static String? labelOf(VaultItem item) {
+    final label = switch (item.metadata.type) {
+      VaultItemType.password => item.passwordContent?.username,
+      VaultItemType.file => item.fileContent?.fileName,
+      VaultItemType.note => null,
+    };
+    final trimmed = label?.trim() ?? '';
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  /// Seals [item]'s label beside it under the vault key (version [version],
+  /// like the item). Every password and file item has one, empty when there
+  /// is no username, so the file's presence (and, padded in the core, its
+  /// size) says nothing about the label (security review 2026-10-26). A note
+  /// and an item with a password of its own keep none: only that password
+  /// opens anything of it. Never fails the save: without its label the row
+  /// shows the type.
+  Future<void> _writeLabel(
+    VaultItem item,
+    VaultKey key, {
+    required int version,
+    String? customPassword,
+  }) async {
+    final itemId = item.metadata.id;
+    try {
+      final hasOwnPassword = item.metadata.hasCustomPassword ||
+          (customPassword != null && customPassword.isNotEmpty);
+      final keepsLabel =
+          item.metadata.type != VaultItemType.note && !hasOwnPassword;
+      final sealRes = keepsLabel
+          ? await cryptoRepository.sealLabel(
+              labelOf(item) ?? '',
+              key,
+              itemId: itemId,
+              version: version,
+            )
+          : null;
+      if (sealRes is VaultSuccess<Uint8List>) {
+        await fileDataSource.writeLabelAtomic(itemId, sealRes.data);
+      } else {
+        await fileDataSource.deleteLabel(itemId);
+      }
+    } catch (e) {
+      logger.w('VAULT: list label not written: $e');
+    }
+  }
+
+  /// The list labels of [items] (item id → label), opened with the vault
+  /// key once the safe is open: only each item's small label, never the
+  /// item. An item without one, with an empty one, with its own password, or
+  /// whose label does not open, is left out (the list shows its type). Never
+  /// fails.
+  Future<Map<String, String>> readLabels(
+    List<VaultItemMetadata> items,
+    VaultKey key,
+  ) async {
+    final labels = <String, String>{};
+    for (final item in items) {
+      if (item.hasCustomPassword || item.type == VaultItemType.note) continue;
+      try {
+        final bytes = await fileDataSource.readLabel(item.id);
+        if (bytes == null) continue;
+        final label = await cryptoRepository.openLabel(
+          Uint8List.fromList(bytes),
+          key,
+          itemId: item.id,
+          version: item.contentVersion,
+        );
+        if (label != null && label.trim().isNotEmpty) {
+          labels[item.id] = label.trim();
+        }
+      } catch (_) {
+        // A label is only a convenience: the row shows the type instead.
+      }
+    }
+    return labels;
   }
 
   Future<VaultResponse<VaultGroupData>> ensureGeneralGroup() async {
@@ -108,6 +301,8 @@ class VaultRepository {
       final encryptedRes = await cryptoRepository.encryptContent(
         content,
         masterKey,
+        itemId: item.metadata.id,
+        version: item.metadata.contentVersion,
         customPassword: customPassword,
       );
 
@@ -118,6 +313,12 @@ class VaultRepository {
       final encryptedBytes = (encryptedRes as VaultSuccess<Uint8List>).data;
 
       await fileDataSource.writeItemAtomic(item.metadata.id, encryptedBytes);
+      await _writeLabel(
+        item,
+        masterKey,
+        version: item.metadata.contentVersion,
+        customPassword: customPassword,
+      );
 
       final storedItem = StoredVaultItem()
         ..itemId = item.metadata.id
@@ -162,20 +363,31 @@ class VaultRepository {
         );
       }
 
-      final metadata = VaultItemMetadata.fromStored(storedItem);
+      var metadata = VaultItemMetadata.fromStored(storedItem);
 
       final decryptedRes = await cryptoRepository.decryptContent(
         Uint8List.fromList(encryptedBytes),
         masterKey,
         metadata.type,
+        itemId: metadata.id,
+        version: metadata.contentVersion,
         customPassword: customPassword,
       );
 
-      if (decryptedRes is VaultFailure) {
+      if (decryptedRes is VaultFailure<VaultDecryptedContent>) {
         return VaultFailure(decryptedRes.type, message: decryptedRes.message);
       }
 
-      final content = (decryptedRes as VaultSuccess<dynamic>).data;
+      final decrypted =
+          (decryptedRes as VaultSuccess<VaultDecryptedContent>).data;
+      final content = decrypted.content;
+      if (decrypted.version != metadata.contentVersion) {
+        // The file was written and the app stopped before the index caught
+        // up: the index learns the version the file carries.
+        storedItem.contentVersion = decrypted.version;
+        await itemDataSource.saveItem(storedItem);
+        metadata = metadata.copyWith(contentVersion: decrypted.version);
+      }
 
       if (metadata.type == VaultItemType.password) {
         return VaultSuccess(
@@ -218,9 +430,12 @@ class VaultRepository {
         return const VaultFailure(VaultFailureType.itemNotFound);
       }
 
+      // One past the version the index holds, whatever the caller sent: the
+      // sealed file is bound to this number, and [getItem] accepts a file
+      // exactly one ahead of its row.
       final updatedMetadata = item.metadata.copyWith(
         updatedAt: DateTime.now(),
-        contentVersion: item.metadata.contentVersion + 1,
+        contentVersion: storedItem.contentVersion + 1,
       );
 
       final content = updatedMetadata.type == VaultItemType.password
@@ -232,6 +447,8 @@ class VaultRepository {
       final encryptedRes = await cryptoRepository.encryptContent(
         content,
         masterKey,
+        itemId: updatedMetadata.id,
+        version: updatedMetadata.contentVersion,
         customPassword: customPassword,
       );
 
@@ -241,7 +458,15 @@ class VaultRepository {
       }
       final encryptedBytes = (encryptedRes as VaultSuccess<Uint8List>).data;
 
+      // The file first, then the index: a stop in between leaves the file
+      // one version ahead, which [getItem] accepts and records.
       await fileDataSource.writeItemAtomic(updatedMetadata.id, encryptedBytes);
+      await _writeLabel(
+        item.copyWith(metadata: updatedMetadata),
+        masterKey,
+        version: updatedMetadata.contentVersion,
+        customPassword: customPassword,
+      );
 
       storedItem
         ..title = updatedMetadata.title

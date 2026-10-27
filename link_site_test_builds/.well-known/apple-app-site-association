@@ -1,0 +1,29 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "7W88HRQFXP.com.fuzzzycore.ink.stg",
+          "7W88HRQFXP.com.fuzzzycore.ink.dev"
+        ],
+        "components": [
+          {
+            "/": "/invite",
+            "#": "?*",
+            "comment": "Invitation. The payload after # stays on the device."
+          },
+          {
+            "/": "/accept",
+            "#": "?*",
+            "comment": "Acceptance. The payload after # stays on the device."
+          },
+          {
+            "/": "/message",
+            "#": "?*",
+            "comment": "Sealed message. The payload after # stays on the device."
+          }
+        ]
+      }
+    ]
+  }
+}

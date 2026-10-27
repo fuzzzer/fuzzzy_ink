@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
@@ -16,10 +15,16 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   final VaultRepository vaultRepository;
   late final StreamSubscription<VaultDataUpdated> _updatesSubscription;
-  Timer? _clipboardClearTimer;
   final Debouncer _autoSaveDebouncer = Debouncer(milliseconds: 2000);
 
-  Future<void> loadItems() async {
+  /// The open safe's key, for the rows' labels ([loadItems]); a closed key
+  /// opens nothing and the rows show their types.
+  VaultKey? _key;
+
+  /// Loads the list, then the rows' labels with [key] (kept for the
+  /// reloads after a change).
+  Future<void> loadItems({VaultKey? key}) async {
+    if (key != null) _key = key;
     emit(state.copyWith(status: StateStatus.loading));
     final res = await vaultRepository.getAllItems();
     if (res is VaultFailure) {
@@ -39,10 +44,39 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
         items: items,
       ),
     );
+    final openKey = _key;
+    if (openKey == null) return;
+    final labels = await vaultRepository.readLabels(items, openKey);
+    // The safe locked (or opened again with another key) meanwhile: what
+    // was opened before the lock is dropped, never shown or kept.
+    if (isClosed ||
+        !identical(state.items, items) ||
+        !identical(_key, openKey)) {
+      return;
+    }
+    emit(state.copyWith(labels: labels));
   }
 
+  /// The safe locked (by itself, by the lock button or with the whole app):
+  /// the rows' labels — usernames, file names — leave memory with the key,
+  /// and a reading still under way is dropped (security review 2026-10-26).
+  void forgetLabels() {
+    _key = null;
+    if (isClosed || state.labels.isEmpty) return;
+    emit(state.copyWith(labels: const {}));
+  }
+
+  /// `null` shows every group again.
   void filterByGroup(String? groupId) {
-    emit(state.copyWith(selectedGroupId: groupId));
+    emit(
+      VaultItemsState(
+        status: state.status,
+        items: state.items,
+        labels: state.labels,
+        selectedGroupId: groupId,
+        failureType: state.failureType,
+      ),
+    );
   }
 
   Future<VaultResponse<VaultItem>> createItem(
@@ -123,24 +157,6 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
     }
   }
 
-  Future<void> copyToClipboard(
-    String text, {
-    int clearAfterSeconds = 45,
-  }) async {
-    await Clipboard.setData(ClipboardData(text: text));
-
-    _clipboardClearTimer?.cancel();
-    if (clearAfterSeconds > 0) {
-      _clipboardClearTimer =
-          Timer(Duration(seconds: clearAfterSeconds), () async {
-        final data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data?.text == text) {
-          await Clipboard.setData(const ClipboardData(text: ''));
-        }
-      });
-    }
-  }
-
   void autoSaveNote(
     VaultItem item,
     VaultKey masterKey, {
@@ -167,7 +183,6 @@ class VaultItemsCubit extends Cubit<VaultItemsState> {
 
   @override
   Future<void> close() {
-    _clipboardClearTimer?.cancel();
     _updatesSubscription.cancel();
     _autoSaveDebouncer.close();
     return super.close();

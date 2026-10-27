@@ -118,6 +118,26 @@ class InvitationAcceptanceCubit extends Cubit<InvitationAcceptanceState> {
     }
   }
 
+  /// Reads [invitationContent] without accepting it (nothing is written):
+  /// whether it is a good invite, damaged, your own, or
+  /// one already accepted on this phone. "I got an invite" asks this before
+  /// it asks for a name.
+  Future<InvitationCheck> checkInvitation(String invitationContent) async {
+    final chatIdRes = cryptoCoreService.peekChatId(invitationContent);
+    if (chatIdRes is CryptoCoreFailure<String>) {
+      return chatIdRes.type == CryptoCoreFailureType.newerVersion
+          ? InvitationCheck.newerApp
+          : InvitationCheck.damaged;
+    }
+    final chatId = (chatIdRes as CryptoCoreSuccess<String>).data;
+    final existingChat =
+        await chatGeneralDataListRepository.getChatById(chatId);
+    if (existingChat == null) return InvitationCheck.good;
+    return existingChat.didAcceptInvitation
+        ? InvitationCheck.alreadyConnected
+        : InvitationCheck.ownInvitation;
+  }
+
   Future<ChatCreationFailureType?> checkChatNameRestrictions(
     String chatName,
   ) async {
@@ -132,6 +152,7 @@ class InvitationAcceptanceCubit extends Cubit<InvitationAcceptanceState> {
 
   static ChatCreationFailureType _failureTypeOf(CryptoCoreFailureType type) {
     return switch (type) {
+      CryptoCoreFailureType.newerVersion => ChatCreationFailureType.newerApp,
       CryptoCoreFailureType.unsupportedFormat ||
       CryptoCoreFailureType.invalidSignature ||
       CryptoCoreFailureType.corrupt =>

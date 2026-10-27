@@ -6,36 +6,93 @@
 import '../error.dart';
 import '../frb_generated.dart';
 import 'files.dart';
+import 'formats.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pairing.dart';
+import 'safety.dart';
 
-// These functions are ignored because they are not marked as `pub`: `opened_mut`, `opened`
+// These functions are ignored because they are not marked as `pub`: `open_with`, `opened_mut`, `opened`
 
-/// Draws a fresh 32-byte store key and returns it wrapped under `password`
-/// (0x10 blob — the only form the key ever takes outside Rust). Call
-/// [`open_store`] with the blob to use it.
-Future<Uint8List> createStoreKey({required String password}) =>
+/// First run: draws the master key, the store key and a recovery key, wraps
+/// the master key under `password` and under the recovery key, wraps the
+/// store key under the master key, opens the store at
+/// `<store_dir>/fuzzy_crypto_store/` and seals the recovery lock under the
+/// store key. Two Argon2id runs. An empty password is refused
+/// (`WrongPassword`); strength is the app's judgement.
+Future<MasterKeySetup> createMasterKey(
+        {required String storeDir, required String password}) =>
     FuzzyCryptoCoreLib.instance.api
-        .crateApiCoreCreateStoreKey(password: password);
+        .crateApiCoreCreateMasterKey(storeDir: storeDir, password: password);
 
-/// Unwraps `wrapped` under `password` and opens the store at
-/// `<store_dir>/fuzzy_crypto_store/` (created if missing). A wrong password —
-/// or a tampered blob — is `WrongPassword`.
+/// Unwraps the master key from `password_wrap` under `password` (one Argon2id
+/// run), the store key from `store_wrap` under the master key, and opens the
+/// store. A wrong password — or a tampered password wrap — is `WrongPassword`;
+/// a store wrap that does not open under the master key is `Corrupt`.
 Future<CryptoCore> openStore(
         {required String storeDir,
-        required List<int> wrapped,
+        required List<int> passwordWrap,
+        required List<int> storeWrap,
         required String password}) =>
     FuzzyCryptoCoreLib.instance.api.crateApiCoreOpenStore(
-        storeDir: storeDir, wrapped: wrapped, password: password);
+        storeDir: storeDir,
+        passwordWrap: passwordWrap,
+        storeWrap: storeWrap,
+        password: password);
 
-/// Re-wraps the store key under `new_password` with a fresh salt and nonce.
-/// The old blob keeps opening with the old password until the caller replaces it.
-Future<Uint8List> rewrapStoreKey(
-        {required List<int> wrapped,
+/// Re-wraps the master key under `new_password` with a fresh salt and nonce
+/// (two Argon2id runs). Everything below the master key stays as it is, so
+/// this one blob is the whole change. The old blob keeps opening with the old
+/// password until the caller replaces it.
+Future<Uint8List> changeMasterPassword(
+        {required List<int> passwordWrap,
         required String oldPassword,
         required String newPassword}) =>
-    FuzzyCryptoCoreLib.instance.api.crateApiCoreRewrapStoreKey(
-        wrapped: wrapped, oldPassword: oldPassword, newPassword: newPassword);
+    FuzzyCryptoCoreLib.instance.api.crateApiCoreChangeMasterPassword(
+        passwordWrap: passwordWrap,
+        oldPassword: oldPassword,
+        newPassword: newPassword);
+
+/// Checks the form of a typed `recovery_key` — 32 base32 characters (case,
+/// spaces, dashes, line breaks and the look-alikes `0`, `1`, `8` ignored, as
+/// [`RecoveryKey::parse`] reads it) with a matching check byte — so the app
+/// can say "Key accepted." before asking for a new password. No key work
+/// and no Argon2 run: a typo is `Corrupt`; whether the key opens this device
+/// is known only when it is used (`WrongPassword` then).
+Future<void> checkRecoveryKey({required String recoveryKey}) =>
+    FuzzyCryptoCoreLib.instance.api
+        .crateApiCoreCheckRecoveryKey(recoveryKey: recoveryKey);
+
+/// The forgotten-password path: reads the typed `recovery_key` (a typo is
+/// `Corrupt`, before any Argon2 run), unwraps the master key from
+/// `recovery_wrap` (a key of another device is `WrongPassword`), wraps it
+/// under `new_password` and opens the store. The recovery key, its lock and a
+/// vault key sealed to it stay valid.
+Future<RecoveredStore> recoverMasterPassword(
+        {required String storeDir,
+        required List<int> recoveryWrap,
+        required List<int> storeWrap,
+        required String recoveryKey,
+        required String newPassword}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiCoreRecoverMasterPassword(
+        storeDir: storeDir,
+        recoveryWrap: recoveryWrap,
+        storeWrap: storeWrap,
+        recoveryKey: recoveryKey,
+        newPassword: newPassword);
+
+/// Draws a new recovery key and wraps the master key under it, after
+/// `password` has opened `password_wrap` (two Argon2id runs), and seals its
+/// lock under the store key of the open `core`. The app replaces the stored
+/// recovery wrap and lock with the new ones, which ends the old key; a vault
+/// with its own password is sealed to the new lock with
+/// [`crate::api::vault::vault_seal_for_recovery`] (its password is needed —
+/// the master password alone never reaches that vault).
+Future<NewRecoveryKey> newRecoveryKey(
+        {required CryptoCore core,
+        required List<int> passwordWrap,
+        required String password}) =>
+    FuzzyCryptoCoreLib.instance.api.crateApiCoreNewRecoveryKey(
+        core: core, passwordWrap: passwordWrap, password: password);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CryptoCore>>
 abstract class CryptoCore implements RustOpaqueInterface {
@@ -48,6 +105,17 @@ abstract class CryptoCore implements RustOpaqueInterface {
 
   /// `Connected` once this side holds a session, `Invited` before.
   Future<ChatStatus> chatStatus({required String chatId});
+
+  /// Read-only: `Ok` when `acceptance` is a genuine answer to the invitation
+  /// this chat made — a `0x02` blob for this chat, signed by the key inside
+  /// it, whose pre-key message is built on this invitation's one-time key
+  /// ([`pairing::answers_invitation`]). Nothing is decrypted, consumed or
+  /// written; the chat may be connected already. The app asks this before
+  /// it warns that someone else answered (security review 2026-10-26); any
+  /// failure means "not a valid reply" (`UnsupportedFormat`, `Corrupt`,
+  /// `InvalidSignature`, `WrongChat`, `UnknownChat`).
+  Future<void> checkAcceptance(
+      {required String chatId, required String acceptance});
 
   /// Drops the store key and every cached state (all zeroised on drop).
   Future<void> close();
@@ -93,15 +161,53 @@ abstract class CryptoCore implements RustOpaqueInterface {
   /// The persisted flag; `false` for every chat until [`CryptoCore::mark_verified`].
   Future<bool> isVerified({required String chatId});
 
+  /// Seals the file key of a prepared, not yet run, receive ticket for
+  /// `chat_id`: a 0x20 blob (AAD `kept-file-key` ‖ chat id) the app stores
+  /// beside the kept container. A send ticket, or one already run, is
+  /// `Internal`; a chat the store does not know is `UnknownChat`.
+  /// Keeping a received file (`PROTOCOL.md` §9.6): the app stores the container
+  /// it received, never the plaintext. The container's key message is spent by
+  /// the first prepare, so the file key is sealed under the chat's history key
+  /// and the container is opened again from that seal.
+  Future<Uint8List> keepReceivedFile(
+      {required String chatId, required FileTicket ticket});
+
   /// Persists whether the user compared the safety number with the peer. The
   /// flag is on disk before this returns; a chat that is not paired yet is
   /// `UnknownChat`.
   Future<void> markVerified({required String chatId, required bool verified});
 
-  /// Inverse of [`CryptoCore::seal_local`] for the same chat; a tampered
-  /// blob or another chat's is `Corrupt`, a deleted chat's is `UnknownChat`.
+  /// Inverse of [`CryptoCore::seal_local`] for the same chat and row; a
+  /// tampered blob, another chat's or another row's is `Corrupt`, a deleted
+  /// chat's is `UnknownChat`.
   Future<Uint8List> openLocal(
-      {required String chatId, required List<int> blob});
+      {required String chatId,
+      required List<int> row,
+      required List<int> blob});
+
+  /// Inverse of [`CryptoCore::seal_setting`]; another name, another store
+  /// or a tampered blob is `Corrupt`.
+  Future<Uint8List> openSetting(
+      {required String name, required List<int> blob});
+
+  /// [`CryptoCore::peek_pasted`] for a chosen file: a container is told by
+  /// its header (a header-only or truncated one is `Damaged`, as the receive
+  /// would refuse it), a chat-mode one is matched to a chat exactly like a
+  /// message; a small file of sealed text (`is_text_file`) is peeked as that
+  /// text. A missing or unreadable file is `Io`.
+  Future<Peek> peekFile({required String input, required List<String> chatIds});
+
+  /// Recognises a pasted text without spending anything: no message key, no
+  /// one-time key, no state write. Invitations and acceptances answer their
+  /// clear chat id (a hint: nothing is authenticated until they are
+  /// accepted or completed); a password-sealed text needs nothing more. A
+  /// message names no chat (PROTOCOL.md §6.5), so it is tried read-only
+  /// against each of `chat_ids` ([`messages::is_for_chat`]): the first
+  /// whose session sent it is answered. Chat ids that are malformed or
+  /// unknown to the store are skipped. Only a message needs the open store
+  /// (`StoreLocked` otherwise).
+  Future<Peek> peekPasted(
+      {required String text, required List<String> chatIds});
 
   /// Step one of receiving the chat-mode container at `input` on `chat_id`:
   /// reads the header (a header-only or truncated container is `Corrupt`
@@ -126,20 +232,151 @@ abstract class CryptoCore implements RustOpaqueInterface {
   Future<FileTicket> prepareFileSend(
       {required String chatId, required String input});
 
-  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups), derived
-  /// from both Ed25519 identity keys and the chat id (plan §B.3) — identical on
-  /// both sides of a pairing. `UnknownChat` for a chat the store does not know
-  /// or that is not paired yet. Nothing secret is involved; it stays async
-  /// like every other call on the handle.
-  Future<String> safetyNumber({required String chatId});
+  /// A receive ticket for the kept container at `input`, from the seal
+  /// [`CryptoCore::keep_received_file`] made: no Olm step, no state change.
+  /// A seal of another chat, a history seal or a tampered one is `Corrupt`;
+  /// a deleted chat is `UnknownChat`; a password-mode container is
+  /// `UnsupportedFormat`; a truncated one `Corrupt` (before any output).
+  /// The run then opens only the container the key was made for: chunk 0 of
+  /// anything else is `Corrupt`. The ticket's name is `input`'s file name.
+  /// Keeping a received file (`PROTOCOL.md` §9.6): the app stores the container
+  /// it received, never the plaintext. The container's key message is spent by
+  /// the first prepare, so the file key is sealed under the chat's history key
+  /// and the container is opened again from that seal.
+  Future<FileTicket> reopenKeptFile(
+      {required String chatId,
+      required String input,
+      required List<int> keptKey});
 
-  /// Seals `bytes` of `chat_id`'s message history (F2-8) under that chat's
-  /// own history key (owner decision D-1, F2-12): a 0x20 blob with a fresh
-  /// random nonce and AAD `local-seal` ‖ chat id. A chat the store does not
-  /// know is `UnknownChat`.
+  /// The chat's 60-digit safety number (`"12345 67890 …"`, 12 groups) with
+  /// the version of its computation, derived from both Ed25519 identity keys
+  /// and the chat id (plan §B.3) — identical on both sides of a pairing.
+  /// `UnknownChat` for a chat the store does not know or that is not paired
+  /// yet. Nothing secret is involved; it stays async like every other call on
+  /// the handle.
+  Future<SafetyNumber> safetyNumber({required String chatId});
+
+  /// Seals `bytes` of one row of `chat_id`'s message history (F2-8) under
+  /// that chat's own history key (owner decision D-1, F2-12): a 0x20 blob
+  /// with a fresh random nonce and AAD `local-seal` ‖ chat id ‖ `row`. The
+  /// app passes the row's direction byte and `Fuzz/` blob text as `row`, so
+  /// a seal opens only on the row it was made for. A chat the store does
+  /// not know is `UnknownChat`.
   Future<Uint8List> sealLocal(
-      {required String chatId, required List<int> bytes});
+      {required String chatId,
+      required List<int> row,
+      required List<int> bytes});
+
+  /// Seals the app setting `name` (1..=64 bytes) under the store key — a
+  /// 0x20 blob with AAD `app-setting` ‖ name — so the app's lock settings
+  /// cannot be loosened by editing a file.
+  Future<Uint8List> sealSetting(
+      {required String name, required List<int> bytes});
 
   /// The directory the store was opened with (for tests).
   Future<String> storeDir();
+}
+
+/// What [`create_master_key`] hands back: the open store and the four blobs
+/// the app keeps in secure storage, plus the recovery key to show the user
+/// once. `non_opaque` so frb passes the fields once.
+class MasterKeySetup {
+  final CryptoCore core;
+
+  /// 0x10 — the master key under the master password.
+  final Uint8List passwordWrap;
+
+  /// 0x10 — the master key under the recovery key.
+  final Uint8List recoveryWrap;
+
+  /// 0x20 — the store key under the master key.
+  final Uint8List storeWrap;
+
+  /// 0x20 — the recovery lock (public) under the store key: what a vault
+  /// with its own password seals its key to, so the recovery key opens it.
+  final Uint8List recoveryLock;
+
+  /// The printable recovery key (`XXXX-XXXX-…`, 32 base32 characters).
+  final String recoveryKey;
+
+  const MasterKeySetup({
+    required this.core,
+    required this.passwordWrap,
+    required this.recoveryWrap,
+    required this.storeWrap,
+    required this.recoveryLock,
+    required this.recoveryKey,
+  });
+
+  @override
+  int get hashCode =>
+      core.hashCode ^
+      passwordWrap.hashCode ^
+      recoveryWrap.hashCode ^
+      storeWrap.hashCode ^
+      recoveryLock.hashCode ^
+      recoveryKey.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MasterKeySetup &&
+          runtimeType == other.runtimeType &&
+          core == other.core &&
+          passwordWrap == other.passwordWrap &&
+          recoveryWrap == other.recoveryWrap &&
+          storeWrap == other.storeWrap &&
+          recoveryLock == other.recoveryLock &&
+          recoveryKey == other.recoveryKey;
+}
+
+/// A new recovery key, the master key's wrap under it and its lock (under
+/// the store key); the old recovery wrap stops working the moment the app
+/// replaces it with this one.
+class NewRecoveryKey {
+  final String recoveryKey;
+  final Uint8List recoveryWrap;
+  final Uint8List recoveryLock;
+
+  const NewRecoveryKey({
+    required this.recoveryKey,
+    required this.recoveryWrap,
+    required this.recoveryLock,
+  });
+
+  @override
+  int get hashCode =>
+      recoveryKey.hashCode ^ recoveryWrap.hashCode ^ recoveryLock.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NewRecoveryKey &&
+          runtimeType == other.runtimeType &&
+          recoveryKey == other.recoveryKey &&
+          recoveryWrap == other.recoveryWrap &&
+          recoveryLock == other.recoveryLock;
+}
+
+/// What [`recover_master_password`] hands back: the open store and the
+/// master key's new password wrap.
+class RecoveredStore {
+  final CryptoCore core;
+  final Uint8List passwordWrap;
+
+  const RecoveredStore({
+    required this.core,
+    required this.passwordWrap,
+  });
+
+  @override
+  int get hashCode => core.hashCode ^ passwordWrap.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecoveredStore &&
+          runtimeType == other.runtimeType &&
+          core == other.core &&
+          passwordWrap == other.passwordWrap;
 }

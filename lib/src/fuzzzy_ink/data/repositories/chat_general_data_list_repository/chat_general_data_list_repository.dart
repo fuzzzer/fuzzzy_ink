@@ -4,11 +4,18 @@ export 'events/events.dart';
 
 class ChatGeneralDataListRepository {
   final ChatGeneralDataLocalDataSource localDataSource;
+  final PairedAcceptanceLocalDataSource pairedAcceptanceDataSource;
 
   Stream<ChatGeneralDataListUpdated> get chatListUpdates =>
       fuzzyHub.on<ChatGeneralDataListUpdated>();
 
-  ChatGeneralDataListRepository({required this.localDataSource});
+  /// "Erase everything" emptied the storage: the list starts over.
+  Stream<AppDataErased> get appDataErased => fuzzyHub.on<AppDataErased>();
+
+  ChatGeneralDataListRepository({
+    required this.localDataSource,
+    required this.pairedAcceptanceDataSource,
+  });
 
   Future<List<ChatGeneralData>> getAllChats() async {
     return (await localDataSource.getAllChats())
@@ -66,7 +73,20 @@ class ChatGeneralDataListRepository {
 
   Future<void> deleteChat(String chatId) async {
     await localDataSource.deleteChat(chatId);
+    await pairedAcceptanceDataSource.delete(chatId);
 
     fuzzyHub.sendSignal(ChatGeneralDataListUpdated());
   }
+
+  /// Remembers the acceptance that completed [chatId]'s pairing.
+  Future<void> rememberPairedAcceptance(String chatId, String acceptance) =>
+      pairedAcceptanceDataSource.write(chatId, _compact(acceptance));
+
+  /// Whether [acceptance] is the one that completed [chatId]'s pairing. False
+  /// when none was remembered: a different acceptance is then assumed.
+  Future<bool> isPairedAcceptance(String chatId, String acceptance) async =>
+      pairedAcceptanceDataSource.read(chatId) == _compact(acceptance);
+
+  /// The core ignores whitespace inside a blob (PROTOCOL.md §6.1).
+  static String _compact(String blob) => blob.replaceAll(RegExp(r'\s'), '');
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
@@ -25,6 +26,7 @@ FileProcessingHandler _handler(List<FileProcessingProgress> events) =>
 void main() {
   late MockCryptoCoreService mockService;
   late Directory documents;
+  late UserFileStore store;
 
   /// Time for the fire-and-forget `_processFile` and its stream to settle.
   const settle = Duration(milliseconds: 150);
@@ -33,27 +35,34 @@ void main() {
     mockService = MockCryptoCoreService();
     documents =
         Directory.systemTemp.createTempSync('custom_file_processing_cubit_');
-    sl.safeRegisterSingleton<AppDocumentsDirectory>(
-      AppDocumentsDirectory(directory: documents),
+    store = UserFileStore(
+      supportDirectoryPath: path.join(documents.path, 'support'),
+      temporaryDirectoryPath: path.join(documents.path, 'tmp'),
+      documentsDirectoryPath: documents.path,
     );
   });
 
   tearDown(() async {
-    await sl.unregister<AppDocumentsDirectory>();
     if (documents.existsSync()) documents.deleteSync(recursive: true);
   });
 
-  String workingFolder() => path.join(documents.path, dummyChatName);
+  /// Where Basics keeps its password containers.
+  String basicsFolder() =>
+      path.join(documents.path, 'support', 'sealed_files', 'basics');
 
   CustomFileProcessingCubit<FileEncryptionOption> buildEncrypt() =>
       CustomFileProcessingCubit<FileEncryptionOption>(
         cryptoCoreService: mockService,
+        userFileStore: store,
+        passwordStrengthService: PasswordStrengthService(),
         processingOption: const FileEncryptionOption(),
       );
 
   CustomFileProcessingCubit<FileDecryptionOption> buildDecrypt() =>
       CustomFileProcessingCubit<FileDecryptionOption>(
         cryptoCoreService: mockService,
+        userFileStore: store,
+        passwordStrengthService: PasswordStrengthService(),
         processingOption: const FileDecryptionOption(),
       );
 
@@ -102,8 +111,8 @@ void main() {
   group('FileEncryptionOption', () {
     blocTest<CustomFileProcessingCubit<FileEncryptionOption>,
         CustomFileProcessingState>(
-      'fuzzes through encryptFileWithPassword into '
-      '<Working Folder>/<name>.fuzz with the key text as the password',
+      "fuzzes through encryptFileWithPassword into the app's Basics folder "
+      'as <name>.fuzz with the key text as the password',
       setUp: () => stubEncrypt(
         CryptoCoreSuccess(
           _handler([
@@ -119,7 +128,7 @@ void main() {
       ),
       wait: settle,
       verify: (cubit) {
-        final outputPath = path.join(workingFolder(), 'photo.jpg.fuzz');
+        final outputPath = path.join(basicsFolder(), 'photo.jpg.fuzz');
         verify(
           () => mockService.encryptFileWithPassword(
             password: _password,
@@ -127,7 +136,11 @@ void main() {
             outputPath: outputPath,
           ),
         ).called(1);
-        expect(Directory(workingFolder()).existsSync(), isTrue);
+        expect(Directory(basicsFolder()).existsSync(), isTrue);
+        expect(
+          Directory(path.join(documents.path, 'Working Folder')).existsSync(),
+          isFalse,
+        );
         expect(
           cubit.state,
           processedAs(
@@ -160,38 +173,138 @@ void main() {
     );
   });
 
+  group('password strength', () {
+    test('a weak password seals no file: nothing is queued or fuzzed', () {
+      final cubit = buildEncrypt();
+      addTearDown(cubit.close);
+
+      final isQueued = cubit.addFilesToProcess(
+        filePaths: ['/pick/photo.jpg'],
+        customKey: '1234',
+      );
+
+      expect(isQueued, isFalse);
+      expect(cubit.state.toBeProcessedFiles, isEmpty);
+      expect(cubit.state.currentProcessingFile, isNull);
+      verifyNever(
+        () => mockService.encryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      );
+    });
+
+    test('opening accepts any password: the sender chose it', () async {
+      when(
+        () => mockService.decryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).thenAnswer(
+        (_) async => const CryptoCoreFailure(CryptoCoreFailureType.internal),
+      );
+      final cubit = buildDecrypt();
+      addTearDown(cubit.close);
+
+      expect(
+        cubit.addFilesToProcess(
+          filePaths: ['/pick/photo.jpg.fuzz'],
+          customKey: '1234',
+        ),
+        isTrue,
+      );
+      // Let the queued run finish before the cubit closes.
+      await cubit.stream.firstWhere((state) => state.processedFiles.isNotEmpty);
+      verify(
+        () => mockService.decryptFileWithPassword(
+          password: '1234',
+          inputPath: '/pick/photo.jpg.fuzz',
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).called(1);
+    });
+  });
+
   group('FileDecryptionOption', () {
-    blocTest<CustomFileProcessingCubit<FileDecryptionOption>,
-        CustomFileProcessingState>(
-      'unfuzzes through decryptFileWithPassword, output = the input name '
-      'without .fuzz',
-      setUp: () => stubDecrypt(
-        CryptoCoreSuccess(_handler([FileProcessingProgress.completed()])),
-      ),
-      build: buildDecrypt,
-      act: (cubit) => cubit.addFilesToProcess(
-        filePaths: ['/pick/photo.jpg.fuzz'],
-        customKey: _password,
-      ),
-      wait: settle,
-      verify: (cubit) {
-        final outputPath = path.join(workingFolder(), 'photo.jpg');
-        verify(
-          () => mockService.decryptFileWithPassword(
-            password: _password,
-            inputPath: '/pick/photo.jpg.fuzz',
-            outputPath: outputPath,
-          ),
-        ).called(1);
-        expect(
-          cubit.state,
-          processedAs(
-            FileProcessingStatus.completed,
-            outputFilePath: outputPath,
+    /// Runs one decryption of `photo.jpg.fuzz` to completion (Completer
+    /// ordering, no wall clock) and answers the cubit and the plain copy.
+    Future<(CustomFileProcessingCubit<FileDecryptionOption>, String)>
+        decryptOnce() async {
+      final chosen = Completer<String>();
+      final progress = StreamController<FileProcessingProgress>();
+      addTearDown(progress.close);
+      when(
+        () => mockService.decryptFileWithPassword(
+          password: any(named: 'password'),
+          inputPath: any(named: 'inputPath'),
+          outputPath: any(named: 'outputPath'),
+        ),
+      ).thenAnswer((invocation) async {
+        final outputPath = invocation.namedArguments[#outputPath] as String;
+        File(outputPath).writeAsStringSync('plain');
+        chosen.complete(outputPath);
+        return CryptoCoreSuccess(
+          FileProcessingHandler(
+            progressStream: progress.stream,
+            pause: () {},
+            resume: () {},
+            cancel: () {},
           ),
         );
-      },
-    );
+      });
+      final cubit = buildDecrypt();
+      final done = cubit.stream.firstWhere(
+        (state) =>
+            state.processedFiles.length == 1 &&
+            state.currentProcessingFile == null,
+      );
+      cubit.addFilesToProcess(
+        filePaths: ['/pick/photo.jpg.fuzz'],
+        customKey: _password,
+      );
+      final copy = await chosen.future;
+      progress.add(FileProcessingProgress.completed());
+      await done;
+      return (cubit, copy);
+    }
+
+    test(
+        'unfuzzes into a private hand-off copy named without .fuzz, never '
+        'into a user folder', () async {
+      final (cubit, copy) = await decryptOnce();
+
+      expect(path.basename(copy), 'photo.jpg');
+      expect(store.isHandoff(copy), isTrue);
+      expect(cubit.state.processedFiles.single.outputFilePath, copy);
+      expect(File(copy).existsSync(), isTrue);
+      expect(
+        Directory(path.join(documents.path, 'Working Folder')).existsSync(),
+        isFalse,
+      );
+      await cubit.close();
+    });
+
+    test('a saved copy is wiped at once and its entry loses the path',
+        () async {
+      final (cubit, copy) = await decryptOnce();
+
+      await cubit.wipePlainCopy(copy);
+
+      expect(File(copy).existsSync(), isFalse);
+      expect(cubit.state.processedFiles.single.outputFilePath, isNull);
+      await cubit.close();
+    });
+
+    test('every copy still held is wiped when the page closes', () async {
+      final (cubit, copy) = await decryptOnce();
+
+      await cubit.close();
+
+      expect(File(copy).existsSync(), isFalse);
+      expect(Directory(store.handoffRootPath).listSync(), isEmpty);
+    });
 
     for (final (text, failure) in [
       (

@@ -17,16 +17,28 @@ class GlobalBlocProviders extends StatelessWidget {
         BlocProvider<FuzzyAuthStore>.value(
           value: sl.get<FuzzyAuthStore>()..checkAuthStatus(),
         ),
+        BlocProvider<AutoLockCubit>(
+          create: (_) => AutoLockCubit(
+            repository: sl.get<AutoLockSettingsRepository>(),
+          ),
+        ),
         BlocProvider<LocalizationCubit>(
           create: (_) => LocalizationCubit(),
         ),
         BlocProvider<ThemeCubit>(
           create: (_) => ThemeCubit(),
         ),
+        BlocProvider<FuzzzyCastSettingsCubit>(
+          create: (_) => FuzzzyCastSettingsCubit(
+            preferencesService: sl.get<PreferencesService>(),
+          ),
+        ),
         BlocProvider<ChatGeneralDataListCubit>(
           create: (context) => ChatGeneralDataListCubit(
             chatRepository: sl.get<ChatGeneralDataListRepository>(),
             cryptoCoreService: sl.get<CryptoCoreService>(),
+            messageDataRepository: sl.get<MessageDataRepository>(),
+            userFileStore: sl.get<UserFileStore>(),
           )..fetchChats(),
         ),
         BlocProvider<FileProcessingCubit<FileEncryptionOption>>(

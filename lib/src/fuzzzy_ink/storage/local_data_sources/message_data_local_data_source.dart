@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../storage_models/storage_models.dart';
 
 class MessageDataLocalDataSource {
@@ -39,12 +39,6 @@ class MessageDataLocalDataSource {
   Future<int> updateMessage(StoredMessageData messageData) async {
     return await isar.writeTxn<int>(() async {
       return await isar.storedMessageDatas.put(messageData);
-    });
-  }
-
-  Future<void> deleteMessage(int messageId) async {
-    await isar.writeTxn(() async {
-      await isar.storedMessageDatas.delete(messageId);
     });
   }
 

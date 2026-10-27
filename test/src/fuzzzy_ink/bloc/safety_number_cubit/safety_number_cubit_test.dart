@@ -10,8 +10,11 @@ import 'package:mocktail/mocktail.dart';
 class MockCryptoCoreService extends Mock implements CryptoCoreService {}
 
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
-const _safetyNumber =
-    '12345 67890 11111 22222 33333 44444 55555 66666 77777 88888 99999 00000';
+const _safetyNumber = SafetyNumber(
+  version: 1,
+  digits:
+      '12345 67890 11111 22222 33333 44444 55555 66666 77777 88888 99999 00000',
+);
 
 void main() {
   late MockCryptoCoreService mockService;

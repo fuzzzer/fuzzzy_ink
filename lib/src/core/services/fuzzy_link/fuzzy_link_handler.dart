@@ -1,29 +1,65 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 
+/// Opens what arrives from outside the app: Fuzzzy Ink links, and `.fuzz`
+/// files other apps opened in this one ([IncomingFiles], to Open as an
+/// [OpenArrivedFile]). Nothing that arrives opens, connects or spends a key
+/// by itself: Open asks first (security review 2026-10-26). While the app is
+/// locked, the one that came last waits for the unlock.
 class FuzzyLinkHandler {
   FuzzyLinkHandler({
     required FuzzyLinkService linkService,
     required ChatGeneralDataListRepository chatRepository,
     required FuzzyAuthStore authStore,
     required CryptoCoreService cryptoCoreService,
+    IncomingFiles? incomingFiles,
+    void Function(String path, Object? extra)? navigate,
   })  : _linkService = linkService,
         _chatRepository = chatRepository,
         _authStore = authStore,
-        _cryptoCoreService = cryptoCoreService;
+        _cryptoCoreService = cryptoCoreService,
+        _incomingFiles = incomingFiles,
+        _navigate = navigate;
 
   final FuzzyLinkService _linkService;
   final ChatGeneralDataListRepository _chatRepository;
   final FuzzyAuthStore _authStore;
   final CryptoCoreService _cryptoCoreService;
+  final IncomingFiles? _incomingFiles;
+
+  /// Tests watch where things go; the app goes Home, then pushes `path`.
+  final void Function(String path, Object? extra)? _navigate;
 
   StreamSubscription<Uri>? _subscription;
+  StreamSubscription<Uri>? _fileSubscription;
   FuzzyLinkPayload? _pendingPayload;
+
+  /// A `.fuzz` file's incoming copy waiting for the unlock.
+  String? _pendingFilePath;
+
+  /// The incoming copy last handed to Open, which may still wait there for
+  /// the person's Open or Connect ([keepWaitingFileAtLock]).
+  String? _shownFilePath;
   bool _isInitialized = false;
 
-  bool get hasPendingPayload => _pendingPayload != null;
+  bool get hasPendingPayload =>
+      _pendingPayload != null || _pendingFilePath != null;
+
+  /// Pages a link must not cover (My safe's editor, whose unsaved edits a
+  /// jump elsewhere would lose) hold links while they are open; a link that
+  /// arrives meanwhile waits and opens when the last hold is released
+  /// (security review 2026-10-26).
+  int _holds = 0;
+
+  /// What waits for the unlock, null when nothing does: the lock screen
+  /// says so ("A link is waiting. Unlock to open it.", or "A file is
+  /// waiting…" for a `.fuzz` file).
+  ValueListenable<WaitingArrival?> get pendingLink => _pendingLink;
+  final _pendingLink = ValueNotifier<WaitingArrival?>(null);
 
   FuzzzyInkLocalizations get _l10n =>
       FuzzzyInkLocalizations.of(navigatorKey.currentContext!)!;
@@ -51,16 +87,81 @@ class FuzzyLinkHandler {
     }
 
     _subscription = _linkService.onLinkReceived.listen(_handleUri);
-  }
 
-  void processPendingPayload() {
-    if (_pendingPayload != null) {
-      _processPayload(_pendingPayload!);
-      _pendingPayload = null;
+    final incomingFiles = _incomingFiles;
+    if (incomingFiles != null) {
+      _fileSubscription = incomingFiles.opened.listen(_handleUri);
+      await incomingFiles.start();
     }
   }
 
+  /// Holds links until the returned callback runs (call it once, in
+  /// `dispose`).
+  VoidCallback holdLinks() {
+    _holds++;
+    var isReleased = false;
+    return () {
+      if (isReleased) return;
+      isReleased = true;
+      _holds--;
+      if (_holds == 0 && !_isLocked) processPendingPayload();
+    };
+  }
+
+  /// Erase everything: a link or file waiting at the lock screen is dropped,
+  /// so it does not run after the next first run (security review
+  /// 2026-10-26). The file's hand-off copy goes with the hand-off folder.
+  void discardPending() {
+    _pendingPayload = null;
+    _pendingFilePath = null;
+    _shownFilePath = null;
+    _pendingLink.value = null;
+  }
+
+  /// The app is locking. A `.fuzz` file Open still holds (on "Open the
+  /// message from …?", or still being read) is kept and waits for the
+  /// unlock like one that arrived while locked, so the lock on return does
+  /// not lose it (2026-10-26, seen live). One Open used or left is gone
+  /// already, and so is not brought back.
+  void keepWaitingFileAtLock() {
+    final filePath = _shownFilePath;
+    _shownFilePath = null;
+    final store = _incomingFiles?.userFileStore;
+    if (filePath == null || store == null) return;
+    if (_pendingPayload != null || _pendingFilePath != null) return;
+    if (!File(filePath).existsSync()) return;
+    store.keepForUnlock(filePath);
+    _pendingFilePath = filePath;
+    _pendingLink.value = WaitingArrival.file;
+  }
+
+  /// A newer arrival takes the place of a file waiting for the unlock: the
+  /// older copy goes.
+  void _dropPendingFile() {
+    final filePath = _pendingFilePath;
+    _pendingFilePath = null;
+    final store = _incomingFiles?.userFileStore;
+    if (filePath == null || store == null) return;
+    store.release(filePath);
+    unawaited(store.wipe(filePath));
+  }
+
+  void processPendingPayload() {
+    if (_holds > 0) return;
+    final payload = _pendingPayload;
+    final filePath = _pendingFilePath;
+    _pendingPayload = null;
+    _pendingFilePath = null;
+    _pendingLink.value = null;
+    if (payload != null) _processPayload(payload);
+    if (filePath != null) _openFile(filePath);
+  }
+
   void _handleUri(Uri uri) {
+    if (IncomingFiles.isFileUri(uri)) {
+      unawaited(_handleIncomingFile(uri));
+      return;
+    }
     final payload = FuzzyLinkParser.parse(uri);
     if (payload == null) {
       if (navigatorKey.currentContext == null) return;
@@ -68,30 +169,58 @@ class FuzzyLinkHandler {
       return;
     }
 
-    if (!payload.isSupported) {
-      _showMessage(_l10n.updateRequired);
-      return;
-    }
-
-    if (payload is InvitationLinkPayload && payload.isExpired) {
-      _showMessage(_l10n.invitationLinkExpired);
-      return;
-    }
-    if (payload is AcceptanceLinkPayload && payload.isExpired) {
-      _showMessage(_l10n.acceptanceLinkExpired);
-      return;
-    }
-
     _routePayload(payload);
   }
 
   Future<void> _routePayload(FuzzyLinkPayload payload) async {
-    if (await _isAppLocked()) {
+    if (_isLocked || _holds > 0) {
       _pendingPayload = payload;
+      _dropPendingFile();
+      _pendingLink.value = WaitingArrival.link;
+      if (!_isLocked && navigatorKey.currentContext != null) {
+        _showMessage(_l10n.linkWaitsForSafe);
+      }
       return;
     }
 
     _processPayload(payload);
+  }
+
+  /// A `.fuzz` file from another app: read once into the incoming folder,
+  /// then Open (after the unlock when the app is locked), where a message,
+  /// a person's file or a reply waits for the person's Open or Connect.
+  Future<void> _handleIncomingFile(Uri uri) async {
+    final incomingFiles = _incomingFiles;
+    if (incomingFiles == null) return;
+    final filePath = await incomingFiles.take(uri);
+    if (filePath == null) {
+      if (navigatorKey.currentContext != null) {
+        _showMessage(_l10n.incomingFileUnreadable);
+      }
+      return;
+    }
+    if (_isLocked || _holds > 0) {
+      _dropPendingFile();
+      _pendingFilePath = filePath;
+      _pendingPayload = null;
+      _pendingLink.value = WaitingArrival.file;
+      if (!_isLocked && navigatorKey.currentContext != null) {
+        _showMessage(_l10n.fileWaitsForSafe);
+      }
+      return;
+    }
+    _openFile(filePath);
+  }
+
+  void _openFile(String filePath) {
+    _incomingFiles?.userFileStore.release(filePath);
+    _shownFilePath = filePath;
+    _navigateCleanly(
+      AppRouter.open,
+      // Arrived, not chosen: it waits for an explicit Open/Connect tap and
+      // never spends a one-time key on arrival.
+      extra: OpenPagePayload(request: OpenArrivedFile(filePath)),
+    );
   }
 
   void _processPayload(FuzzyLinkPayload payload) {
@@ -144,16 +273,39 @@ class FuzzyLinkHandler {
       }
 
       if (chat.setupStatus == ChatSetupStatus.connected) {
-        _showMessage(_l10n.alreadyConnected);
+        // The same acceptance again is harmless. A different one means a
+        // second person accepted this invitation: say so, never "connected".
+        final isSameAcceptance = await _chatRepository.isPairedAcceptance(
+          chatId,
+          payload.rawAcceptanceContent,
+        );
+        if (isSameAcceptance) {
+          _showMessage(_l10n.alreadyConnected);
+          return;
+        }
+        // Only a reply that really answers this chat's invite raises the
+        // alarm; a junk or forged one is just not a valid reply (security
+        // review 2026-10-26).
+        final checkRes = await _cryptoCoreService.checkAcceptance(
+          chatId: chatId,
+          acceptance: payload.rawAcceptanceContent,
+        );
+        if (checkRes is CryptoCoreSuccess<void>) {
+          _showPairingWarning(chat);
+        } else {
+          _showMessage(_l10n.failedToProcessAcceptance);
+        }
         return;
       }
 
+      // "Connect with {name}?" first: a link alone never connects.
       _navigateCleanly(
         AppRouter.chatInvitation,
         extra: ChatInvitationPagePayload(
           chatName: chat.chatName,
           chatId: chat.chatId,
           prefillAcceptanceContent: payload.rawAcceptanceContent,
+          confirmReply: true,
         ),
       );
     } catch (_) {
@@ -161,40 +313,39 @@ class FuzzyLinkHandler {
     }
   }
 
-  Future<void> _handleFuzzMessage(FuzzMessageLinkPayload payload) async {
-    try {
-      final chat = await _chatRepository.getChatById(payload.chatId);
-
-      if (chat == null) {
-        _showMessage(_l10n.chatNotFoundForMessage);
-        return;
-      }
-
-      _navigateCleanly(
-        AppRouter.chatConnected,
-        extra: ConnectedChatPagePayload(
-          chatGeneralData: chat,
-          prefillEncryptedMessage: payload.encryptedMessage,
-        ),
-      );
-    } catch (_) {
-      _showMessage(_l10n.failedToProcessMessage);
-    }
+  /// A message link goes to Open, which finds its person with the peek
+  /// (nothing spent) and asks "Open the message from {name}?"; it opens only
+  /// on Open (security review 2026-10-26). A person not on this phone is
+  /// "Not from your people".
+  void _handleFuzzMessage(FuzzMessageLinkPayload payload) {
+    _navigateCleanly(
+      AppRouter.open,
+      extra: OpenPagePayload(
+        request: OpenMessageLink(encryptedMessage: payload.encryptedMessage),
+      ),
+    );
   }
 
+  /// "Someone else may have answered": its own screen, with Check numbers
+  /// and Remove (DESIGN.md section 4.3).
+  void _showPairingWarning(ChatGeneralData chat) {
+    _navigateCleanly(AppRouter.personAnsweredTwice, extra: chat);
+  }
+
+  /// On top of wherever the person is: a link no longer throws away the
+  /// screens below it (security review 2026-10-26).
   void _navigateCleanly(String path, {Object? extra}) {
+    final navigate = _navigate;
+    if (navigate != null) return navigate(path, extra);
     final router = AppRouter.routerInstance;
     if (router == null) return;
-    router.go(AppRouter.home);
     router.push(path, extra: extra);
   }
 
-  Future<bool> _isAppLocked() async {
-    final status = _authStore.state.status;
-    return status.isInitial || status.isLocked || status.isUnlocking;
-  }
+  bool get _isLocked => !_authStore.state.status.hasAccess;
 
   void dispose() {
     _subscription?.cancel();
+    _fileSubscription?.cancel();
   }
 }

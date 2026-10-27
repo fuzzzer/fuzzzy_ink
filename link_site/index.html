@@ -1,0 +1,146 @@
+<!doctype html>
+<!--
+  Fuzzzy Ink link page, served for https://ink.fuzzzycore.com/invite,
+  /accept and /message (see README.md).
+
+  What someone sent sits in the link after "#". Browsers never send that part
+  to a server, and this page has no scripts at all (the Content-Security-Policy
+  below forbids them), so nothing can read it or pass it on. Keep it that way:
+  no analytics, no external scripts, fonts or images.
+
+  Restyle freely: the look is the custom properties in :root and the classes
+  below. Placeholders to replace before publishing are marked REPLACE_WITH_.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="This was sent with Fuzzzy Ink. Get the app, then tap the link again." />
+    <meta property="og:title" content="This was sent with Fuzzzy Ink" />
+    <meta property="og:description" content="Get the app, then tap the link again." />
+    <title>Fuzzzy Ink</title>
+    <style>
+      :root {
+        --ground: #f6f4ef;
+        --surface: #ffffff;
+        --ink: #17161a;
+        --ink-mute: #5b5960;
+        --line: #dcd8cf;
+        --action-bg: #17161a;
+        --action-fg: #f6f4ef;
+        --radius: 12px;
+        --space: 16px;
+        --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ground: #121114;
+          --surface: #1c1b1f;
+          --ink: #f1efe9;
+          --ink-mute: #a8a5ad;
+          --line: #34323a;
+          --action-bg: #f1efe9;
+          --action-fg: #121114;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 16px/1.5 var(--font);
+      }
+      .page {
+        max-width: 32rem;
+        margin: 0 auto;
+        padding: calc(var(--space) * 3) var(--space);
+      }
+      .title { font-size: 1.75rem; line-height: 1.2; margin: 0 0 var(--space); }
+      .lead, .note { color: var(--ink-mute); margin: 0 0 var(--space); }
+      .steps { margin: calc(var(--space) * 1.5) 0; padding-left: 1.25rem; }
+      .steps li { margin-bottom: calc(var(--space) / 2); }
+      .downloads[hidden] { display: none; }
+      .downloads {
+        display: grid;
+        gap: calc(var(--space) * 0.75);
+        margin: calc(var(--space) * 1.5) 0;
+      }
+      .download {
+        display: block;
+        padding: var(--space);
+        border-radius: var(--radius);
+        background: var(--action-bg);
+        color: var(--action-fg);
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+      }
+      .download--secondary {
+        background: var(--surface);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+      .desktop {
+        margin-top: calc(var(--space) * 2);
+        padding: var(--space);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .desktop h2 { font-size: 1rem; margin: 0 0 calc(var(--space) / 2); }
+      .desktop p { margin: 0; color: var(--ink-mute); }
+      .footer { margin-top: calc(var(--space) * 2); font-size: 0.875rem; color: var(--ink-mute); }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="title">This was sent with Fuzzzy Ink</h1>
+      <p class="lead">
+        Someone sent you something sealed: an invitation, a reply to yours, or a
+        message. Only the Fuzzzy Ink app can open it.
+      </p>
+
+      <ol class="steps">
+        <li>Get the Fuzzzy Ink app.</li>
+        <li>Come back here and tap the link again. It opens in the app.</li>
+      </ol>
+
+      <!-- Hidden until the store listings exist: remove `hidden` once the App Store id and
+           desktop download address below are filled in. -->
+      <nav class="downloads" aria-label="Get Fuzzzy Ink" hidden>
+        <!-- REPLACE_WITH_APP_STORE_ID: the number in the app's App Store address. -->
+        <a class="download" href="https://apps.apple.com/app/idREPLACE_WITH_APP_STORE_ID" rel="noreferrer">
+          Get it on the App Store
+        </a>
+        <a class="download" href="https://play.google.com/store/apps/details?id=com.fuzzzycore.ink" rel="noreferrer">
+          Get it on Google Play
+        </a>
+        <!-- REPLACE_WITH_DESKTOP_DOWNLOAD_URL: where the Mac, Windows and Linux builds are downloaded. -->
+        <a class="download download--secondary" href="https://REPLACE_WITH_DESKTOP_DOWNLOAD_URL" rel="noreferrer">
+          Download for Mac, Windows or Linux
+        </a>
+      </nav>
+
+      <section class="desktop" aria-labelledby="desktop-title">
+        <h2 id="desktop-title">On a computer</h2>
+        <p>
+          Open Fuzzzy Ink, copy this page's full address from the address bar,
+          and paste it where the app asks for a code.
+        </p>
+      </section>
+
+      <p class="note">
+        What was sent is in the part of the link after “#”. Browsers never send
+        that part to this website, and this page has no scripts.
+      </p>
+
+      <p class="footer">Fuzzzy Ink works offline and has no account.</p>
+    </main>
+  </body>
+</html>

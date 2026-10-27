@@ -1,7 +1,8 @@
 {
-  "aad": "local-seal6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
+  "aad": "local-seal6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d ‖ row (01 ‖ \"Fuzz/RlVaWgEDAd6tvu8\")",
   "chat_id": "6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d",
   "history_key": "5555555555555555555555555555555555555555555555555555555555555555",
   "nonce": "444444444444444444444444444444444444444444444444",
-  "plaintext": "hello"
+  "plaintext": "hello",
+  "row": "0146757a7a2f526c56615767454441643674767538"
 }

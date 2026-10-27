@@ -20,7 +20,7 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 - `‖` is byte concatenation. Hex is lowercase. `0x..×n` means the byte repeated `n` times.
 - "AEAD" means XChaCha20-Poly1305 (24-byte nonce, 16-byte tag, tag appended to the ciphertext); "KDF" means
   Argon2id; "Olm" means the Olm v1 double ratchet as vodozemac implements it (`SessionConfig::version_1()`).
-- Every error the core reports is one of 13 payload-free variants of `CoreError`
+- Every error the core reports is one of 14 payload-free variants of `CoreError`
   ([`error.rs#L11`](../../rust/fuzzy_crypto_core/src/error.rs#L11)); Appendix B lists them. Tables below name the
   variant a check produces.
 - Links of the form `file.rs#Lnn` point at the line that defines the constant or check in the crate at the
@@ -38,8 +38,9 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
    Olm session on a one-time key;
 2. text messages and files on that session, with per-message forward secrecy, replay and ordering rules;
 3. a safety number for out-of-band authentication of the pairing;
-4. the device-local state: a store key wrapped under the app-lock password, sealed per-chat state files,
-   sealed local copies of message plaintext, a vault master key and sealed vault items;
+4. the device-local state: a master key wrapped under the master password (and, as a second wrap, under a
+   printable recovery key), the store key and the vault key wrapped under the master key, sealed per-chat state
+   files, sealed local copies of message plaintext, sealed vault items and sealed app settings;
 5. password-sealed blobs and files for the "Basics" tools that need no chat at all.
 
 **Non-goals.**
@@ -63,11 +64,11 @@ design is `HARDENING_2026.md` (F5-5). This document only says *what the bytes ar
 |---|---|
 | **A, the inviter** | The device that creates a chat. It generates the Olm account and the one-time key, publishes the **invitation**, and later completes the handshake from the acceptance. Direction byte `0x00 = A→B`. |
 | **B, the accepter** | The device that pastes the invitation. It generates its own Olm account, creates the outbound session on A's one-time key, and publishes the **acceptance**. Direction byte `0x01 = B→A`. |
-| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L25`](../../rust/fuzzy_crypto_core/src/store.rs#L25)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
-| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L258`](../../rust/fuzzy_crypto_core/src/store.rs#L258)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
+| **Device / store** | One installation of the app. It owns exactly one *store*: a directory `<app support dir>/fuzzy_crypto_store/` ([`store.rs#L30`](../../rust/fuzzy_crypto_core/src/store.rs#L30)) of sealed state files and one 32-byte **store key**. A device is a store; the protocol has no other notion of identity. |
+| **chat_id** | A UUID v4 in its canonical lowercase text form, chosen by A's app when the chat is created. It names the chat on both devices and is a file-name component on disk, so it is validated by **shape** before any other use: exactly 36 bytes, `[0-9a-f]` everywhere except a `-` at offsets 8, 13, 18 and 23 ([`store.rs#L299`](../../rust/fuzzy_crypto_core/src/store.rs#L299)). The version and variant nibbles are *not* checked. Anything else is `Corrupt`. The wire codec itself only requires 1..=255 bytes of UTF-8; the shape check runs at every API entry that takes a chat id from Dart, and inside the crate a chat id read out of a blob is only ever *compared* with an already-validated one, never used as a path (the one function that hands a blob's chat id to Dart unvalidated, `peek_chat_id`, is discussed in §13). |
 | **Blob** | A binary message with the 6-byte envelope of §6.2, exchanged as `Fuzz/` text (§6.1). Types `0x01`–`0x05`. |
 | **Container** | A file with the `0x04` envelope (§9). Files are never turned into text. |
-| **Storage-only blobs** | Types `0x10` and `0x20` never travel: the paste decoder refuses them ([`formats.rs#L63`](../../rust/fuzzy_crypto_core/src/formats.rs#L63)). |
+| **Storage-only blobs** | Types `0x10`, `0x11` and `0x20` never travel: the paste decoder refuses them ([`formats.rs#L66`](../../rust/fuzzy_crypto_core/src/formats.rs#L66)). |
 
 ---
 
@@ -83,10 +84,12 @@ source in the crate) and never leaves it in the clear (§13).
 | **Olm `Session`** | both, one per chat | from acceptance (B) / completion (A) to chat deletion | the double ratchet. B's is outbound (created from A's identity key + one-time key), A's is inbound (created from B's pre-key message). Both persist as vodozemac pickles inside the sealed state file (§10.3). |
 | **Message keys** | derived by the ratchet | one message | never stored beyond the ratchet's skipped-key store (§8.1); deleted on use. |
 | **File key** (32 random bytes) | sender, per file | one container | drawn per chat-mode file, sealed inside one Olm message in the container header (§9.4). |
-| **Store key** (32 random bytes) | one per device | for the life of the install | seals every state file (§10.3) — and, through them, every history key. Exists only wrapped (§10.2) outside a running process. |
+| **Master key** (32 random bytes) | one per device | for the life of the install | wraps the keys below it — the store key and, by default, the vault key — and nothing else: it seals no data. Exists only wrapped, under the master password and under the recovery key (§10.2), and in the clear only for the length of one call: no handle keeps it. |
+| **Recovery key** (19 random bytes + 1 check byte) | one per device, while the user keeps one | until replaced | a second password for the master key, drawn by the crate and shown to the user once as 32 base32 characters (§10.2). |
+| **Store key** (32 random bytes) | one per device | for the life of the install | seals every state file (§10.3) — and, through them, every history key — and the app settings (§10.7). Exists only wrapped under the master key (§10.2) outside a running process. |
 | **History key** (32 random bytes) | one per **chat per device** | from chat creation to chat deletion | seals that chat's message history (§10.4) and nothing else (owner decision D-1). Drawn from the CSPRNG at the same moment as the chat's Olm account — `create_invitation` on A, `accept_invitation` on B — and stored as the `history_key` field of the chat's sealed state (§10.3, [`state.rs#L78`](../../rust/fuzzy_crypto_core/src/state.rs#L78)); it never crosses the wire, so A's and B's history keys for one chat are unrelated. It is **not** derived from the identity secret: vodozemac 0.10.0 exposes no accessor for the account's Curve25519 secret (`Account::curve25519_key()` is the public key and `AccountPickle`'s fields are private), and a fresh random key gives the same property — one chat's key opens no other chat's history — without parsing vodozemac's private pickle layout in library code. Regenerating an invitation (§4.2) or deleting a chat (§10.3) replaces or destroys the key; no history exists before the first message, so nothing is orphaned by regeneration. Vector: `local_seal_chat` (fixed key `55×32`). |
-| **KEK** | derived | per unwrap | `Argon2id(password, salt, m, t, p)`, 32 bytes (§11). Wraps the store key and the vault master key; is the key of a password-sealed blob and of a password-mode file. |
-| **Vault master key** (32 random bytes) | one per vault | for the life of the vault | seals vault items (§10.6). Wrapped under the vault password exactly like the store key, in its own AAD domain. |
+| **KEK** | derived | per unwrap | `Argon2id(password, salt, m, t, p)`, 32 bytes (§11). Wraps the master key (under the master password or the recovery key) and a vault key that has its own password; is the key of a password-sealed blob and of a password-mode file. |
+| **Vault key** (32 random bytes) | one per vault | for the life of the vault | seals vault items (§10.6). Wrapped under the master key by default, or under a password of the vault's own (§10.6). It opens no chat, and the store key opens no vault item. |
 
 The identity keys of A and B are the only long-lived public values a peer ever learns; they are what the
 safety number (§5) commits to.
@@ -124,11 +127,12 @@ other type do not verify. Verification is `ed25519-dalek`'s `verify_strict` thro
 the **received** bytes, never over a re-encoding. A key or signature that does not parse is
 `InvalidSignature`.
 
-Order of checks on every pasted pairing blob ([`pairing.rs#L89`](../../rust/fuzzy_crypto_core/src/pairing.rs#L89),
-[`#L157`](../../rust/fuzzy_crypto_core/src/pairing.rs#L157)):
+Order of checks on every pasted pairing blob ([`pairing.rs#L92`](../../rust/fuzzy_crypto_core/src/pairing.rs#L92),
+[`#L162`](../../rust/fuzzy_crypto_core/src/pairing.rs#L162)):
 
 1. the Dart-supplied `chat_id` has the uuid shape (`Corrupt`) — before the store is touched;
-2. text envelope and outer envelope decode (`UnsupportedFormat`); the blob is of the expected type
+2. text envelope and outer envelope decode (`UnsupportedFormat`; a newer version or an unknown type byte
+   `NewerVersion`); the blob is of the expected type
    (`UnsupportedFormat`); the payload parses with no trailing bytes (`Corrupt`);
 3. **signature** verifies under the key carried in the blob (`InvalidSignature`);
 4. the blob's `chat_id` equals the caller's (`WrongChat`).
@@ -171,7 +175,7 @@ message until B has decrypted something from A — Olm semantics, both decryptab
 ### 4.4 Completion (A) and one-time-key consumption
 
 `complete_handshake` ([`api/pairing.rs#L68`](../../rust/fuzzy_crypto_core/src/api/pairing.rs#L68),
-[`pairing.rs#L173`](../../rust/fuzzy_crypto_core/src/pairing.rs#L173)), after §4.1 and inside one atomic
+[`pairing.rs#L178`](../../rust/fuzzy_crypto_core/src/pairing.rs#L178)), after §4.1 and inside one atomic
 state mutation (§10.3 — the file is written only if every step passes, and is byte-identical otherwise):
 
 1. `role == Inviter` and `session.is_none()`, else `InvitationAlreadyUsed` — this catches a second
@@ -209,13 +213,24 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 | B pastes A's invitation into a chat that already has state | `Internal` | §4.3. |
 | An acceptance whose handshake header is dishonest (wrong chat, wrong keys, wrong direction, counter ≠ 0, wrong content type) | `Corrupt` | §4.4 step 4; the one-time key survives. |
 
+**Is a second reply a real answer?** (`check_acceptance`, [`api/pairing.rs`](../../rust/fuzzy_crypto_core/src/api/pairing.rs);
+security review 2026-10-26). Before the app warns a connected inviter that "someone else answered your invite", it
+asks the core, read-only: §4.1 steps 1–4 on the reply, then the chat must be the inviter's, and the reply's
+pre-key message must name the one-time key of the invitation this chat made (`last_invitation`) and the identity
+key the reply itself carries (both compared in constant time). Nothing is decrypted, no key is consumed, nothing
+is written. A reply anyone could build from a chat id seen elsewhere, an invitation passed off as a reply, or a
+reply to another invitation fails (`UnsupportedFormat`, `InvalidSignature`, `WrongChat`, `Corrupt`) and the app
+says the reply is not valid instead of raising the alarm. What it does not prove: who answered — anyone who had
+the invitation can build a real answer, which is exactly what the warning is for. Test:
+`api::pairing::tests::only_a_genuine_second_reply_counts_as_an_answer`.
+
 ### 4.6 What the pairing does not do
 
 - It does not authenticate *who* A and B are; it authenticates that whoever produced each blob controls the
   Ed25519 key inside it. See §5 and §17.
 - It has no timeout: a pending chat keeps its account and one-time key until the acceptance arrives, the
-  invitation is regenerated or the chat is deleted. The app's deep-link `exp` field is a link-level hint the
-  core never sees.
+  invitation is regenerated or the chat is deleted. The app's links (`https://ink.fuzzzycore.com/…#<payload>`)
+  carry no expiry either.
 - It never publishes a fallback key or a second one-time key; the account's one-time-key count is 0 after
   completion.
 
@@ -225,7 +240,7 @@ an honest session: `api::pairing::tests::wrong_inner_header_is_corrupt_and_keeps
 
 After the handshake both devices hold `A_ed25519` and `B_ed25519` — the exact keys that signed the blobs and
 that the handshake header bound to the 3DH. The safety number is a fingerprint of those two keys and the
-chat id ([`safety.rs#L31`](../../rust/fuzzy_crypto_core/src/safety.rs#L31)):
+chat id ([`safety.rs#L39`](../../rust/fuzzy_crypto_core/src/safety.rs#L39)):
 
 ```
 low, high = sort_lexicographic(key_1, key_2)                     // byte-wise on the two [u8; 32]
@@ -234,10 +249,10 @@ group[i]  = ( u40 BE of digest[5i .. 5i+5] ) mod 100000            for i in 0..1
 text      = zero-padded 5-digit groups joined by single spaces      // 60 digits, 71 characters
 ```
 
-Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20)),
-12 groups ([`#L22`](../../rust/fuzzy_crypto_core/src/safety.rs#L22)) of 5 digest bytes each
-([`#L24`](../../rust/fuzzy_crypto_core/src/safety.rs#L24)), modulus 100 000
-([`#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25)); the last 4 bytes of the digest are unused. This
+Constants: domain `FUZZZYINK_SAFETY_NUMBER_V1` ([`safety.rs#L28`](../../rust/fuzzy_crypto_core/src/safety.rs#L28)),
+12 groups ([`#L30`](../../rust/fuzzy_crypto_core/src/safety.rs#L30)) of 5 digest bytes each
+([`#L32`](../../rust/fuzzy_crypto_core/src/safety.rs#L32)), modulus 100 000
+([`#L33`](../../rust/fuzzy_crypto_core/src/safety.rs#L33)); the last 4 bytes of the digest are unused. This
 is libsignal's `DisplayableFingerprint` group encoding (5 bytes → `% 100000`), applied to one combined
 digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-…`, keys `00 01 … 1f` and
 `ff fe … e0` → `77854 71920 59655 43036 43670 32437 81099 92950 15670 73365 44425 64132`).
@@ -257,12 +272,27 @@ digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-
   cannot be reused as another's.
 - **Availability.** B has A's identity key from the moment it accepts; A has B's once the handshake completes.
   Before that `safety_number` is `UnknownChat`.
-- **The verified flag** (`mark_verified`, [`safety.rs#L75`](../../rust/fuzzy_crypto_core/src/safety.rs#L75)) is a
+- **The verified flag** (`mark_verified`, [`safety.rs#L83`](../../rust/fuzzy_crypto_core/src/safety.rs#L83)) is a
   per-device boolean in the sealed state, persisted before the call returns. It is refused (`UnknownChat`)
   while no peer key exists, so a flag can never pre-date the keys it vouches for. The only ways an identity
   key of an existing chat can change — regenerating a pending invitation, or deleting and re-pairing — replace
   the whole state with `verified = false`, so the flag cannot outlive the keys either.
 - Nothing secret is hashed; both keys travel in the clear inside the pairing blobs.
+- **Version.** The computation above is safety-number **version 1**
+  (`SAFETY_NUMBER_VERSION`, [`safety.rs`](../../rust/fuzzy_crypto_core/src/safety.rs)); the `V1` at the end of the
+  domain string is that number, and a test pins the two together. The core never returns the digits alone:
+  `safety_number` answers `SafetyNumber { version, digits }` ([`api/safety.rs`](../../rust/fuzzy_crypto_core/src/api/safety.rs)),
+  and the app shows "Version 1" under the digits with the instruction to update both apps if the partner sees
+  another version or none. Two builds that derive the digits differently therefore show different versions,
+  never silently different digits that look exactly like an attack. **Any** change to the derivation — the
+  domain string (including a rename of the app), the inputs, their order, the digest or the group encoding —
+  bumps the version (§12); the golden test fails until the version is bumped and the golden re-pinned.
+- **History.** Release 1.1.0 (app id `com.fuzzzytechnologies.fuzzy_chat`) hashed the domain
+  `FUZZZYSEAL_SAFETY_NUMBER_V1`; 1.1.1 renamed it to `FUZZZYINK_SAFETY_NUMBER_V1` without a version change and
+  without showing a version, so a 1.1.0 device and a later one disagreed silently. 1.1.0 is retired (its app id
+  never updates to the current one) and is not supported: its computation is the unlabelled predecessor, not a
+  version. The current computation keeps exactly the digits of 1.1.1–1.1.4 and is labelled version 1, so those
+  builds agree with this one digit for digit.
 
 ---
 
@@ -272,7 +302,7 @@ digest instead of two per-side ones. Vector: `safety_number` (chat id `6f1e9b2c-
 
 Every blob is exchanged as text: the ASCII prefix `Fuzz/` ([`formats.rs#L15`](../../rust/fuzzy_crypto_core/src/formats.rs#L15))
 followed by **base64url without padding** (RFC 4648 §5 alphabet `A–Z a–z 0–9 - _`, no `=`) of the binary
-blob. Decoding ([`formats.rs#L125`](../../rust/fuzzy_crypto_core/src/formats.rs#L125)):
+blob. Decoding ([`formats.rs#L131`](../../rust/fuzzy_crypto_core/src/formats.rs#L131)):
 
 1. every ASCII whitespace byte (space, `\t`, `\n`, `\x0c`, `\r`) anywhere in the text is dropped — so a blob
    wrapped by an e-mail or SMS client still decodes (vertical tab `\x0b` is *not* whitespace here);
@@ -289,14 +319,15 @@ discriminator (see §12).
 |---|---|---|---|
 | 0..4 | 4 | magic | `46 55 5a 5a` = `FUZZ` ([`formats.rs#L17`](../../rust/fuzzy_crypto_core/src/formats.rs#L17)) |
 | 4 | 1 | version | `0x01` ([`formats.rs#L19`](../../rust/fuzzy_crypto_core/src/formats.rs#L19)) |
-| 5 | 1 | type | `0x01` invitation · `0x02` acceptance · `0x03` message · `0x04` file container · `0x05` password-sealed blob · `0x10` wrapped key (storage only) · `0x20` local seal (storage only) ([`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37)) |
+| 5 | 1 | type | `0x01` invitation · `0x02` acceptance · `0x03` message · `0x04` file container · `0x05` password-sealed blob · `0x10` wrapped key (storage only) · `0x11` recovery box (storage only) · `0x20` local seal (storage only) ([`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37)) |
 | 6.. | | payload | per type |
 
 Envelope length 6 ([`formats.rs#L21`](../../rust/fuzzy_crypto_core/src/formats.rs#L21)). Any other magic,
-version or type byte is `UnsupportedFormat` ([`formats.rs#L152`](../../rust/fuzzy_crypto_core/src/formats.rs#L152));
+version is `UnsupportedFormat`, except a version above `0x01` or a type byte this build does not know, which
+is `NewerVersion` (made by a newer app, §12) ([`formats.rs#L158`](../../rust/fuzzy_crypto_core/src/formats.rs#L158));
 a blob of the wrong type for the call (an invitation given to the message decoder) is also
-`UnsupportedFormat`. Types `0x10` and `0x20` are refused by the paste path (`decode_pasted`) — they are valid
-only where the device stores them.
+`UnsupportedFormat`. Types `0x10`, `0x11` and `0x20` are refused by the paste path (`decode_pasted`) — they are
+valid only where the device stores them.
 
 All payload fields are fixed-size or carry a big-endian length prefix (`u8` for chat ids, `u16` for Olm bodies
 and names, `u32` for inner-header bodies). No JSON, no serde, no varints on the wire. Every decoder reads
@@ -346,7 +377,7 @@ Vector: `message` (a 4-byte placeholder body; a real body is vodozemac's `Messag
 | Offset | Size | Field | Rule |
 |---|---|---|---|
 | 0..6 | 6 | envelope | `FUZZ 01 03` |
-| 6 | 1 | `olm_type` | `0x00` pre-key message · `0x01` normal message ([`formats.rs#L72`](../../rust/fuzzy_crypto_core/src/formats.rs#L72)); anything else `Corrupt` |
+| 6 | 1 | `olm_type` | `0x00` pre-key message · `0x01` normal message ([`formats.rs#L78`](../../rust/fuzzy_crypto_core/src/formats.rs#L78)); anything else `Corrupt` |
 | 7.. | ≥ 1 | `olm_body` | the Olm message bytes; empty is `Corrupt` |
 
 Nothing else is in the clear — **no chat id, no counter, no sender**: a chat id on every message would be a
@@ -356,7 +387,7 @@ binding after decryption. The Olm plaintext of every message is an inner header.
 ### 6.6 File container `0x04`
 
 See §9 for the chunks; this is the header. Two key modes. `header_len` is not stored: the decoder recomputes
-it from the fields it read ([`formats.rs#L476`](../../rust/fuzzy_crypto_core/src/formats.rs#L476)).
+it from the fields it read ([`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519)).
 
 **Chat mode** (`key_mode 0x01`) — vector: `file_header_chat` (3-byte placeholder Olm body; a real one is a
 pre-key or normal message whose plaintext is an inner header with content type `0x02`, vector
@@ -414,7 +445,7 @@ is `Corrupt`. Decryption rules and error mapping: §11.
 
 ### 6.8 Wrapped key `0x10` (storage only)
 
-Vectors: `wrapped_store_key` (key `33×32`, password `pw`, salt `11×16`, nonce `22×24`, AAD `store-key`) and
+Vectors: `wrapped_master_key` (key `33×32`, password `pw`, salt `11×16`, nonce `22×24`, AAD `master-key`) and
 `wrapped_vault_key` (same inputs, AAD `vault-key` — same header and ciphertext, different tag).
 
 | Offset | Size | Field | Rule |
@@ -427,14 +458,21 @@ Vectors: `wrapped_store_key` (key `33×32`, password `pw`, salt `11×16`, nonce 
 | 31..55 | 24 | `nonce` | random per wrap |
 | 55..103 | 48 | `ct ‖ tag` | AEAD(key = Argon2id(password, salt, m, t, p), nonce, aad = role string, the 32-byte key) — exactly 48 bytes ([`formats.rs#L31`](../../rust/fuzzy_crypto_core/src/formats.rs#L31)); anything else `Corrupt` |
 
-103 bytes. The AAD names the key's **role**: `store-key` ([`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41))
-for the app-lock store key, `vault-key` ([`vault.rs#L15`](../../rust/fuzzy_crypto_core/src/vault.rs#L15)) for the
-vault master key, so a blob wrapped for one role never unwraps as the other. Never valid on the wire.
+103 bytes. The AAD names the key's **role**: `master-key` ([`master.rs#L31`](../../rust/fuzzy_crypto_core/src/master.rs#L31))
+for the master key under the master password, `master-key-recovery`
+([`master.rs#L33`](../../rust/fuzzy_crypto_core/src/master.rs#L33)) for the master key under the recovery key, `vault-key`
+([`vault.rs#L23`](../../rust/fuzzy_crypto_core/src/vault.rs#L23)) for a vault key under the vault's own password, so a
+blob wrapped for one role never unwraps as another. For the recovery wrap the Argon2id "password" is the recovery
+key's 20 decoded bytes (§10.2). An empty password is refused (`WrongPassword`) before any Argon2 run: no wrap
+under `""` can be made. Never valid on the wire.
 
 ### 6.9 Local seal `0x20` (storage only)
 
-Vectors: `local_seal_chat` (history key `55×32`, nonce `44×24`, plaintext `hello`, AAD `local-seal` ‖ chat id),
-`vault_item` (master key `33×32`, nonce `44×24`, plaintext `item`, AAD `vault-item`), `state_file` (store key
+Vectors: `local_seal_chat` (history key `55×32`, nonce `44×24`, plaintext `hello`, AAD `local-seal` ‖ chat id ‖ row),
+`vault_item` (vault key `33×32`, nonce `44×24`, plaintext `item`, AAD `vault-item` ‖ `00000003` ‖ item id),
+`vault_label` (the same key, nonce and item id, the label `user` padded to 256 bytes, AAD `vault-label` ‖ `00000003` ‖ item id),
+`store_key_wrap` and `vault_key_wrap` (master key `33×32`, nonce `44×24`, the key `66×32`, AAD `store-key-wrap` /
+`vault-key-wrap`), `state_file` (store key
 `33×32`, nonce `44×24`, AAD `chat-state` ‖ chat id, plaintext `state_file.body.json`).
 
 | Offset | Size | Field | Rule |
@@ -443,7 +481,36 @@ Vectors: `local_seal_chat` (history key `55×32`, nonce `44×24`, plaintext `hel
 | 6..30 | 24 | `nonce` | random per seal |
 | 30.. | ≥ 16 | `ct ‖ tag` | AEAD(key, nonce, aad, plaintext); the key and AAD depend on the use (§10) |
 
-Fewer than 16 bytes after the nonce is `Corrupt`. Never valid on the wire.
+Fewer than 16 bytes after the nonce is `Corrupt`. Never valid on the wire. A **key wrapped under the master key**
+is a `0x20` whose plaintext is the 32-byte key (78 bytes in all); a plaintext of any other length is `Corrupt`.
+
+### 6.10 Recovery box `0x11` (storage only)
+
+Vectors: `recovery_lock` (the lock of the recovery key `AAAQ-EAYE-AUDA-OCAJ-BIFQ-YDIO-B4IB-CEQZ`, i.e. the bytes
+`00 01 … 12` ‖ its check byte) and `vault_key_recovery` (the vault key `33×32` sealed to that lock, ephemeral
+secret `55×32`, nonce `22×24`).
+
+A 32-byte key **sealed to the recovery lock** — an X25519 public key the recovery key determines (§10.2) — so
+that it can be sealed without the recovery key at hand and opened only with it
+([`RecoveryBox`](../../rust/fuzzy_crypto_core/src/formats.rs#L405), [`master.rs#L290`](../../rust/fuzzy_crypto_core/src/master.rs#L290)).
+Today its one use is the key of a vault with its own password (§10.6).
+
+| Offset | Size | Field | Rule |
+|---|---|---|---|
+| 0..6 | 6 | envelope | `FUZZ 01 11` |
+| 6..38 | 32 | `ephemeral` | X25519 public key of a one-time secret drawn per box |
+| 38..62 | 24 | `nonce` | random per box |
+| 62..110 | 48 | `ct ‖ tag` | AEAD(box key, nonce, aad = role string, the 32-byte key) — exactly 48 bytes; anything else `Corrupt` |
+
+110 bytes. **Box key** = `SHA-256(Z ‖ 00 00 00 01 ‖ "fuzzy-recovery-box-v1" ‖ ephemeral ‖ lock)`, where
+`Z = X25519(ephemeral secret, lock)` — the ANSI X9.63 / SEC 1 §3.6.1 KDF with SHA-256, one output block
+([`master.rs#L224`](../../rust/fuzzy_crypto_core/src/master.rs#L224)); both public keys are bound, so a box opens only
+for the lock it was made for. A lock or an ephemeral key of small order (no contributory shared secret) is refused:
+`Corrupt` when sealing, `WrongPassword` when opening. The AAD names the role: `vault-key-recovery`
+([`vault.rs#L25`](../../rust/fuzzy_crypto_core/src/vault.rs#L25)). Opening (`open_with_recovery`,
+[`master.rs#L326`](../../rust/fuzzy_crypto_core/src/master.rs#L326)) recomputes the lock's secret from the typed
+recovery key; a tag failure — another device's recovery key, another role, a tampered box — is `WrongPassword`,
+as for the recovery wrap of §6.8. Never valid on the wire.
 
 ---
 
@@ -452,7 +519,7 @@ Fewer than 16 bytes after the nonce is `Corrupt`. Never valid on the wire.
 The **inner header** is the plaintext of every Olm message the protocol produces — the handshake, every text
 message, every chat-mode file key. It is the Matrix "m.olm" construction: the sender's and recipient's
 identity keys and the room (chat) id travel *inside* the authenticated plaintext, and the receiver checks
-them against its own state after decryption ([`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513)).
+them against its own state after decryption ([`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556)).
 
 ### 7.1 Layout
 
@@ -461,14 +528,14 @@ Vectors: `inner_header_handshake` (116 bytes), `inner_header_text` (body `hello`
 
 | Offset | Size | Field | Rule |
 |---|---|---|---|
-| 0 | 1 | `inner_version` | `0x01` ([`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513)); anything else `UnsupportedFormat` at the codec, remapped to `Corrupt` by every caller (a foreign inner version inside a message is not a negotiation signal) |
+| 0 | 1 | `inner_version` | `0x01` ([`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556)); anything else `UnsupportedFormat` at the codec, remapped to `Corrupt` by every caller (a foreign inner version inside a message is not a negotiation signal) |
 | 1 | 1 | `chat_id_len` | 1..=255 |
 | 2..38 | 36 | `chat_id` | UTF-8 |
 | 38..70 | 32 | `sender_ed25519` | the sender's identity key |
 | 70..102 | 32 | `recipient_ed25519` | the recipient's identity key |
-| 102 | 1 | `direction` | `0x00` A→B (inviter to accepter) · `0x01` B→A ([`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519)); else `Corrupt` |
+| 102 | 1 | `direction` | `0x00` A→B (inviter to accepter) · `0x01` B→A ([`formats.rs#L562`](../../rust/fuzzy_crypto_core/src/formats.rs#L562)); else `Corrupt` |
 | 103..111 | 8 | `counter` | `u64 BE`, per direction, starts at 0 (B→A counter 0 is the handshake) |
-| 111 | 1 | `content_type` | `0x00` handshake (empty body) · `0x01` text (UTF-8) · `0x02` file-key envelope (§7.3) ([`formats.rs#L537`](../../rust/fuzzy_crypto_core/src/formats.rs#L537)); else `Corrupt` |
+| 111 | 1 | `content_type` | `0x00` handshake (empty body) · `0x01` text (UTF-8) · `0x02` file-key envelope (§7.3) ([`formats.rs#L580`](../../rust/fuzzy_crypto_core/src/formats.rs#L580)); else `Corrupt` |
 | 112..116 | 4 | `body_len` | `u32 BE`; 0 is allowed |
 | 116.. | `body_len` | `body` | per content type |
 
@@ -483,7 +550,7 @@ after any rejection the file on disk is byte-identical and the ratchet has not a
 
 | # | Check | Failure |
 |---|---|---|
-| 1 | Text envelope, outer envelope, type `0x03` | `UnsupportedFormat` |
+| 1 | Text envelope, outer envelope, type `0x03` | `UnsupportedFormat` (a newer version or unknown type byte: `NewerVersion`) |
 | 2 | `olm_type` known, body non-empty, and the body parses as a vodozemac `PreKeyMessage` / `Message` | `Corrupt` |
 | 3 | **Olm decrypt** on a *copy* of the session: `MissingMessageKey` (the message key was consumed or evicted) | `Replay` |
 | | `TooBigMessageGap` (more than 2000 ahead of the chain) | `TooOld` |
@@ -515,12 +582,72 @@ Vector: `file_key_body` (44 bytes: key `42×32`, name `report.pdf`).
 |---|---|---|---|
 | 0..32 | 32 | `file_key` | the container's AEAD key |
 | 32..34 | 2 | `original_name_len` | `u16 BE`, 1..=65535 |
-| 34.. | n | `original_name` | UTF-8; then validated as a **file name** ([`files.rs#L269`](../../rust/fuzzy_crypto_core/src/files.rs#L269)): not empty, not `.` or `..`, at most 255 bytes ([`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261)), no `/`, `\`, NUL or any byte in `0x00..=0x1f`, `0x7f` |
+| 34.. | n | `original_name` | UTF-8; then **made safe** as a file name ([`files.rs#L305`](../../rust/fuzzy_crypto_core/src/files.rs#L305)) — never refused for its content (below) |
 
-The name check runs on both sides (the sender derives it from a real basename; the receiver checks it inside
-step 9, before the counter commit). It is a file *name*, never a path, so a peer cannot steer the receiver's
-output outside the directory the receiver chose. It is not display-sanitised (a Unicode direction override is
-a valid file name); the UI must treat it as untrusted text.
+The name is cleaned on both sides by the same function, `safe_file_name` (the sender cleans its own basename
+before sealing it, the receiver cleans whatever the peer sent after opening it), with the same rules on every
+platform, so a peer's choice can never make a file impossible to receive and both devices agree on the name
+(since 2026-10-26; before, the receiver *refused* a bad name as `Corrupt` after the message had been spent,
+and accepted names that Windows cannot create):
+
+1. every separator (`/`, `\`), every character Windows forbids (`< > : " | ? *`), every control character
+   (Unicode `Cc`) and every direction or invisible-format control (U+061C, U+200B–U+200F, U+202A–U+202E,
+   U+2066–U+2069, U+FEFF) becomes `_` — so the result is a single name, never a path, and cannot hide its
+   real extension behind a direction override;
+2. a name over **120 bytes** ([`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277)) is cut at a
+   character boundary, keeping an extension of up to 16 bytes whole — 120 leaves room for the app's ` (n)`
+   and the core's `.part` under every platform's 255 limit and keeps a file in the app's private folders, or
+   in the folder the user saves it to, inside Windows' classic 260-character path limit. The app names the
+   kept container and every opened or saved copy after this cleaned name, never after the container's outside
+   file name (security review 2026-10-26);
+3. trailing dots and spaces are removed (Windows drops them silently);
+4. a Windows device name before the first dot (`CON`, `PRN`, `AUX`, `NUL`, `CONIN$`, `CONOUT$`, `COM0`–`COM9`,
+   `LPT0`–`LPT9` and their `¹²³` forms; any case; trailing spaces ignored) gets a `_` in front;
+5. an empty result (`.`, `..`, only dots and spaces) becomes `file`.
+
+The function is idempotent and never fails; only the codec's own rules (length 1..=65535, valid UTF-8) can
+still refuse a body, and the app's own sender never produces one that breaks them. The result is a bare *name*,
+so a peer cannot steer the receiver's output outside the directory the receiver chose. It is still untrusted
+text for display (the cleaning is for the file system, not for the eye). The app does (2026-10-22): every
+file name and folder it shows has its direction controls and control characters removed
+(`UserFileNames.forDisplay`); and since 2026-10-26 it never hands a received file to another app to open —
+images and text are shown in the app, anything else is offered for saving only (§10.5, `THREAT_MODEL.md` R14).
+
+### 7.4 Recognising without opening (the Open screen's peek)
+
+Open takes anything the user pastes or picks and must route it — to the right person, to the password prompt,
+or to an error — **before** it spends a message key or a one-time key. `peek_pasted(text, chat_ids)` and
+`peek_file(path, chat_ids)` ([`api/formats.rs`](../../rust/fuzzy_crypto_core/src/api/formats.rs)) answer a
+`PeekKind` and, where there is one, a chat id. Neither writes anything: no state file, no cache entry that is
+not already on disk, no output file.
+
+| Input | Answer |
+|---|---|
+| no `Fuzz/` prefix (text) / no `FUZZ` magic and not a small text file (file) | `NotFuzzzy` |
+| `FUZZ` with a version above `0x01`, or version `0x01` with a type byte this build does not know (§12) | `NewerVersion` |
+| bad base64url, a short or malformed payload, version `0x00`, a storage-only type, a container pasted as text, a truncated or header-only container | `Damaged` |
+| invitation / acceptance | `Invitation` / `Acceptance` + the clear chat id, only if it has the chat-id shape (§2) — a **hint**, exactly as `peek_chat_id`; nothing is verified until `accept_invitation` / `complete_handshake` |
+| password-sealed blob / password-mode container | `PasswordText` / `PasswordFile` |
+| message / chat-mode container | `Message` / `ChatFile` + the chat whose session sent it, or none |
+| a file ≤ 1 MiB that is UTF-8 text | peeked as that text, `is_text_file` set (a `.fuzz` file holding a `Fuzz/` blob, made by "Send as a file") |
+
+**Finding the chat of a message without a chat id (§6.5).** The app passes the chat ids of its connected people;
+for each, `messages::is_for_chat` runs the Olm step on a **copy** of the session and drops it. A match is either a
+successful decrypt whose inner header binds to that chat (chat id, both identity keys in constant time, the peer's
+direction — §7.2 checks 4–7), or vodozemac's `MissingMessageKey`, which it only returns after finding a receiving
+chain under the message's ratchet key — a random Curve25519 key of that session alone — so the message is that
+chat's and was already opened (the app then says "Already opened" and where it is). A MAC failure, a
+`TooBigMessageGap` (any session says that on a fresh chain) or no session is "not this chat". The plaintext of a
+match is wiped at once and never crosses the bridge; the counter window is not consulted; nothing is committed.
+The real open (`decrypt_text`, `prepare_file_receive`) runs the whole of §7.2 afterwards, unchanged.
+
+What this costs: one Olm decrypt per connected chat per peek (AES-CBC + HMAC, no KDF), and a peek reveals to the
+app — never to anyone else — which chat a blob belongs to, which the paste into that chat revealed anyway. The
+wire format is unchanged: still no chat id on a message. Since 2026-10-26 message links carry no chat id either
+(`https://ink.fuzzzycore.com/message#<blob>`): the app peeks a link's blob on arrival to name its person, and
+opens it only when the user taps Open (THREAT_MODEL §2.6, §7.5). A `.fuzz` file another app hands over (the
+system's "open with") is peeked the same way and opened, or its reply connected, only on the user's Open or
+Connect tap; nothing that arrives from outside spends a message key or a one-time key by itself.
 
 ---
 
@@ -596,7 +723,7 @@ RustCrypto STREAM construction (`aead-stream` 0.6.0, `EncryptorBE32`/`DecryptorB
 | chunk size | `chunk_size` from the header: encoder 1 MiB, decoder accepts 64 KiB..=16 MiB (§6.6) |
 | chunk `i` (`0 ≤ i < n`) | `AEAD(file_key, nonce_i, aad_i, plaintext_i)` = `ct ‖ tag(16)`; every chunk but the last holds exactly `chunk_size` plaintext bytes, the last holds the remainder (0..=`chunk_size`) |
 | `nonce_i` (24 bytes) | `nonce_prefix(19) ‖ i as u32 BE ‖ last_flag` where `last_flag = 0x01` for chunk `n−1`, `0x00` otherwise — built by `aead-stream` (`StreamBE32::aead_nonce`, `aead-stream-0.6.0/src/lib.rs` line 440) |
-| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L487`](../../rust/fuzzy_crypto_core/src/files.rs#L487)) |
+| `aad_i` | the **exact header bytes as they appear in the file** (`header_len` bytes, §6.6) ‖ `i as u32 BE` ([`files.rs#L576`](../../rust/fuzzy_crypto_core/src/files.rs#L576)) |
 | `n` (chunks) | encrypt: `max(1, ceil(len / chunk_size))` — an empty file is one 16-byte chunk; decrypt: `ceil(body_len / (chunk_size + 16))` |
 
 Vectors: `file_container_password` (one 43-byte plaintext → one chunk sealed with the last flag; key =
@@ -610,12 +737,12 @@ of the *new* `x` is emitted.
 
 ### 9.2 Decoding and what the tags detect
 
-`decrypt_chunks` ([`files.rs#L343`](../../rust/fuzzy_crypto_core/src/files.rs#L343)), in order:
+`decrypt_chunks` ([`files.rs#L432`](../../rust/fuzzy_crypto_core/src/files.rs#L432)), in order:
 
 1. Read at most `MAX_HEADER_LEN = 65 568` bytes ([`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53)),
    decode the header (§6.6; `UnsupportedFormat` / `Corrupt` as there), keep its exact bytes for the AAD.
 2. Derive the key (password mode: Argon2id from the header's salt and parameters, §11; chat mode: §9.4).
-3. Structural check ([`files.rs#L418`](../../rust/fuzzy_crypto_core/src/files.rs#L418)): `body_len = file_len −
+3. Structural check ([`files.rs#L507`](../../rust/fuzzy_crypto_core/src/files.rs#L507)): `body_len = file_len −
    header_len ≥ 16`, `n = ceil(body_len / (chunk_size + 16))`, and the last chunk `≥ 16` bytes; else `Corrupt`
    — before any output file exists.
 4. For `i in 0..n`: read the chunk, `decrypt_next` for `i < n−1`, `decrypt_last` for `i = n−1`; write the
@@ -638,10 +765,12 @@ of the *new* `x` is emitted.
 ### 9.3 The `.part` rule and jobs
 
 - All output goes to `<output>.part` (suffix appended, so `report.pdf.part`), created with mode `0o600` on
-  unix ([`store.rs#L319`](../../rust/fuzzy_crypto_core/src/store.rs#L319)), **after** the header parsed and the key
+  unix ([`store.rs#L360`](../../rust/fuzzy_crypto_core/src/store.rs#L360)), **after** the header parsed and the key
   was derived — so a header-stage rejection creates nothing. On success: `fsync` → close → rename over
-  `<output>` (replacing an existing file silently). On *any* other exit — error, cancel, panic — the `.part`
-  is unlinked by a drop guard ([`files.rs#L499`](../../rust/fuzzy_crypto_core/src/files.rs#L499)). A process kill
+  `<output>` (the core replaces an existing file silently; the app never names an existing file, or one with
+  a `.part` beside it, as `<output>` — it picks `name (1).ext`, `name (2).ext`, … first,
+  `UserFileNames.uniqueOutputPath`, 2026-10-22, `THREAT_MODEL.md` R15). On *any* other exit — error, cancel, panic — the `.part`
+  is unlinked by a drop guard ([`files.rs#L588`](../../rust/fuzzy_crypto_core/src/files.rs#L588)). A process kill
   mid-job can leave a `.part` behind; the next job over the same output truncates it.
 - A job's control word ([`files.rs#L41`](../../rust/fuzzy_crypto_core/src/files.rs#L41)) is read before every
   chunk: paused → sleep 50 ms and re-read; cancelled (terminal) → `Cancelled`, `.part` gone. Progress is one
@@ -653,8 +782,8 @@ of the *new* `x` is emitted.
 ### 9.4 Chat mode — the file key rides in one Olm message
 
 **Send** (`prepare_file_send` → `run_file_job`, [`api/files.rs#L207`](../../rust/fuzzy_crypto_core/src/api/files.rs#L207),
-[`files.rs#L190`](../../rust/fuzzy_crypto_core/src/files.rs#L190)): the input must be a readable regular file
-(`Io` otherwise — checked before anything is spent); its basename is validated as in §7.3; a random 32-byte
+[`files.rs#L191`](../../rust/fuzzy_crypto_core/src/files.rs#L191)): the input must be a readable regular file
+(`Io` otherwise — checked before anything is spent); its basename is made safe as in §7.3; a random 32-byte
 file key is drawn; the file-key body `file_key ‖ name_len ‖ name` is sealed in **one Olm message** on the
 chat's session with content type `0x02` and the next send counter — the sending rules of §7.2 exactly; the
 ratcheted session and counter are persisted; the ticket (key + header) is returned and the core lock
@@ -662,14 +791,14 @@ released. The container header embeds that Olm message; then the chunks are stre
 one ratchet step and has the same forward secrecy as a text message.**
 
 **Receive** (`prepare_file_receive` → `run_file_job`, [`api/files.rs#L248`](../../rust/fuzzy_crypto_core/src/api/files.rs#L248),
-[`files.rs#L220`](../../rust/fuzzy_crypto_core/src/files.rs#L220)): the input must be a regular file; the header is
+[`files.rs#L232`](../../rust/fuzzy_crypto_core/src/files.rs#L232)): the input must be a regular file; the header is
 read and the structural check of §9.2 step 3 runs **first**, so a header-only or truncated container is
 `Corrupt` before the file's message is spent; a password-mode header is `UnsupportedFormat`; then the embedded
 Olm message goes through the receiving chain of §7.2 with `content_type = 0x02` and the file-key body as the
 body parser — `Replay`, `TooOld`, `WrongChat`, `Corrupt` exactly as for text; the state is persisted; the
 ticket carries the key and the original name. The run then opens the chunks with `Corrupt` as the chunk-0
 failure, and additionally refuses to release the key unless the header on disk equals the header the ticket
-was prepared on ([`api/files.rs#L302`](../../rust/fuzzy_crypto_core/src/api/files.rs#L302)) — redundant with the
+was prepared on ([`api/files.rs#L366`](../../rust/fuzzy_crypto_core/src/api/files.rs#L366)) — redundant with the
 AAD, kept as a belt.
 
 **Binding.** The Olm message commits to the inner header only — chat, identities, direction, counter, key,
@@ -690,8 +819,8 @@ The app can write one chat's history to a file the user keeps. The archive is an
 `0x04` container** (§6.6 `key_mode 0x02`: fresh 16-byte salt, Argon2id m = 65 536 KiB, t = 4, p = 1; chunks
 as §9.1) whose plaintext is UTF-8 **JSON lines**, one object per message row in the chat's stored order:
 `chatId`, `chatName`, `direction` (`sent` | `received`), `sentAt` (UTC ISO-8601), `type` (`text` | `file`),
-then exactly one of `text` (the row's opened local seal, §10.4), `fileName` (the base name of the stored
-file — **never file bytes**; the file itself is a plain file on the device, §10.5) or `"unreadable": true`
+then exactly one of `text` (the row's opened local seal, §10.4), `fileName` (the base name of the kept
+sealed file, `<name>.fuzz` — **never file bytes**; the file itself stays sealed in the app, §9.6, §10.5) or `"unreadable": true`
 (a text row whose local seal did not open: absent, malformed, or `Corrupt` / `UnknownChat` / `StoreLocked`
 at the core). The crate sees nothing but a password-mode file job: the lines are produced by the app
 (`lib/src/fuzzzy_ink/data/repositories/chat_archive_repository/`), so no vector covers them — the container
@@ -705,10 +834,37 @@ against offline, Argon2id-bounded guessing (§11). The export is gated on an ope
 returns before a byte is written, so a blank-rows archive cannot be produced). During the seal the JSON
 lines exist in the clear as `<application support directory>/chat_archive_<chat_id>.jsonl` (default file
 mode inside a user-private directory), deleted in a `finally` on every in-process exit; a process **kill**
-mid-seal leaves that file until the next export of the same chat overwrites and deletes it — there is no
-boot sweep (`THREAT_MODEL.md` §2.5, R35). On Android the sealed container is additionally staged by the
-share sheet under `cache/share_plus/` until the next share — sealed bytes only, as for every file the app
-shares.
+mid-seal leaves that file until the next launch, whose sweep deletes every `chat_archive_*.jsonl` before
+anything else runs (2026-10-26, `UserFileStore.wipeTemporaryPlainCopies`; `THREAT_MODEL.md` §2.5, R35). On a
+computer the sealed container is written straight to the place the user picked in the save panel; on Android
+and iOS it is written into the app's private hand-off folder (§10.1), given to the system save dialog
+(Android) or the share sheet's "Save to Files" (iOS), and wiped right after — sealed bytes only.
+
+### 9.6 Keeping a received file
+
+The app keeps what it receives sealed, never the plaintext (2026-10-26): a received chat-mode container is
+copied into the app's private files folder (§10.1) **before** it is prepared, and the copy is what the core
+opens. Because the container's key message is spent by that first prepare (§9.4), the file key is sealed for
+the app to keep ([`api/files.rs` `keep_received_file`](../../rust/fuzzy_crypto_core/src/api/files.rs)), between
+prepare and run:
+
+| Item | Definition |
+|---|---|
+| kept key | `0x20` local seal (§6.9): `AEAD(history key of chat_id, random nonce, aad = "kept-file-key" ‖ chat_id, file_key)` — exactly 32 bytes of plaintext ([`store.rs` `seal_kept_file_key`](../../rust/fuzzy_crypto_core/src/store.rs)) |
+| stored | base64 in the file's message row (`StoredMessageData.sealedPlaintext`), beside the kept container's path |
+| reopen | `reopen_kept_file(chat_id, container, kept key)`: open the seal (tag failure, another chat's id, a history seal or a body that is not 32 bytes → `Corrupt`; a deleted chat → `UnknownChat`), peek the container's header (truncated → `Corrupt`, password mode → `UnsupportedFormat`), then run a receive ticket — chunk 0 of any container the key was not made for is `Corrupt` (the chunk AAD binds the whole header, §9.4) |
+
+Reopening spends no message and writes no state; it can run any number of times while the chat exists. The
+domain prefix keeps a history seal (`local-seal`, §10.4) from ever opening as a file key and the reverse. A
+send ticket, or a ticket already run, is `Internal` (only the receive side keeps anything; a sender keeps the
+container it produced, which it cannot open — FN-013).
+
+What this costs, stated exactly: a kept file has the **same protection as the chat's text history** (§10.4) —
+the file key is outside forward secrecy once kept, readable by whoever holds the store key (or the master
+password and the OS keystore) and the kept container. Deleting the chat deletes its state file and with it the
+history key, so every kept key of that chat becomes unopenable; the app also deletes the chat's files folder
+(§10.1). No test vector covers the kept key: it is the `0x20` of §6.9 under a new AAD, and the Rust tests
+assert round trip, tamper, cross-chat, cross-domain and length rules.
 
 ---
 
@@ -719,40 +875,122 @@ shares.
 ```
 <application support directory>/fuzzy_crypto_store/<chat_id>.state      one sealed 0x20 file per chat
 <application support directory>/fuzzy_crypto_store/<chat_id>.state.tmp  transient, see 10.3
-flutter_secure_storage  key "crypto_store_key_v1"                       the wrapped store key (0x10), base64
+<application support directory>/fuzzy_crypto_store.lock                 empty; the store's exclusive lock while it is open (§17.10)
+flutter_secure_storage  key "master_key_password_v2"                    the master key under the master password (0x10), base64
+flutter_secure_storage  key "master_key_recovery_v2"                    the master key under the recovery key (0x10), base64 — absent without a recovery key
+flutter_secure_storage  key "store_key_wrap_v2"                         the store key under the master key (0x20), base64
+flutter_secure_storage  key "recovery_lock_v2"                          the recovery lock (public) under the store key (0x20, AAD "recovery-lock"), base64 — kept with the recovery wrap
+flutter_secure_storage  key "vault_key_recovery_v2"                     the vault key sealed to the recovery lock (0x11, §6.10), base64 — only for a vault with its own password and a kept recovery key
+flutter_secure_storage  key "auto_lock_settings_v1"                     the auto-lock times, sealed under the store key (0x20, §10.7), base64
 Isar (app database)     StoredMessageData.sealedPlaintext                one local seal (0x20) per message under the chat's history key, base64
-Isar (app database)     StoredVaultMetadata.verificationTokenBase64      the wrapped vault master key (0x10), base64
-vault item files        one file per item (VaultFileDataSource)          a 0x20 blob, AAD "vault-item" (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/vault.meta                       JSON: the wrapped vault key (field "verificationToken", base64: a 0x20 under the master key, or a 0x10 under the vault's own password); vault id and timestamps in plaintext. No auto-lock value: the vault's timer is a constant of the app
+<application support directory>/vault/items/<item_id>.vault             one file per item: a 0x20 blob, AAD "vault-item" ‖ version ‖ item id (optionally wrapped again in a 0x05 under a per-item password)
+<application support directory>/vault/items/<item_id>.label             the item's list label (a password's username, a file's name): a 0x20 blob of 302 bytes, AAD "vault-label" ‖ version ‖ item id, the label padded to 256 bytes (§10.6); one for every password and file item, empty without a username; none for a note or an item with its own password
+<application support directory>/vault/items/<item_id>.{vault,label}.rekey  transient: an item's or label's copy under the new key while the vault moves to it (§10.6)
+<application support directory>/vault/.tmp/                             transient: the vault's atomic-write temp files (VaultFileDataSource)
 <application support directory>/chat_archive_<chat_id>.jsonl            transient: plaintext JSON lines during an archive export (§9.5), deleted in finally
-<application documents directory>/<chat name>/<name>                     unfuzzed FILES in the clear (§10.5) — plain files, not sealed; fuzzed containers <name>.fuzz sit beside them.
-                                                                        Android since T-0366: the finished file is moved to the public Downloads/Fuzzzy Ink/<chat name>/ (MediaStore); iOS exposes Documents to the Files app
+<application support directory>/sealed_files/chats/<safe chat name> (<first 8 of chat id>)/<name>.fuzz
+                                                                        one folder per chat: the containers the user sent (0x04, chat mode) and the received ones
+                                                                        the app keeps (§9.6, their kept key in the message row); deleted with the chat; a taken
+                                                                        name becomes <name> (1).<ext>.fuzz
+<application support directory>/sealed_files/basics/<name>.fuzz        the password containers Basics made (0x04, password mode)
+<application support directory>/handoff/<one folder per use>/<name>    transient: a plain (or staged sealed) file for one use — the in-app viewer, the save dialog,
+                                                                        the share sheet — wiped right after, at lock and by the
+                                                                        launch sweep (§10.5); the only folder
+                                                                        Android's FileProvider serves
+<application support directory>/incoming/<one folder per file>/<name>   a sealed .fuzz another app handed over, waiting for Open: wiped once Open used or left
+                                                                        it, at erase and by the launch sweep; a lock keeps it for Open after the unlock
 ```
 
 The store directory is created and canonicalised when the store opens; every path under it is formed only
 from a shape-validated chat id (§2) and is asserted to stay inside the directory.
 
-### 10.2 Store key lifecycle
+The vault folder is app-private. Builds before 2026-10-22 used the application documents directory itself as
+the vault folder (`vault.meta`, `items/`, `.tmp/` loose in it); at every start, before the vault is used, a
+crash-safe one-time move (`VaultLocationMigration`, `THREAT_MODEL.md` §2.5) brings such a vault into
+`<application support directory>/vault/`. The wrapped vault key is not stored in Isar
+(`StoredVaultMetadata` is declared but never written).
 
-- **Creation** (`create_store_key`, [`api/core.rs#L23`](../../rust/fuzzy_crypto_core/src/api/core.rs#L23)): 32 random
-  bytes, wrapped (§6.8, AAD `store-key`) under the app-lock password with a fresh salt and nonce and
-  `Argon2id(m = 65 536 KiB, t = 4, p = 1)`. With app lock disabled the password is the empty string — the
-  wrapping is the same, the KEK is simply derived from `""`.
-- **Open** (`open_store`, [`api/core.rs#L33`](../../rust/fuzzy_crypto_core/src/api/core.rs#L33)): unwrap under the
-  password — a tag failure is `WrongPassword` (the AEAD cannot distinguish a wrong password from a tampered
-  blob), so **the wrapped key doubles as the password verifier**; there is no separate verification token.
-  The plaintext must be exactly 32 bytes. Then the directory is created/canonicalised and an opaque handle is
-  returned (§13).
-- **Password change / enable / disable** (`rewrap_store_key`, [`api/core.rs#L50`](../../rust/fuzzy_crypto_core/src/api/core.rs#L50)):
-  unwrap under the old password, wrap under the new one with a fresh salt and nonce. One blob replaces the
-  other in secure storage in a single write; nothing else on disk changes, because nothing else is keyed by
-  the password.
+Builds before the master password (2026-10-26) kept the store key wrapped straight under the app-lock password in
+`crypto_store_key_v1`, with `""` when the lock was off. No migration exists (pre-launch): such an install has no
+master key, so it starts with the first run, which erases the app's own data — secure-storage entries, database,
+state files, vault folder; never the user's unfuzzed files — before drawing new keys. The app says so on the
+first-run screen.
+
+### 10.2 Master key, store key and recovery key
+
+One master password locks every key; the keys lock the data (owner, 2026-10-25: "user password locks all keys.
+keys lock messages"):
+
+```
+master password ──Argon2id──▶ 0x10 "master-key" ──────────┐
+recovery key ─────Argon2id──▶ 0x10 "master-key-recovery" ──┴──▶ master key (never stored, never kept)
+                                                                 │
+                       ┌─────────────────────────────────────────┴───────────────────┐
+              0x20 "store-key-wrap"                                     0x20 "vault-key-wrap" (default)
+                       ▼                                                              ▼
+                  store key ──▶ state files ──▶ history keys ──▶ history         vault key ──▶ vault items
+                       ├──▶ sealed app settings (§10.7)       or: vault password ──Argon2id──▶ 0x10 "vault-key"
+                       └──▶ 0x20 "recovery-lock": the lock (public)       and: recovery key ──X25519──▶ 0x11 "vault-key-recovery"
+```
+
+The recovery key reaches a vault with its own password through the `0x11` box (§6.10); the master password reaches
+the lock's public half only, which seals but does not open.
+
+- **Creation** (`create_master_key`, [`api/core.rs#L65`](../../rust/fuzzy_crypto_core/src/api/core.rs#L65)), the first
+  run: 32 random bytes each for the master key and the store key, and a recovery key. The master key is wrapped
+  under the master password (§6.8, AAD `master-key`) and under the recovery key (AAD `master-key-recovery`), each
+  with a fresh salt and nonce and `Argon2id(m = 65 536 KiB, t = 4, p = 1)`; the store key is wrapped under the
+  master key (§6.9, AAD `store-key-wrap`). The master key is dropped (wiped) before the store opens with the
+  store key; the recovery lock (below) is then sealed under the store key. An empty password is refused. Two
+  Argon2id runs. The app writes the store wrap, then the password wrap last (its presence marks a finished first
+  run); it keeps the recovery wrap and the lock only once the user confirms the key is saved, so a skipped key
+  leaves neither.
+- **The recovery key** ([`master.rs#L114`](../../rust/fuzzy_crypto_core/src/master.rs#L114)): 19 bytes from the OS CSPRNG
+  (152 bits) and one check byte, `SHA-256("fuzzy-recovery-check-v1" ‖ the 19 bytes)[0]`; the 20 bytes are written as
+  RFC 4648 base32 (32 characters, no padding) in eight groups of four, `XXXX-XXXX-…`. Reading it ignores case,
+  spaces, dashes and line breaks and reads `0`, `1`, `8` as `O`, `I`, `B`; anything else, a wrong length or a
+  wrong check byte is `Corrupt` — a typo, told apart before any Argon2 run from a key that does not open this
+  device (`WrongPassword` at unwrap). The KDF input is the 20 bytes. The recovery key crosses the FFI as text
+  only as Rust → Dart once to be shown and Dart → Rust when typed (§13): `check_recovery_key` reads its form
+  and check byte (no key work, no Argon2 run) so the app can say "Key accepted." before it asks for a new
+  password, then the call that uses it. The app never stores it.
+- **The recovery lock** ([`master.rs#L216`](../../rust/fuzzy_crypto_core/src/master.rs#L216)): an X25519 key pair the
+  recovery key determines — secret = `SHA-256(the 20 bytes ‖ 00 00 00 01 ‖ "fuzzy-recovery-lock-v1")` (X9.63 KDF,
+  clamped by X25519), lock = its public key. The 20 bytes are 152 random bits drawn by the crate, so a hash KDF is
+  enough: there is nothing to stretch, and a guess checked against the public lock still costs 2¹⁵¹ on average.
+  The lock is public: the app keeps it sealed under the store key (`0x20`, AAD `recovery-lock`,
+  [`store.rs#L639`](../../rust/fuzzy_crypto_core/src/store.rs#L639)) only so that a lock swapped in the secure
+  storage does not open and nobody without the store key can make the app seal a vault key to a lock of theirs.
+  Anything is sealed to it as a `0x11` box (§6.10); the recovery key alone opens a box.
+- **Open** (`open_store`, [`api/core.rs#L91`](../../rust/fuzzy_crypto_core/src/api/core.rs#L91)): unwrap the master key
+  under the password — a tag failure is `WrongPassword` (the AEAD cannot distinguish a wrong password from a
+  tampered blob), so **the password wrap doubles as the password verifier**; there is no separate verification
+  token — then the store key under the master key (`Corrupt` on failure); then the directory is
+  created/canonicalised and an opaque handle is returned (§13). One Argon2id run.
+- **Password change** (`change_master_password`, [`api/core.rs#L108`](../../rust/fuzzy_crypto_core/src/api/core.rs#L108)):
+  unwrap the master key under the old password, wrap it under the new one with a fresh salt and nonce. One blob
+  replaces the other in secure storage in a single write, so the change is atomic: nothing else is keyed by the
+  password — the store wrap, the recovery wrap, a vault wrap under the master key and every state file stay as
+  they are. There is no "lock off": the password cannot become empty.
+- **Recovery** (`recover_master_password`, [`api/core.rs#L125`](../../rust/fuzzy_crypto_core/src/api/core.rs#L125)):
+  read the typed key, unwrap the master key from the recovery wrap, wrap it under the new master password, open
+  the store. The recovery key, its lock and a vault box sealed to it stay valid. Two Argon2id runs.
+- **New recovery key** (`new_recovery_key`, [`api/core.rs#L154`](../../rust/fuzzy_crypto_core/src/api/core.rs#L154)):
+  the master password opens the master key, a new recovery key is drawn and the master key wrapped under it; its
+  lock is sealed under the store key of the open store (a closed store is `StoreLocked`). Two Argon2id runs. When
+  the vault has its own password, its password seals the vault key to the new lock (`vault_seal_for_recovery`,
+  §10.6) — the master password alone cannot, by design; a wrong vault password stops the change before anything
+  is deleted. The app then deletes the old recovery wrap, lock and vault box at once and stores the new ones when
+  the user confirms the key is saved; once they are gone the old key opens nothing.
 - **Lock** (`close`): the handle drops the store key and every cached state; every later call on the handle is
-  `StoreLocked`.
+  `StoreLocked`. The app closes it on the Lock button, after the idle time, after the time in the background, and
+  on every path that ends the session.
 
 ### 10.3 Sealed per-chat state files
 
 `<chat_id>.state` is a `0x20` blob (§6.9): `AEAD(store key, random nonce, aad = "chat-state" ‖ chat_id,
-body)` ([`store.rs#L42`](../../rust/fuzzy_crypto_core/src/store.rs#L42), no separator — the chat id is fixed-length).
+body)` ([`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46), no separator — the chat id is fixed-length).
 Vector: `state_file` with its decrypted body in `state_file.body.json`.
 
 The body is compact serde JSON of `ChatState` ([`state.rs#L57`](../../rust/fuzzy_crypto_core/src/state.rs#L57)) —
@@ -782,8 +1020,8 @@ One AEAD scheme with random nonces covers all local state. The JSON is produced 
 that is wiped after use ([`state.rs#L27`](../../rust/fuzzy_crypto_core/src/state.rs#L27)), so no partial copy of a
 key is left on the heap by buffer growth.
 
-**Atomic write, save-before-return** ([`store.rs#L334`](../../rust/fuzzy_crypto_core/src/store.rs#L334),
-[`#L420`](../../rust/fuzzy_crypto_core/src/store.rs#L420)): every mutation (pairing step, message, file key, flag)
+**Atomic write, save-before-return** ([`store.rs#L375`](../../rust/fuzzy_crypto_core/src/store.rs#L375),
+[`#L556`](../../rust/fuzzy_crypto_core/src/store.rs#L556)): every mutation (pairing step, message, file key, flag)
 runs inside `with_state_mut`: load (lazily cached), mutate, seal, write `<chat_id>.state.tmp` (mode `0o600`),
 `fsync`, rename over `<chat_id>.state`, `fsync` the directory (unix). The result of the operation is returned
 only after the rename. If the mutation, the seal or the write fails, the cached copy is evicted and the next
@@ -791,32 +1029,41 @@ call re-reads the disk — the cache never holds a state that is not on disk, an
 the file byte-identical. On decrypt this means: a crash *between* Olm decrypt and the write leaves the message
 key on disk, so the user re-pastes once; a crash *after* the write has already returned the plaintext.
 
-**Delete** ([`store.rs#L444`](../../rust/fuzzy_crypto_core/src/store.rs#L444)): remove a stale `.tmp`, overwrite the
-state file with zeros (best effort on flash), unlink. Idempotent. The history key goes with the state, so the
+**Delete** ([`store.rs#L580`](../../rust/fuzzy_crypto_core/src/store.rs#L580)): overwrite a stale `.tmp` and the
+state file with zeros **in place** — opened without truncation, so the zeros land on the blocks that held the
+ciphertext rather than on newly allocated ones — `fsync`, then unlink (since 2026-10-26; before, the file was
+truncated first, which freed the old blocks unwritten). Best effort: on a copy-on-write file system (APFS on
+iPhone and Mac, Btrfs) and on flash storage with wear levelling the old blocks can survive an in-place write;
+there the protection of a deleted chat's old state is the platform's disk encryption. Idempotent. The history key goes with the state, so the
 chat's sealed history (§10.4) is unreadable from then on by design — a chat re-created under the same id draws
 a new key and answers `Corrupt` for the old seals.
 
 ### 10.4 Local seal of message history
 
 The app keeps received *and* sent **text** plaintext locally (the ratchet makes a blob decryptable once, and a
-sender can never decrypt its own output) — owner decision D-1, design (a). File rows carry no seal: a received
-file is a plain file on disk (§10.5) and its row holds only the path. Each text plaintext is sealed by
-`seal_local(chat_id, plaintext)`: `AEAD(history key of chat_id, random nonce, aad = "local-seal" ‖ chat_id,
-plaintext)` in a `0x20` blob, stored base64 in the database row
-([`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43), [`#L210`](../../rust/fuzzy_crypto_core/src/store.rs#L210),
-[`#L466`](../../rust/fuzzy_crypto_core/src/store.rs#L466)); `open_local(chat_id, blob)` is the inverse. The
+sender can never decrypt its own output) — owner decision D-1, design (a). File rows carry no text seal: a
+file row holds the stored path of its sealed container (§10.1), and a received file row's `sealedPlaintext`
+holds the container's kept key instead (§9.6; its own AAD `kept-file-key` ‖ chat id, so it never opens as
+history and history never opens as a kept key). Each text plaintext is sealed by
+`seal_local(chat_id, row, plaintext)`: `AEAD(history key of chat_id, random nonce, aad = "local-seal" ‖ chat_id ‖
+row, plaintext)` in a `0x20` blob, stored base64 in the database row. `row` is the row's own identity as the app
+forms it: the direction byte (`01` sent, `00` received) ‖ the UTF-8 of the row's `Fuzz/` blob text (the chat id is
+fixed-length, so no separator is needed). A seal copied onto another row — of this chat or another — or a row
+flipped between sent and received no longer opens (`Corrupt`; security review 2026-10-22)
+([`store.rs#L47`](../../rust/fuzzy_crypto_core/src/store.rs#L47), [`#L201`](../../rust/fuzzy_crypto_core/src/store.rs#L201),
+[`#L610`](../../rust/fuzzy_crypto_core/src/store.rs#L610)); `open_local(chat_id, row, blob)` is the inverse. The
 history key is the chat's own (§3): it is read from that chat's sealed state — the cached copy when the state is
 loaded, else the file — so a chat the store does not know is `UnknownChat`, a tag failure (a tampered blob,
-another chat's key, or the right key under another chat's id, which the AAD binds) is `Corrupt`. Vector:
+another chat's key, the right key under another chat's id or another row, which the AAD binds) is `Corrupt`. Vector:
 `local_seal_chat`.
 
 What this buys, stated exactly: a leaked **history key** opens one chat's history and no other's, on one device
-(A's and B's keys for the same chat are independent). It does **not** limit a leaked **store key** or the app-lock
+(A's and B's keys for the same chat are independent). It does **not** limit a leaked **store key** or the master
 password: the store key opens every state file, each state file holds its chat's history key, so whoever has the
 store key reads every chat's history — the per-chat key is defence in depth below the store key, not a second
 gate above it. History is therefore readable only while the store is unlocked; because the store key is wrapped
-under the app-lock password, a copy of the database without the password (and without the OS keystore) is
-ciphertext. No migration exists: seals written by the pre-F2-12 store-derived key (`HKDF(store key,
+under the master key, and the master key under the master password, a copy of the database without the password
+(or the recovery key) is ciphertext. No migration exists: seals written by the pre-F2-12 store-derived key (`HKDF(store key,
 "fuzzy-local-seal-v1")`, AAD `local-seal` without a chat id) read as `Corrupt` at the core — an empty row in
 the app, which never throws on a seal it cannot open (`THREAT_MODEL.md` §8) — that key was never shipped.
 
@@ -825,44 +1072,134 @@ the app, which never throws on a seal it cannot open (`THREAT_MODEL.md` §8) —
 Deliberately, so the reviewer is not misled: the app's Isar database is not encrypted as a whole. Chat names,
 the chat id, timestamps, message ordering, file names and sizes, the `encryptedMessage` column (the `Fuzz/`
 blob text itself — ciphertext, but a record that a message exists), and every other row are plaintext on disk.
-Only the `sealedPlaintext` column and the vault item files are sealed; a vault item's title, tags, group and
-type are plaintext columns in the database. The wrapped store key lives in the platform
+Only the `sealedPlaintext` column, the vault item files and labels and the kept `.fuzz` files (§10.1) are sealed; a vault item's title, tags, group and
+type are plaintext columns in the database. Of a vault item's list label (§10.6) a disk reader sees only what the
+plaintext row already says: a label file exists for every password and file item without a password of its own
+(empty when there is no username), and every label file has the same size (the label is padded to 256 bytes in
+the core, a longer one cut), so neither its presence nor its size tells whether a username exists or how long
+it or a file name is. Like every vault file, its modification time marks each content save. The wrapped store key lives in the platform
 secure storage (Keychain / Keystore / DPAPI / libsecret) as a `0x10` blob.
 
-**Unfuzzed files are written in the clear.** A received file's plaintext is delivered as an ordinary file at
-`<application documents directory>/<chat name>/<original name>` — on desktop that is the user's Documents
-folder; on iOS the app's Documents folder, which the Files app shows as "On My iPhone › Fuzzzy Ink"; on
-Android the file is written there and then moved to the public `Downloads/Fuzzzy Ink/<chat name>/` through
-MediaStore (T-0366, so the user finds it with any file manager) — and the fuzzed containers the user produced
-sit beside it as `<name>.fuzz` (ciphertext). The plaintext file is **not sealed, not gated by the app lock, and
-not removed when the chat is deleted**; anyone who can read the device's file system reads it, and only text
-rows get a `sealedPlaintext` (§10.4). A file row's `encryptedMessage` column holds that file's path, so the
-database names the plaintext file but does not contain it; the archive export (§9.5) records the name only.
-Basics file decryption likewise writes a plain file into a folder under the same documents directory. The app's own copy (About
-encryption; README) says so in as many words. `THREAT_MODEL.md` §2.5, §7.13, R36.
+**Files are kept sealed; plaintext exists only for one use** (2026-10-26, owner: "transfer ownership of
+unfuzzed files to user and we store only fuzzed ones"). The app's private storage holds only sealed files:
+the `.fuzz` containers of each chat and of Basics (§10.1) and the vault's items (§10.6). A received chat file
+is kept as the container it arrived in, with its kept key (§9.6); a Basics container under its password.
+When the user opens, saves or shares a file, it is unfuzzed into a fresh folder of the private hand-off folder
+(`<application support directory>/handoff/`), shown in the app (images and plain text; text is never
+selectable) or given to the system save dialog (Android `ACTION_CREATE_DOCUMENT`, a computer's save panel,
+iOS the share sheet's "Save to Files") or the share sheet, and wiped right after: on closing the viewer, after
+the save, when the app is back in front after a share (Android's share sheet returns before the target has
+read), when the chat or Basics page closes, when the app locks (`UserFileStore.wipeAtLock`) and at every launch
+(`UserFileStore.wipeTemporaryPlainCopies`,
+which also deletes the file picker's cache copies, Android's old share staging `cache/user_files` and
+`cache/share_plus`, the archive export's working file and, on a phone, the old Basics `Working Folder`).
+A vault file item is shown from memory and written to the hand-off folder only to be saved or shared.
+Nothing is written to a user-visible folder, to Android's public Downloads or MediaStore (no gallery
+indexing), or to iOS's Files-app-visible Documents (the app no longer exposes it), and the app never hands a
+plain file to another app to *open* it — so a received program cannot be run from the app. A file the user
+saves or shares is the user's: it leaves as an ordinary file. Deleting a chat deletes its state (and with it
+every kept key, §9.6), its message rows and its files folder. A file row's `encryptedMessage` column holds the
+container's path relative to `sealed_files` (so iOS's container move between updates does not break it): the
+database names the sealed file, not a plaintext one. While a hand-off copy exists it is plain on disk, in
+user-private storage with the default file mode; a process kill leaves it until the next launch.
+`THREAT_MODEL.md` §2.5, §7.13, R36.
 
 ### 10.6 Vault
 
-The vault has its own 32-byte master key, wrapped under the vault password exactly like the store key (§6.8)
-but with AAD `vault-key` — a vault blob never unwraps as the app-lock key and vice versa. Items are sealed
-under the master key **directly** (no sub-key: the master key has one purpose) as `0x20` blobs with AAD
-`vault-item` ([`vault.rs#L16`](../../rust/fuzzy_crypto_core/src/vault.rs#L16)); a tag failure is `Corrupt`. A vault
-password change re-wraps the master key ([`vault.rs#L52`](../../rust/fuzzy_crypto_core/src/vault.rs#L52)); items are
-never re-encrypted. The master key is held in an opaque handle (`VaultKey`) that behaves like the store handle
-(`close` → later calls `StoreLocked`). Vectors: `wrapped_vault_key`, `vault_item`.
+The vault has its own 32-byte key ([`vault.rs`](../../rust/fuzzy_crypto_core/src/vault.rs)). By default it is wrapped
+under the **master key** as a `0x20` with AAD `vault-key-wrap` (`vault_init_with_master`; one Argon2id run for the
+master password), so the master password opens the vault (`vault_unlock_with_master`). On request it gets a
+**password of its own** instead: a `0x10` with AAD `vault-key` under that password (`vault_unlock`,
+`vault_rewrap`). The switch to its own password moves the vault to a new key (`vault_use_own_password`, below);
+the way back, `vault_use_master_password` (the vault password opens the `0x10`, the master password opens the
+master key, the key is wrapped under it), keeps the key. Which one a vault uses is read from
+the wrapped key's type byte (`vault_uses_own_password`, synchronous, no key). Either way the vault key opens no
+chat, and neither the store key nor any history key opens a vault item. An empty vault password is refused.
+
+**Its own password means a new key and a new recovery key** (security review 2026-10-26). Every vault starts under
+the master key (`vault_init_with_master`; there is no call that makes a vault with its own password from scratch).
+`vault_use_own_password` ([`api/vault.rs`](../../rust/fuzzy_crypto_core/src/api/vault.rs)) takes the master
+password, opens the master key and with it the current vault key, then draws a **new** vault key (wrapped as a
+`0x10` under the new password), a **new** recovery key (the master key wrapped under it as a `0x10` AAD
+`master-key-recovery`, its lock sealed under the store key) and seals the new vault key to the new lock (`0x11`);
+three Argon2id runs. It hands back both keys as handles. The app then, in this order: locks the vault; re-seals
+every item from the old key to the new one with `vault_reseal` (open under the old key, seal under the new one,
+same id and version, fresh nonce; the plaintext stays in Rust and is wiped) into a copy beside each item file,
+after first writing the new `vault.meta` beside the old one (`vault.meta.rekey`); deletes any old `0x11` box; then
+commits with one rename of `vault.meta.rekey` over `vault.meta` and renames the item copies over the old files.
+A stop before the commit leaves `vault.meta.rekey`, and the next read of the metadata deletes the copies and keeps
+the old vault; a stop after it is finished at the next read by renaming the remaining copies. After the commit the
+app deletes the old recovery wrap and lock and shows the new recovery key, keeping its wrap, lock and box only when
+the user confirms it is saved (as at the first run). The result: a copy of the old `vault.meta` plus the master
+password gives the old key, which opens no item kept after the switch; a recovery key somebody made earlier with
+the master password opens neither the new box nor the master key. An item with a password of its own cannot be
+re-sealed without that password; no screen makes such items any more, and the switch is refused if one exists.
+
+**The recovery key opens a vault with its own password too** (owner, 2026-10-26); the master password alone still
+does not. A vault under the master key needs nothing more: the recovery key opens the master key. A vault with its
+own password is **sealed to the recovery lock** (a `0x11`, AAD `vault-key-recovery`, §6.10) of the key shown at the
+switch. The master password reaches the master key, the store key and the lock's public half, none of which opens
+the box.
+The box needs no update when the vault password changes (`vault_rewrap`) — the vault key does not change — and is
+deleted when the vault goes back under the master key. With the recovery key (a typo is `Corrupt`, before any
+Argon2 run; another device's key `WrongPassword`) the vault gets a new password of its own, `vault_recover` (one
+Argon2id run), or goes back under the master key,
+`vault_recover_to_master` (the recovery key also opens the master key's recovery wrap; one Argon2id run); either way the vault is open and no item is
+re-encrypted (the key does not change). A new recovery key reseals the box with the vault password (`vault_seal_for_recovery`, §10.2). Without a kept recovery key no box exists and
+a vault with its own password is lost with its password; the app says which applies where the user chooses it.
+
+Items are sealed under the vault key **directly** (no sub-key: the key has one purpose) as `0x20` blobs with AAD
+`vault-item` ‖ u32 BE version ‖ item id ([`vault.rs#L129`](../../rust/fuzzy_crypto_core/src/vault.rs#L129)); a tag
+failure is `Corrupt`. The version is the item's content version in the vault index (its database row); the app
+writes the item file first and the row second, so after a stop between the two it opens the file at the row's
+version or one ahead (and records the newer version). An item file copied over another item, or an older copy of
+the same item put back, does not open (security review 2026-10-22). A password change, a switch back to the master
+password or a recovery re-wraps the key and re-encrypts no item; only the switch to its own password moves every
+item to a new key (above). The key is held in an opaque handle (`VaultKey`) that behaves like the store
+handle (`close` → later calls `StoreLocked`). The vault's auto-lock is a constant of the app (5 minutes after
+opening), not a value in `vault.meta`. Vectors: `wrapped_vault_key`, `vault_key_wrap`, `vault_item`, `vault_label`,
+`recovery_lock`, `vault_key_recovery`.
+
+**List labels** (2026-10-26). So that My safe's list can show a password's username or a file's name without
+opening any item, each password and file item also has a small label file, `<item id>.label`, sealed by calls of
+its own (`vault_seal_label`, `vault_open_label`, `vault_reseal_label`): a `0x20` under the vault key with AAD
+`vault-label` ‖ u32 BE version ‖ item id, bound to the item and its content version like the item but in its own
+domain, so a label never opens as an item, as another item's label or at another version, and an item never
+opens as a label, whatever the ids. The plaintext is always 256 bytes, padded in the core: one length byte, the
+label's UTF-8 text cut at a character boundary to at most 255 bytes, zeros to the end (any other shape is
+`Corrupt`); every label file is 302 bytes. A password item without a username has an empty label, so neither the
+file's presence nor its size says anything about the label (security review 2026-10-26). The app writes it after
+the item file and before the database row; the list opens it at the row's version or one ahead and shows the
+item's type when it does not open (a stop left it behind) or is empty. It is opened only while the vault is open,
+leaves the app's memory when the vault locks (with the vault or with the whole app), holds no password, note or
+file content, and is deleted with the item. A note and an item with a password of its own have none (only that
+password opens anything of such an item). The switch to the vault's own password re-seals each label with its
+item (`vault_reseal_label`, staged and committed with the items); every label that did not move — it did not
+open, a file step failed, its item file is missing, it has no row — is deleted before the commit, and if that
+delete fails the switch stops and the old vault stays whole, so no label is left under the old key. Vector:
+`vault_label`.
+
+### 10.7 Sealed app settings
+
+A setting that guards the app — today only the auto-lock times — is sealed under the **store key** as a `0x20` with
+AAD `app-setting` ‖ name ([`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48); `seal_setting` /
+`open_setting` on the store handle, name 1..=64 bytes). An edited blob is `Corrupt`, and the app then uses its
+standard times; the app also accepts only the times it offers. The settings can be read only while the store is
+open.
 
 ---
 
 ## 11. Password formats
 
-**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L94`](../../rust/fuzzy_crypto_core/src/store.rs#L94)),
-is the crate's only Argon2 entry: the store key, the vault key, password-sealed blobs and password-mode files
-all go through it.
+**Argon2id everywhere.** One implementation, `derive_kek` ([`store.rs#L101`](../../rust/fuzzy_crypto_core/src/store.rs#L101)),
+is the crate's only Argon2 entry: the master key (under the master password and under the recovery key), a vault
+key under its own password, password-sealed blobs and password-mode files all go through it. The one key derived
+without it is the recovery lock (§10.2): its input is the crate-drawn 152-bit recovery key, not a password.
 
 | Parameter | Value written by this build | Where |
 |---|---|---|
 | algorithm | Argon2id, version 0x13 | `argon2` 0.6.0 |
-| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27) |
+| `m_cost` | 65 536 KiB (64 MiB) | [`store.rs#L32`](../../rust/fuzzy_crypto_core/src/store.rs#L32) |
 | `t_cost` | 4 | same |
 | `p_cost` | 1 | same |
 | output | 32 bytes | same |
@@ -876,12 +1213,12 @@ changed parameter derives a different KEK.
 
 **Caps on attacker-controlled headers.** Because a pasted `0x05` blob, a received container or a tampered
 `0x10` blob dictates the cost, the decoder refuses `m_cost > 262 144 KiB (256 MiB)`
-([`store.rs#L36`](../../rust/fuzzy_crypto_core/src/store.rs#L36)) or `t_cost > 16`
-([`store.rs#L39`](../../rust/fuzzy_crypto_core/src/store.rs#L39)) — and anything `argon2::Params::new` rejects, e.g.
+([`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41)) or `t_cost > 16`
+([`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44)) — and anything `argon2::Params::new` rejects, e.g.
 `p = 0` or `m < 8·p` — as `Corrupt` **before allocating a single block**. The worst header a peer can make the
 device compute is therefore 256 MiB × 16 passes (≈ 2 s on a 2021 laptop in release, more on a phone). All
 Argon2 runs in the process are serialised by one lock, taken *before* the block buffer is allocated
-([`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48)), so peak memory is one buffer, and that buffer
+([`store.rs#L55`](../../rust/fuzzy_crypto_core/src/store.rs#L55)), so peak memory is one buffer, and that buffer
 is owned by the crate and wiped after the run (the `argon2` crate does not wipe its own).
 
 **Password-sealed blob `0x05`** (§6.7; vector `password_sealed_text`): `open_bytes`
@@ -899,19 +1236,24 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 ## 12. Versioning policy
 
 - **Magic, version, type** (§6.2) are the whole negotiation. A decoder that does not recognise all three
-  refuses the input with `UnsupportedFormat` and never guesses.
+  refuses the input and never guesses: a version above its own, or a type byte it does not know, is
+  `NewerVersion` (the app says "Needs a newer Fuzzzy Ink"); anything else it does not recognise is
+  `UnsupportedFormat`.
 - **A version bump (`0x01` → `0x02`) means an incompatible layout** of the envelope or of any payload it
   carries. Nothing in this document survives a version bump unless the next document says so explicitly.
   This build carries no compatibility shims and no legacy readers (the project's rule for the hardening);
   whether a version-2 build would read version-1 blobs is a decision that version's document must make —
   the version-1 layout is not designed to coexist with another version in one decoder.
 - **Adding a type byte is not a bump.** New types can appear under version 1; an old build reports them as
-  `UnsupportedFormat`, which is the intended behaviour for "this build cannot read that".
+  `NewerVersion`, which is the intended behaviour for "this build cannot read that".
 - **Removing or changing the meaning of a type byte, a field, an AAD string, a domain string, a KDF
   parameter's semantics, a nonce layout or a check in §7.2** is a bump.
 - **Inner header version** (`inner_version`, §7.1) and **state body version** (`format_version`, §10.3) are
   independent counters with the same rule each: an unknown value is refused. They are bumped only when their
   own layout changes.
+- **Safety-number version** (`SAFETY_NUMBER_VERSION`, §5) is a third independent counter. It is not on the
+  wire — each device computes the number locally — so instead of being refused it is **shown** next to the
+  digits. Changing anything in the derivation of §5 bumps it; the domain string's `V<n>` follows it.
 - **Argon2 parameters are data, not format** (§11): changing the values a build *writes* is not a bump.
 - **Text encoding.** Version 1 has exactly one text encoding, base64url without padding, and no encoding byte
   after `Fuzz/`. The design note that a base91 encoding could later be added as "encoding `0x02`" of the
@@ -932,21 +1274,25 @@ function; the KEK is a wiped 32-byte buffer; the AEAD object wipes its key on dr
 Fuzzzy Ink is a Flutter app; the crate is reached through `flutter_rust_bridge` 2.13.0 (frb). The boundary
 is drawn so that **no key material ever crosses it**.
 
-**Crosses the FFI, Dart → Rust:** passwords (as strings; moved into wiped buffers immediately), the wrapped
-`0x10` blobs (ciphertext), `Fuzz/` blob texts and container paths (attacker-controlled input), chat ids
+**Crosses the FFI, Dart → Rust:** passwords and a typed recovery key (as strings; moved into wiped buffers
+immediately), the wrapped `0x10`/`0x11`/`0x20` key blobs (ciphertext; the recovery lock is a `0x20`), a history row's binding (direction byte and blob
+text), a vault item's id and version, a setting's name, `Fuzz/` blob texts and container paths (attacker-controlled input), chat ids
 (validated by shape on entry), plaintext the user typed (to be encrypted), file paths, the verified flag.
 
-**Crosses the FFI, Rust → Dart:** `Fuzz/` blob texts and `0x10`/`0x20`/`0x05` blobs (ciphertext), the
-plaintext the user asked to see (a decrypted message, an opened local seal, a decrypted vault item), the
+**Crosses the FFI, Rust → Dart:** `Fuzz/` blob texts and `0x10`/`0x11`/`0x20`/`0x05` blobs (ciphertext), a new recovery
+key's text, once, to be shown to the user (it is a password for the master key, like the master password the user
+types; the app never stores it), the plaintext the user asked to see (a decrypted message, an opened local seal, a decrypted vault item), the
 safety-number string, status enums, progress events, file names, and the 13 `CoreError` variants
 (payload-free — no OS error text, no path, no key or digit ever appears in an error).
 
-**Never crosses:** the store key, the KEK, the history keys, the vault master key, file keys, Olm accounts and
+**Never crosses:** the master key, the store key, the KEK, the history keys, the vault key, the recovery lock's
+secret half and a box's ephemeral secret, file keys, Olm accounts and
 sessions, message keys, state-file bodies. They live inside four opaque handles the Dart side holds by
 reference only — `CryptoCore` (the unlocked store), `VaultKey`, `FileTicket` (a prepared file job with its
 key), `FileJob` (a pause/cancel word, no secret) — and every function that touches a key is asynchronous
-(runs on frb's thread pool). The only synchronous functions in the crate are `blob_type_of`, `peek_chat_id`
-([`api/formats.rs#L22`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L22), [`#L40`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L40))
+(runs on frb's thread pool). The only synchronous functions in the crate are `blob_type_of`, `vault_uses_own_password` (a type byte),
+`peek_chat_id`
+([`api/formats.rs#L22`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L22), [`#L41`](../../rust/fuzzy_crypto_core/src/api/formats.rs#L41))
 and the three `FileJob` controls ([`api/files.rs#L85`](../../rust/fuzzy_crypto_core/src/api/files.rs#L85)) — none
 touches a key. `peek_chat_id` reads the chat id out of an `0x01`/`0x02` blob **without** verifying its
 signature and **without** the uuid shape check — Dart receives whatever 1..=255 bytes of UTF-8 the blob
@@ -988,7 +1334,7 @@ the state file can read.
 3. **The deletion is persisted before the plaintext is returned** (§10.3). A snapshot of the sealed state file
    taken *after* message N−1 was read cannot decrypt N−1 or anything earlier (their keys are already gone from
    that snapshot) — forward secrecy holds for everything already read. **But the snapshot holds the receiving
-   chain key**, so, together with the store key (or the app-lock password that unwraps it), it decrypts N *and
+   chain key**, so, together with the store key (or the master password, or the recovery key, that unwraps it), it decrypts N *and
    every later message the peer generates on that same receiving chain* — reading it on the live device does not
    close a *copy*. The copy stops working only at the next DH ratchet step, which needs a round trip: this device
    sends, the peer receives that message (advancing its ratchet), and the peer's next message arrives on a new
@@ -1031,18 +1377,19 @@ build without a lock-file change. Toolchain: Rust 1.98.1 (`rust-toolchain.toml`)
 | `chacha20poly1305` | 0.11.0 (`zeroize`) | XChaCha20-Poly1305 for every AEAD use (§6.7–6.9, §9) | RustCrypto AEADs; NCC Group audit of the `chacha20poly1305` crate, 2020, no significant findings (report linked from the crate README: https://github.com/RustCrypto/AEADs/tree/master/chacha20poly1305). Also present at 0.10.1 as vodozemac's dependency |
 | `aead-stream` | 0.6.0 (`alloc`) | the STREAM construction (BE32 nonce layout) of §9.1 | RustCrypto AEADs (same repository); implements the STREAM construction of Hoang, Reyhanitabar, Rogaway, Vizár (2015) |
 | `argon2` | 0.6.0 (`zeroize`) | Argon2id of §11 | RustCrypto password-hashes; RFC 9106; parameters per OWASP Password Storage Cheat Sheet |
-| `sha2` | 0.11.0 | SHA-512 for the safety number (§5) — the crate's only direct hash use. The crate calls no HKDF of its own: the `hkdf` dependency became callerless when the store-derived local key was replaced by per-chat history keys (§3, §10.4) and was removed from `Cargo.toml`, the lock and the SBOM; the only HKDF in the core is inside vodozemac's ratchet | RustCrypto hashes (`sha2` 0.10.9 and `hkdf` 0.12.4 are also present as vodozemac's transitive dependencies) |
+| `sha2` | 0.11.0 | SHA-512 for the safety number (§5); SHA-256 for the recovery key's check byte and for the X9.63 KDF of the recovery lock and box (§6.10, §10.2) — the crate's only direct hash uses. The crate calls no HKDF of its own: the `hkdf` dependency became callerless when the store-derived local key was replaced by per-chat history keys (§3, §10.4) and was removed from `Cargo.toml`, the lock and the SBOM; the only HKDF in the core is inside vodozemac's ratchet | RustCrypto hashes (`sha2` 0.10.9 and `hkdf` 0.12.4 are also present as vodozemac's transitive dependencies) |
 | `subtle` | 2.6.1 | constant-time comparisons (§4.4, §7.2) | dalek-cryptography |
 | `zeroize` | 1.9.0 (`zeroize_derive`) | wiped buffers and structs (§13) | RustCrypto utils |
 | `getrandom` | 0.4.3 (`sys_rng`) | the only randomness source: nonces, salts, keys, one-time-key seeds (through vodozemac's own `rand`/`getrandom` 0.2.17 for its keys) | rust-random |
 | `base64` | 0.22.1 | base64url-no-pad text envelope (§6.1) | marshallpierce/rust-base64 |
-| `ed25519-dalek` / `x25519-dalek` / `curve25519-dalek` | 2.2.0 / 2.0.1 / 4.1.3 | vodozemac's curves (transitive) | dalek-cryptography (transitive through vodozemac; not separately audited for this project) |
+| `ed25519-dalek` / `x25519-dalek` / `curve25519-dalek` | 2.2.0 / 2.0.1 / 4.1.3 | vodozemac's curves (transitive); the recovery lock's X25519 goes through vodozemac's `Curve25519SecretKey`/`Curve25519PublicKey` (§6.10) | dalek-cryptography (transitive through vodozemac; not separately audited for this project) |
 | `serde` / `serde_json` | 1.0.229 / 1.0.151 | state-file body only (§10.3) | — |
 | `flutter_rust_bridge` | 2.13.0 (Rust, Dart and codegen in lockstep) | the FFI (§13) | — |
 | `thiserror` | 2.0.20 | `CoreError` | — |
 
-Nothing else in the crate is cryptographic: there is no hand-written primitive, no custom KDF, no custom MAC,
-no custom encoding of Olm messages. `vodozemac`'s `libolm-compat` feature is disabled — libolm pickles are
+Nothing else in the crate is cryptographic: there is no hand-written primitive, no custom MAC, no custom encoding
+of Olm messages. The one KDF the crate composes itself is the standard ANSI X9.63 / SEC 1 KDF with SHA-256, one
+output block (a single `SHA-256(Z ‖ 00000001 ‖ shared info)` call), for the recovery lock and box (§6.10). `vodozemac`'s `libolm-compat` feature is disabled — libolm pickles are
 never read. The crate must never be built with `--cfg fuzzing`: under it vodozemac's `Ed25519PublicKey::verify`
 is a no-op (a standing comment at the top of `lib.rs` records this).
 
@@ -1051,7 +1398,7 @@ is a no-op (a standing comment at the top of `lib.rs` records this).
 ## 16. Threat model
 
 This document describes the mechanism; the threat model — assets, trust boundaries, the adversaries (passive
-channel observer, active attacker on the pairing channel, device thief with and without the app lock,
+channel observer, active attacker on the pairing channel, device thief with and without the master password,
 malicious peer, harvest-now-decrypt-later), what is and is not defended, and residual risks — is
 `THREAT_MODEL.md` (F5-2). Read §13 and §17 here as its inputs.
 
@@ -1075,8 +1422,9 @@ Stated so a reviewer does not have to discover them.
    stores sent and received plaintext locally because a ratcheted blob cannot be re-read; each chat's history
    is sealed under that chat's own history key, which lives in the chat's state file under the store key
    (§10.4). The per-chat key bounds a *history-key* leak to one chat; it does not bound a *store-key* leak,
-   which opens every state and therefore every history key. The sealed copy is exactly as strong as the app
-   lock: no app-lock password (the empty-string wrap) means the OS keystore alone protects the store key.
+   which opens every state and therefore every history key. The sealed copy is exactly as strong as the master
+   password (and the recovery key, a second way to the master key); there is no "lock off" and no empty-string
+   wrap.
 4. **Metadata is not sealed** (§10.5): chat names, timestamps, message counts and the blob texts themselves are
    readable in the database.
 5. **A corrupt chat-mode file consumes its message** (§9.4): the key message is opened — and the ratchet
@@ -1094,28 +1442,42 @@ Stated so a reviewer does not have to discover them.
    builds run; it is a development-only setting, not shipped in staging or production.
 9. **Hostile Argon2 headers cost up to 256 MiB × 16 passes** (§11) before being refused by the tag. A phone may
    take ten seconds on the worst accepted header; it will not crash.
-10. **Two processes on one store are unsupported.** In-process access is serialised; a second process opening
-    the same directory would race the atomic writes.
+10. **One process per store.** In-process access is serialised; across processes the store directory carries an
+    exclusive OS file lock (`<application support directory>/fuzzy_crypto_store.lock`, `flock` on Linux, macOS,
+    Android and iOS, `LockFileEx` on Windows), taken by `open_store` and released when the last handle closes or
+    the process ends ([`store.rs#L422`](../../rust/fuzzy_crypto_core/src/store.rs#L422)). A second copy of the app
+    gets `Io` from `open_store` (after about a second of retries) instead of racing the first one's atomic
+    writes — so it can neither corrupt a chat's state nor reuse a counter or a message key. Handles in one
+    process share the lock (since 2026-10-26).
 11. **`.part` after a process kill** (§9.3) stays on disk until the next job over the same output.
 12. **No post-quantum component, no deniability claim, no multi-device, no key rotation** of a chat's identity
     keys (delete and re-pair instead).
 13. **An Ed25519 identity key is per chat for the life of that chat.** Its compromise allows impersonation in
     that chat from then on; it does not reveal past message keys (§14).
 14. **A copy of the sealed state plus the store key reads forward until the peer ratchets** (§14.3). Whoever
-    holds a `<chat_id>.state` file and the store key (or the app-lock password, which unwraps it) can decrypt every
+    holds a `<chat_id>.state` file and the store key (or the master password, or the recovery key, which unwraps it) can decrypt every
     message the peer sends on the current receiving chain after the copy was taken — not messages already read
     (forward secrecy), but future ones, until this device sends and the peer's next message arrives on a fresh
     chain. Post-compromise security needs that round trip; nothing in the protocol forces one.
-15. **Unfuzzed files and exported archives are outside every guarantee above.** A received file lands as a
-    plain file under the app's documents directory (§10.5) and an archive export is the chat's plaintext under
-    a user-chosen password (§9.5); neither is sealed by the store, gated by the app lock, or covered by forward
-    secrecy. Only text history is sealed at rest.
+15. **Files the user takes out, and exported archives, are outside every guarantee above.** The app keeps
+    files sealed (§9.6, §10.5): a kept received file has the protection of the chat's text history, not forward
+    secrecy. A file the user saves or shares leaves as plaintext, and an archive export is the chat's plaintext
+    under a user-chosen password (§9.5); once outside the app, neither is sealed by the store, gated by the
+    master password, or covered by forward secrecy. A hand-off copy is plain on disk while it is in use (§10.5).
+16. **The recovery key opens everything, the vault with its own password included** (§10.6). A vault's own
+    password protects it from someone who has the master password, not from someone who has the recovery key.
+    A new recovery key needs the vault's password to keep that vault recoverable; without it the change is
+    refused rather than made with a key that would not open the vault. The lock is sealed under the store key,
+    which the master password reaches: someone who has the master password **and** can write the app's secure
+    storage could plant a lock of their own, and a vault given its own password after that would be sealed to it.
+    The vault's own password assumes the device was not tampered with by someone who already holds the master
+    password.
 
 ---
 
 ## Appendix A — Test vectors
 
-`documents/security/vectors/` holds 19 vectors (43 files) as `.hex` (bytes, 32 per line — `xxd -r -p name.hex | xxd`),
+`documents/security/vectors/` holds 21 vectors (47 files) as `.hex` (bytes, 32 per line — `xxd -r -p name.hex | xxd`),
 `.txt` (the `Fuzz/` form of wire blobs) and `.json` (inputs), plus `state_file.body.json`. They are
 generated by `rust/fuzzy_crypto_core/src/vectors.rs` from fixed inputs through the production code paths
 (randomness injected through the crate's `*_with` hooks) and **checked on every `cargo test`**: the test
@@ -1139,10 +1501,15 @@ and the independent derivation it was checked against.
 | `file_key_body` | §7.3 | 44 | key `42×32`, name `report.pdf` |
 | `inner_header_file_key` | §7.1/7.3 | 160 | same, counter 8 |
 | `argon2id_kek` | §11 | 32 | `pw`, salt `11×16` |
-| `wrapped_store_key` | §6.8 | 103 | key `33×32`, `pw`, salt `11×16`, nonce `22×24`, AAD `store-key` |
-| `wrapped_vault_key` | §6.8 | 103 | same, AAD `vault-key` |
-| `local_seal_chat` | §6.9/10.4 | 51 | history key `55×32`, chat id, `hello`, nonce `44×24` |
-| `vault_item` | §6.9/10.6 | 50 | `item`, nonce `44×24` |
+| `wrapped_master_key` | §6.8/10.2 | 103 | key `33×32`, `pw`, salt `11×16`, nonce `22×24`, AAD `master-key` |
+| `wrapped_vault_key` | §6.8/10.6 | 103 | same, AAD `vault-key` |
+| `store_key_wrap` | §6.9/10.2 | 78 | master key `33×32`, key `66×32`, nonce `44×24`, AAD `store-key-wrap` |
+| `vault_key_wrap` | §6.9/10.6 | 78 | same, AAD `vault-key-wrap` |
+| `recovery_lock` | §6.10/10.2 | 32 | the recovery key `00 01 … 12` ‖ check byte |
+| `vault_key_recovery` | §6.10/10.6 | 110 | vault key `33×32` sealed to `recovery_lock`, ephemeral secret `55×32`, nonce `22×24`, AAD `vault-key-recovery` |
+| `local_seal_chat` | §6.9/10.4 | 51 | history key `55×32`, chat id, row `01` ‖ `Fuzz/RlVaWgEDAd6tvu8`, `hello`, nonce `44×24` |
+| `vault_item` | §6.9/10.6 | 50 | `item`, item id, version 3, nonce `44×24` |
+| `vault_label` | §6.9/10.6 | 302 | the label `user` padded to 256 bytes, item id, version 3, nonce `44×24`, AAD `vault-label` |
 | `password_sealed_text` | §6.7 | 76 | `pw`, salt `11×16`, nonce `22×24`, `hello` |
 | `state_file` (+ `.body.json`) | §10.3 | 1662 | A's fixed account, freshly invited, history key `55×32`, nonce `44×24` |
 | `file_header_password` | §6.6 | 55 | prefix `90..a2`, salt `a0..af` |
@@ -1162,7 +1529,8 @@ a file job's terminal event carries.
 
 | Variant | Text | Meaning |
 |---|---|---|
-| `UnsupportedFormat` | `unsupported format` | unknown magic, version, type byte or text encoding; a blob of the wrong type for the call; storage-only type pasted |
+| `UnsupportedFormat` | `unsupported format` | unknown magic or text encoding, a version below `0x01`; a blob of the wrong type for the call; storage-only type pasted |
+| `NewerVersion` | `newer version` | a version above `0x01`, or a type byte this build does not know: made by a newer app (§12) |
 | `InvalidSignature` | `invalid signature` | an invitation/acceptance signature did not verify (or the key/signature bytes do not parse) |
 | `InvitationAlreadyUsed` | `invitation already used` | §4.5 |
 | `WrongChat` | `wrong chat` | the blob names another chat, or its identity keys are not this chat's peer/ours |
@@ -1185,27 +1553,35 @@ a file job's terminal event carries.
 | envelope version | `0x01` | [`formats.rs#L19`](../../rust/fuzzy_crypto_core/src/formats.rs#L19) |
 | envelope length | 6 | [`formats.rs#L21`](../../rust/fuzzy_crypto_core/src/formats.rs#L21) |
 | signature length | 64 | [`formats.rs#L23`](../../rust/fuzzy_crypto_core/src/formats.rs#L23) |
-| type bytes | `01 02 03 04 05 10 20` | [`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37) |
-| key modes | chat `0x01`, password `0x02` | [`formats.rs#L439`](../../rust/fuzzy_crypto_core/src/formats.rs#L439) |
+| type bytes | `01 02 03 04 05 10 11 20` | [`formats.rs#L37`](../../rust/fuzzy_crypto_core/src/formats.rs#L37) |
+| key modes | chat `0x01`, password `0x02` | [`formats.rs#L482`](../../rust/fuzzy_crypto_core/src/formats.rs#L482) |
 | chunk size written / accepted | 1 048 576 / 65 536..=16 777 216 | [`formats.rs#L25`](../../rust/fuzzy_crypto_core/src/formats.rs#L25) |
 | wrapped-key ciphertext length | 48 | [`formats.rs#L31`](../../rust/fuzzy_crypto_core/src/formats.rs#L31) |
-| Poly1305 tag length | 16 | [`formats.rs#L644`](../../rust/fuzzy_crypto_core/src/formats.rs#L644) |
-| inner header version | `0x01` | [`formats.rs#L513`](../../rust/fuzzy_crypto_core/src/formats.rs#L513) |
-| direction bytes | A→B `0x00`, B→A `0x01` | [`formats.rs#L519`](../../rust/fuzzy_crypto_core/src/formats.rs#L519) |
-| content types | `0x00 0x01 0x02` | [`formats.rs#L537`](../../rust/fuzzy_crypto_core/src/formats.rs#L537) |
-| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L27`](../../rust/fuzzy_crypto_core/src/store.rs#L27) |
-| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L36`](../../rust/fuzzy_crypto_core/src/store.rs#L36) |
-| AAD `store-key` | | [`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41) |
-| AAD `chat-state` ‖ chat id | | [`store.rs#L42`](../../rust/fuzzy_crypto_core/src/store.rs#L42) |
-| AAD `local-seal` ‖ chat id | | [`store.rs#L43`](../../rust/fuzzy_crypto_core/src/store.rs#L43) |
-| AAD `vault-key` / `vault-item` | | [`vault.rs#L15`](../../rust/fuzzy_crypto_core/src/vault.rs#L15) |
+| Poly1305 tag length | 16 | [`formats.rs#L687`](../../rust/fuzzy_crypto_core/src/formats.rs#L687) |
+| inner header version | `0x01` | [`formats.rs#L556`](../../rust/fuzzy_crypto_core/src/formats.rs#L556) |
+| direction bytes | A→B `0x00`, B→A `0x01` | [`formats.rs#L562`](../../rust/fuzzy_crypto_core/src/formats.rs#L562) |
+| content types | `0x00 0x01 0x02` | [`formats.rs#L580`](../../rust/fuzzy_crypto_core/src/formats.rs#L580) |
+| Argon2id parameters written | m 65 536 KiB, t 4, p 1 | [`store.rs#L32`](../../rust/fuzzy_crypto_core/src/store.rs#L32) |
+| Argon2id caps read | m ≤ 262 144 KiB, t ≤ 16 | [`store.rs#L41`](../../rust/fuzzy_crypto_core/src/store.rs#L41) |
+| AAD `master-key` / `master-key-recovery` (0x10) | | [`master.rs#L31`](../../rust/fuzzy_crypto_core/src/master.rs#L31) |
+| AAD `store-key-wrap` / `vault-key-wrap` (0x20) | | [`master.rs#L35`](../../rust/fuzzy_crypto_core/src/master.rs#L35) |
+| recovery key | 19 random bytes + 1 check byte, 32 base32 characters in groups of 4, check domain `fuzzy-recovery-check-v1` | [`master.rs#L46`](../../rust/fuzzy_crypto_core/src/master.rs#L46) |
+| AAD `recovery-lock` (0x20 under the store key) | | [`master.rs#L39`](../../rust/fuzzy_crypto_core/src/master.rs#L39) |
+| recovery lock / box KDF domains | `fuzzy-recovery-lock-v1` / `fuzzy-recovery-box-v1` (X9.63, SHA-256) | [`master.rs#L41`](../../rust/fuzzy_crypto_core/src/master.rs#L41) |
+| AAD `vault-key-recovery` (0x11) | | [`vault.rs#L25`](../../rust/fuzzy_crypto_core/src/vault.rs#L25) |
+| recovery box length | 110 | [`formats.rs#L405`](../../rust/fuzzy_crypto_core/src/formats.rs#L405) |
+| AAD `chat-state` ‖ chat id | | [`store.rs#L46`](../../rust/fuzzy_crypto_core/src/store.rs#L46) |
+| AAD `local-seal` ‖ chat id ‖ row | | [`store.rs#L47`](../../rust/fuzzy_crypto_core/src/store.rs#L47) |
+| AAD `app-setting` ‖ name (≤ 64 bytes) | | [`store.rs#L48`](../../rust/fuzzy_crypto_core/src/store.rs#L48) |
+| AAD `kept-file-key` ‖ chat id | | [`store.rs#L683`](../../rust/fuzzy_crypto_core/src/store.rs#L683) |
+| AAD `vault-key` (0x10) / `vault-item` ‖ u32 BE version ‖ item id | | [`vault.rs#L23`](../../rust/fuzzy_crypto_core/src/vault.rs#L23) |
 | `0x05` AAD length | 31 | [`passwords.rs#L18`](../../rust/fuzzy_crypto_core/src/passwords.rs#L18) |
-| store directory | `fuzzy_crypto_store` | [`store.rs#L25`](../../rust/fuzzy_crypto_core/src/store.rs#L25) |
-| state file extensions | `.state`, `.state.tmp` | [`store.rs#L44`](../../rust/fuzzy_crypto_core/src/store.rs#L44) |
+| store directory | `fuzzy_crypto_store` | [`store.rs#L30`](../../rust/fuzzy_crypto_core/src/store.rs#L30) |
+| state file extensions | `.state`, `.state.tmp` | [`store.rs#L51`](../../rust/fuzzy_crypto_core/src/store.rs#L51) |
 | state body version | 1 | [`state.rs#L16`](../../rust/fuzzy_crypto_core/src/state.rs#L16) |
 | counter window | 64 | [`counters.rs#L22`](../../rust/fuzzy_crypto_core/src/counters.rs#L22) |
-| safety-number domain / groups / bytes / modulus | `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L20`](../../rust/fuzzy_crypto_core/src/safety.rs#L20) |
-| original name limit | 255 bytes | [`files.rs#L261`](../../rust/fuzzy_crypto_core/src/files.rs#L261) |
+| safety-number version / domain / groups / bytes / modulus | 1 / `FUZZZYINK_SAFETY_NUMBER_V1` / 12 / 5 / 100 000 | [`safety.rs#L25`](../../rust/fuzzy_crypto_core/src/safety.rs#L25) |
+| original name limit (after cleaning) | 120 bytes, extension kept up to 16 | [`files.rs#L277`](../../rust/fuzzy_crypto_core/src/files.rs#L277) |
 | longest header read | 65 568 | [`files.rs#L53`](../../rust/fuzzy_crypto_core/src/files.rs#L53) |
 | pause poll | 50 ms | [`files.rs#L50`](../../rust/fuzzy_crypto_core/src/files.rs#L50) |
 | Olm skipped keys / gap / chains | 40 / 2000 / 5 | `vodozemac-0.10.0/src/olm/session/receiver_chain.rs` lines 50, 31; `session/mod.rs` line 53 |

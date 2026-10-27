@@ -6,7 +6,14 @@ class FileProcessingData {
   final DateTime encryptionStartTime;
   final bool isProcessed;
   final String inputFilePath;
+
+  /// Once completed: where the sealed file is kept, relative to the app's
+  /// sealed folder (`UserFileStore.storedPathOf`).
   final String? outputFilePath;
+
+  /// A completed receive: the kept container's file key, sealed under the
+  /// chat's history key, base64 (`PROTOCOL.md` §9.6).
+  final String? keptFileKey;
   final FileProcessingStatus status;
   final double progress; // value between 0 and 1
   // set with FileProcessingStatus.failed, and on a canceled receive
@@ -19,6 +26,7 @@ class FileProcessingData {
     required this.encryptionStartTime,
     this.isProcessed = false,
     this.outputFilePath,
+    this.keptFileKey,
     this.status = FileProcessingStatus.pending,
     this.progress = 0.0,
     this.failure,
@@ -31,6 +39,7 @@ class FileProcessingData {
     bool? isProcessed,
     String? inputFilePath,
     String? outputFilePath,
+    String? keptFileKey,
     FileProcessingStatus? status,
     double? progress,
     FileProcessingFailure? failure,
@@ -42,6 +51,7 @@ class FileProcessingData {
         isProcessed: isProcessed ?? this.isProcessed,
         inputFilePath: inputFilePath ?? this.inputFilePath,
         outputFilePath: outputFilePath ?? this.outputFilePath,
+        keptFileKey: keptFileKey ?? this.keptFileKey,
         status: status ?? this.status,
         progress: progress ?? this.progress,
         failure: failure ?? this.failure,

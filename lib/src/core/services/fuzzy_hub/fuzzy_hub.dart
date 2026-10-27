@@ -1,5 +1,7 @@
 import 'dart:async';
 
+export 'events/events.dart';
+
 final fuzzyHub = FuzzyHub();
 
 class FuzzyHub {

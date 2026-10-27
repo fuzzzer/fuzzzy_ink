@@ -99,53 +99,11 @@ abstract class FuzzzyInkLocalizations {
     Locale('ka')
   ];
 
-  /// No description provided for @chat.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat'**
-  String get chat;
-
   /// No description provided for @fuzzzyInk.
   ///
   /// In en, this message translates to:
   /// **'Fuzzzy Ink'**
   String get fuzzzyInk;
-
-  /// No description provided for @failedToLoadChats.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to load chats.'**
-  String get failedToLoadChats;
-
-  /// No description provided for @newChat.
-  ///
-  /// In en, this message translates to:
-  /// **'New Chat'**
-  String get newChat;
-
-  /// No description provided for @acceptInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept Invitation'**
-  String get acceptInvitation;
-
-  /// No description provided for @createANewChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a New Chat'**
-  String get createANewChat;
-
-  /// No description provided for @enterChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter Chat Name'**
-  String get enterChatName;
-
-  /// No description provided for @eg.
-  ///
-  /// In en, this message translates to:
-  /// **'e.g.'**
-  String get eg;
 
   /// No description provided for @back.
   ///
@@ -153,192 +111,23 @@ abstract class FuzzzyInkLocalizations {
   /// **'Back'**
   String get back;
 
-  /// No description provided for @create.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get create;
-
-  /// No description provided for @chatWithAlice.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat with Alice'**
-  String get chatWithAlice;
-
   /// No description provided for @failedToCreateChat.
   ///
   /// In en, this message translates to:
-  /// **'Failed to create chat.'**
+  /// **'Couldn\'t add the person. Try again.'**
   String get failedToCreateChat;
-
-  /// No description provided for @pleaseEnterAChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a chat name.'**
-  String get pleaseEnterAChatName;
-
-  /// No description provided for @pleasePasteTheAcceptanceContent.
-  ///
-  /// In en, this message translates to:
-  /// **'Please paste the acceptance content.'**
-  String get pleasePasteTheAcceptanceContent;
-
-  /// No description provided for @failedToCompleteHandshake.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to complete handshake.'**
-  String get failedToCompleteHandshake;
-
-  /// No description provided for @sendInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Invitation'**
-  String get sendInvitation;
-
-  /// No description provided for @copyInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Invitation'**
-  String get copyInvitation;
-
-  /// No description provided for @invitationCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Invitation copied to clipboard.'**
-  String get invitationCopiedToClipboard;
-
-  /// No description provided for @provideAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Provide Acceptance'**
-  String get provideAcceptance;
-
-  /// No description provided for @pasteAcceptanceText.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste Acceptance Text'**
-  String get pasteAcceptanceText;
-
-  /// No description provided for @accept.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept'**
-  String get accept;
-
-  /// No description provided for @unexpectedFailureOccuredPleaseContactUs.
-  ///
-  /// In en, this message translates to:
-  /// **'Unexpected failure occurred, please contact us.'**
-  String get unexpectedFailureOccuredPleaseContactUs;
-
-  /// No description provided for @failedToGenerateInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to generate invitation.'**
-  String get failedToGenerateInvitation;
-
-  /// No description provided for @inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages.
-  ///
-  /// In en, this message translates to:
-  /// **'To start a chat with someone, they must first import the invitation and provide the acceptance text generated in their chat. This will allow them to send and unlock messages.'**
-  String
-      get inOrderToStartAChatWithSomeoneFirstTheyNeedToImportTheInvitationAndProvideAcceptanceFileOrTextGeneratedOnTheirChatSoTheyCanAlsoSendAndUnlockMessages;
-
-  /// No description provided for @theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere.
-  ///
-  /// In en, this message translates to:
-  /// **'The acceptance that you get from the invited person should be pasted here:'**
-  String get theAcceptanceThatYouGetFromInvitedPersonShouldBePastedHere;
-
-  /// No description provided for @failedToAcceptInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to accept invitation.'**
-  String get failedToAcceptInvitation;
-
-  /// No description provided for @pleaseProvideInvitationTextAndChatName.
-  ///
-  /// In en, this message translates to:
-  /// **'Please provide invitation text and chat name.'**
-  String get pleaseProvideInvitationTextAndChatName;
-
-  /// No description provided for @acceptChatInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Accept Chat Invitation'**
-  String get acceptChatInvitation;
-
-  /// No description provided for @pasteInvitationText.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste Invitation Text'**
-  String get pasteInvitationText;
-
-  /// No description provided for @failedToGenerateAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to generate acceptance.'**
-  String get failedToGenerateAcceptance;
 
   /// No description provided for @failedToReadAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to read acceptance.'**
+  /// **'Couldn\'t read the reply.'**
   String get failedToReadAcceptance;
-
-  /// No description provided for @goToChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Go to Chat'**
-  String get goToChat;
-
-  /// No description provided for @copyAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Acceptance'**
-  String get copyAcceptance;
-
-  /// No description provided for @yourAcceptanceHasBeenGeneratedSuccessfully.
-  ///
-  /// In en, this message translates to:
-  /// **'Your acceptance has been generated successfully.'**
-  String get yourAcceptanceHasBeenGeneratedSuccessfully;
-
-  /// No description provided for @exportAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Export Acceptance'**
-  String get exportAcceptance;
-
-  /// No description provided for @acceptanceCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Acceptance copied to clipboard.'**
-  String get acceptanceCopiedToClipboard;
-
-  /// No description provided for @tapToViewChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to view chat.'**
-  String get tapToViewChat;
-
-  /// No description provided for @waitingForAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiting for acceptance.'**
-  String get waitingForAcceptance;
 
   /// No description provided for @deleteChat.
   ///
   /// In en, this message translates to:
-  /// **'Delete Chat'**
+  /// **'Remove person'**
   String get deleteChat;
-
-  /// No description provided for @areYouSureYouWantToDeleteThisChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete this chat?'**
-  String get areYouSureYouWantToDeleteThisChat;
 
   /// No description provided for @cancel.
   ///
@@ -351,24 +140,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
-
-  /// No description provided for @textGoesHere.
-  ///
-  /// In en, this message translates to:
-  /// **'Text goes here.'**
-  String get textGoesHere;
-
-  /// No description provided for @encrypting.
-  ///
-  /// In en, this message translates to:
-  /// **'Encrypting'**
-  String get encrypting;
-
-  /// No description provided for @decrypting.
-  ///
-  /// In en, this message translates to:
-  /// **'Decrypting'**
-  String get decrypting;
 
   /// No description provided for @copiedToTheClipboard.
   ///
@@ -391,20 +162,14 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @areYouSureYouWantToDeleteChatWith.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete chat with {personName}'**
+  /// **'Remove {personName}?'**
   String areYouSureYouWantToDeleteChatWith(Object personName);
 
   /// No description provided for @failedToGetAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to get acceptance'**
+  /// **'Couldn\'t get the reply.'**
   String get failedToGetAcceptance;
-
-  /// No description provided for @storagePermissionDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Storage permission denied.'**
-  String get storagePermissionDenied;
 
   /// No description provided for @errorPickingFiles.
   ///
@@ -418,18 +183,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Loading'**
   String get loading;
 
-  /// No description provided for @fuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzz'**
-  String get fuzz;
-
-  /// No description provided for @defuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Defuzz'**
-  String get defuzz;
-
   /// No description provided for @failedToProcessFiles.
   ///
   /// In en, this message translates to:
@@ -439,20 +192,8 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @chatWithIndicatedNameAlreadyExists.
   ///
   /// In en, this message translates to:
-  /// **'Chat with indicated name already exists'**
+  /// **'You already have someone with this name.'**
   String get chatWithIndicatedNameAlreadyExists;
-
-  /// No description provided for @reveal.
-  ///
-  /// In en, this message translates to:
-  /// **'Reveal'**
-  String get reveal;
-
-  /// No description provided for @show.
-  ///
-  /// In en, this message translates to:
-  /// **'Show'**
-  String get show;
 
   /// No description provided for @open.
   ///
@@ -465,18 +206,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Drop files here'**
   String get dropFilesHere;
-
-  /// No description provided for @shareInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Share invitation'**
-  String get shareInvitation;
-
-  /// No description provided for @acceptanceText.
-  ///
-  /// In en, this message translates to:
-  /// **'Acceptance Text'**
-  String get acceptanceText;
 
   /// No description provided for @basicEncryption.
   ///
@@ -499,7 +228,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @textToEncryptDecrypt.
   ///
   /// In en, this message translates to:
-  /// **'Text to Encrypt Decrypt'**
+  /// **'Text to encrypt or decrypt'**
   String get textToEncryptDecrypt;
 
   /// No description provided for @encryptText.
@@ -565,44 +294,8 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @decryptionFailedCheckYourKeyOrEncryptedText.
   ///
   /// In en, this message translates to:
-  /// **'Decryption failed check your key or encrypted text'**
+  /// **'Decryption failed. Check your key or the encrypted text.'**
   String get decryptionFailedCheckYourKeyOrEncryptedText;
-
-  /// No description provided for @welcomeToFuzzzyInk.
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome to Fuzzzy Ink'**
-  String get welcomeToFuzzzyInk;
-
-  /// No description provided for @offlineEncryptedClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline Encrypted Clipboard'**
-  String get offlineEncryptedClipboard;
-
-  /// No description provided for @yourDataNeverLeavesYourDeviceNoServersNoTracking.
-  ///
-  /// In en, this message translates to:
-  /// **'Your data never leaves your device. No servers, no tracking.'**
-  String get yourDataNeverLeavesYourDeviceNoServersNoTracking;
-
-  /// No description provided for @secureHandshake.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure Handshake'**
-  String get secureHandshake;
-
-  /// No description provided for @connectWithOthersUsingASecureOfflineCodeExchange.
-  ///
-  /// In en, this message translates to:
-  /// **'Connect with others using a secure, offline code exchange.'**
-  String get connectWithOthersUsingASecureOfflineCodeExchange;
-
-  /// No description provided for @getStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Started'**
-  String get getStarted;
 
   /// No description provided for @next.
   ///
@@ -610,175 +303,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Next'**
   String get next;
 
-  /// No description provided for @noOngoingChats.
-  ///
-  /// In en, this message translates to:
-  /// **'No Ongoing Chats'**
-  String get noOngoingChats;
-
-  /// No description provided for @tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap the button below to create a new secure handshake or accept an invitation.'**
-  String get tapTheButtonBelowToCreateANewSecureHandshakeOrAcceptAnInvitation;
-
-  /// No description provided for @stepSendYourInviteCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 1: Send Your Invite Code'**
-  String get stepSendYourInviteCode;
-
-  /// No description provided for @sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Send this code to the person you want to chat with using any secure channel.'**
-  String get sendThisCodeToThePersonYouWantToChatWithUsingAnySecureChannel;
-
-  /// No description provided for @stepPasteTheirAcceptanceCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 2: Paste Their Acceptance Code'**
-  String get stepPasteTheirAcceptanceCode;
-
-  /// No description provided for @onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow.
-  ///
-  /// In en, this message translates to:
-  /// **'Once they accept your invite, they will send a code back. Paste it below.'**
-  String get onceTheyAcceptYourInviteTheyWillSendACodeBackPasteItBelow;
-
-  /// No description provided for @stepPasteTheirInviteCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 1: Paste Their Invite Code'**
-  String get stepPasteTheirInviteCode;
-
-  /// No description provided for @askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow.
-  ///
-  /// In en, this message translates to:
-  /// **'Ask your contact to share their invite code securely and paste it below.'**
-  String get askYourContactToShareTheirInviteCodeSecurelyAndPasteItBelow;
-
-  /// No description provided for @stepNameThisChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Step 2: Name This Chat'**
-  String get stepNameThisChat;
-
-  /// No description provided for @chooseALocalNameForThisChatThisIsOnlyVisibleToYou.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a local name for this chat. This is only visible to you.'**
-  String get chooseALocalNameForThisChatThisIsOnlyVisibleToYou;
-
-  /// No description provided for @securityWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'Security Warning'**
-  String get securityWarning;
-
-  /// No description provided for @areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to copy unencrypted data to your clipboard? This could compromise your secure chat.'**
-  String
-      get areYouSureYouWantToCopyUnencryptedDataToYourClipboardThisCouldCompromiseYourSecureChat;
-
-  /// No description provided for @copyFuzz.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Fuzz'**
-  String get copyFuzz;
-
-  /// No description provided for @copyPlaintext.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy Plaintext'**
-  String get copyPlaintext;
-
-  /// No description provided for @firstEncryption.
-  ///
-  /// In en, this message translates to:
-  /// **'First Encryption'**
-  String get firstEncryption;
-
-  /// No description provided for @typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText.
-  ///
-  /// In en, this message translates to:
-  /// **'Type a message and press send. It will be encrypted locally, and you can then copy the secure fuzzed text.'**
-  String
-      get typeAMessageAndPressSendItWillBeEncryptedLocallyAndYouCanThenCopyTheSecureFuzzedText;
-
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
-
-  /// No description provided for @securityLevel.
-  ///
-  /// In en, this message translates to:
-  /// **'Security Level'**
-  String get securityLevel;
-
-  /// No description provided for @strict.
-  ///
-  /// In en, this message translates to:
-  /// **'Strict'**
-  String get strict;
-
-  /// No description provided for @moderate.
-  ///
-  /// In en, this message translates to:
-  /// **'Moderate'**
-  String get moderate;
-
-  /// No description provided for @strictSecurityDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Shows a confirmation dialog before copying any decrypted text. Recommended for maximum privacy.'**
-  String get strictSecurityDescription;
-
-  /// No description provided for @moderateSecurityDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Received messages are selectable and can be copied directly without a warning.'**
-  String get moderateSecurityDescription;
-
-  /// No description provided for @shareAsLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Share as Link'**
-  String get shareAsLink;
-
-  /// No description provided for @copyAsLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Copy as Link'**
-  String get copyAsLink;
-
-  /// No description provided for @linkCopiedToClipboard.
-  ///
-  /// In en, this message translates to:
-  /// **'Link copied to clipboard.'**
-  String get linkCopiedToClipboard;
-
-  /// No description provided for @shareAcceptance.
-  ///
-  /// In en, this message translates to:
-  /// **'Share acceptance'**
-  String get shareAcceptance;
-
-  /// No description provided for @linkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This link has expired.'**
-  String get linkExpired;
-
-  /// No description provided for @linkShared.
-  ///
-  /// In en, this message translates to:
-  /// **'Link shared.'**
-  String get linkShared;
 
   /// No description provided for @invalidLink.
   ///
@@ -786,137 +315,35 @@ abstract class FuzzzyInkLocalizations {
   /// **'This link is invalid or corrupted.'**
   String get invalidLink;
 
-  /// No description provided for @noMatchingChat.
-  ///
-  /// In en, this message translates to:
-  /// **'No matching chat found.'**
-  String get noMatchingChat;
-
   /// No description provided for @alreadyConnected.
   ///
   /// In en, this message translates to:
   /// **'Already connected!'**
   String get alreadyConnected;
 
-  /// No description provided for @updateRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'This link requires a newer version of Fuzzzy Ink.'**
-  String get updateRequired;
-
   /// No description provided for @cantAcceptOwnInvitation.
   ///
   /// In en, this message translates to:
-  /// **'You can\'t accept your own invitation.'**
+  /// **'You can\'t accept your own invite.'**
   String get cantAcceptOwnInvitation;
-
-  /// No description provided for @connectionComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection established!'**
-  String get connectionComplete;
-
-  /// No description provided for @incomingInvitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Incoming invitation detected.'**
-  String get incomingInvitation;
-
-  /// No description provided for @invitationLinkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This invitation link has expired.'**
-  String get invitationLinkExpired;
-
-  /// No description provided for @acceptanceLinkExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'This acceptance link has expired.'**
-  String get acceptanceLinkExpired;
 
   /// No description provided for @chatNotFoundForAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Chat not found for this acceptance link.'**
+  /// **'This reply doesn\'t match any invite you sent.'**
   String get chatNotFoundForAcceptance;
 
   /// No description provided for @failedToProcessAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'Failed to process acceptance link.'**
+  /// **'Couldn\'t read this reply link.'**
   String get failedToProcessAcceptance;
-
-  /// No description provided for @chatNotFoundForMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat not found for this message link.'**
-  String get chatNotFoundForMessage;
-
-  /// No description provided for @failedToProcessMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to process message link.'**
-  String get failedToProcessMessage;
-
-  /// No description provided for @shareFile.
-  ///
-  /// In en, this message translates to:
-  /// **'Share File'**
-  String get shareFile;
 
   /// No description provided for @vaultUntitled.
   ///
   /// In en, this message translates to:
   /// **'Untitled'**
   String get vaultUntitled;
-
-  /// No description provided for @vaultNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New Password'**
-  String get vaultNewPassword;
-
-  /// No description provided for @vaultNewNote.
-  ///
-  /// In en, this message translates to:
-  /// **'New Note'**
-  String get vaultNewNote;
-
-  /// No description provided for @vaultEditItem.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Item'**
-  String get vaultEditItem;
-
-  /// No description provided for @vaultTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Title'**
-  String get vaultTitle;
-
-  /// No description provided for @vaultUsernameEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'Username / Email'**
-  String get vaultUsernameEmail;
-
-  /// No description provided for @vaultUrlWebsite.
-  ///
-  /// In en, this message translates to:
-  /// **'URL (Website)'**
-  String get vaultUrlWebsite;
-
-  /// No description provided for @vaultNotesOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'Notes (Optional)'**
-  String get vaultNotesOptional;
-
-  /// No description provided for @vaultSecureNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Secure Note'**
-  String get vaultSecureNote;
 
   /// No description provided for @vaultSave.
   ///
@@ -942,12 +369,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Files'**
   String get vaultFiles;
 
-  /// No description provided for @vaultNoFilesYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No files yet'**
-  String get vaultNoFilesYet;
-
   /// No description provided for @vaultFileLabel.
   ///
   /// In en, this message translates to:
@@ -959,60 +380,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get vaultAll;
-
-  /// No description provided for @vaultAddGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Group'**
-  String get vaultAddGroup;
-
-  /// No description provided for @vaultNewGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'New Group'**
-  String get vaultNewGroup;
-
-  /// No description provided for @vaultGroupName.
-  ///
-  /// In en, this message translates to:
-  /// **'Group name'**
-  String get vaultGroupName;
-
-  /// No description provided for @vaultMoveToGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Move to Group'**
-  String get vaultMoveToGroup;
-
-  /// No description provided for @vaultNoOtherGroups.
-  ///
-  /// In en, this message translates to:
-  /// **'No other groups available'**
-  String get vaultNoOtherGroups;
-
-  /// No description provided for @vaultNoResultsFound.
-  ///
-  /// In en, this message translates to:
-  /// **'No results found.'**
-  String get vaultNoResultsFound;
-
-  /// No description provided for @vaultNoPasswordsYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No passwords yet.\nTap + to add one.'**
-  String get vaultNoPasswordsYet;
-
-  /// No description provided for @vaultNoNotesYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No notes yet.\nTap + to add one.'**
-  String get vaultNoNotesYet;
-
-  /// No description provided for @vaultIsEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault is empty.\nAdd a password or note.'**
-  String get vaultIsEmpty;
 
   /// No description provided for @vaultPasswordLabel.
   ///
@@ -1026,89 +393,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Note'**
   String get vaultNoteLabel;
 
-  /// No description provided for @vaultCopyingNotImplemented.
-  ///
-  /// In en, this message translates to:
-  /// **'Copying not fully implemented yet.'**
-  String get vaultCopyingNotImplemented;
-
-  /// No description provided for @vaultFailedToLoadItem.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to load item'**
-  String get vaultFailedToLoadItem;
-
-  /// No description provided for @vaultSearchHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Search passwords & notes'**
-  String get vaultSearchHint;
-
-  /// No description provided for @vaultCreateYourVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Your Vault'**
-  String get vaultCreateYourVault;
-
-  /// No description provided for @vaultCreateDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Your vault encrypts all passwords and notes locally on your device.\nChoose a strong master password.'**
-  String get vaultCreateDescription;
-
-  /// No description provided for @vaultPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault Password'**
-  String get vaultPassword;
-
-  /// No description provided for @vaultConfirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Password'**
-  String get vaultConfirmPassword;
-
-  /// No description provided for @vaultPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get vaultPasswordsDoNotMatch;
-
-  /// No description provided for @vaultPasswordCannotBeReset.
-  ///
-  /// In en, this message translates to:
-  /// **'This password cannot be reset. If you forget it, your data will be permanently lost.'**
-  String get vaultPasswordCannotBeReset;
-
-  /// No description provided for @vaultCreateVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Vault'**
-  String get vaultCreateVault;
-
-  /// No description provided for @vaultFailedToCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to create vault: {failureType}'**
-  String vaultFailedToCreate(Object failureType);
-
-  /// No description provided for @vaultUnlockVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock Vault'**
-  String get vaultUnlockVault;
-
   /// No description provided for @vaultIncorrectPassword.
   ///
   /// In en, this message translates to:
   /// **'Incorrect password'**
   String get vaultIncorrectPassword;
-
-  /// No description provided for @vaultUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock'**
-  String get vaultUnlock;
 
   /// No description provided for @vaultForgotPassword.
   ///
@@ -1116,59 +405,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Forgot password? Your data is encrypted and cannot be recovered.'**
   String get vaultForgotPassword;
 
-  /// No description provided for @vaultUnlockFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock failed: {failureType}'**
-  String vaultUnlockFailed(Object failureType);
-
-  /// No description provided for @vaultPasswordStrength.
-  ///
-  /// In en, this message translates to:
-  /// **'Password Strength'**
-  String get vaultPasswordStrength;
-
-  /// No description provided for @fuzzyVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzzy Vault'**
-  String get fuzzyVault;
-
-  /// No description provided for @menu.
-  ///
-  /// In en, this message translates to:
-  /// **'Menu'**
-  String get menu;
-
-  /// No description provided for @fuzzyUserAuth.
-  ///
-  /// In en, this message translates to:
-  /// **'Fuzzy User Auth'**
-  String get fuzzyUserAuth;
-
-  /// No description provided for @authError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error: {errorMessage}'**
-  String authError(Object errorMessage);
-
   /// No description provided for @unknownError.
   ///
   /// In en, this message translates to:
   /// **'Unknown error'**
   String get unknownError;
-
-  /// No description provided for @noDataFoundPleaseSetYourData.
-  ///
-  /// In en, this message translates to:
-  /// **'No data found. Please set your data.'**
-  String get noDataFoundPleaseSetYourData;
-
-  /// No description provided for @lastUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Last Updated:'**
-  String get lastUpdated;
 
   /// No description provided for @keyStrengthWeak.
   ///
@@ -1212,18 +453,6 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock Fuzzzy Ink'**
   String get chatUnlockTitle;
 
-  /// No description provided for @chatUnlockSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your password to access your chats.'**
-  String get chatUnlockSubtitle;
-
-  /// No description provided for @chatAuthPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get chatAuthPassword;
-
   /// No description provided for @chatAuthIncorrectPassword.
   ///
   /// In en, this message translates to:
@@ -1236,106 +465,22 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock'**
   String get chatAuthUnlock;
 
-  /// No description provided for @chatAuthForgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot password? Your encrypted data cannot be recovered without it.'**
-  String get chatAuthForgotPassword;
-
-  /// No description provided for @chatAuthSetupTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Protect Your Chats'**
-  String get chatAuthSetupTitle;
-
-  /// No description provided for @chatAuthSetupDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Set a password to encrypt your chat keys. This adds an extra layer of security to your conversations.'**
-  String get chatAuthSetupDescription;
-
-  /// No description provided for @chatAuthSetPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Password'**
-  String get chatAuthSetPassword;
-
-  /// No description provided for @chatAuthConfirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Password'**
-  String get chatAuthConfirmPassword;
-
-  /// No description provided for @chatAuthPasswordsDoNotMatch.
-  ///
-  /// In en, this message translates to:
-  /// **'Passwords do not match'**
-  String get chatAuthPasswordsDoNotMatch;
-
-  /// No description provided for @chatAuthEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Protection Enabled'**
-  String get chatAuthEnabled;
-
-  /// No description provided for @chatAuthDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Protection Disabled'**
-  String get chatAuthDisabled;
-
-  /// No description provided for @chatAuthEnableProtection.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Chat Protection'**
-  String get chatAuthEnableProtection;
-
-  /// No description provided for @chatAuthDisableProtection.
-  ///
-  /// In en, this message translates to:
-  /// **'Disable Chat Protection'**
-  String get chatAuthDisableProtection;
-
-  /// No description provided for @chatAuthProtectionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'When enabled, you must enter a password to access your chats. Your keys will be encrypted with this password.'**
-  String get chatAuthProtectionDescription;
-
-  /// No description provided for @chatAuthMigratingKeys.
-  ///
-  /// In en, this message translates to:
-  /// **'Encrypting your keys...'**
-  String get chatAuthMigratingKeys;
-
   /// No description provided for @chatAuthResecuringKeys.
   ///
   /// In en, this message translates to:
   /// **'Re-securing your keys…'**
   String get chatAuthResecuringKeys;
 
-  /// No description provided for @chatAuthentication.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Authentication'**
-  String get chatAuthentication;
-
-  /// No description provided for @chatAuthenticationDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage chat password protection'**
-  String get chatAuthenticationDescription;
-
   /// No description provided for @benchmarkFileEncryption.
   ///
   /// In en, this message translates to:
-  /// **'Benchmark file encryption (dev)'**
+  /// **'Benchmark locking files (dev)'**
   String get benchmarkFileEncryption;
 
   /// No description provided for @benchmarkFileEncryptionDescription.
   ///
   /// In en, this message translates to:
-  /// **'Fuzzes and unfuzzes a 64 MiB temp file and reports MB/s'**
+  /// **'Locks and opens a 64 MiB test file and reports MB/s'**
   String get benchmarkFileEncryptionDescription;
 
   /// No description provided for @benchmarkResult.
@@ -1357,202 +502,58 @@ abstract class FuzzzyInkLocalizations {
   /// **'Close'**
   String get close;
 
-  /// No description provided for @chatAuthBiometricUnlock.
+  /// No description provided for @chatAuthPasswordTooWeak.
   ///
   /// In en, this message translates to:
-  /// **'Unlock with biometrics'**
-  String get chatAuthBiometricUnlock;
+  /// **'Password is too weak. Use a longer one with letters, numbers and symbols.'**
+  String get chatAuthPasswordTooWeak;
 
-  /// No description provided for @chatAuthBiometricEnable.
+  /// No description provided for @biometricNotStrongEnough.
   ///
   /// In en, this message translates to:
-  /// **'Enable Biometric Unlock'**
-  String get chatAuthBiometricEnable;
+  /// **'Fingerprint or face unlock on this device isn\'t strong enough to protect your password. Keep unlocking with your password.'**
+  String get biometricNotStrongEnough;
 
-  /// No description provided for @chatAuthBiometricDisable.
+  /// No description provided for @biometricNotTurnedOn.
   ///
   /// In en, this message translates to:
-  /// **'Disable Biometric Unlock'**
-  String get chatAuthBiometricDisable;
-
-  /// No description provided for @chatAuthBiometricEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Unlock Enabled'**
-  String get chatAuthBiometricEnabled;
-
-  /// No description provided for @chatAuthBiometricDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your password to confirm, then unlock with fingerprint or Face ID.'**
-  String get chatAuthBiometricDescription;
-
-  /// No description provided for @chatAuthBiometricUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication is not available on this device.'**
-  String get chatAuthBiometricUnavailable;
-
-  /// No description provided for @chatAuthBiometricFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication failed.'**
-  String get chatAuthBiometricFailed;
-
-  /// No description provided for @chatAuthBiometricInvalidated.
-  ///
-  /// In en, this message translates to:
-  /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
-  String get chatAuthBiometricInvalidated;
-
-  /// No description provided for @vaultBiometricUnlock.
-  ///
-  /// In en, this message translates to:
-  /// **'Unlock with biometrics'**
-  String get vaultBiometricUnlock;
-
-  /// No description provided for @vaultBiometricEnable.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable Biometric Unlock'**
-  String get vaultBiometricEnable;
-
-  /// No description provided for @vaultBiometricDisable.
-  ///
-  /// In en, this message translates to:
-  /// **'Disable Biometric Unlock'**
-  String get vaultBiometricDisable;
-
-  /// No description provided for @vaultBiometricEnabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Unlock Enabled'**
-  String get vaultBiometricEnabled;
-
-  /// No description provided for @vaultBiometricDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm with your master password to enable biometric unlock for this vault.'**
-  String get vaultBiometricDescription;
-
-  /// No description provided for @vaultBiometricUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric authentication is not available on this device.'**
-  String get vaultBiometricUnavailable;
-
-  /// No description provided for @vaultBiometricSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Biometric Settings'**
-  String get vaultBiometricSettings;
-
-  /// No description provided for @vaultBiometricInvalidPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Incorrect vault password.'**
-  String get vaultBiometricInvalidPassword;
+  /// **'Quick unlock was not turned on.'**
+  String get biometricNotTurnedOn;
 
   /// No description provided for @vaultBiometricInvalidated.
   ///
   /// In en, this message translates to:
-  /// **'Your biometrics have changed. Biometric unlock has been disabled. Please re-enable it from settings.'**
+  /// **'Your fingerprint or face changed, so quick unlock was turned off. Turn it on again in Settings.'**
   String get vaultBiometricInvalidated;
-
-  /// No description provided for @vaultAuthentication.
-  ///
-  /// In en, this message translates to:
-  /// **'Vault Authentication'**
-  String get vaultAuthentication;
-
-  /// No description provided for @vaultAuthenticationDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage vault biometric unlock'**
-  String get vaultAuthenticationDescription;
-
-  /// No description provided for @vaultNotCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a vault first to enable biometric unlock.'**
-  String get vaultNotCreated;
-
-  /// No description provided for @vaultLockVault.
-  ///
-  /// In en, this message translates to:
-  /// **'Lock Vault'**
-  String get vaultLockVault;
-
-  /// No description provided for @chatAuthCurrentPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Current Password'**
-  String get chatAuthCurrentPassword;
-
-  /// No description provided for @chatAuthNewPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'New Password'**
-  String get chatAuthNewPassword;
-
-  /// No description provided for @chatAuthEnterPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter your current password'**
-  String get chatAuthEnterPassword;
-
-  /// No description provided for @chatAuthPasswordChanged.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat Password Changed'**
-  String get chatAuthPasswordChanged;
-
-  /// No description provided for @vaultFileSaveWarning.
-  ///
-  /// In en, this message translates to:
-  /// **'⚠️ The original file is NOT auto-deleted. After a successful save, the user\'s source file remains on disk untouched. The app currently doesn\'t warn about this.'**
-  String get vaultFileSaveWarning;
 
   /// No description provided for @invitationAlreadyUsed.
   ///
   /// In en, this message translates to:
-  /// **'This invitation was already used.'**
+  /// **'This invite was already used.'**
   String get invitationAlreadyUsed;
 
   /// No description provided for @invalidInvitation.
   ///
   /// In en, this message translates to:
-  /// **'This invitation is invalid or damaged.'**
+  /// **'This invite is not valid or is damaged.'**
   String get invalidInvitation;
 
   /// No description provided for @invalidAcceptance.
   ///
   /// In en, this message translates to:
-  /// **'This acceptance is invalid or damaged.'**
+  /// **'This reply is not valid or is damaged.'**
   String get invalidAcceptance;
 
   /// No description provided for @wrongChatBlob.
   ///
   /// In en, this message translates to:
-  /// **'This code belongs to a different chat.'**
+  /// **'This belongs to a different person.'**
   String get wrongChatBlob;
-
-  /// No description provided for @alreadyUnfuzzed.
-  ///
-  /// In en, this message translates to:
-  /// **'This message was already unfuzzed on this device.'**
-  String get alreadyUnfuzzed;
-
-  /// No description provided for @blobTooOld.
-  ///
-  /// In en, this message translates to:
-  /// **'This message is too old to unfuzz — too many newer messages were unfuzzed first.'**
-  String get blobTooOld;
 
   /// No description provided for @corruptBlob.
   ///
   /// In en, this message translates to:
-  /// **'This is not a valid fuzzed message.'**
+  /// **'This is not a valid locked message.'**
   String get corruptBlob;
 
   /// No description provided for @safetyNumberTitle.
@@ -1561,40 +562,16 @@ abstract class FuzzzyInkLocalizations {
   /// **'Safety number'**
   String get safetyNumberTitle;
 
-  /// No description provided for @safetyNumberExplanation.
+  /// No description provided for @safetyNumberVersion.
   ///
   /// In en, this message translates to:
-  /// **'Compare these digits with your partner by voice or in person. Until they match, someone who intercepted the invitation or acceptance could be in the middle.'**
-  String get safetyNumberExplanation;
-
-  /// No description provided for @safetyNumberMarkVerified.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as verified'**
-  String get safetyNumberMarkVerified;
-
-  /// No description provided for @safetyNumberUnmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Unmark'**
-  String get safetyNumberUnmark;
-
-  /// No description provided for @safetyNumberVerifiedBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'Verified'**
-  String get safetyNumberVerifiedBadge;
-
-  /// No description provided for @verifySafetyNumberCta.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify safety number'**
-  String get verifySafetyNumberCta;
+  /// **'Version {version}. If the other person sees another version, or none, update both apps before comparing.'**
+  String safetyNumberVersion(int version);
 
   /// No description provided for @wrongPasswordFile.
   ///
   /// In en, this message translates to:
-  /// **'Wrong password — this file cannot be unfuzzed with it.'**
+  /// **'Wrong password — this file doesn\'t open with it.'**
   String get wrongPasswordFile;
 
   /// No description provided for @fileStillArriving.
@@ -1612,19 +589,19 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @basicsWrongPassword.
   ///
   /// In en, this message translates to:
-  /// **'Incorrect key — this text cannot be unfuzzed with it.'**
+  /// **'Incorrect key — this text doesn\'t open with it.'**
   String get basicsWrongPassword;
 
   /// No description provided for @forwardSecrecyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unfuzzed once, on this device'**
+  /// **'Opened once, on this device'**
   String get forwardSecrecyTitle;
 
   /// No description provided for @forwardSecrecyNotice.
   ///
   /// In en, this message translates to:
-  /// **'Each fuzzed message can be unfuzzed once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot re-read old blobs.'**
+  /// **'Each locked message can be opened once, on this device only. Your history stays in the app — export an archive to back it up. A new device cannot read old messages.'**
   String get forwardSecrecyNotice;
 
   /// No description provided for @aboutEncryptionTitle.
@@ -1632,12 +609,6 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'About encryption'**
   String get aboutEncryptionTitle;
-
-  /// No description provided for @aboutEncryptionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'What single-use unfuzzing means, and how your history is kept'**
-  String get aboutEncryptionDescription;
 
   /// No description provided for @aboutEncryptionHistoryTitle.
   ///
@@ -1648,19 +619,19 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyHistory.
   ///
   /// In en, this message translates to:
-  /// **'Every text you send or unfuzz is kept in the app, sealed per chat under a key only this device holds. If you set an app-lock password, that key is protected by it — without the password, the stored text history cannot be opened. Unfuzzed files are different: they are saved as ordinary files in this chat’s folder on the device and are not sealed or locked by the app — anyone who can read the device’s storage can open them, so protect them like any other file. Once unlocked, your chats stay open until you close the app; the app does not lock itself after a while. If you turn on biometric unlock, your password is stored securely on this device so a fingerprint or face can release it.'**
+  /// **'Every text you lock or open is kept in the app, sealed per person under a key only this device holds. Your master password protects every key: without it, or your recovery key, nothing kept here can be opened. My safe opens with the master password or with a password of its own; giving it its own password also gives it a new key and a new recovery key. Files are kept the same way: the app keeps only the sealed file and unlocks it for the moment you open, save or share it. A file you save or share is yours — it leaves the app as an ordinary file, so protect it like any other file. The app locks itself after the idle time you choose, and when it has been in the background for a while. If you turn on fingerprint or face unlock, your password is stored on this device so your fingerprint or face can release it.'**
   String get aboutEncryptionBodyHistory;
 
   /// No description provided for @aboutEncryptionWindowTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unfuzz in order'**
+  /// **'Open in order'**
   String get aboutEncryptionWindowTitle;
 
   /// No description provided for @aboutEncryptionBodyWindow.
   ///
   /// In en, this message translates to:
-  /// **'The app keeps keys for skipped messages, but not without limit. A blob more than 63 messages behind the newest one you already read in that chat can no longer be unfuzzed — the app says it is too old — and no more than 40 skipped messages are kept at once. Your own sent blobs cannot be unfuzzed by you either; that is why the app keeps what you sent.'**
+  /// **'The app keeps keys for skipped messages, but not without limit. A message more than 63 behind the newest one you already opened from that person can no longer be opened — the app says it is too old — and no more than 40 skipped messages are kept at once. You cannot open your own sent messages either; that is why the app keeps what you sent.'**
   String get aboutEncryptionBodyWindow;
 
   /// No description provided for @aboutEncryptionLinksTitle.
@@ -1672,7 +643,7 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyLinks.
   ///
   /// In en, this message translates to:
-  /// **'A message copied or shared as a link carries the chat’s id next to the blob, so tapping the link opens the right chat. The id is not part of the secret, but anyone who sees the link can tell which chat it belongs to. The blob itself carries no chat id.'**
+  /// **'A link carries only the locked message, after the # — the part a browser never sends to any server. A link never opens anything by itself: the app shows who it is from and opens it only when you tap Open. A reply link connects you only when you tap Connect.'**
   String get aboutEncryptionBodyLinks;
 
   /// No description provided for @aboutEncryptionErrorsTitle.
@@ -1684,13 +655,13 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyErrors.
   ///
   /// In en, this message translates to:
-  /// **'“Already unfuzzed”: this blob was unfuzzed on this device before and cannot be read a second time. “Not a valid fuzzed message”: the blob is damaged, incomplete, or belongs to a different chat — the app cannot tell these apart. “Too old”: too many newer messages were unfuzzed first. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
+  /// **'“Already opened”: this message was opened on this device before, or its one-time key is gone — more than 40 messages before it were skipped, or the conversation has moved on several rounds since — so it can never be read here. “Not a valid locked message”: it is damaged, incomplete, or belongs to a different person — the app cannot tell these apart. “Too old”: it is more than 63 messages behind the newest one you already opened from that person. “Incorrect key” / “Wrong password” (Basics): the key or password does not match, or the text or file is damaged — the app cannot tell these apart either. For files, a receive that fails or is cancelled after it started has already used the file’s one-time key: ask the sender to send the file again.'**
   String get aboutEncryptionBodyErrors;
 
   /// No description provided for @aboutEncryptionBodySafetyNumber.
   ///
   /// In en, this message translates to:
-  /// **'Every chat has a 60-digit safety number, computed from both devices’ identity keys. Compare it with your partner by voice or in person: if the digits match, nobody sat in the middle when you paired. “Verified” is your own note that you did this — the app cannot check it for you.'**
+  /// **'Each person you connect with has a 60-digit safety number, computed from both devices’ identity keys. Compare it with them by voice or in person: if the digits match, nobody sat in the middle when you connected. “Checked” is your own note that you did this — the app cannot check it for you.'**
   String get aboutEncryptionBodySafetyNumber;
 
   /// No description provided for @aboutEncryptionUnderTheHoodTitle.
@@ -1702,67 +673,43 @@ abstract class FuzzzyInkLocalizations {
   /// No description provided for @aboutEncryptionBodyUnderTheHood.
   ///
   /// In en, this message translates to:
-  /// **'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a blob single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.'**
+  /// **'Messages use the Olm double ratchet (vodozemac, independently audited) — a fresh key per message, which is what makes a locked message single-use. Files are sealed with XChaCha20-Poly1305 in chunks; a damaged file is refused and nothing is left on disk. Passwords go through Argon2id. Your secret keys live in the app’s native core and are never sent anywhere. There is no web version: the core is native code.'**
   String get aboutEncryptionBodyUnderTheHood;
 
   /// No description provided for @alreadyReceived.
   ///
   /// In en, this message translates to:
-  /// **'This file was already received on this device — it cannot be unfuzzed a second time.'**
+  /// **'This file was already received on this device — it can\'t be opened a second time.'**
   String get alreadyReceived;
 
   /// No description provided for @fileTooOld.
   ///
   /// In en, this message translates to:
-  /// **'This file is too old to unfuzz — too many newer messages were unfuzzed first.'**
+  /// **'This file is too old to open — many newer messages were opened first.'**
   String get fileTooOld;
 
   /// No description provided for @fileCorrupt.
   ///
   /// In en, this message translates to:
-  /// **'This is not a valid fuzzed file — it is damaged, incomplete, or from a different chat.'**
+  /// **'This is not a valid locked file — it is damaged, incomplete, or from a different person.'**
   String get fileCorrupt;
 
   /// No description provided for @fileCancelled.
   ///
   /// In en, this message translates to:
-  /// **'Receiving was cancelled — this file cannot be unfuzzed on this device now; ask the sender to send it again.'**
+  /// **'Receiving was cancelled — this file can\'t be opened on this device now; ask the sender to send it again.'**
   String get fileCancelled;
-
-  /// No description provided for @exportChatArchive.
-  ///
-  /// In en, this message translates to:
-  /// **'Export chat archive'**
-  String get exportChatArchive;
-
-  /// No description provided for @exportChatArchiveDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Seals this chat\'s history into a password-protected file (one message per line). Open it later in Basic Encryption → file decryption with the same password.'**
-  String get exportChatArchiveDescription;
-
-  /// No description provided for @exportChatArchivePassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Archive password'**
-  String get exportChatArchivePassword;
-
-  /// No description provided for @exportChatArchiveDone.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat archive exported.'**
-  String get exportChatArchiveDone;
 
   /// No description provided for @exportChatArchiveFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to export the chat archive.'**
+  /// **'Couldn\'t save the history as a file.'**
   String get exportChatArchiveFailed;
 
   /// No description provided for @exportChatArchiveNothingToExport.
   ///
   /// In en, this message translates to:
-  /// **'This chat has no messages to export.'**
+  /// **'There is no history to save yet.'**
   String get exportChatArchiveNothingToExport;
 
   /// No description provided for @exportChatArchiveStoreLocked.
@@ -1771,29 +718,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Unlock Fuzzzy Ink first — your history cannot be read while it is locked.'**
   String get exportChatArchiveStoreLocked;
 
-  /// No description provided for @export.
-  ///
-  /// In en, this message translates to:
-  /// **'Export'**
-  String get export;
-
   /// No description provided for @couldNotOpenFile.
   ///
   /// In en, this message translates to:
   /// **'Could not open file.'**
   String get couldNotOpenFile;
-
-  /// No description provided for @legalAndSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Legal and support'**
-  String get legalAndSupport;
-
-  /// No description provided for @legalAndSupportDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'These open fuzzzycore.com in your browser. Fuzzzy Ink itself never goes online.'**
-  String get legalAndSupportDescription;
 
   /// No description provided for @privacyPolicy.
   ///
@@ -1801,23 +730,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Privacy policy'**
   String get privacyPolicy;
 
-  /// No description provided for @privacyPolicyDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'What the app keeps, and where'**
-  String get privacyPolicyDescription;
-
   /// No description provided for @termsOfUse.
   ///
   /// In en, this message translates to:
   /// **'Terms of use'**
   String get termsOfUse;
-
-  /// No description provided for @termsOfUseDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'The rules for using Fuzzzy Ink'**
-  String get termsOfUseDescription;
 
   /// No description provided for @support.
   ///
@@ -1825,23 +742,11 @@ abstract class FuzzzyInkLocalizations {
   /// **'Support'**
   String get support;
 
-  /// No description provided for @supportDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Help, questions and reporting a problem'**
-  String get supportDescription;
-
   /// No description provided for @dataDeletion.
   ///
   /// In en, this message translates to:
   /// **'Deleting your data'**
   String get dataDeletion;
-
-  /// No description provided for @dataDeletionDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'How to remove everything the app keeps'**
-  String get dataDeletionDescription;
 
   /// No description provided for @couldNotOpenLink.
   ///
@@ -1849,28 +754,22 @@ abstract class FuzzzyInkLocalizations {
   /// **'Could not open the link.'**
   String get couldNotOpenLink;
 
-  /// No description provided for @appVersion.
-  ///
-  /// In en, this message translates to:
-  /// **'Version {version} (build {build})'**
-  String appVersion(Object version, Object build);
-
   /// No description provided for @biometricUnlockChats.
   ///
   /// In en, this message translates to:
-  /// **'Authenticate to unlock chats'**
+  /// **'Confirm it\'s you to unlock Fuzzzy Ink'**
   String get biometricUnlockChats;
 
   /// No description provided for @biometricUnlockVault.
   ///
   /// In en, this message translates to:
-  /// **'Authenticate to unlock vault'**
+  /// **'Confirm it\'s you to open My safe'**
   String get biometricUnlockVault;
 
   /// No description provided for @biometricUnlockVaultTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock Fuzzy Vault'**
+  /// **'Open My safe'**
   String get biometricUnlockVaultTitle;
 
   /// No description provided for @biometricSavePassword.
@@ -1878,6 +777,3390 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Authenticate to save password'**
   String get biometricSavePassword;
+
+  /// No description provided for @vaultMoveUnfinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My safe wasn\'t moved'**
+  String get vaultMoveUnfinishedTitle;
+
+  /// No description provided for @vaultMoveUnfinishedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'My safe couldn\'t be moved to its protected place in the app. Nothing was deleted. Close and reopen the app to try again.'**
+  String get vaultMoveUnfinishedMessage;
+
+  /// No description provided for @copyRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Only sealed text can be copied.'**
+  String get copyRefused;
+
+  /// No description provided for @vaultCopyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy password'**
+  String get vaultCopyPassword;
+
+  /// No description provided for @saveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveFile;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get fileSaved;
+
+  /// No description provided for @couldNotSaveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the file.'**
+  String get couldNotSaveFile;
+
+  /// No description provided for @unfuzzingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening…'**
+  String get unfuzzingFile;
+
+  /// No description provided for @fileNoPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'This file cannot be shown in the app. Save it to open it with another app.'**
+  String get fileNoPreview;
+
+  /// No description provided for @basicsFuzzedFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked files kept in the app'**
+  String get basicsFuzzedFilesTitle;
+
+  /// No description provided for @masterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Master password'**
+  String get masterPassword;
+
+  /// No description provided for @masterPasswordPreviousData.
+  ///
+  /// In en, this message translates to:
+  /// **'This version uses a master password. People, history and My safe from the earlier test version can\'t be opened with it, so they will be removed. Files you saved stay where they are.'**
+  String get masterPasswordPreviousData;
+
+  /// No description provided for @accessSetupInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup didn\'t finish last time. A recovery key you saw then won\'t work. You\'ll get a new one.'**
+  String get accessSetupInterrupted;
+
+  /// No description provided for @masterPasswordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your keys could not be created. Try again.'**
+  String get masterPasswordFailed;
+
+  /// No description provided for @recoveryKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get recoveryKeyTitle;
+
+  /// No description provided for @recoveryKeySaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The recovery key was not saved.'**
+  String get recoveryKeySaveFailed;
+
+  /// No description provided for @recoveryKeyFileText.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink recovery key\n\n{key}\n\nIf you forget your master password, this key lets you set a new one. Keep it somewhere safe, away from the device. Without your password or this recovery key, nobody — not even us — can get your data back.\n'**
+  String recoveryKeyFileText(String key);
+
+  /// No description provided for @recoveryKeyField.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get recoveryKeyField;
+
+  /// No description provided for @recoveryKeyTypo.
+  ///
+  /// In en, this message translates to:
+  /// **'This recovery key has a typo. Check each group of four.'**
+  String get recoveryKeyTypo;
+
+  /// No description provided for @recoveryKeyWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'This recovery key does not open this app.'**
+  String get recoveryKeyWrong;
+
+  /// No description provided for @chatUnlockErase.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything and start over'**
+  String get chatUnlockErase;
+
+  /// No description provided for @eraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything?'**
+  String get eraseTitle;
+
+  /// No description provided for @eraseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your people, history, My safe and settings leave this device for good. There is no undo. Files you saved stay where they are.'**
+  String get eraseMessage;
+
+  /// No description provided for @eraseConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything'**
+  String get eraseConfirm;
+
+  /// No description provided for @storageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink can\'t read this device\'s secure key storage, so it stays locked. Try again; if it keeps happening, restart the device.'**
+  String get storageUnavailable;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @appLockNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Fuzzzy Ink'**
+  String get appLockNow;
+
+  /// No description provided for @autoLockSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The setting was not saved.'**
+  String get autoLockSaveFailed;
+
+  /// No description provided for @vaultRecoveryUseMasterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe with my master password'**
+  String get vaultRecoveryUseMasterPassword;
+
+  /// No description provided for @vaultRecoverySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe'**
+  String get vaultRecoverySubmit;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe'**
+  String get tabMySafe;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get tabSettings;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get homeLockTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'For one person'**
+  String get homeLockSubtitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get homeOpenTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What you got'**
+  String get homeOpenSubtitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get homePeople;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'People · {count}'**
+  String homePeopleCount(int count);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get homeAdd;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person'**
+  String get homeAddPerson;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No one yet'**
+  String get homeNoOneYet;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your people. Close and open the app again.'**
+  String get homeLoadError;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You send an invite'**
+  String get stepYouSendInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They reply'**
+  String get stepTheyReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Invite sent'**
+  String get stepInviteSent;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} replies'**
+  String stepNameReplies(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for each other'**
+  String get stepLockForEachOther;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String stepsProgress(int step, int total);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total} · {label}'**
+  String stepsProgressWithLabel(int step, int total, String label);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done: {step}'**
+  String stepDone(String step);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {step}'**
+  String stepNext(String step);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send an invite'**
+  String get addSendInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You start'**
+  String get addYouStart;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got an invite'**
+  String get addGotInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They started'**
+  String get addTheyStarted;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for reply'**
+  String get chipWaitingForReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get chipChecked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked'**
+  String get chipNotChecked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then you can lock for each other'**
+  String get personRowWaitingLine;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Once {name} replies, you can lock messages for each other.'**
+  String waitNoteReply(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send the invite any way, even publicly. It stays safe.'**
+  String get waitNoteAnyWay;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why?'**
+  String get linkWhy;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How?'**
+  String get linkHow;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get linkMore;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens an explanation'**
+  String get linkOpensExplanation;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why no reset?'**
+  String get infoNoResetTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your password never leaves this phone.'**
+  String get infoNoResetLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t see it, so no one can reset it.'**
+  String get infoNoResetLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key is the only spare.'**
+  String get infoNoResetLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key'**
+  String get infoRecoveryKeyTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare if you forget the password.'**
+  String get infoRecoveryKeyLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It opens Fuzzzy Ink, and My safe too.'**
+  String get infoRecoveryKeyLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print it or save it off this phone. Anyone with it and your phone can open everything.'**
+  String get infoRecoveryKeyLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why only once?'**
+  String get infoOpensOnceTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each locked thing has its own key.'**
+  String get infoOpensOnceLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening it uses the key up, on any phone.'**
+  String get infoOpensOnceLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A copy stays in your history, locked.'**
+  String get infoOpensOnceLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to send anywhere'**
+  String get infoSafeAnywhereTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'An invite can\'t open anything.'**
+  String get infoSafeAnywhereLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only their reply connects you two.'**
+  String get infoSafeAnywhereLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then you check numbers together, so you know it\'s them.'**
+  String get infoSafeAnywhereLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why check numbers?'**
+  String get infoCheckNumbersTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone who saw your invite could answer it.'**
+  String get infoCheckNumbersLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers on both phones: nobody got in between.'**
+  String get infoCheckNumbersLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Where do files go?'**
+  String get infoFilesTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink keeps only the locked copy.'**
+  String get infoFilesLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open shows it here. Nothing is saved.'**
+  String get infoFilesLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. From then on it\'s yours to protect.'**
+  String get infoFilesLine3;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why no copying?'**
+  String get infoNoCopyingTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What you open stays inside Fuzzzy Ink.'**
+  String get infoNoCopyingLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only locked text can be copied. It is safe anywhere.'**
+  String get infoNoCopyingLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking with a password'**
+  String get infoPasswordLockingTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with the password can open it.'**
+  String get infoPasswordLockingLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Say the password. Never send it with the locked thing.'**
+  String get infoPasswordLockingLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe\'s own password'**
+  String get infoSafePasswordTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One more password to remember.'**
+  String get infoSafePasswordLine1;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot it? Your recovery key opens My safe too.'**
+  String get infoSafePasswordLine2;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No copy · no screenshots'**
+  String get tagNoCopyNoScreenshots;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No copy'**
+  String get tagNoCopy;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s it for?'**
+  String get lockWhoTitle;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock with a password'**
+  String get lockWithPassword;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No invite needed'**
+  String get lockNoInviteNeeded;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person first'**
+  String get lockAddPersonFirst;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orDivider;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open what you got'**
+  String get openWhatYouGot;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Paste it'**
+  String get openPasteIt;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked text, invite or reply'**
+  String get openPasteItHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Links and QR codes come here. Nothing opens until you tap Open.'**
+  String get openLinksTip;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the locked text first.'**
+  String get openNothingToPaste;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get openLockedWithPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who'**
+  String get lockStepWho;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What'**
+  String get lockStepWhat;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for {name}'**
+  String lockForName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get lockKindMessage;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get lockKindFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Write your message…'**
+  String get lockWriteMessageHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only {name} can open it, once.'**
+  String lockOnlyNameOnce(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get lockChooseFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Or drop it here on a computer'**
+  String get lockDropHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get lockChangeFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password for this'**
+  String get lockPasswordLabel;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Say the password. Don\'t send it.'**
+  String get lockSayPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get lockAction;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Write something first.'**
+  String get lockWriteSomethingFirst;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file first.'**
+  String get lockChooseFileFirst;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It needs to reach Good.'**
+  String get lockPasswordNotGood;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t lock it. Try again.'**
+  String get lockFailed;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped. Nothing was kept.'**
+  String get lockStoppedNothingKept;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking'**
+  String get workingLocking;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening'**
+  String get workingOpening;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get workingStarting;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get workingPause;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Go on'**
+  String get workingGoOn;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get workingPaused;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked for {name}'**
+  String lockedForName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get lockedWithPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Now send it.'**
+  String get lockedNowSendIt;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to your share menu.'**
+  String get lockedSentToShareMenu;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share again'**
+  String get lockedShareAgain;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy locked text'**
+  String get lockedCopyText;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save locked file'**
+  String get lockedSaveFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get flowDone;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get openChooseFile;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A .fuzz file'**
+  String get openChooseFileHint;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Reading…'**
+  String get openReading;
+
+  /// A message came by link: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the message from {name}?'**
+  String openLinkTitle(String name);
+
+  /// A person's locked file another app handed over: nothing is opened until the person taps Open (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the file from {name}?'**
+  String openArrivedFileTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'It opens once, then it stays in your history with them.'**
+  String get openLinkLine;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openLinkOpen;
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get openLinkNotNow;
+
+  /// A reply to your invite came by link: nothing connects until the person taps Connect (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with {name}?'**
+  String replyLinkTitle(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect only if {name} sent you this reply.'**
+  String replyLinkLine(String name);
+
+  /// Security review fixes 2026-10-26.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get replyLinkConnect;
+
+  /// A link arrived while My safe's editor is open: it waits so unsaved edits are not lost (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'A link is waiting. It opens when you leave this safe item.'**
+  String get linkWaitsForSafe;
+
+  /// Toast: a .fuzz file arrived while My safe's editor is open; it opens when the editor closes (the file version of linkWaitsForSafe).
+  ///
+  /// In en, this message translates to:
+  /// **'A file is waiting. It opens when you leave this safe item.'**
+  String get fileWaitsForSafe;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'From {name}'**
+  String openedFromName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Just now · kept in {name}\'s history'**
+  String openedKeptInHistory(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened with a password'**
+  String get openedWithPassword;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Just now · not kept'**
+  String get openedNotKept;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'In {name}\'s history now.'**
+  String openedInHistoryNow(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. Then it\'s yours.'**
+  String get openedSaveTip;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s the password?'**
+  String get openPasswordTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get openPasswordLabel;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t open it. Check it and try again.'**
+  String get openPasswordWrong;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Already opened'**
+  String get openErrorAlreadyTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each locked thing opens once. It\'s in {name}\'s history.'**
+  String openErrorAlreadyLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not from your people'**
+  String get openErrorNotYoursTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask them for an invite first.'**
+  String get openErrorNotYoursLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t open this'**
+  String get openErrorDamagedTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It may be cut off or for someone else. Ask them to send it again.'**
+  String get openErrorDamagedLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too old to open'**
+  String get openErrorOldTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask {name} to lock it again.'**
+  String openErrorOldLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a newer Fuzzzy Ink'**
+  String get openErrorNewerTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Update the app, then try again.'**
+  String get openErrorNewerLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s your own invite'**
+  String get openErrorOwnTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to the other person.'**
+  String get openErrorOwnLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Already connected'**
+  String get openErrorConnectedTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You and {name} are connected already.'**
+  String openErrorConnectedLine(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This isn\'t from Fuzzzy Ink'**
+  String get openErrorNotFuzzzyTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open locked text, an invite or a reply.'**
+  String get openErrorNotFuzzzyLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Still arriving'**
+  String get openErrorArrivingTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Wait until the file has fully arrived, then try again.'**
+  String get openErrorArrivingLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This file didn\'t open'**
+  String get openErrorResendTitle;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It can\'t open on this phone now. Ask them to send it again.'**
+  String get openErrorResendLine;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Go to {name}'**
+  String openErrorGoToName(String name);
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get openErrorOk;
+
+  /// Fuzzzy Ink redesign, Lock and Open flows (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open it. Try again.'**
+  String get openFailed;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite'**
+  String get shareTitleInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share reply'**
+  String get shareTitleReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share locked message'**
+  String get shareTitleMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share locked file'**
+  String get shareTitleFile;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Any way. Even publicly.'**
+  String get shareLineInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Any way you like.'**
+  String get shareLineReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only {name} can open it.'**
+  String shareLineForName(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They need the password.'**
+  String get shareLinePassword;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send a link'**
+  String get shareSendLink;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens in the app'**
+  String get shareSendLinkHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Show a QR code'**
+  String get shareShowQr;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They scan it'**
+  String get shareShowQrHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send as a file'**
+  String get shareSendFile;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A small file'**
+  String get shareSendFileHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy as text'**
+  String get shareCopyText;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Stays locked anywhere'**
+  String get shareCopyTextHint;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too big. Send it as a file.'**
+  String get shareTooBig;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. It stays locked.'**
+  String get shareCopiedStaysLocked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite'**
+  String get qrLabelInvite;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your reply'**
+  String get qrLabelReply;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked message'**
+  String get qrLabelMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Let {name} scan this.'**
+  String qrLetNameScan(String name);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Let them scan this.'**
+  String get qrLetThemScan;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe to show anyone. Only their reply connects you.'**
+  String get qrSafeToShowAnyone;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only show it to the right person.'**
+  String get qrOnlyRightPerson;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked a message'**
+  String get historyYouLockedMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You opened a message'**
+  String get historyYouOpenedMessage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked {file}'**
+  String historyYouLockedFile(String file);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You opened {file}'**
+  String historyYouOpenedFile(String file);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'tap to read'**
+  String get historyTapToRead;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'tap to see'**
+  String get historyTapToSee;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get fileCardLocked;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Kept locked in My safe'**
+  String get fileCardKeptInSafe;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked version · safe to send'**
+  String get lockedPreviewLabel;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get confirmCopied;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Handed over'**
+  String get confirmHandedOver;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safety numbers'**
+  String get safetyGridLabel;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Wait {time}'**
+  String lockoutWaitLeft(String time);
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look and language'**
+  String get settingsLookAndLanguage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look'**
+  String get settingsLook;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Like my phone'**
+  String get lookLikeMyPhone;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lookLight;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get lookDark;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'ქართული'**
+  String get languageGeorgian;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Cast'**
+  String get fuzzzyCast;
+
+  /// The Fuzzzy Cast switch line (Settings and the first-run You're ready card); owner wording, 2026-10-27.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini characters guard your safe and locks. Just for fun.'**
+  String get fuzzzyCastLine;
+
+  /// Toast after turning Fuzzzy Cast on (owner, 2026-10-27: mini characters that guard, just for fun).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Cast is on. Your guards are on watch.'**
+  String get fuzzzyCastOn;
+
+  /// Fuzzzy Ink redesign (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Soft sounds'**
+  String get softSounds;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe is locked'**
+  String get safeLockedTitle;
+
+  /// Fuzzzy Ink redesign, My safe header lock button (prototype aria-label, DESIGN.md section 4.11).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock My safe'**
+  String get safeLockButton;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with your master password.'**
+  String get safeOpensWithMaster;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with your safe password.'**
+  String get safeOpensWithOwn;
+
+  /// My safe's unlock screen button. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Open with Face ID} touchId{Open with Touch ID} fingerprint{Open with fingerprint} face{Open with face unlock} other{Open with fingerprint or face}}'**
+  String safeOpenWithFingerprint(String kind);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use master password'**
+  String get safeUseMasterPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use safe password'**
+  String get safeUseSafePassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe password'**
+  String get safePasswordField;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Open My safe'**
+  String get safeOpenButton;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Use recovery key'**
+  String get safeUseRecoveryKey;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Not right. Try again.'**
+  String get safeWrongPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries.'**
+  String get safeTooManyTries;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open My safe. Try again.'**
+  String get safeCouldNotOpen;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your recovery key'**
+  String get safeRecoveryTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and capitals don\'t matter.'**
+  String get safeRecoveryLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'No key? Then nothing can open it.'**
+  String get safeRecoveryNoKey;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New safe password'**
+  String get safeRecoveryNewPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get safeSearch;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'All groups'**
+  String get safeAllGroups;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get safeNewGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get safeEmptyTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add.'**
+  String get safeEmptyLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found'**
+  String get safeNothingFound;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Try another word.'**
+  String get safeTryAnotherWord;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load My safe. Lock it and open it again.'**
+  String get safeLoadError;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Locks itself after {minutes} minutes away'**
+  String safeAutoLockTip(int minutes);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get safeAdd;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add to My safe'**
+  String get safeAddTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Username or email'**
+  String get safeUsername;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get safeWebsite;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get safeNotes;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get safeShowPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get safeHidePassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied · clears in {seconds} s'**
+  String safeCopiedClearsIn(int seconds);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied passwords clear after {seconds} seconds.'**
+  String safeCopyRule(int seconds);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared.'**
+  String get safeCleared;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Copying is off in Settings.'**
+  String get safeCopyOff;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get safeGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'No group'**
+  String get safeNoGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get safeMove;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get safeEdit;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'More for {title}'**
+  String safeMoreFor(String title);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Save gives you a normal copy. Then it\'s yours.'**
+  String get safeSaveTip;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a group'**
+  String get safeMoveToGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {title}?'**
+  String safeDeleteTitle(String title);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves My safe for good. No undo.'**
+  String get safeDeleteLine;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted from My safe.'**
+  String get safeDeleted;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to {group}.'**
+  String safeMovedTo(String group);
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from its group.'**
+  String get safeMovedOut;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved in My safe.'**
+  String get safeSaved;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this. Try again.'**
+  String get safeItemLoadFailed;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Try again.'**
+  String get safeSaveFailed;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get safeGroupName;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Family'**
+  String get safeGroupHint;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Add group'**
+  String get safeAddGroup;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get safeNewPasswordTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New note'**
+  String get safeNewNoteTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'New file'**
+  String get safeNewFileTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get safeTitle;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Bank app'**
+  String get safeTitleHintPassword;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Passport number'**
+  String get safeTitleHintNote;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Home insurance'**
+  String get safeTitleHintFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'optional'**
+  String get safeOptional;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Anything to keep safe'**
+  String get safeNoteHint;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get safeChooseFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Your original stays where it is.'**
+  String get safeOriginalStays;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get safeChangeFile;
+
+  /// Fuzzzy Ink redesign, My safe (DESIGN.md sections 4.11 and 7).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file first.'**
+  String get safeChooseFileFirst;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock it. Only they can open it.'**
+  String get accessWelcomeLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts · nothing goes online'**
+  String get accessWelcomeTag;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get accessStart;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get accessHowItWorks;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person'**
+  String get accessHowAddPerson;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock for them'**
+  String get accessHowLockForThem;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They open it, once'**
+  String get accessHowTheyOpenOnce;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Why once?'**
+  String get accessWhyOnce;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One master password guards it all. You make it next.'**
+  String get accessHowTip;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get accessContinue;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accessStepPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a master password'**
+  String get accessMakeMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type it again'**
+  String get accessTypeItAgain;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No reset.'**
+  String get accessNoResetBold;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose it and your recovery key, and everything is gone.'**
+  String get accessNoResetLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I understand: no password and no key means no access.'**
+  String get accessUnderstandNoAccess;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'They don\'t match yet.'**
+  String get accessPasswordsDontMatch;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get accessStrengthWeak;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get accessStrengthFair;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get accessStrengthGood;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get accessStrengthStrong;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: a few random words.'**
+  String get accessStrengthHintEmpty;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make it longer.'**
+  String get accessStrengthHintWeak;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few more words.'**
+  String get accessStrengthHintFair;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Hard to guess.'**
+  String get accessStrengthHintGood;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Very hard to guess.'**
+  String get accessStrengthHintStrong;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password strength: {level}'**
+  String accessStrengthLabel(String level);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get accessShowPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get accessHidePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key'**
+  String get accessYourRecoveryKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your spare, if you forget the password.'**
+  String get accessRecoverySpare;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get accessPrint;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save as file'**
+  String get accessSaveAsFile;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get accessSaved;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it off this phone. Anyone with it can open everything.'**
+  String get accessKeepOffPhone;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve kept it safe'**
+  String get accessKeptItSafe;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get accessSkipForNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip the recovery key?'**
+  String get accessSkipKeyTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forget your password without it, and everything is lost. You can make one later in Settings.'**
+  String get accessSkipKeyMessage;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it now'**
+  String get accessSkipKeyKeep;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Skip anyway'**
+  String get accessSkipKeyAnyway;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Print preview'**
+  String get accessPrintPreview;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink · recovery key'**
+  String get accessPrintSheetTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens Fuzzzy Ink and My safe if you forget your password.'**
+  String get accessPrintLine1;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this key and your phone can open everything. Keep it away from your phone.'**
+  String get accessPrintLine2;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lose your password and this key, and nothing can be recovered.'**
+  String get accessPrintLine3;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Made {date}. A new key from Settings stops this one.'**
+  String accessPrintMade(String date);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone\'s share menu opens. Choose Print there, not Save to Photos or a cloud app.'**
+  String get accessPrintHint;
+
+  /// Recovery key print preview, iPhone: the printer list opens and the sheet prints directly (no print options sheet, no share button).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a printer. The key goes straight to it, with no copy saved.'**
+  String get accessPrintHintIos;
+
+  /// Recovery key print preview, Mac: the system print panel opens; its PDF menu could save the key.
+  ///
+  /// In en, this message translates to:
+  /// **'The print window opens. Choose your printer, not Save as PDF.'**
+  String get accessPrintHintMac;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The print sheet could not be made. Try Save as file.'**
+  String get accessPrintFailed;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Quick unlock'**
+  String get accessStepQuickUnlock;
+
+  /// First run, quick-unlock step title. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Unlock with Face ID?} touchId{Unlock with Touch ID?} fingerprint{Unlock with your fingerprint?} face{Unlock with your face?} other{Unlock with your fingerprint or face?}}'**
+  String accessBioTitle(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your password always works too.'**
+  String get accessBioLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locks itself after 5 minutes away'**
+  String get accessBioTip;
+
+  /// Button on the quick-unlock step and the lock screen. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Use Face ID} touchId{Use Touch ID} fingerprint{Use fingerprint} face{Use face unlock} other{Use fingerprint or face}}'**
+  String accessUseBio(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get accessNotNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re ready'**
+  String get accessReadyTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first person'**
+  String get accessAddFirstPerson;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Look around first'**
+  String get accessLookAround;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink is locked'**
+  String get accessLockedTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not right. Try again.'**
+  String get accessWrongPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries.'**
+  String get accessTooManyTries;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your password?'**
+  String get accessForgotPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A link is waiting. Unlock to open it.'**
+  String get accessLinkWaiting;
+
+  /// Lock screen: a .fuzz file another app handed over waits for the unlock (the file version of accessLinkWaiting).
+  ///
+  /// In en, this message translates to:
+  /// **'A file is waiting. Unlock to open it.'**
+  String get accessFileWaiting;
+
+  /// Lock screen note: the device's enrolled biometrics changed. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Face ID changed, so quick unlock is off. Turn it on again in Settings.} touchId{Touch ID changed, so quick unlock is off. Turn it on again in Settings.} fingerprint{Your fingerprints changed, so quick unlock is off. Turn it on again in Settings.} face{Your face unlock changed, so quick unlock is off. Turn it on again in Settings.} other{Your fingerprint or face changed, so quick unlock is off. Turn it on again in Settings.}}'**
+  String accessBioChanged(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'An update turned quick unlock off to make it safer. Turn it on again in Settings.'**
+  String get accessBioReset;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery key'**
+  String get accessRecoveryKeyHeader;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your recovery key'**
+  String get accessTypeRecoveryKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Spaces and capitals don\'t matter.'**
+  String get accessSpacesDontMatter;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No key? Then nothing can open it.'**
+  String get accessNoKeyNothing;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A recovery key has 8 groups of 4.'**
+  String get accessKeyTooShort;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That key doesn\'t match. Check each group.'**
+  String get accessKeyDoesntMatch;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New master password'**
+  String get accessNewMasterPassword;
+
+  /// No description provided for @accessKeyAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Key accepted.'**
+  String get accessKeyAccepted;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save new password'**
+  String get accessSaveNewPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New master password saved.'**
+  String get accessNewPasswordSaved;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping it safe'**
+  String get accessSettingsKeepingSafe;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change it'**
+  String get accessChangeIt;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a new one'**
+  String get accessMakeNewOne;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'None yet'**
+  String get accessNoKeyYet;
+
+  /// Settings row title for quick unlock. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Face ID} touchId{Touch ID} fingerprint{Fingerprint} face{Face unlock} other{Fingerprint or face}}'**
+  String accessFingerprintOrFace(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not on this device'**
+  String get accessNotOnThisDevice;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the app'**
+  String get accessLockTheApp;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'After {time}'**
+  String accessLockAfter(String time);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock now'**
+  String get accessLockNow;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock the app after'**
+  String get accessLockAfterTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Right away'**
+  String get accessRightAway;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute'**
+  String get accessOneMinute;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'5 minutes'**
+  String get accessFiveMinutes;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'15 minutes'**
+  String get accessFifteenMinutes;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get accessOneHour;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'recommended'**
+  String get accessRecommended;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens with'**
+  String get accessOpensWith;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Its own password'**
+  String get accessItsOwnPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy passwords'**
+  String get accessCopyPasswords;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Clears after 30 seconds'**
+  String get accessClearsAfter30;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get accessOff;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Coming in an update'**
+  String get accessSoftSoundsSoon;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get accessHelp;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'How Fuzzzy Ink works'**
+  String get accessHowFuzzzyInkWorks;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy, terms and support'**
+  String get accessPrivacyTermsSupport;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your browser'**
+  String get accessOpensYourBrowser;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your browser. The app itself never goes online.'**
+  String get accessBrowserTip;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get accessDeveloper;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink · version {version} (build {build})'**
+  String accessVersionFooter(String version, String build);
+
+  /// Settings sheet title: turn quick unlock on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Turn on Face ID} touchId{Turn on Touch ID} fingerprint{Turn on fingerprint} face{Turn on face unlock} other{Turn on fingerprint or face}}'**
+  String accessTurnOnBioTitle(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type your master password once.'**
+  String get accessTurnOnBioLine;
+
+  /// Settings row and sheet title: quick unlock for My safe. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Face ID for My safe} touchId{Touch ID for My safe} fingerprint{Fingerprint for My safe} face{Face unlock for My safe} other{Fingerprint or face for My safe}}'**
+  String accessTurnOnSafeBioTitle(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Type My safe\'s own password once.'**
+  String get accessTurnOnSafeBioLine;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get accessTurnOn;
+
+  /// Toast after quick unlock was turned on. Chosen by the device's quick unlock (BiometricKind): faceId, touchId, fingerprint, face, other.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, faceId{Face ID is on.} touchId{Touch ID is on.} fingerprint{Fingerprint is on.} face{Face unlock is on.} other{Fingerprint or face is on.}}'**
+  String accessBioOn(String kind);
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe\'s password'**
+  String get accessMySafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change master password'**
+  String get accessChangeMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get accessCurrentPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get accessNewPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your recovery key keeps working.'**
+  String get accessRecoveryKeepsWorking;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get accessChangePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Master password changed.'**
+  String get accessMasterPasswordChanged;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a new key'**
+  String get accessMakeNewKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The old key stops working.'**
+  String get accessOldKeyStops;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe has its own password. Type it too, so the new key opens My safe.'**
+  String get accessSafePasswordToo;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your new key'**
+  String get accessYourNewKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'No password and no key means no access.'**
+  String get accessNoPasswordNoKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your new recovery key is set.'**
+  String get accessNewKeyKept;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe opens with'**
+  String get accessSafeOpensWith;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Simplest. Recommended.'**
+  String get accessSimplestRecommended;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One more to remember'**
+  String get accessOneMoreToRemember;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Safe password'**
+  String get accessSafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save safe password'**
+  String get accessSaveSafePassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe now has its own password.'**
+  String get accessSafeHasOwnPassword;
+
+  /// Safe gets its own password: a new safe key and a new recovery key are made in the same step (security review 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Next you get a new recovery key. It opens My safe, and the old key stops working.'**
+  String get accessSafeGetsNewKey;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Use master password'**
+  String get accessUseMasterPassword;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe opens with your master password again.'**
+  String get accessSafeUsesMaster;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'My safe isn\'t made yet. Open it once from its tab.'**
+  String get accessSafeNotMadeYet;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your master password, to confirm'**
+  String get accessMasterPasswordToConfirm;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Each thing opens once'**
+  String get accessHowOnceTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opening uses its key up. A copy stays in your history.'**
+  String get accessHowOnceBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History stays on this phone'**
+  String get accessHowHistoryTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with your master password. A new phone can\'t read it. Save a person\'s history as a file to keep a copy.'**
+  String get accessHowHistoryBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open things in order'**
+  String get accessHowOrderTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'A very old message may be too old to open. Then ask them to lock it again.'**
+  String get accessHowOrderBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Checking a person'**
+  String get accessHowCheckTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers on both phones: nobody got in between. \"Checked\" is your own note.'**
+  String get accessHowCheckBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get accessHowLinksTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'What comes after the # never reaches our website.'**
+  String get accessHowLinksBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Files you save'**
+  String get accessHowFilesTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The app keeps only locked files. A saved copy is yours to protect.'**
+  String get accessHowFilesBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Under the hood'**
+  String get accessHowHoodTitle;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Messages use the Olm double ratchet (vodozemac, independently audited): a new key for every message. Files are sealed with XChaCha20-Poly1305 in pieces. Passwords go through Argon2id. Keys live in the app\'s native core and are never sent anywhere.'**
+  String get accessHowHoodBody;
+
+  /// Fuzzzy Ink redesign, access screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More about encryption'**
+  String get accessMoreAboutEncryption;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'More for {name}'**
+  String personMoreFor(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet.'**
+  String get personNotCheckedLead;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers.'**
+  String get personNotCheckedAction;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get historyFilterAll;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get historyFilterLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get historyFilterOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get historyToday;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get historyYesterday;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet.'**
+  String get historyEmpty;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing locked yet.'**
+  String get historyEmptyLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing opened yet.'**
+  String get historyEmptyOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History stays locked on this phone.'**
+  String get historyStaysLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the history.'**
+  String get historyLoadError;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {name}\'s reply'**
+  String waitingCardTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share invite again'**
+  String get waitingShareInviteAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got the reply'**
+  String get waitingGotReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers'**
+  String get personMenuCheckNumbers;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet'**
+  String get personMenuNotCheckedYet;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send my reply again'**
+  String get personMenuSendReplyAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save history as a file'**
+  String get personMenuSaveHistory;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with a password'**
+  String get personMenuSaveHistoryHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}'**
+  String personMenuRemove(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String removePersonTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Their history and files leave this phone. No undo.'**
+  String get removePersonBody;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removePersonConfirm;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed.'**
+  String removePersonDone(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t remove {name}. Try again.'**
+  String removePersonFailed(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save {name}\'s history'**
+  String exportHistoryTitle(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'One file, locked with this password.'**
+  String get exportHistoryLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Password for the file'**
+  String get exportHistoryPassword;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save file'**
+  String get exportHistorySave;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'History saved as a file.'**
+  String get exportHistorySaved;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'For {name}'**
+  String itemForName(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You locked this · {day} · {time}'**
+  String itemYouLockedWhen(String day, String time);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened {day} · {time}'**
+  String itemOpenedWhen(String day, String time);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Share again'**
+  String get itemShareAgain;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy locked'**
+  String get itemCopyLocked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only the locked copy is kept.'**
+  String get itemOnlyLockedKept;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get itemSave;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This message can\'t be read on this phone.'**
+  String get itemUnreadable;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get itemDone;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get inviteStepName;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get inviteStepSend;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s it for?'**
+  String get inviteWhoFor;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Their name'**
+  String get inviteTheirName;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Tamar'**
+  String get inviteNameHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Only you see it.'**
+  String get inviteOnlyYouSee;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Make the invite'**
+  String get inviteMake;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You already have someone with this name.'**
+  String get inviteNameTaken;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t make the invite. Try again.'**
+  String get inviteMakeFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to {name}'**
+  String inviteSendTo(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Done for now'**
+  String get inviteDoneForNow;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'I got {name}\'s reply'**
+  String inviteGotNameReply(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to your share menu.'**
+  String get inviteSharedLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get inviteConnecting;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the invite. Close and open it again.'**
+  String get inviteLoadFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the reply'**
+  String get replyOpenTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied text or link'**
+  String get pasteItHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file'**
+  String get chooseFile;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The file they sent'**
+  String get chooseFileHint;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the reply first.'**
+  String get replyNothingToPaste;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste. Copy the invite first.'**
+  String get inviteNothingToPaste;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a reply. Check what you pasted.'**
+  String get notAReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file.'**
+  String get couldNotReadFile;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That reply didn\'t connect you. Ask for it again.'**
+  String get replyNotConnected;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open it'**
+  String get gotStepOpen;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get gotStepReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the invite'**
+  String get gotOpenTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The invite is good.'**
+  String get gotInviteGood;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Who sent it?'**
+  String get gotWhoSent;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get gotAccept;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s your own invite'**
+  String get gotOwnInviteTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it to the other person.'**
+  String get gotOwnInviteLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already connected'**
+  String get gotAlreadyTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'This invite is already open on this phone.'**
+  String get gotAlreadyLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t open this'**
+  String get gotDamagedTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It may be cut off or for someone else. Ask them to send it again.'**
+  String get gotDamagedLine;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t accept the invite. Try again.'**
+  String get gotAcceptFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Send your reply to {name}'**
+  String replySendTo(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'The same way the invite came.'**
+  String get replySameWay;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Then check numbers together.'**
+  String get replyCheckTip;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Invite opened'**
+  String get stepInviteOpened;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You reply'**
+  String get stepYouReply;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Connected with {name}'**
+  String connectedWith(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Is it really {name}?'**
+  String isItReally(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers together.'**
+  String get checkTogether;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get checkNow;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get checkLater;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else may have answered'**
+  String get twiceTitle;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite to {name} got two replies.'**
+  String twiceLine(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t lock anything for {name} yet.'**
+  String twiceNoteLead(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Check numbers first.'**
+  String get twiceNoteRest;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}, invite again'**
+  String twiceRemove(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Compare on a call, or side by side.'**
+  String get safetyCompare;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Same numbers'**
+  String get safetySame;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Different numbers'**
+  String get safetyDifferent;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as not checked'**
+  String get safetyMarkNotChecked;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'You checked {name} before.'**
+  String safetyCheckedBefore(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is now Not checked.'**
+  String safetyNowNotChecked(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the numbers. Close and open them again.'**
+  String get safetyLoadFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save that. Try again.'**
+  String get safetySaveFailed;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t send {name} anything.'**
+  String mismatchLead(String name);
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone may be in between. Remove and add them again, best in person.'**
+  String get mismatchRest;
+
+  /// Fuzzzy Ink redesign, People screens (DESIGN.md copy table).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s really {name}'**
+  String checkedTitle(String name);
+
+  /// A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file. Open it again from where it is.'**
+  String get incomingFileUnreadable;
 }
 
 class _FuzzzyInkLocalizationsDelegate

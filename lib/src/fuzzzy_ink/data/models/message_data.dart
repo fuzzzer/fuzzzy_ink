@@ -13,6 +13,11 @@ class MessageData {
   /// [decryptedMessage] means "unreadable", not "empty" (F2-10 export marker).
   final bool isUnreadable;
 
+  /// A received file row: the kept container's file key, sealed under the
+  /// chat's history key, base64 (`PROTOCOL.md` §9.6). `null` on every other
+  /// row; [encryptedMessage] is then the kept container's stored path.
+  final String? keptFileKey;
+
   MessageData({
     required this.id,
     required this.chatId,
@@ -22,6 +27,7 @@ class MessageData {
     required this.sentAt,
     required this.isSent,
     this.isUnreadable = false,
+    this.keptFileKey,
   });
 
   /// [decryptedMessage] is the opened local seal — the repository fills it,
@@ -30,6 +36,7 @@ class MessageData {
     StoredMessageData stored, {
     String decryptedMessage = '',
     bool isUnreadable = false,
+    String? keptFileKey,
   }) {
     return MessageData(
       id: stored.id,
@@ -43,6 +50,7 @@ class MessageData {
       sentAt: stored.sentAt,
       isSent: stored.isSent,
       isUnreadable: isUnreadable,
+      keptFileKey: keptFileKey,
     );
   }
 
@@ -55,6 +63,7 @@ class MessageData {
     DateTime? sentAt,
     bool? isSent,
     bool? isUnreadable,
+    String? keptFileKey,
   }) {
     return MessageData(
       id: id ?? this.id,
@@ -65,11 +74,14 @@ class MessageData {
       sentAt: sentAt ?? this.sentAt,
       isSent: isSent ?? this.isSent,
       isUnreadable: isUnreadable ?? this.isUnreadable,
+      keptFileKey: keptFileKey ?? this.keptFileKey,
     );
   }
 
   @override
+  // Never the opened text: rows end up in development and profile logs
+  // (security review 2026-10-26).
   String toString() {
-    return 'MessageData(id: $id, chatId: $chatId, type: $type, encryptedMessage: $encryptedMessage, decryptedMessage: $decryptedMessage, sentAt: $sentAt, isSent: $isSent, isUnreadable: $isUnreadable)';
+    return 'MessageData(id: $id, chatId: $chatId, type: $type, sentAt: $sentAt, isSent: $isSent, isUnreadable: $isUnreadable, hasKeptFileKey: ${keptFileKey != null})';
   }
 }

@@ -70,8 +70,9 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
     final fuzzzyTextStyles = context.fuzzzyTextStyles;
     final fuzzzyColors = context.fuzzzyColors;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
+    // The kit's way: a plain tap target, no Material ink; the pack's radius.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: _isRequesting
           ? null
           : hasSelectedFiles
@@ -81,7 +82,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
         width: 50,
         height: 70,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
           border: Border.all(
             color: fuzzzyColors.inkFaint,
           ),

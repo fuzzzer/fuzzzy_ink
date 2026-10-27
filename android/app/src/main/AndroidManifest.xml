@@ -1,15 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fuzzzycore.ink">
 
-    <!-- Permissions -->
-    <!-- API 24–28 only: writing Downloads/Fuzzzy Ink/ directly (UserFiles.kt).
-         API 29+ goes through MediaStore and needs no storage permission. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <!-- Requested alongside WRITE by permission_handler's Permission.storage
-         (UserFileStore, API 24–28). Capped: it is a no-op from API 33 on. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <!-- No storage permission: the app keeps its files in private storage and
+         hands a file to the user only through the system save dialog or the
+         share sheet (UserFiles.kt). -->
 
     <application
         android:label="${appName}"
@@ -41,17 +35,54 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- FuzzyLink deep link handler -->
-            <intent-filter android:autoVerify="false">
+            <!-- Links are read by app_links (FuzzyLinkHandler) only; Flutter's
+                 own deep linking would also hand them to the router. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
+            <!-- Fuzzzy Ink links, https://ink.fuzzzycore.com/<kind>#<payload>.
+                 Verified App Links: Android opens them in the app only once it
+                 has checked https://ink.fuzzzycore.com/.well-known/assetlinks.json
+                 (link_site/) against this build's signing certificate; until
+                 then they open the link page in the browser. The payload after
+                 # never reaches that server. No custom scheme: another app
+                 could claim it, and any web page could fire it. -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="fuzzylink" />
+                <data android:scheme="https" />
+                <data android:host="ink.fuzzzycore.com" />
+                <data android:path="/invite" />
+                <data android:path="/accept" />
+                <data android:path="/message" />
+            </intent-filter>
+            <!-- .fuzz files opened from another app (Files, mail, a chat):
+                 read once into the private hand-off folder and handed to
+                 Open (UserFiles.kt, incoming_files.dart); never run. Most
+                 apps send a .fuzz file as a plain binary; a file manager
+                 that names the file is matched by its extension. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.fuzz" />
+                <data android:pathPattern=".*\\..*\\.fuzz" />
+                <data android:pathPattern=".*\\..*\\..*\\.fuzz" />
             </intent-filter>
         </activity>
 
-        <!-- Content URIs for opening and sharing the files the app produced
-             (T-0366); roots in res/xml/user_file_paths.xml. -->
+        <!-- Content URIs for the share sheet, served from the private hand-off
+             folder only (res/xml/user_file_paths.xml). -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.userfiles"

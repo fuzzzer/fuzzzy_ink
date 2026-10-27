@@ -7,13 +7,10 @@ import 'package:mocktail/mocktail.dart';
 // Mocks
 // ---------------------------------------------------------------------------
 
-class MockCryptoCoreService extends Mock implements CryptoCoreService {}
-
 class MockMessageDataRepository extends Mock implements MessageDataRepository {}
 
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _blobBody = 'AwEC';
-const _blob = '$fuzzIdentificator$_blobBody';
 
 MessageData _storedText({
   required int id,
@@ -31,7 +28,6 @@ MessageData _storedText({
     );
 
 void main() {
-  late MockCryptoCoreService mockService;
   late MockMessageDataRepository mockRepo;
 
   setUpAll(() {
@@ -39,7 +35,6 @@ void main() {
   });
 
   setUp(() {
-    mockService = MockCryptoCoreService();
     mockRepo = MockMessageDataRepository();
     when(() => mockRepo.newMessageUpdates)
         .thenAnswer((_) => const Stream.empty());
@@ -48,218 +43,8 @@ void main() {
 
   ConnectedChatCubit build() => ConnectedChatCubit(
         messageDataRepository: mockRepo,
-        cryptoCoreService: mockService,
         chatId: _chatId,
       );
-
-  Matcher failedAction(
-    ChatActionType actionType,
-    ConnectedChatFailureType failureType,
-  ) =>
-      isA<ConnectedChatState>()
-          .having((s) => s.actionStatus, 'actionStatus', StateStatus.failed)
-          .having((s) => s.actionType, 'actionType', actionType)
-          .having((s) => s.actionFailure?.type, 'failure', failureType)
-          .having((s) => s.messages, 'messages', isEmpty);
-
-  // -----------------------------------------------------------------------
-  // sendMessage
-  // -----------------------------------------------------------------------
-  group('sendMessage', () {
-    blocTest<ConnectedChatCubit, ConnectedChatState>(
-      'fuzzes through encryptText, stores the sealed row, then shows it',
-      setUp: () {
-        when(
-          () => mockService.encryptText(
-            chatId: any(named: 'chatId'),
-            text: any(named: 'text'),
-          ),
-        ).thenAnswer((_) async => const CryptoCoreSuccess(_blob));
-      },
-      build: build,
-      act: (cubit) => cubit.sendMessage(text: 'hello'),
-      expect: () => [
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.loading)
-            .having(
-              (s) => s.actionType,
-              'actionType',
-              ChatActionType.sendMessage,
-            ),
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.success)
-            .having((s) => s.messages.length, 'messages', 1)
-            .having((s) => s.messages.first.id, 'id', 7)
-            .having((s) => s.messages.first.isSent, 'isSent', isTrue)
-            .having((s) => s.messages.first.decryptedMessage, 'text', 'hello')
-            .having(
-              (s) => s.messages.first.encryptedMessage,
-              'blob without the Fuzz/ prefix',
-              _blobBody,
-            ),
-      ],
-      verify: (_) {
-        verifyInOrder([
-          () => mockService.encryptText(chatId: _chatId, text: 'hello'),
-          () => mockRepo.addMessage(
-                any(
-                  that: isA<MessageData>()
-                      .having((m) => m.chatId, 'chatId', _chatId)
-                      .having((m) => m.type, 'type', MessageType.text)
-                      .having((m) => m.isSent, 'isSent', isTrue)
-                      .having((m) => m.decryptedMessage, 'plaintext', 'hello')
-                      .having((m) => m.encryptedMessage, 'blob', _blobBody),
-                ),
-              ),
-        ]);
-      },
-    );
-
-    blocTest<ConnectedChatCubit, ConnectedChatState>(
-      'a core failure is unknown and nothing is stored',
-      setUp: () {
-        when(
-          () => mockService.encryptText(
-            chatId: any(named: 'chatId'),
-            text: any(named: 'text'),
-          ),
-        ).thenAnswer(
-          (_) async =>
-              const CryptoCoreFailure(CryptoCoreFailureType.storeLocked),
-        );
-      },
-      build: build,
-      act: (cubit) => cubit.sendMessage(text: 'hello'),
-      expect: () => [
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.loading),
-        failedAction(
-          ChatActionType.sendMessage,
-          ConnectedChatFailureType.unknown,
-        ),
-      ],
-      verify: (_) => verifyNever(() => mockRepo.addMessage(any())),
-    );
-  });
-
-  // -----------------------------------------------------------------------
-  // receiveMessage
-  // -----------------------------------------------------------------------
-  group('receiveMessage', () {
-    blocTest<ConnectedChatCubit, ConnectedChatState>(
-      'unfuzzes through decryptText and stores the row BEFORE showing it',
-      setUp: () {
-        when(
-          () => mockService.decryptText(
-            chatId: any(named: 'chatId'),
-            blob: any(named: 'blob'),
-          ),
-        ).thenAnswer((_) async => const CryptoCoreSuccess('hello'));
-      },
-      build: build,
-      act: (cubit) {
-        // The cubit must not have emitted the message when the row is written.
-        when(() => mockRepo.addMessage(any())).thenAnswer((_) async {
-          expect(cubit.state.messages, isEmpty);
-          expect(cubit.state.actionStatus, StateStatus.loading);
-          return 7;
-        });
-        return cubit.receiveMessage(encryptedText: _blobBody);
-      },
-      expect: () => [
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.loading)
-            .having(
-              (s) => s.actionType,
-              'actionType',
-              ChatActionType.receiveMessage,
-            ),
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.success)
-            .having((s) => s.messages.length, 'messages', 1)
-            .having((s) => s.messages.first.id, 'id', 7)
-            .having((s) => s.messages.first.isSent, 'isSent', isFalse)
-            .having((s) => s.messages.first.decryptedMessage, 'text', 'hello')
-            .having(
-              (s) => s.messages.first.encryptedMessage,
-              'blob',
-              _blobBody,
-            ),
-      ],
-      verify: (_) {
-        verifyInOrder([
-          () => mockService.decryptText(chatId: _chatId, blob: _blob),
-          () => mockRepo.addMessage(
-                any(
-                  that: isA<MessageData>()
-                      .having((m) => m.isSent, 'isSent', isFalse)
-                      .having((m) => m.decryptedMessage, 'plaintext', 'hello')
-                      .having((m) => m.encryptedMessage, 'blob', _blobBody),
-                ),
-              ),
-        ]);
-      },
-    );
-
-    for (final (coreFailure, uiFailure) in [
-      (CryptoCoreFailureType.replay, ConnectedChatFailureType.alreadyUnfuzzed),
-      (CryptoCoreFailureType.wrongChat, ConnectedChatFailureType.wrongChat),
-      (CryptoCoreFailureType.tooOld, ConnectedChatFailureType.tooOld),
-      (CryptoCoreFailureType.corrupt, ConnectedChatFailureType.corrupt),
-      (
-        CryptoCoreFailureType.unsupportedFormat,
-        ConnectedChatFailureType.corrupt
-      ),
-      (CryptoCoreFailureType.storeLocked, ConnectedChatFailureType.unknown),
-      (CryptoCoreFailureType.unknownChat, ConnectedChatFailureType.unknown),
-    ]) {
-      blocTest<ConnectedChatCubit, ConnectedChatState>(
-        '$coreFailure → $uiFailure, history untouched',
-        setUp: () {
-          when(
-            () => mockService.decryptText(
-              chatId: any(named: 'chatId'),
-              blob: any(named: 'blob'),
-            ),
-          ).thenAnswer((_) async => CryptoCoreFailure(coreFailure));
-        },
-        build: build,
-        act: (cubit) => cubit.receiveMessage(encryptedText: _blobBody),
-        expect: () => [
-          isA<ConnectedChatState>().having(
-            (s) => s.actionStatus,
-            'actionStatus',
-            StateStatus.loading,
-          ),
-          failedAction(ChatActionType.receiveMessage, uiFailure),
-        ],
-        verify: (_) => verifyNever(() => mockRepo.addMessage(any())),
-      );
-    }
-
-    blocTest<ConnectedChatCubit, ConnectedChatState>(
-      'a storage throw after a successful unfuzz is unknown',
-      setUp: () {
-        when(
-          () => mockService.decryptText(
-            chatId: any(named: 'chatId'),
-            blob: any(named: 'blob'),
-          ),
-        ).thenAnswer((_) async => const CryptoCoreSuccess('hello'));
-        when(() => mockRepo.addMessage(any())).thenThrow(Exception('isar'));
-      },
-      build: build,
-      act: (cubit) => cubit.receiveMessage(encryptedText: _blobBody),
-      expect: () => [
-        isA<ConnectedChatState>()
-            .having((s) => s.actionStatus, 'actionStatus', StateStatus.loading),
-        failedAction(
-          ChatActionType.receiveMessage,
-          ConnectedChatFailureType.unknown,
-        ),
-      ],
-    );
-  });
 
   // -----------------------------------------------------------------------
   // history
@@ -304,7 +89,6 @@ void main() {
             pageIndex: 0,
           ),
         ).called(1);
-        verifyZeroInteractions(mockService);
       },
     );
 
@@ -329,5 +113,46 @@ void main() {
             .having((s) => s.hasFetchedAllMessages, 'fetchedAll', isTrue),
       ],
     );
+  });
+
+  // -----------------------------------------------------------------------
+  // reloadMessages
+  // -----------------------------------------------------------------------
+  group('reloadMessages', () {
+    test(
+        'reads the loaded pages again from the newest row and replaces the '
+        'list', () async {
+      final cubit = ConnectedChatCubit(
+        messageDataRepository: mockRepo,
+        chatId: _chatId,
+        messagesPerPage: 2,
+      );
+      addTearDown(cubit.close);
+      var rows = [
+        for (var id = 5; id >= 1; id--) _storedText(id: id, isSent: true),
+      ];
+      when(
+        () => mockRepo.getMessagesForChatPaginated(
+          _chatId,
+          pageSize: any(named: 'pageSize'),
+          pageIndex: any(named: 'pageIndex'),
+        ),
+      ).thenAnswer((invocation) async {
+        final size = invocation.namedArguments[#pageSize] as int;
+        final index = invocation.namedArguments[#pageIndex] as int;
+        return rows.skip(size * index).take(size).toList();
+      });
+
+      await cubit.loadInitialMessages();
+      await cubit.loadOlderMessages();
+      expect(cubit.state.messages.map((m) => m.id), [5, 4, 3, 2]);
+
+      // Lock added a row while the page was away.
+      rows = [_storedText(id: 6, isSent: true), ...rows];
+      await cubit.reloadMessages();
+
+      expect(cubit.state.status, StateStatus.success);
+      expect(cubit.state.messages.map((m) => m.id), [6, 5, 4, 3]);
+    });
   });
 }

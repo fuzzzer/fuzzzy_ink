@@ -2,19 +2,49 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum CopySecurityLevel {
-  strict, // Prompts confirmation before copy
-  moderate, // Copies directly
-}
-
 class PreferencesService {
   final SharedPreferences _prefs;
 
   PreferencesService(this._prefs);
 
+  /// Erase everything: every preference, the remembered pairing replies
+  /// included (security review 2026-10-26). The values under [keep] are put
+  /// back afterwards.
+  Future<void> clearAll({Set<String> keep = const {}}) async {
+    final kept = {
+      for (final key in keep)
+        if (_prefs.containsKey(key)) key: _prefs.get(key),
+    };
+    await _prefs.clear();
+    for (final MapEntry(:key, :value) in kept.entries) {
+      switch (value) {
+        case final bool v:
+          await _prefs.setBool(key, v);
+        case final int v:
+          await _prefs.setInt(key, v);
+        case final double v:
+          await _prefs.setDouble(key, v);
+        case final String v:
+          await _prefs.setString(key, v);
+        case final List<String> v:
+          await _prefs.setStringList(key, v);
+      }
+    }
+  }
+
+  /// What a person chose in this first run before its erase (the welcome
+  /// seen, the language and the look picked on it): the first run's own
+  /// erase keeps them, so finishing it does not land on the welcome again
+  /// and the language does not switch back. The names are those
+  /// `LocalizationCubit` and `ThemeCubit` store under.
+  static const firstRunChoiceKeys = {
+    _hasSeenOnboardingKey,
+    'language_code',
+    'brightness',
+  };
+
   static const _hasSeenOnboardingKey = 'has_seen_onboarding';
   static const _hasCompletedTutorialKey = 'has_completed_tutorial';
-  static const _copySecurityLevelKey = 'copy_security_level';
 
   bool get hasSeenOnboarding => _prefs.getBool(_hasSeenOnboardingKey) ?? false;
   Future<void> setHasSeenOnboarding(bool value) =>
@@ -25,25 +55,45 @@ class PreferencesService {
   Future<void> setHasCompletedTutorial(bool value) =>
       _prefs.setBool(_hasCompletedTutorialKey, value);
 
-  CopySecurityLevel get copySecurityLevel {
-    final value = _prefs.getString(_copySecurityLevelKey);
-    if (value == CopySecurityLevel.moderate.name) {
-      return CopySecurityLevel.moderate;
-    }
-    return CopySecurityLevel.strict; // default
-  }
-
-  Future<void> setCopySecurityLevel(CopySecurityLevel level) =>
-      _prefs.setString(_copySecurityLevelKey, level.name);
+  /// Set while a first run has drawn its keys but not yet kept them (the
+  /// recovery-key step): found at the next start, it means that run was
+  /// closed half-way and any recovery key it showed was never kept.
+  static const _firstRunPendingKey = 'first_run_pending';
+  bool get firstRunPending => _prefs.getBool(_firstRunPendingKey) ?? false;
+  Future<void> setFirstRunPending(bool value) =>
+      _prefs.setBool(_firstRunPendingKey, value);
 
   static const _lastSelectedTabKey = 'last_selected_tab';
   String get lastSelectedTab => _prefs.getString(_lastSelectedTabKey) ?? '/';
   Future<void> setLastSelectedTab(String path) =>
       _prefs.setString(_lastSelectedTabKey, path);
 
+  /// Fuzzzy Cast, the optional character layer: off until the person turns
+  /// it on (first run or Settings).
+  static const _fuzzzyCastEnabledKey = 'fuzzzy_cast_enabled';
+  bool get fuzzzyCastEnabled => _prefs.getBool(_fuzzzyCastEnabledKey) ?? false;
+  Future<void> setFuzzzyCastEnabled(bool value) =>
+      _prefs.setBool(_fuzzzyCastEnabledKey, value);
+
+  /// Fuzzzy Cast's soft sounds, off by default; shown only while Fuzzzy Cast
+  /// is on.
+  static const _fuzzzyCastSoftSoundsKey = 'fuzzzy_cast_soft_sounds';
+  bool get fuzzzyCastSoftSounds =>
+      _prefs.getBool(_fuzzzyCastSoftSoundsKey) ?? false;
+  Future<void> setFuzzzyCastSoftSounds(bool value) =>
+      _prefs.setBool(_fuzzzyCastSoftSoundsKey, value);
+
   static const _vaultLastSelectedTabIndexKey = 'vault_last_selected_tab_index';
   int get vaultLastSelectedTabIndex =>
       _prefs.getInt(_vaultLastSelectedTabIndexKey) ?? 0;
   Future<void> setVaultLastSelectedTabIndex(int index) =>
       _prefs.setInt(_vaultLastSelectedTabIndexKey, index);
+
+  /// Settings → My safe → Copy passwords: on by default (DESIGN.md section
+  /// 14). Off hides every My safe copy button; the copy guard's own rule
+  /// (`allowVaultPasswordCopy`) still comes first.
+  static const _vaultPasswordCopyKey = 'vault_password_copy';
+  bool get vaultPasswordCopy => _prefs.getBool(_vaultPasswordCopyKey) ?? true;
+  Future<void> setVaultPasswordCopy(bool value) =>
+      _prefs.setBool(_vaultPasswordCopyKey, value);
 }

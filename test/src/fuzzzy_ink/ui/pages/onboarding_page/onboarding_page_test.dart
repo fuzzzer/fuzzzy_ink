@@ -1,105 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fuzzzy_ink/lib.dart';
-import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fuzzzy_ink/src/src.dart';
 
-/// The forward-secrecy trade-off (owner decision D-1) is the last onboarding
-/// slide, in both locales.
+import '../../../../../helpers/access_harness.dart';
+
+/// The first run's opening (prototype `ob-welcome`, `ob-how`): Welcome, then
+/// How it works, then the master password. "Why once?" carries the
+/// opens-once explanation that used to be the last slide.
 void main() {
-  const enNotice = 'Each fuzzed message can be unfuzzed once, on this device '
-      'only. Your history stays in the app — export an archive to back it up. '
-      'A new device cannot re-read old blobs.';
-  const kaNotice = 'თითოეული დაშიფრული შეტყობინების გაშიფვრა მხოლოდ ერთხელ და '
-      'მხოლოდ ამ მოწყობილობაზე შეიძლება. თქვენი ისტორია აპლიკაციაში რჩება — '
-      'სარეზერვო ასლისთვის არქივის ექსპორტი გააკეთეთ. ახალ მოწყობილობას ძველი '
-      'შეტყობინებების ხელახლა წაკითხვა არ შეუძლია.';
+  late AccessHarness harness;
+  final en = FuzzzyInkLocalizationsEn();
+  final ka = FuzzzyInkLocalizationsKa();
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues({});
-    sl.safeRegisterSingleton<PreferencesService>(
-      PreferencesService(await SharedPreferences.getInstance()),
+    harness = AccessHarness();
+    await harness.setUp();
+  });
+
+  tearDown(() => harness.tearDown());
+
+  testWidgets('Welcome: the mark, one line, the offline tag and Start',
+      (tester) async {
+    await harness.pump(tester, const OnboardingPage());
+
+    expect(find.byKey(const Key('mark.welcome')), findsOneWidget);
+    expect(find.text(en.accessWelcomeLine), findsOneWidget);
+    expect(find.text(en.accessWelcomeTag.toUpperCase()), findsOneWidget);
+    expect(find.text(en.accessStart), findsOneWidget);
+    // Not a private screen.
+    expect(
+      SensitiveScreen.isIn(tester.element(find.text(en.accessWelcomeLine))),
+      isFalse,
     );
   });
 
-  tearDown(() async {
-    await sl.unregister<PreferencesService>();
+  testWidgets('the language chip opens the Language sheet', (tester) async {
+    await harness.pump(tester, const OnboardingPage());
+    await tester.tap(find.byKey(const Key('btn.welcome.language')));
+    await tester.pumpAndSettle();
+    expect(find.text(en.languageEnglish), findsWidgets);
+    expect(find.text(en.languageGeorgian), findsWidgets);
   });
 
-  Future<void> pumpOnboarding(WidgetTester tester, Locale locale) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
-        localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
-        supportedLocales: FuzzzyInkLocalizations.supportedLocales,
-        locale: locale,
-        home: const OnboardingPage(),
-      ),
-    );
-    await tester.pumpAndSettle();
-  }
-
-  Future<void> next(WidgetTester tester) async {
-    await tester.tap(find.byType(ElevatedButton));
-    await tester.pumpAndSettle();
-  }
-
-  for (final (locale, notice, cta) in [
-    (const Locale('en'), enNotice, 'Get Started'),
-    (const Locale('ka'), kaNotice, 'დაწყება'),
+  for (final (locale, l10n) in [
+    (const Locale('en'), en),
+    (const Locale('ka'), ka),
   ]) {
     testWidgets(
-        'the fourth slide carries the forward-secrecy notice '
+        'Start shows How it works; "Why once?" explains opening once '
         '(${locale.languageCode})', (tester) async {
-      await pumpOnboarding(tester, locale);
-      expect(find.text(notice), findsNothing);
+      await harness.pump(tester, const OnboardingPage(), locale: locale);
+      await tester.tap(find.text(l10n.accessStart));
+      await tester.pumpAndSettle();
 
-      await next(tester);
-      await next(tester);
-      await next(tester);
+      expect(find.text(l10n.accessHowAddPerson), findsOneWidget);
+      expect(find.text(l10n.accessHowLockForThem), findsOneWidget);
+      expect(find.text(l10n.accessHowTheyOpenOnce), findsOneWidget);
+      expect(find.text(l10n.accessHowTip), findsOneWidget);
 
-      expect(find.text(notice), findsOneWidget);
-      expect(find.text(cta), findsOneWidget);
+      await tester.tap(find.text(l10n.accessWhyOnce));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.infoOpensOnceTitle), findsOneWidget);
+      expect(find.text(l10n.infoOpensOnceLine2), findsOneWidget);
     });
   }
 
-  // T-0335: at 411 dp the ka title's last word was wider than the column at
-  // the display size, so it broke inside the word ("მოწყობილობაზ / ე"). The
-  // title steps its style down until every word fits; en keeps the display
-  // size.
-  for (final (locale, title, width) in [
-    (const Locale('ka'), 'იშიფრება ერთხელ, ამ მოწყობილობაზე', 411.0),
-    (const Locale('ka'), 'იშიფრება ერთხელ, ამ მოწყობილობაზე', 360.0),
-    (const Locale('en'), 'Unfuzzed once, on this device', 411.0),
-  ]) {
-    testWidgets(
-        'the fourth slide title only wraps between words '
-        '(${locale.languageCode}, $width dp)', (tester) async {
-      tester.view.physicalSize = Size(width, 914);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
+  testWidgets('Next remembers the opening was seen and goes to the password',
+      (tester) async {
+    await harness.pump(tester, const OnboardingPage(initialPage: 1));
+    expect(sl.get<PreferencesService>().hasSeenOnboarding, isFalse);
 
-      await pumpOnboarding(tester, locale);
-      await next(tester);
-      await next(tester);
-      await next(tester);
+    await tester.tap(find.text(en.next));
+    await tester.pumpAndSettle();
 
-      final text = tester.widget<Text>(find.text(title));
-      final column = tester.getSize(find.text(title)).width;
-      for (final word in title.split(' ')) {
-        final painter = TextPainter(
-          text: TextSpan(text: word, style: text.style),
-          textDirection: TextDirection.ltr,
-        )..layout();
-        expect(painter.width, lessThanOrEqualTo(column), reason: word);
-      }
-      if (locale.languageCode == 'en') {
-        final display = Theme.of(tester.element(find.text(title)))
-            .textTheme
-            .headlineMedium!
-            .fontSize;
-        expect(text.style!.fontSize, display);
-      }
-    });
-  }
+    expect(sl.get<PreferencesService>().hasSeenOnboarding, isTrue);
+    expect(find.text('route:${AppRouter.setup}'), findsOneWidget);
+  });
+
+  testWidgets('back from How it works shows Welcome again', (tester) async {
+    await harness.pump(tester, const OnboardingPage(initialPage: 1));
+    await tester.tap(find.byKey(const Key('how.back')));
+    await tester.pumpAndSettle();
+    expect(find.text(en.accessWelcomeLine), findsOneWidget);
+  });
+
+  forEveryLook('Welcome and How it works fit', (
+    tester,
+    skin,
+    reduceMotion,
+    textScale,
+  ) async {
+    await harness.pump(
+      tester,
+      const OnboardingPage(),
+      skin: skin,
+      reduceMotion: reduceMotion,
+      textScale: textScale,
+      surface: const Size(390, 844),
+    );
+    await tester.tap(find.text(en.accessStart));
+    await tester.pumpAndSettle();
+    expect(find.text(en.accessHowTip), findsOneWidget);
+  });
 }

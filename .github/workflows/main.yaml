@@ -1,171 +1,237 @@
 name: fuzzzy_ink
 on:
   push:
-    branches: [main, 'agent/**']
+    # dev is the integration branch everything merges into (security review 2026-10-26).
+    branches: [main, dev, 'agent/**']
     tags: ['v*']
   pull_request:
+# Every job states what its token may do; anything not listed is denied. Third-party steps are pinned to a
+# full commit (the version in the comment), so nobody can swap the code behind a tag; dependabot
+# (github-actions) bumps the commit and the comment together.
+permissions: {}
 env:
   FLUTTER_VERSION: 3.41.7
   CARGO_TERM_COLOR: always
   CRATE: rust/fuzzy_crypto_core
 jobs:
   rust:
+    permissions: { contents: read }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.98.1
-        with: { components: "clippy, rustfmt" }
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1, components: "clippy, rustfmt" }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - run: cargo fmt --manifest-path $CRATE/Cargo.toml --all -- --check
       - run: cargo clippy --manifest-path $CRATE/Cargo.toml --all-targets --locked -- -D warnings
       - run: cargo test --manifest-path $CRATE/Cargo.toml --locked
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
         with: { tool: "cargo-audit@0.22.2,cargo-cyclonedx@0.5.9" }
       - run: cargo audit --file $CRATE/Cargo.lock
       - name: sbom-rust
         # Regenerates the Rust SBOM (cargo-cyclonedx 0.5.9, --target all) and fails if it differs from the
         # committed documents/security/sbom/rust.cdx.json — a dependency bump must ship its SBOM (`./sbom.sh rust`).
         run: ./sbom.sh rust --check
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: sbom-rust, path: documents/security/sbom/rust.cdx.json }
   flutter-test:
+    permissions: { contents: read }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.98.1
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1 }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - uses: ./.github/actions/pub-git-auth
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
       - run: cargo build --release --locked --manifest-path $CRATE/Cargo.toml   # for the Dart tests' ExternalLibrary
-      - run: flutter pub get
+      # The lock file, exactly: a changed or missing entry fails instead of resolving anew.
+      - run: flutter pub get --enforce-lockfile
       - run: dart format --set-exit-if-changed --output=none lib test
       - run: flutter analyze --fatal-infos --fatal-warnings
       - run: flutter test
       - name: sbom-flutter
-        # Same drift gate for the Dart half (cdxgen 12.8.4 via npx, from pubspec.lock): `./sbom.sh flutter` after a bump.
+        # Same drift gate for the Dart half (cdxgen 12.8.4 from tools/sbom/package-lock.json via `npm ci`, reading
+        # pubspec.lock): `./sbom.sh flutter` after a bump.
         run: ./sbom.sh flutter --check
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: sbom-flutter, path: documents/security/sbom/flutter.cdx.json }
   android:
+    permissions: { contents: read }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with: { distribution: temurin, java-version: '17' }
-      - uses: android-actions/setup-android@v4
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
       - run: sdkmanager "ndk;28.2.13676358"
-      - uses: dtolnay/rust-toolchain@1.98.1
-        with: { targets: "aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android" }
-      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1, targets: "aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android" }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - uses: ./.github/actions/pub-git-auth
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
-      - name: Throwaway signing key for the release build type
-        # android/app/build.gradle's `release` signingConfig requires a keystore
-        # (`SigningConfig "release" is missing required property "storeFile"` without one).
-        # CI proves the release build with a key generated here and discarded with the runner;
-        # the distributable key is a release-time secret wired by F5-4 through these same variables.
+      - name: Release signing (release tags only)
+        # A release tag is the downloadable build: it is signed with the real release key from the repository
+        # secrets, and stops here, naming them, if any is missing. Every other run is a compile proof and builds
+        # an unsigned release APK that no device installs — never one signed with a throwaway key.
+        env:
+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          keytool -genkeypair -keystore "$RUNNER_TEMP/ci-throwaway.jks" -storetype JKS -alias ci-throwaway \
-            -keyalg RSA -keysize 2048 -validity 1 -storepass ci-throwaway -keypass ci-throwaway \
-            -dname "CN=fuzzzy_ink CI throwaway, O=FuzzyCore"
-          {
-            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/ci-throwaway.jks"
-            echo "ANDROID_KEYSTORE_ALIAS=ci-throwaway"
-            echo "ANDROID_KEYSTORE_PASSWORD=ci-throwaway"
-            echo "ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD=ci-throwaway"
-          } >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF" != refs/tags/v* ]]; then
+            echo "FUZZZY_UNSIGNED_RELEASE_PROOF=true" >> "$GITHUB_ENV"
+            echo "Not a release tag: building an unsigned release APK as a compile proof."
+            exit 0
+          fi
+          missing=()
+          for name in ANDROID_RELEASE_KEYSTORE_BASE64 ANDROID_KEYSTORE_ALIAS ANDROID_KEYSTORE_PASSWORD ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD; do
+            [ -n "${!name:-}" ] || missing+=("$name")
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Release tag without the Android release key: repository secrets ${missing[*]} are not set (documents/security/RELEASE.md §2)."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$ANDROID_RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build apk --release --flavor production -t lib/main_production.dart --split-debug-info=build/symbols
         # cargokit sets CARGO_ENCODED_RUSTFLAGS for Android (NDK linker workarounds), which makes cargo ignore
         # .cargo/config.toml's rustflags; it appends to an existing value, so the path remap is seeded here.
-        env: { CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src" }
+        # The three key values reach Gradle on release tags only (the keystore path was set above).
+        env:
+          CARGO_ENCODED_RUSTFLAGS: "--remap-path-prefix=/home/runner/.cargo/registry/src=/cargo/registry/src"
+          ANDROID_KEYSTORE_ALIAS: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_ALIAS || '' }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD || '' }}
       - name: 16 KB page-size check
-        # Every LOAD segment of the crate's .so must be aligned >= 0x4000 on the 64-bit ABIs
-        # (Android's 16 KB requirement; armeabi-v7a is 32-bit and printed for information only).
+        # Every LOAD segment of every bundled .so (the crypto core, the database library and any
+        # other plugin's native code) must be aligned >= 0x4000 on the 64-bit ABIs (Android's 16 KB
+        # requirement; armeabi-v7a is 32-bit and printed for information only). The libraries the
+        # app cannot start without must be present, so a packaging change cannot skip the check.
         run: |
           set -euo pipefail
           readelf=$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf
           unzip -o -q build/app/outputs/flutter-apk/app-production-release.apk 'lib/*' -d "$RUNNER_TEMP/apk"
-          find "$RUNNER_TEMP/apk/lib" -name 'libfuzzy_crypto_core.so' | sort
+          find "$RUNNER_TEMP/apk/lib" -name '*.so' | sort
           bad=0; checked=0
           for abi in arm64-v8a x86_64; do
-            so="$RUNNER_TEMP/apk/lib/$abi/libfuzzy_crypto_core.so"
-            if [ ! -f "$so" ]; then echo "MISSING $so"; bad=1; continue; fi
-            echo "## $abi"
-            "$readelf" -lW "$so" | awk '$1 == "LOAD"'
-            for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
-              if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $so"; bad=1; fi
+            for required in libfuzzy_crypto_core.so libisar.so libflutter.so libapp.so; do
+              if [ ! -f "$RUNNER_TEMP/apk/lib/$abi/$required" ]; then echo "MISSING $abi/$required"; bad=1; fi
             done
-            checked=$((checked + 1))
+            while IFS= read -r so; do
+              echo "## $abi/$(basename "$so")"
+              "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+              for align in $("$readelf" -lW "$so" | awk '$1 == "LOAD" {print $NF}'); do
+                if [ "$((align))" -lt 16384 ]; then echo "BAD ALIGN $align in $abi/$(basename "$so")"; bad=1; fi
+              done
+              checked=$((checked + 1))
+            done < <(find "$RUNNER_TEMP/apk/lib/$abi" -name '*.so' | sort)
           done
-          so="$RUNNER_TEMP/apk/lib/armeabi-v7a/libfuzzy_crypto_core.so"
-          if [ -f "$so" ]; then echo "## armeabi-v7a (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'; fi
+          for so in $(find "$RUNNER_TEMP/apk/lib/armeabi-v7a" -name '*.so' 2>/dev/null | sort); do
+            echo "## armeabi-v7a/$(basename "$so") (32-bit, informational)"; "$readelf" -lW "$so" | awk '$1 == "LOAD"'
+          done
           echo "checked=$checked bad=$bad"
-          [ "$checked" -eq 2 ] && [ "$bad" -eq 0 ]
-      - uses: actions/upload-artifact@v7
+          [ "$checked" -ge 8 ] && [ "$bad" -eq 0 ]
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: android-apk, path: build/app/outputs/flutter-apk/*.apk }
   linux:
+    permissions: { contents: read }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev libsecret-1-dev
-      - uses: dtolnay/rust-toolchain@1.98.1
-      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1 }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - uses: ./.github/actions/pub-git-auth
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build linux --release -t lib/main_production.dart
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: linux-bundle, path: build/linux/x64/release/bundle }
   windows:
-    # windows-2022 (VS 2022): on windows-latest (= windows-2025-vs2026) the VS 2026 STL turns
-    # <experimental/coroutine> into a hard error, and permission_handler_windows (C++/WinRT under
-    # Flutter's C++17 runner) still includes it — an upstream plugin issue, not a cargokit one.
-    runs-on: windows-2022
+    # Pinned to the current Windows image by its full label (what windows-latest points at today),
+    # so a runner change is a reviewed commit. The earlier windows-2022 pin existed only for
+    # permission_handler_windows, whose C++/WinRT code includes <experimental/coroutine> (a hard
+    # error with the VS 2026 STL); that plugin is gone, and no Windows plugin left in
+    # windows/flutter/generated_plugins.cmake includes it.
+    permissions: { contents: read }
+    runs-on: windows-2025-vs2026
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.98.1
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1 }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - uses: ./.github/actions/pub-git-auth
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build windows --release -t lib/main_production.dart
-      - uses: actions/upload-artifact@v7
+      - name: Sign the Windows build (release tags only; placeholder until the certificate exists)
+        # Placeholder: signs with a code-signing certificate given as a PFX in repository secrets. If the owner
+        # picks a cloud signing service instead (Azure Trusted Signing, a hardware-token EV certificate), this
+        # step is replaced, not extended. On a release tag it stops, naming the secrets, when they are missing.
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          WINDOWS_SIGNING_PFX_BASE64: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+          WINDOWS_SIGNING_PFX_PASSWORD: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
+        run: ./scripts/sign_windows_release.ps1 build/windows/x64/runner/Release
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: windows-bundle, path: build/windows/x64/runner/Release }
   macos:
+    permissions: { contents: read }
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.98.1
-        with: { targets: "aarch64-apple-darwin,x86_64-apple-darwin" }
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1, targets: "aarch64-apple-darwin,x86_64-apple-darwin" }
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with: { workspaces: "${{ env.CRATE }}" }
       - uses: ./.github/actions/pub-git-auth
         with: { deploy-key: "${{ secrets.FUZZY_DESIGN_DEPLOY_KEY }}" }
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "${{ env.FLUTTER_VERSION }}", channel: stable, cache: true }
-      # The Xcode project only has flavored configurations (Release-production), and the Runner is
-      # signed with team 7W88HRQFXP, which the runner does not have — build unsigned (compile+link proof).
+      # The Xcode project only has flavored configurations (Release-production). Xcode signing is off here; on a
+      # release tag the next step signs the finished app (Developer ID, hardened runtime, sandbox checked) and
+      # notarizes it. Any other run ships nothing and stays an unsigned compile+link proof.
+      - run: flutter pub get --enforce-lockfile
       - run: flutter build macos --release --flavor production -t lib/main_production.dart
         env:
           FLUTTER_XCODE_CODE_SIGNING_ALLOWED: "NO"
           FLUTTER_XCODE_CODE_SIGNING_REQUIRED: "NO"
           FLUTTER_XCODE_CODE_SIGN_IDENTITY: ""
+      - name: Sign, check the sandbox and notarize (release tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          MACOS_DEVELOPER_ID_P12_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_P12_BASE64 }}
+          MACOS_DEVELOPER_ID_P12_PASSWORD: ${{ secrets.MACOS_DEVELOPER_ID_P12_PASSWORD }}
+          MACOS_DEVELOPER_ID_PROFILE_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_PROFILE_BASE64 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY_BASE64 }}
+          APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: ./scripts/sign_macos_direct.sh "build/macos/Build/Products/Release-production/Fuzzzy Ink.app" com.fuzzzycore.ink
       # upload-artifact drops symlinks and file modes, which a .app bundle needs (Frameworks/*/Versions/Current);
       # ditto keeps them, and the zip is the one file SHA256SUMS + the attestation can name.
       - run: ditto -c -k --keepParent "build/macos/Build/Products/Release-production/Fuzzzy Ink.app" build/macos/fuzzzy_ink-macos.zip
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: macos-app, path: build/macos/fuzzzy_ink-macos.zip }
   # ios: optional, `flutter build ios --release --no-codesign` on macos-latest; allowed to be added in Phase 5.
   rust-repro:
@@ -173,15 +239,16 @@ jobs:
     # two separate runners — deliberately without Swatinem/rust-cache, so nothing compiled is shared between the
     # two — and rust-repro-compare fails unless every hash matches. Host = the linux-bundle target, arm64-v8a =
     # the Android target, both `--locked --release` with the path remap from .cargo/config.toml.
+    permissions: { contents: read }
     strategy:
       matrix: { run: [1, 2] }
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: android-actions/setup-android@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
       - run: sdkmanager "ndk;28.2.13676358"
-      - uses: dtolnay/rust-toolchain@1.98.1
-        with: { targets: aarch64-linux-android }
+      - uses: dtolnay/rust-toolchain@18f0487477426dce244608110aa2660c2893deb7 # branch 1.98.1
+        with: { toolchain: 1.98.1, targets: aarch64-linux-android }
       - run: cargo install cargo-ndk --version 4.1.2 --locked
       # Same invocation shape as cargokit's (explicit --target; Android API level = Flutter's default minSdk 24,
       # cargo-ndk would otherwise pick 21) so the result is comparable with the core inside the shipped bundles.
@@ -202,13 +269,14 @@ jobs:
           # .shstrtab only, no loaded byte changes); hash the same form so it can be compared with the APK.
           $ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip --strip-debug out/android/libfuzzy_crypto_core.so
           (cd out && sha256sum host/* android/* | tee SHA256SUMS)
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: "rust-repro-${{ matrix.run }}", path: out }
   rust-repro-compare:
     needs: rust-repro
+    permissions: {}   # only reads this run's artifacts (runtime token, not the repository token)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with: { pattern: "rust-repro-*" }
       - run: |
           set -euo pipefail
@@ -223,13 +291,13 @@ jobs:
   attest:
     # Tag runs only: SHA256SUMS over the four platform artifacts + the Rust core inside the linux/windows
     # bundles, published as an artifact and used as the subject list of the provenance attestation
-    # (verify: `gh attestation verify <file> -R fuzzzy-bot/fuzzy_chat`). Release procedure: documents/security/RELEASE.md.
+    # (verify: `gh attestation verify <file> -R fuzzzer/fuzzzy_ink`). Release procedure: documents/security/RELEASE.md.
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [rust, flutter-test, android, linux, windows, macos, rust-repro-compare]
     runs-on: ubuntu-latest
     permissions: { id-token: write, attestations: write, contents: read }
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
       - run: |
           set -euo pipefail
           sha256sum android-apk/app-production-release.apk windows-bundle/fuzzzy_ink.exe linux-bundle/fuzzzy_ink \
@@ -246,7 +314,7 @@ jobs:
           grep -q "$(sha256sum linux-bundle/lib/libfuzzy_crypto_core.so | cut -d' ' -f1)  host/libfuzzy_crypto_core.so" rust-repro-1/SHA256SUMS
           grep -q "$(sha256sum apk/lib/arm64-v8a/libfuzzy_crypto_core.so | cut -d' ' -f1)  android/libfuzzy_crypto_core.so" rust-repro-1/SHA256SUMS
           echo "shipped linux + android cores == rust-repro"
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with: { name: sha256sums, path: SHA256SUMS }
-      - uses: actions/attest-build-provenance@v4
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with: { subject-checksums: SHA256SUMS }

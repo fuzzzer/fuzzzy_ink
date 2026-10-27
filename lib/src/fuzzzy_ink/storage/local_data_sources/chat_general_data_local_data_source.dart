@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../storage_models/storage_models.dart';
 
 class ChatGeneralDataLocalDataSource {

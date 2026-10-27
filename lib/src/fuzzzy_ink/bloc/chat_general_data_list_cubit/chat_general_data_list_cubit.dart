@@ -9,6 +9,8 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
   ChatGeneralDataListCubit({
     required this.cryptoCoreService,
     required this.chatRepository,
+    required this.messageDataRepository,
+    required this.userFileStore,
   }) : super(
           const ChatGeneralDataListState(
             status: StateStatus.initial,
@@ -17,18 +19,32 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
     _chatListUpdatesSubscription = chatRepository.chatListUpdates.listen((_) {
       _fetchChatsInBackground();
     });
+    _appDataErasedSubscription =
+        chatRepository.appDataErased.listen((_) => _startOver());
   }
 
   final CryptoCoreService cryptoCoreService;
 
   final ChatGeneralDataListRepository chatRepository;
+  final MessageDataRepository messageDataRepository;
+  final UserFileStore userFileStore;
   late final StreamSubscription<ChatGeneralDataListUpdated>
       _chatListUpdatesSubscription;
+  late final StreamSubscription<AppDataErased> _appDataErasedSubscription;
 
   @override
   Future<void> close() {
     _chatListUpdatesSubscription.cancel();
+    _appDataErasedSubscription.cancel();
     return super.close();
+  }
+
+  /// After "Erase everything": nothing of the erased people stays in memory
+  /// (their names, marks or a pending action); the list is read again from
+  /// the storage, which is empty now.
+  Future<void> _startOver() async {
+    emit(const ChatGeneralDataListState(status: StateStatus.initial));
+    await fetchChats();
   }
 
   Future<void> fetchChats() async {
@@ -41,6 +57,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         state.copyWith(
           status: StateStatus.success,
           chatList: chats,
+          unverifiedChatIds: await _unverifiedChatIdsOf(chats),
         ),
       );
     } catch (ex) {
@@ -60,6 +77,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
       emit(
         state.copyWith(
           chatList: chats,
+          unverifiedChatIds: await _unverifiedChatIdsOf(chats),
         ),
       );
     } catch (ex) {
@@ -70,6 +88,26 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         ),
       );
     }
+  }
+
+  /// Re-reads every connected chat's verified flag from the core: after a
+  /// safety number is marked or unmarked, and after an unlock.
+  Future<void> refreshVerification() async {
+    final chats = state.chatList;
+    if (chats == null) return;
+    emit(state.copyWith(unverifiedChatIds: await _unverifiedChatIdsOf(chats)));
+  }
+
+  Future<Set<String>> _unverifiedChatIdsOf(List<ChatGeneralData> chats) async {
+    final unverified = <String>{};
+    for (final chat in chats) {
+      if (chat.setupStatus != ChatSetupStatus.connected) continue;
+      final verifiedRes = await cryptoCoreService.isVerified(chat.chatId);
+      final isVerified =
+          verifiedRes is CryptoCoreSuccess<bool> && verifiedRes.data;
+      if (!isVerified) unverified.add(chat.chatId);
+    }
+    return unverified;
   }
 
   Future<void> deleteChat({
@@ -95,6 +133,7 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         return;
       }
       await chatRepository.deleteChat(chatId);
+      await _deleteChatFilesAndMessages(chatId);
 
       final updatedChats =
           state.chatList?.where((chat) => chat.chatId != chatId).toList();
@@ -117,6 +156,21 @@ class ChatGeneralDataListCubit extends Cubit<ChatGeneralDataListState> {
         ),
       );
     }
+  }
+
+  /// The chat's sealed files go with it (its kept keys died with its state
+  /// above), and so do its rows, which nothing can open any more.
+  Future<void> _deleteChatFilesAndMessages(String chatId) async {
+    final chatName = state.chatList
+            ?.firstWhereOrNull((chat) => chat.chatId == chatId)
+            ?.chatName ??
+        '';
+    await userFileStore.deleteChatFiles(
+      chatName: chatName,
+      chatId: chatId,
+      storedPaths: await messageDataRepository.getFilePathsForChat(chatId),
+    );
+    await messageDataRepository.deleteAllMessagesForChat(chatId);
   }
 
   Future<void> updateChat({

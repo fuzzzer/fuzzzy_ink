@@ -1,10 +1,15 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuzzzy_ink/lib.dart';
+import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
 
+/// "Is it really Tamar?" (DESIGN.md section 4.3, prototype `safety`): the
+/// 12 groups of 5 digits both phones show, and the version of the
+/// computation that made them (only equal versions compare). Same numbers
+/// saves Checked and goes on to "It's really Tamar"; Different numbers opens
+/// the red sheet with Remove; once checked, Mark as not checked. The numbers
+/// are not secret, so this is not a private screen.
 class SafetyNumberPage extends StatelessWidget {
   final ChatGeneralData chatGeneralData;
 
@@ -27,102 +32,139 @@ class ProvidedSafetyNumberPage extends StatelessWidget {
 
   const ProvidedSafetyNumberPage({super.key, required this.chatGeneralData});
 
-  /// The core's 12 space-separated groups laid out 3 per row, so both
-  /// devices show the same shape whatever their width.
-  static String _rowsOf(String safetyNumber) {
-    final groups = safetyNumber.split(' ');
-    final rows = <String>[];
-    for (var i = 0; i < groups.length; i += 3) {
-      rows.add(groups.sublist(i, math.min(i + 3, groups.length)).join(' '));
+  /// Saves the flag in the core, then refreshes every trust chip.
+  Future<bool> _mark(BuildContext context) async {
+    final cubit = context.read<SafetyNumberCubit>();
+    final listCubit = context.read<ChatGeneralDataListCubit>();
+    await cubit.toggleVerified();
+    if (cubit.state.status.isFailed) {
+      if (context.mounted) {
+        showInkToast(
+          context,
+          message: context.fuzzzyInkLocalizations.safetySaveFailed,
+          kind: FuzzzyToastKind.error,
+        );
+      }
+      return false;
     }
-    return rows.join('\n');
+    await listCubit.refreshVerification();
+    return true;
+  }
+
+  Future<void> _same(BuildContext context) async {
+    if (!await _mark(context) || !context.mounted) return;
+    context.pushReplacement(
+      AppRouter.personChecked,
+      extra: chatGeneralData,
+    );
+  }
+
+  Future<void> _unmark(BuildContext context) async {
+    if (!await _mark(context) || !context.mounted) return;
+    showInkToast(
+      context,
+      message: context.fuzzzyInkLocalizations
+          .safetyNowNotChecked(chatGeneralData.chatName),
+      kind: FuzzzyToastKind.info,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final fuzzzyColors = context.fuzzzyColors;
-    final fuzzzyTextStyles = context.fuzzzyTextStyles;
-
     final localizations = context.fuzzzyInkLocalizations;
+    final space = context.fuzzzySpace;
+    final name = chatGeneralData.chatName;
 
     return BlocBuilder<SafetyNumberCubit, SafetyNumberState>(
       builder: (context, state) {
-        return StatusBuilder.buildByStatus(
-          status: state.status,
-          onInitial: () => const FuzzyLoadingPagebuilder(),
-          onLoading: () => const FuzzyLoadingPagebuilder(),
-          onSuccess: () => FuzzyScaffold(
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SingleChildScrollView(
-                child: Column(
+        final number = state.safetyNumber;
+        final title = localizations.isItReally(name);
+
+        if (number == null) {
+          return FlowScaffold(
+            qaId: 'safety',
+            title: title,
+            children: [
+              SizedBox(height: space.xl),
+              if (state.status.isFailed)
+                InkNotice(
+                  kind: InkNoticeKind.danger,
+                  text: localizations.safetyLoadFailed,
+                  qaId: 'safety.failed',
+                )
+              else
+                const Center(child: FuzzzyProgressRing(qaId: 'safety')),
+            ],
+          );
+        }
+
+        return FlowScaffold(
+          qaId: 'safety',
+          title: title,
+          footer: state.isVerified
+              ? FuzzzyButton(
+                  qaId: 'safety.unmark',
+                  label: localizations.safetyMarkNotChecked,
+                  variant: FuzzzyButtonVariant.secondary,
+                  onPressed: () => _unmark(context),
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    FuzzzyAppBar(
-                      title: localizations.safetyNumberTitle,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      chatGeneralData.chatName,
-                      textAlign: TextAlign.start,
-                      style: fuzzzyTextStyles.body.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: fuzzzyColors.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      localizations.safetyNumberExplanation,
-                      textAlign: TextAlign.start,
-                      style: fuzzzyTextStyles.body.copyWith(
-                        color: fuzzzyColors.inkMute,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      _rowsOf(state.safetyNumber!),
-                      textAlign: TextAlign.center,
-                      style: fuzzzyTextStyles.dataL.copyWith(
-                        color: fuzzzyColors.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    if (state.isVerified) ...[
-                      Center(
-                        child: FuzzzyStatusChip(
-                          label: localizations.safetyNumberVerifiedBadge,
-                          kind: FuzzzyStatusKind.success,
-                          dot: true,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
                     FuzzzyButton(
-                      key: const ValueKey('verify_mark_button'),
-                      label: state.isVerified
-                          ? localizations.safetyNumberUnmark
-                          : localizations.safetyNumberMarkVerified,
-                      variant: state.isVerified
-                          ? FuzzzyButtonVariant.secondary
-                          : FuzzzyButtonVariant.primary,
-                      icon: Icon(
-                        state.isVerified
-                            ? Icons.shield_outlined
-                            : Icons.verified_user,
-                      ),
-                      onPressed: () =>
-                          context.read<SafetyNumberCubit>().toggleVerified(),
+                      qaId: 'safety.same',
+                      label: localizations.safetySame,
+                      icon: const Icon(Icons.check),
+                      onPressed: () => _same(context),
                     ),
-                    const SizedBox(height: 120),
+                    SizedBox(height: space.s + space.xs / 2),
+                    FuzzzyButton(
+                      qaId: 'safety.different',
+                      label: localizations.safetyDifferent,
+                      variant: FuzzzyButtonVariant.secondary,
+                      onPressed: () => showMismatchSheet(
+                        context,
+                        name: name,
+                        onRemove: () => removePerson(context, chatGeneralData),
+                      ),
+                    ),
                   ],
                 ),
+          children: [
+            InkScreenLine(localizations.safetyCompare, center: false),
+            SizedBox(height: space.l),
+            SafetyNumberGrid(
+              qaId: 'safety',
+              groups: SafetyNumberGrid.groupsOf(number.digits),
+            ),
+            SizedBox(height: space.s),
+            // The digits compare only between equal versions of the
+            // computation, so the version is always shown.
+            Text(
+              localizations.safetyNumberVersion(number.version),
+              key: const ValueKey('safety_number_version'),
+              textAlign: TextAlign.center,
+              style: context.fuzzzyTextStyles.bodyS.copyWith(
+                color: context.fuzzzyColors.inkMute,
               ),
             ),
-          ),
-          onFailure: () => FuzzyErrorPageBuilder(
-            message: state.failure?.message,
-          ),
+            SizedBox(height: space.m),
+            if (state.isVerified)
+              InkNotice(
+                kind: InkNoticeKind.ok,
+                text: localizations.safetyCheckedBefore(name),
+                qaId: 'safety.checkedBefore',
+              )
+            else
+              const Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: WhyLink(
+                  topic: InkInfoTopic.checkNumbers,
+                  qaId: 'safety.why',
+                ),
+              ),
+          ],
         );
       },
     );

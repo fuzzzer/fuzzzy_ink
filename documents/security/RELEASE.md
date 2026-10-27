@@ -37,7 +37,7 @@ git add pubspec.yaml CHANGELOG.md documents/security/RELEASE.md documents/securi
 git diff --cached --check && git diff --cached | grep -iEc 'api[_-]?key|secret|token|password|BEGIN.*PRIVATE'
 git commit -F msg.txt                                           # chore(release): v1.1.0 — …
 git push origin agent/chat-harden-rust-crypto-core && git ls-remote --heads origin agent/chat-harden-rust-crypto-core
-gh run list -R fuzzzy-bot/fuzzy_chat --commit "$(git rev-parse HEAD)" ; gh run watch <push-run-id> --exit-status
+gh run list -R fuzzzer/fuzzzy_ink --commit "$(git rev-parse HEAD)" ; gh run watch <push-run-id> --exit-status
 
 # 2. full regression on that exact tip, locally (the same gates CI runs)
 ( cd rust/fuzzy_crypto_core && cargo fmt --check && cargo clippy --all-targets --locked -- -D warnings && cargo test --locked )
@@ -49,13 +49,13 @@ fvm dart format --output=none --set-exit-if-changed lib test
 # 3. tag the release commit, annotated, and watch the tag run (ten jobs incl. attest)
 git tag -a v1.1.0 -m "Fuzzzy Ink 1.1.0 — Rust crypto core; see documents/security/HARDENING_2026.md"
 git push origin v1.1.0 && git ls-remote --tags origin v1.1.0
-gh run list -R fuzzzy-bot/fuzzy_chat --event push --branch v1.1.0 ; gh run watch <tag-run-id> --exit-status
+gh run list -R fuzzzer/fuzzzy_ink --event push --branch v1.1.0 ; gh run watch <tag-run-id> --exit-status
 
 # 4. verify the tag's artifacts once (§3), then delete the download
-gh run download <tag-run-id> -R fuzzzy-bot/fuzzy_chat -D rel && cd rel
+gh run download <tag-run-id> -R fuzzzer/fuzzzy_ink -D rel && cd rel
 shasum -a 256 -c sha256sums/SHA256SUMS
 for f in android-apk/app-production-release.apk linux-bundle/lib/libfuzzy_crypto_core.so macos-app/fuzzzy_ink-macos.zip; do
-  gh attestation verify "$f" -R fuzzzy-bot/fuzzy_chat; done
+  gh attestation verify "$f" -R fuzzzer/fuzzzy_ink; done
 unzip -p android-apk/app-production-release.apk lib/arm64-v8a/libfuzzy_crypto_core.so | shasum -a 256   # == rust-repro-1/SHA256SUMS android line
 cd .. && rm -rf rel
 ```
@@ -83,18 +83,34 @@ which workflow produced these exact bytes* — nothing more.
 
 **Not proven, and stated here so nobody assumes it:**
 
-- **macOS is unsigned and not notarized.** The macOS job builds with code signing disabled
-  (`FLUTTER_XCODE_CODE_SIGNING_ALLOWED=NO`): the Xcode project is signed for team `7W88HRQFXP` and CI
-  has no certificate. Gatekeeper will refuse the app unless the user overrides it. Signing needs an Apple
-  Developer certificate as a CI secret or a signing step on a Mac that holds it — an owner decision
-  (hardening decision D-3); signed builds come from Codemagic, §6.
-- **iOS is not built.** There is no iOS job; nothing in a release is an iOS artifact (signed IPA: Codemagic, §6).
-- **The Android APK is signed with a throwaway key.** The `android` job generates a fresh keystore per run
-  (`keytool -genkeypair … -validity 1`, `CN=fuzzzy_ink CI throwaway`) because the `release` build type
-  refuses to build without one. The APK installs and runs, and is a faithful build of the commit, but it is
-  **not a store build**: it cannot update an installation signed with the real key, and the real key is
-  never in this repository or in CI until the owner provides it as the `ANDROID_KEYSTORE_*` secrets
-  (hardening decision D-6); the store build is signed on Codemagic, §6.
+- **Release tags are signed with the real keys, or they stop (since 2026-10-26).** No signing key exists in
+  this repository, and none is ever generated in CI. On a `v*` tag:
+  - **Android:** the `android` job decodes the release keystore from repository secrets and `build.gradle` signs
+    with it; a missing secret stops the job, naming it. `build.gradle` reads release signing **only** from the
+    four `ANDROID_KEYSTORE_*` environment variables (no `key.properties`, no fallback) and refuses any release
+    build without them, naming the missing ones.
+  - **macOS:** `scripts/sign_macos_direct.sh` signs the finished app with a Developer ID certificate, the
+    hardened runtime and `macos/Runner/Release.entitlements`, stops unless the signed app carries
+    `com.apple.security.app-sandbox` and no network entitlement, then notarizes (status must be `Accepted`) and
+    staples it.
+  - **Windows:** `scripts/sign_windows_release.ps1` signs `fuzzzy_ink.exe` and `fuzzy_crypto_core.dll` with a
+    code-signing certificate and verifies both — a **placeholder** until the owner chooses a certificate; a
+    cloud or hardware-token service would replace it.
+
+  Every other run (branches, pull requests) is a compile proof: the Android APK is an **unsigned** release
+  build that no device installs (`FUZZZY_UNSIGNED_RELEASE_PROOF=true`, set only there), and the macOS and
+  Windows bundles are unsigned. Nothing from such a run is attested or published.
+
+  Repository secrets a release tag needs (names only; values exist only in GitHub's secret store):
+  `ANDROID_RELEASE_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_ALIAS`, `ANDROID_KEYSTORE_PASSWORD`,
+  `ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD`; `MACOS_DEVELOPER_ID_P12_BASE64`, `MACOS_DEVELOPER_ID_P12_PASSWORD`,
+  `MACOS_DEVELOPER_ID_PROFILE_BASE64`, `APPLE_TEAM_ID`, `APP_STORE_CONNECT_PRIVATE_KEY_BASE64`,
+  `APP_STORE_CONNECT_KEY_IDENTIFIER`, `APP_STORE_CONNECT_ISSUER_ID`; `WINDOWS_SIGNING_PFX_BASE64`,
+  `WINDOWS_SIGNING_PFX_PASSWORD`. Which Android key signs the downloadable APK is an owner decision: a phone
+  that installed the Play build accepts an update only from the same signing key, and Play App Signing keeps
+  Google's app key, not the upload key.
+- **iOS is not built here.** There is no iOS job in this workflow; the signed IPA comes from Codemagic (§6),
+  which sends it to TestFlight.
 - **Provenance is not a review.** The attestation says who built the bytes, not that the code is correct.
   What the code does is documented in `PROTOCOL.md`; what it defends against, in `THREAT_MODEL.md`.
 
@@ -103,15 +119,17 @@ which workflow produced these exact bytes* — nothing more.
 Needs `gh` ≥ 2.49 (`gh attestation`) and `sha256sum` (macOS: `shasum -a 256 -c`).
 
 ```sh
-gh run download <run-id> -R fuzzzy-bot/fuzzy_chat -D rel        # or download the files from the Release page
+gh run download <run-id> -R fuzzzer/fuzzzy_ink -D rel        # or download the files from the Release page
 cd rel
 sha256sum -c sha256sums/SHA256SUMS                               # every line must print OK
-gh attestation verify android-apk/app-production-release.apk -R fuzzzy-bot/fuzzy_chat
-gh attestation verify linux-bundle/fuzzzy_ink -R fuzzzy-bot/fuzzy_chat
+gh attestation verify android-apk/app-production-release.apk -R fuzzzer/fuzzzy_ink
+gh attestation verify linux-bundle/fuzzzy_ink -R fuzzzer/fuzzzy_ink
 ```
 
 `gh attestation verify` fetches the attestation for the file's digest from GitHub, checks the Sigstore
-signature and that the signer is a workflow of `fuzzzy-bot/fuzzy_chat`, and prints the workflow, the ref
+signature and that the signer is a workflow of `fuzzzer/fuzzzy_ink` (the app's repository since the move;
+releases built before the move were attested in `fuzzzy-bot/fuzzy_chat` — verify those with `-R fuzzzy-bot/fuzzy_chat`,
+and the run and attestation links recorded in §5 keep that name), and prints the workflow, the ref
 and the commit it was built from. Compare that commit with the tag: `git rev-parse v1.2.3^{commit}`. Any
 file listed in `SHA256SUMS` can be verified the same way; the two crate libraries inside the bundles are
 listed so that the Rust core can be checked on its own (§4).
@@ -317,9 +335,8 @@ the build itself to go green and the last step to go red until that has been don
    Those are exactly the names `android/app/build.gradle` reads in `signingConfigs.release` —
    `ANDROID_KEYSTORE_PATH` (store file), `ANDROID_KEYSTORE_ALIAS`, `ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD`
    (key password) and `ANDROID_KEYSTORE_PASSWORD` (store password). Nothing key-shaped is ever handled in a
-   script and the gradle file is unchanged. Its only other branch reads `rootProject.file('key.properties')`,
-   which does not exist on a build machine: if `ANDROID_KEYSTORE_PATH` is unset the release build fails rather
-   than falling back to anything.
+   script. The gradle file has no other source (the old `key.properties` branch is gone): if any of the four is
+   unset, a release build stops before building, naming the missing ones.
 3. **App Store Connect API key** — App Store Connect → Users and Access → Integrations → App Store Connect API →
    *Generate API key* (role **App Manager**), download the `.p8` (one-time download), note the **Key ID** and
    the **Issuer ID**. Then Codemagic Team settings → *Team integrations* → *Developer Portal* → *Connect*: name

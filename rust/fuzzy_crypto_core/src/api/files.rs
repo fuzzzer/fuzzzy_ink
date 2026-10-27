@@ -11,7 +11,7 @@ use crate::error::CoreError;
 use crate::files::{
     self, ChatFileSetup, FileSetup, Progress, JOB_CANCELLED, JOB_PAUSED, JOB_RUNNING,
 };
-use crate::formats::FileHeader;
+use crate::formats::{FileHeader, FileKeyMode};
 use crate::frb_generated::StreamSink;
 use crate::store::{validate_chat_id, Key32};
 
@@ -268,10 +268,74 @@ impl CryptoCore {
     }
 }
 
+/// Keeping a received file (`PROTOCOL.md` §9.6): the app stores the container
+/// it received, never the plaintext. The container's key message is spent by
+/// the first prepare, so the file key is sealed under the chat's history key
+/// and the container is opened again from that seal.
+impl CryptoCore {
+    /// Seals the file key of a prepared, not yet run, receive ticket for
+    /// `chat_id`: a 0x20 blob (AAD `kept-file-key` ‖ chat id) the app stores
+    /// beside the kept container. A send ticket, or one already run, is
+    /// `Internal`; a chat the store does not know is `UnknownChat`.
+    pub fn keep_received_file(
+        &self,
+        chat_id: String,
+        ticket: &FileTicket,
+    ) -> Result<Vec<u8>, CoreError> {
+        validate_chat_id(&chat_id)?;
+        let Some(PreparedJob {
+            key,
+            kind: JobKind::Receive,
+            ..
+        }) = &ticket.inner
+        else {
+            return Err(CoreError::Internal);
+        };
+        self.opened()?.seal_kept_file_key(&chat_id, key)
+    }
+
+    /// A receive ticket for the kept container at `input`, from the seal
+    /// [`CryptoCore::keep_received_file`] made: no Olm step, no state change.
+    /// A seal of another chat, a history seal or a tampered one is `Corrupt`;
+    /// a deleted chat is `UnknownChat`; a password-mode container is
+    /// `UnsupportedFormat`; a truncated one `Corrupt` (before any output).
+    /// The run then opens only the container the key was made for: chunk 0 of
+    /// anything else is `Corrupt`. The ticket's name is `input`'s file name.
+    pub fn reopen_kept_file(
+        &self,
+        chat_id: String,
+        input: String,
+        kept_key: Vec<u8>,
+    ) -> Result<FileTicket, CoreError> {
+        validate_chat_id(&chat_id)?;
+        let key = self.opened()?.open_kept_file_key(&chat_id, &kept_key)?;
+        let input = PathBuf::from(input);
+        let header = files::peek_header(&input)?;
+        if !matches!(header.key_mode, FileKeyMode::Chat { .. }) {
+            return Err(CoreError::UnsupportedFormat);
+        }
+        let original_name = input
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or_default()
+            .to_owned();
+        Ok(FileTicket {
+            original_name,
+            inner: Some(PreparedJob {
+                key,
+                header,
+                input,
+                kind: JobKind::Receive,
+            }),
+        })
+    }
+}
+
 impl FileTicket {
-    /// The file's name as the sender saw it: the input's file name on a send
-    /// ticket, the name carried inside the Olm message on a receive ticket
-    /// (a bare name — never a path). Readable before and after the run.
+    /// The file's name: the input's file name on a send ticket; on a receive
+    /// ticket the name carried inside the Olm message, made safe for every
+    /// platform (a bare name — never a path, never a Windows device name, at
+    /// most 120 bytes; PROTOCOL.md §7.3). Readable before and after the run.
     pub fn original_name(&self) -> String {
         self.original_name.clone()
     }
@@ -411,7 +475,6 @@ mod tests {
 
     use vodozemac::olm::DecryptionError;
 
-    use crate::api::core::{create_store_key, open_store};
     use crate::files::ChatFileSetup;
     use crate::formats::{FileHeader, FileKeyMode, OlmType, CHUNK_SIZE};
     use crate::store::test_support::temp_dir;
@@ -429,12 +492,7 @@ mod tests {
     impl Device {
         fn new() -> Self {
             let dir = temp_dir();
-            let core = open_store(
-                dir.to_string_lossy().into_owned(),
-                create_store_key("".into()).unwrap(),
-                "".into(),
-            )
-            .unwrap();
+            let core = CryptoCore::open_for_tests(&dir, crate::store::random_array().unwrap());
             Self { dir, core }
         }
 
@@ -796,6 +854,184 @@ mod tests {
         assert_absent(&sealed2);
     }
 
+    // -----------------------------------------------------------------------
+    // Keeping a received file — the kept container opens again and again
+    // -----------------------------------------------------------------------
+
+    /// B receives A's `name` and keeps it: (kept container, kept key).
+    fn receive_and_keep(
+        a: &mut Device,
+        b: &mut Device,
+        name: &str,
+        plaintext: &[u8],
+    ) -> (PathBuf, Vec<u8>) {
+        let sealed = send(a, CHAT_X, name, plaintext);
+        let kept = b.path(&format!("kept-{name}.fuzz"));
+        fs::copy(&sealed, &kept).unwrap();
+        let mut ticket = b
+            .core
+            .prepare_file_receive(CHAT_X.into(), kept.to_string_lossy().into_owned())
+            .unwrap();
+        let kept_key = b.core.keep_received_file(CHAT_X.into(), &ticket).unwrap();
+        let first = b.path(&format!("first-{name}"));
+        run(&mut ticket, &first).unwrap();
+        assert_eq!(fs::read(&first).unwrap(), plaintext);
+        (kept, kept_key)
+    }
+
+    #[test]
+    fn kept_file_reopens_without_touching_the_ratchet() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        let plaintext = pattern(CHUNK_SIZE as usize * 2 + 5);
+        let (kept, kept_key) = receive_and_keep(&mut a, &mut b, "photo.jpg", &plaintext);
+        assert_eq!(&kept_key[..6], b"FUZZ\x01\x20");
+        let state_before = b.state_bytes(CHAT_X);
+
+        for round in 0..2 {
+            let mut ticket = b
+                .core
+                .reopen_kept_file(
+                    CHAT_X.into(),
+                    kept.to_string_lossy().into_owned(),
+                    kept_key.clone(),
+                )
+                .unwrap();
+            assert_eq!(ticket.original_name(), "kept-photo.jpg.fuzz");
+            let output = b.path(&format!("again-{round}.jpg"));
+            let events = run(&mut ticket, &output).unwrap();
+            assert_eq!(events.len(), 3);
+            assert_eq!(fs::read(&output).unwrap(), plaintext);
+        }
+        assert_eq!(
+            b.state_bytes(CHAT_X),
+            state_before,
+            "reopening spends no message and writes no state"
+        );
+        // The container itself is still single-use on the ratchet.
+        assert_eq!(
+            b.core
+                .prepare_file_receive(CHAT_X.into(), kept.to_string_lossy().into_owned())
+                .err()
+                .unwrap(),
+            CoreError::Replay
+        );
+    }
+
+    #[test]
+    fn kept_key_opens_only_its_own_chat_and_container() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+        let mut a2 = Device::new();
+        pair(&mut a2, &mut b, CHAT_Y);
+
+        let (kept, kept_key) = receive_and_keep(&mut a, &mut b, "one.bin", &pattern(300));
+        let (other, _) = receive_and_keep(&mut a, &mut b, "two.bin", &pattern(300));
+
+        // Another chat on the same device: another history key and AAD.
+        assert_eq!(
+            b.core
+                .reopen_kept_file(
+                    CHAT_Y.into(),
+                    kept.to_string_lossy().into_owned(),
+                    kept_key.clone(),
+                )
+                .err()
+                .unwrap(),
+            CoreError::Corrupt
+        );
+        // Another container of the same chat: the key does not open its chunks.
+        let mut wrong = b
+            .core
+            .reopen_kept_file(
+                CHAT_X.into(),
+                other.to_string_lossy().into_owned(),
+                kept_key.clone(),
+            )
+            .unwrap();
+        let output = b.path("wrong.bin");
+        assert_eq!(run(&mut wrong, &output).unwrap_err(), CoreError::Corrupt);
+        assert_absent(&output);
+        // A history seal is not a kept key.
+        let history = b
+            .core
+            .seal_local(CHAT_X.into(), b"\x00Fuzz/row".to_vec(), vec![0x66; 32])
+            .unwrap();
+        assert_eq!(
+            b.core
+                .reopen_kept_file(CHAT_X.into(), kept.to_string_lossy().into_owned(), history)
+                .err()
+                .unwrap(),
+            CoreError::Corrupt
+        );
+        // A password-mode container is refused before any output.
+        let password_container = b.path("basics.fuzz");
+        crate::files::encrypt_with_password(
+            b"pw",
+            &crate::files::FileSetup::random().unwrap(),
+            &b.write_plain("basics.txt", b"basics"),
+            &password_container,
+            &running(),
+            &mut |_| {},
+        )
+        .unwrap();
+        assert_eq!(
+            b.core
+                .reopen_kept_file(
+                    CHAT_X.into(),
+                    password_container.to_string_lossy().into_owned(),
+                    kept_key.clone(),
+                )
+                .err()
+                .unwrap(),
+            CoreError::UnsupportedFormat
+        );
+        // Deleting the chat deletes its history key: kept files go with it.
+        b.core.delete_chat(CHAT_X.into()).unwrap();
+        assert_eq!(
+            b.core
+                .reopen_kept_file(CHAT_X.into(), kept.to_string_lossy().into_owned(), kept_key)
+                .err()
+                .unwrap(),
+            CoreError::UnknownChat
+        );
+    }
+
+    #[test]
+    fn only_an_unrun_receive_ticket_can_be_kept() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        let input = a.write_plain("send.bin", &pattern(100));
+        let send_ticket = a
+            .core
+            .prepare_file_send(CHAT_X.into(), input.to_string_lossy().into_owned())
+            .unwrap();
+        assert_eq!(
+            a.core
+                .keep_received_file(CHAT_X.into(), &send_ticket)
+                .unwrap_err(),
+            CoreError::Internal
+        );
+
+        let sealed = send(&mut a, CHAT_X, "recv.bin", &pattern(100));
+        let mut ticket = b
+            .core
+            .prepare_file_receive(CHAT_X.into(), sealed.to_string_lossy().into_owned())
+            .unwrap();
+        run(&mut ticket, &b.path("recv.bin")).unwrap();
+        assert_eq!(
+            b.core
+                .keep_received_file(CHAT_X.into(), &ticket)
+                .unwrap_err(),
+            CoreError::Internal
+        );
+    }
+
     #[test]
     fn rebound_key_message_is_corrupt() {
         // The file key rides in the header, but the chunks are AAD-bound to the
@@ -836,6 +1072,74 @@ mod tests {
         // fail under the re-bound header.
         assert_eq!(run(&mut ticket, &out).unwrap_err(), CoreError::Corrupt);
         assert_absent(&out);
+    }
+
+    /// A peer whose build sends a name this one would never send (an old or a
+    /// modified build): the receiver gets a safe name and the file arrives —
+    /// a name can no longer make a file impossible to receive.
+    #[test]
+    fn hostile_peer_names_are_received_under_a_safe_name() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        // 604 bytes: refused as `Corrupt` (after the ratchet step) before.
+        let long = format!("{}.pdf", "ა".repeat(200));
+        let cases = [
+            ("CON", "_CON".to_owned()),
+            ("..\\x:y. ", ".._x_y".to_owned()),
+            ("a/../../b", "a_.._.._b".to_owned()),
+            (long.as_str(), format!("{}.pdf", "ა".repeat(38))),
+        ];
+        for (index, (name, expected)) in cases.iter().enumerate() {
+            let input = a.write_plain("plain.bin", b"secret");
+            let sealed = a.path(&format!("hostile-{index}.fuzz"));
+            let setup = ChatFileSetup::random().unwrap();
+            let (key, header) = a
+                .core
+                .opened_mut()
+                .unwrap()
+                .with_state_mut(CHAT_X, |state| {
+                    crate::files::wrap_named_file_key(state, name, &setup)
+                })
+                .unwrap();
+            let mut ticket = FileTicket {
+                original_name: (*name).to_owned(),
+                inner: Some(PreparedJob {
+                    key,
+                    header,
+                    input,
+                    kind: JobKind::Send,
+                }),
+            };
+            run(&mut ticket, &sealed).unwrap();
+
+            let mut received = b
+                .core
+                .prepare_file_receive(CHAT_X.into(), sealed.to_string_lossy().into_owned())
+                .unwrap();
+            assert_eq!(&received.original_name(), expected, "{name:?}");
+            let output = b.path(&received.original_name());
+            run(&mut received, &output).unwrap();
+            assert_eq!(fs::read(&output).unwrap(), b"secret", "{name:?}");
+        }
+    }
+
+    /// A local file whose name this build would not hand to a peer as-is is
+    /// still sent: the name inside the message is the safe one.
+    #[test]
+    fn awkward_local_names_are_sent_under_a_safe_name() {
+        let mut a = Device::new();
+        let mut b = Device::new();
+        pair(&mut a, &mut b, CHAT_X);
+
+        let long = format!("{}.txt", "ა".repeat(80)); // 244 bytes: a valid name here
+        let sealed = send(&mut a, CHAT_X, &long, b"long");
+        let received = b
+            .core
+            .prepare_file_receive(CHAT_X.into(), sealed.to_string_lossy().into_owned())
+            .unwrap();
+        assert_eq!(received.original_name(), format!("{}.txt", "ა".repeat(38)));
     }
 
     #[test]

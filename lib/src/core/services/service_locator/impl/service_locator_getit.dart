@@ -91,7 +91,8 @@ class ServiceLocatorGetit implements ServiceLocator {
       getit.isRegistered<T>(
         instanceName: instanceName,
       ) ||
-      getit.isRegistered(instance: instance);
+      // Asked without an instance, GetIt asserts instead of answering false.
+      (instance != null && getit.isRegistered(instance: instance));
 
   @override
   void safeRegisterSingleton<T extends Object>(

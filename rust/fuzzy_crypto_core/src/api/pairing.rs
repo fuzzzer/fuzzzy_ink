@@ -79,6 +79,23 @@ impl CryptoCore {
         })
     }
 
+    /// Read-only: `Ok` when `acceptance` is a genuine answer to the invitation
+    /// this chat made — a `0x02` blob for this chat, signed by the key inside
+    /// it, whose pre-key message is built on this invitation's one-time key
+    /// ([`pairing::answers_invitation`]). Nothing is decrypted, consumed or
+    /// written; the chat may be connected already. The app asks this before
+    /// it warns that someone else answered (security review 2026-10-26); any
+    /// failure means "not a valid reply" (`UnsupportedFormat`, `Corrupt`,
+    /// `InvalidSignature`, `WrongChat`, `UnknownChat`).
+    pub fn check_acceptance(&self, chat_id: String, acceptance: String) -> Result<(), CoreError> {
+        validate_chat_id(&chat_id)?;
+        let store = self.opened()?;
+        let (_, blob) = decode_pasted(&acceptance)?;
+        let acceptance = pairing::verify_acceptance(&chat_id, &blob)?;
+        let state = store.load_state(&chat_id)?;
+        pairing::answers_invitation(&state, &acceptance)
+    }
+
     /// The invitation this chat last produced, for re-display.
     pub fn current_invitation(&self, chat_id: String) -> Result<String, CoreError> {
         let state = self.opened()?.load_state(&chat_id)?;
@@ -118,7 +135,6 @@ mod tests {
     use vodozemac::olm::{OlmMessage, Session};
 
     use super::*;
-    use crate::api::core::{create_store_key, open_store};
     use crate::formats::{decode_text, encode_text, InnerHeader};
     use crate::state::Role;
     use crate::store::test_support::temp_dir;
@@ -130,32 +146,26 @@ mod tests {
     /// One device: its own store directory and store key.
     struct Device {
         dir: PathBuf,
-        wrapped: Vec<u8>,
+        store_key: [u8; 32],
         core: CryptoCore,
     }
 
     impl Device {
         fn new() -> Self {
             let dir = temp_dir();
-            let wrapped = create_store_key("".into()).unwrap();
-            let core = open_store(
-                dir.to_string_lossy().into_owned(),
-                wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
-            Self { dir, wrapped, core }
+            let store_key = crate::store::random_array().unwrap();
+            let core = CryptoCore::open_for_tests(&dir, store_key);
+            Self {
+                dir,
+                store_key,
+                core,
+            }
         }
 
         /// Drops the handle and opens the same store again.
         fn reopen(&mut self) {
             self.core.close();
-            self.core = open_store(
-                self.dir.to_string_lossy().into_owned(),
-                self.wrapped.clone(),
-                "".into(),
-            )
-            .unwrap();
+            self.core = CryptoCore::open_for_tests(&self.dir, self.store_key);
         }
 
         fn state_file(&self, chat_id: &str) -> PathBuf {
@@ -205,6 +215,68 @@ mod tests {
 
     fn assert_no_state(path: &Path) {
         assert!(!path.exists(), "no state may be written on a rejection");
+    }
+
+    /// Security review 2026-10-26 (M4): a second reply raises the "someone
+    /// else answered" warning only when it really answers this invitation.
+    #[test]
+    fn only_a_genuine_second_reply_counts_as_an_answer() {
+        let (a, b, invitation, acceptance) = paired();
+        // The first reply, and a second person's reply to the same invite.
+        assert!(a
+            .core
+            .check_acceptance(CHAT_X.into(), acceptance.clone())
+            .is_ok());
+        let mut c = Device::new();
+        let second = c
+            .core
+            .accept_invitation(CHAT_X.into(), invitation.clone())
+            .unwrap();
+        assert!(a
+            .core
+            .check_acceptance(CHAT_X.into(), second.clone())
+            .is_ok());
+        let before = a.state_bytes(CHAT_X);
+
+        // The invitation under /accept; a tampered reply; another chat's id.
+        assert_eq!(
+            a.core
+                .check_acceptance(CHAT_X.into(), invitation.clone())
+                .unwrap_err(),
+            CoreError::UnsupportedFormat
+        );
+        assert_eq!(
+            a.core
+                .check_acceptance(CHAT_X.into(), flipped(&second, 60))
+                .unwrap_err(),
+            CoreError::InvalidSignature
+        );
+        assert_eq!(
+            a.core
+                .check_acceptance(CHAT_Y.into(), second.clone())
+                .unwrap_err(),
+            CoreError::WrongChat
+        );
+        // A reply properly signed for this chat id but built on another
+        // invitation (anyone who saw the chat id can make one).
+        let mut d = Device::new();
+        let mut e = Device::new();
+        let other_invite = d.core.create_invitation(CHAT_X.into()).unwrap();
+        let forged = e
+            .core
+            .accept_invitation(CHAT_X.into(), other_invite)
+            .unwrap();
+        assert_eq!(
+            a.core.check_acceptance(CHAT_X.into(), forged).unwrap_err(),
+            CoreError::WrongChat
+        );
+        // The accepter's own side has no invitation to be answered.
+        assert_eq!(
+            b.core.check_acceptance(CHAT_X.into(), second).unwrap_err(),
+            CoreError::WrongChat
+        );
+        // Nothing was written.
+        assert_eq!(a.state_bytes(CHAT_X), before);
     }
 
     #[test]
@@ -374,14 +446,25 @@ mod tests {
             );
             assert_no_state(&b_file);
         }
-        // Header bytes: magic, version, type.
-        for offset in [0, 3, 4, 5] {
+        // Header bytes: magic, version (0x01 → 0x00, older than this build).
+        for offset in [0, 3, 4] {
             assert_eq!(
                 b.core
                     .accept_invitation(CHAT_X.into(), flipped(&invitation, offset))
                     .unwrap_err(),
                 CoreError::UnsupportedFormat,
                 "offset {offset}"
+            );
+            assert_no_state(&b_file);
+        }
+        // A type byte this build does not know (0x01 → 0x00), or a newer
+        // version: made by a newer app, never read as damaged.
+        let mut newer = decode_text(&invitation).unwrap();
+        newer[4] = 0x02;
+        for blob in [flipped(&invitation, 5), encode_text(&newer)] {
+            assert_eq!(
+                b.core.accept_invitation(CHAT_X.into(), blob).unwrap_err(),
+                CoreError::NewerVersion
             );
             assert_no_state(&b_file);
         }

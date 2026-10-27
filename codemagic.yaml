@@ -7,10 +7,31 @@ definitions:
 
   install_rust: &install_rust
     name: Install Rust 1.98.1
-    # The Codemagic images ship no Rust; the version must track rust-toolchain.toml.
+    # The Codemagic images ship no Rust; the version must track rust-toolchain.toml. The installer is
+    # rustup-init 1.28.2, downloaded and checked against the SHA-256 pinned here before it runs — never an
+    # unpinned `curl | sh` (security review 2026-10-26). A new rustup means new sums, from
+    # https://static.rust-lang.org/rustup/archive/<version>/<target>/rustup-init.sha256.
     script: |
       set -euo pipefail
-      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.98.1
+      case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64) target=x86_64-unknown-linux-gnu
+          sum=20a06e644b0d9bd2fbdbfd52d42540bdde820ea7df86e92e533c073da0cdd43c ;;
+        Darwin-arm64) target=aarch64-apple-darwin
+          sum=20ef5516c31b1ac2290084199ba77dbbcaa1406c45c1d978ca68558ef5964ef5 ;;
+        Darwin-x86_64) target=x86_64-apple-darwin
+          sum=9c331076f62b4d0edeae63d9d1c9442d5fe39b37b05025ec8d41c5ed35486496 ;;
+        *) echo "No pinned rustup-init for $(uname -s)-$(uname -m)" >&2; exit 1 ;;
+      esac
+      curl --proto '=https' --tlsv1.2 -sSf -o rustup-init \
+        "https://static.rust-lang.org/rustup/archive/1.28.2/$target/rustup-init"
+      if command -v sha256sum >/dev/null; then
+        echo "$sum  rustup-init" | sha256sum -c -
+      else
+        echo "$sum  rustup-init" | shasum -a 256 -c -
+      fi
+      chmod +x rustup-init
+      ./rustup-init -y --no-modify-path --profile minimal --default-toolchain 1.98.1
+      rm rustup-init
       echo "PATH=$HOME/.cargo/bin:$PATH" >> "$CM_ENV"
 
   add_rust_android_targets: &add_rust_android_targets
@@ -44,7 +65,8 @@ definitions:
 
   pub_get: &pub_get
     name: Flutter pub get
-    script: flutter pub get
+    # The lock file, exactly (security review 2026-10-26).
+    script: flutter pub get --enforce-lockfile
 
   initialize_keychain: &initialize_keychain
     name: Initialize the signing keychain
@@ -128,28 +150,6 @@ definitions:
     xcode: 26.5
     cocoapods: default
 
-  on_trunk_push: &on_trunk_push
-    events:
-      - push
-    branch_patterns:
-      - pattern: production-preparation
-        include: true
-    cancel_previous_builds: true
-
-  on_staging_tag: &on_staging_tag
-    events:
-      - tag
-    tag_patterns:
-      - pattern: 'staging-*'
-        include: true
-
-  on_release_tag: &on_release_tag
-    events:
-      - tag
-    tag_patterns:
-      - pattern: 'v*'
-        include: true
-
   notify_by_email: &notify_by_email
     recipients:
       - contact@fuzzzycore.com
@@ -180,7 +180,6 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-    triggering: *on_trunk_push
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -213,7 +212,6 @@ workflows:
         - fuzzzycore_deps
         - fuzzzycore_firebase
         - fuzzzycore_play
-    triggering: *on_staging_tag
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -245,7 +243,6 @@ workflows:
       groups:
         - fuzzzycore_deps
         - fuzzzycore_play
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_android_targets
@@ -271,7 +268,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.dev
-    triggering: *on_trunk_push
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -297,7 +293,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink.stg
-    triggering: *on_staging_tag
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -323,7 +318,6 @@ workflows:
         - fuzzzycore_apple_signing
       vars:
         BUNDLE_ID: com.fuzzzycore.ink
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_ios_target
@@ -350,7 +344,6 @@ workflows:
         - fuzzzycore_deps
       vars:
         BUNDLE_ID: com.fuzzzycore.ink
-    triggering: *on_release_tag
     scripts:
       - *install_rust
       - *add_rust_macos_targets

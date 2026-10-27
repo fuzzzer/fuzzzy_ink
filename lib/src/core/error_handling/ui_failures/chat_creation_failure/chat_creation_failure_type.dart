@@ -7,6 +7,9 @@ enum ChatCreationFailureType {
   invalidAcceptance,
   invitationAlreadyUsed,
   wrongChat,
+
+  /// Made by a newer Fuzzzy Ink.
+  newerApp,
   unknown;
 
   String toUiMessage(
@@ -25,6 +28,7 @@ enum ChatCreationFailureType {
       ChatCreationFailureType.invitationAlreadyUsed =>
         localizations.invitationAlreadyUsed,
       ChatCreationFailureType.wrongChat => localizations.wrongChatBlob,
+      ChatCreationFailureType.newerApp => localizations.openErrorNewerTitle,
       ChatCreationFailureType.unknown =>
         customUnknownMessage ?? localizations.failedToCreateChat,
     };

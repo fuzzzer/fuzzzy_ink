@@ -44,6 +44,7 @@ class AboutEncryptionPage extends StatelessWidget {
     ];
 
     return FuzzyScaffold(
+      actionsRow: const BottomBackButton(qaId: 'aboutEncryption.back'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(
@@ -58,9 +59,7 @@ class AboutEncryptionPage extends StatelessWidget {
                 Text(
                   title,
                   textAlign: TextAlign.start,
-                  style: fuzzzyTextStyles.body.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                  style: fuzzzyTextStyles.titleS.copyWith(
                     color: fuzzzyColors.ink,
                   ),
                 ),

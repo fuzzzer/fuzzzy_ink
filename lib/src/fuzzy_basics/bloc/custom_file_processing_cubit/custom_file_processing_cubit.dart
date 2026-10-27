@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:path/path.dart' as path;
@@ -13,12 +11,20 @@ class CustomFileProcessingCubit<
         ActualProcessingOption extends FileProcessingOption>
     extends Cubit<CustomFileProcessingState> {
   final CryptoCoreService cryptoCoreService;
+  final UserFileStore userFileStore;
+  final PasswordStrengthService passwordStrengthService;
   final ActualProcessingOption processingOption;
 
   CustomFileProcessingCubit({
     required this.cryptoCoreService,
+    required this.userFileStore,
+    required this.passwordStrengthService,
     required this.processingOption,
   }) : super(const CustomFileProcessingState());
+
+  /// The plain copies decryption made in the hand-off folder; each is wiped
+  /// once used ([wipePlainCopy]) and all of them when the page closes.
+  final Set<String> _plainCopies = {};
 
   StreamSubscription<FileProcessingProgress>? _progressSubscription;
   FileProcessingHandler? _activeFileProcessingHandler;
@@ -43,10 +49,19 @@ class CustomFileProcessingCubit<
     );
   }
 
-  void addFilesToProcess({
+  /// Queues [filePaths] under [customKey]. A password that seals files must
+  /// reach the app's bar, as for Basics text ("good" or better, security
+  /// review 2026-10-22): a weaker one queues nothing and returns `false`.
+  /// Opening accepts any password, since the sender chose it.
+  bool addFilesToProcess({
     required List<String> filePaths,
     required String customKey,
   }) {
+    if (processingOption is FileEncryptionOption &&
+        !passwordStrengthService.isStrongEnough(customKey)) {
+      return false;
+    }
+
     final now = DateTime.now();
 
     final newFilesToBeProcessed = filePaths.map(
@@ -71,6 +86,7 @@ class CustomFileProcessingCubit<
         customKey: customKey,
       );
     }
+    return true;
   }
 
   void _startNextFileProcessing({
@@ -114,16 +130,14 @@ class CustomFileProcessingCubit<
     required String customKey,
   }) async {
     try {
-      String generalOutputPath = sl.get<AppDocumentsDirectory>().directory.path;
-
+      final String generalOutputPath;
       final CryptoCoreResponse<FileProcessingHandler> res;
 
       if (processingOption is FileEncryptionOption) {
-        generalOutputPath = await _buildOutputPathInChatFolder(
+        // The password container is kept in the app's Basics folder.
+        generalOutputPath = await _fuzzedOutputPath(
+          basicsFolderPath: await userFileStore.basicsFolder(),
           inputFilePath: fileData.inputFilePath,
-          outputPath: generalOutputPath,
-          chatName: fileData.chatName,
-          isEncryption: true,
           fuzzedFileIdentificator: fuzzedFileIdentificator,
         );
 
@@ -133,13 +147,14 @@ class CustomFileProcessingCubit<
           outputPath: generalOutputPath,
         );
       } else if (processingOption is FileDecryptionOption) {
-        generalOutputPath = await _buildOutputPathInChatFolder(
-          inputFilePath: fileData.inputFilePath,
-          outputPath: generalOutputPath,
-          chatName: fileData.chatName,
-          isEncryption: false,
-          fuzzedFileIdentificator: fuzzedFileIdentificator,
+        // The plain file is a short-lived hand-off copy, never kept.
+        generalOutputPath = await userFileStore.newHandoffPath(
+          _unfuzzedFileName(
+            inputFilePath: fileData.inputFilePath,
+            fuzzedFileIdentificator: fuzzedFileIdentificator,
+          ),
         );
+        _plainCopies.add(generalOutputPath);
 
         res = await cryptoCoreService.decryptFileWithPassword(
           password: customKey,
@@ -153,7 +168,8 @@ class CustomFileProcessingCubit<
       }
 
       if (res is CryptoCoreFailure<FileProcessingHandler>) {
-        _failFile(
+        await _dropPlainCopy(generalOutputPath);
+        await _failFile(
           fileData: fileData,
           type: FileProcessingFailureType.unknown,
           customKey: customKey,
@@ -177,7 +193,7 @@ class CustomFileProcessingCubit<
     } catch (error) {
       logger.i('FILE PROCESSING: file processing failed: $error');
 
-      _failFile(
+      await _failFile(
         fileData: fileData,
         type: FileProcessingFailureType.unknown,
         customKey: customKey,
@@ -185,14 +201,16 @@ class CustomFileProcessingCubit<
     }
   }
 
-  void _onProgress({
+  Future<void> _onProgress({
     required FileProcessingProgress event,
     required FileProcessingData fileData,
     required String outputPath,
     required String customKey,
-  }) {
+  }) async {
     if (event.isCancelled) {
       _resetThrottle();
+      await _dropPlainCopy(outputPath);
+      await userFileStore.discardPickedCopy(fileData.inputFilePath);
       _markFileAsFinished(
         fileData: fileData,
         status: FileProcessingStatus.canceled,
@@ -210,7 +228,8 @@ class CustomFileProcessingCubit<
     if (event.errorMessage != null) {
       _resetThrottle();
       logger.i('FILE PROCESSING: run failed: ${event.errorMessage}');
-      _failFile(
+      await _dropPlainCopy(outputPath);
+      await _failFile(
         fileData: fileData,
         type: _runFailureTypeOf(event.errorMessage!),
         customKey: customKey,
@@ -221,6 +240,7 @@ class CustomFileProcessingCubit<
 
     if (event.isComplete) {
       _resetThrottle();
+      await userFileStore.discardPickedCopy(fileData.inputFilePath);
       _markFileAsFinished(
         fileData: fileData,
         status: FileProcessingStatus.completed,
@@ -240,12 +260,13 @@ class CustomFileProcessingCubit<
     );
   }
 
-  void _failFile({
+  Future<void> _failFile({
     required FileProcessingData fileData,
     required FileProcessingFailureType type,
     required String customKey,
     double? progress,
-  }) {
+  }) async {
+    await userFileStore.discardPickedCopy(fileData.inputFilePath);
     _markFileAsFinished(
       fileData: fileData,
       status: FileProcessingStatus.failed,
@@ -387,6 +408,36 @@ class CustomFileProcessingCubit<
     );
   }
 
+  /// A decrypted file's plain copy, once saved or shared: wiped now, and the
+  /// file's entry loses its path.
+  Future<void> wipePlainCopy(String plainCopyPath) async {
+    await _dropPlainCopy(plainCopyPath);
+    emit(
+      state.copyWith(
+        processedFiles: [
+          for (final file in state.processedFiles)
+            file.outputFilePath == plainCopyPath
+                ? FileProcessingData(
+                    chatId: file.chatId,
+                    chatName: file.chatName,
+                    inputFilePath: file.inputFilePath,
+                    encryptionStartTime: file.encryptionStartTime,
+                    isProcessed: file.isProcessed,
+                    status: file.status,
+                    progress: file.progress,
+                    failure: file.failure,
+                  )
+                : file,
+        ],
+      ),
+    );
+  }
+
+  Future<void> _dropPlainCopy(String outputPath) async {
+    if (!_plainCopies.remove(outputPath)) return;
+    await userFileStore.wipe(outputPath);
+  }
+
   void pauseFile() => _activeFileProcessingHandler?.pause();
 
   void resumeFile() => _activeFileProcessingHandler?.resume();
@@ -394,37 +445,37 @@ class CustomFileProcessingCubit<
   void cancelFile() => _activeFileProcessingHandler?.cancel();
 
   @override
-  Future<void> close() {
-    _progressSubscription?.cancel();
+  Future<void> close() async {
+    await _progressSubscription?.cancel();
     _activeFileProcessingHandler = null;
+    for (final plainCopy in _plainCopies.toList()) {
+      await _dropPlainCopy(plainCopy);
+    }
     return super.close();
   }
 }
 
-Future<String> _buildOutputPathInChatFolder({
+/// `<name>.fuzz` in the Basics folder, or `<name> (1).fuzz`, … when taken.
+Future<String> _fuzzedOutputPath({
+  required String basicsFolderPath,
   required String inputFilePath,
-  required String outputPath,
-  required String chatName,
-  required bool isEncryption,
   required String fuzzedFileIdentificator,
-}) async {
-  final chatIdFolder = Directory(path.join(outputPath, chatName));
+}) {
+  final fileName =
+      UserFileNames.cleanPickedFileName(path.basename(inputFilePath));
+  return UserFileNames.uniqueOutputPath(
+    path.join(basicsFolderPath, '$fileName.$fuzzedFileIdentificator'),
+  );
+}
 
-  if (!await chatIdFolder.exists()) {
-    await chatIdFolder.create(recursive: true);
-    await const BackupExclusion().exclude(chatIdFolder.path);
-  }
-
+/// The container's name without `.fuzz`.
+String _unfuzzedFileName({
+  required String inputFilePath,
+  required String fuzzedFileIdentificator,
+}) {
   final fileName = path.basename(inputFilePath);
-  if (isEncryption) {
-    return path.join(chatIdFolder.path, '$fileName.$fuzzedFileIdentificator');
-  } else {
-    final defuzzedFileName = fileName.endsWith('.$fuzzedFileIdentificator')
-        ? fileName.substring(
-            0,
-            fileName.length - '.$fuzzedFileIdentificator'.length,
-          )
-        : fileName;
-    return path.join(chatIdFolder.path, defuzzedFileName);
-  }
+  final suffix = '.$fuzzedFileIdentificator';
+  return fileName.endsWith(suffix) && fileName.length > suffix.length
+      ? fileName.substring(0, fileName.length - suffix.length)
+      : fileName;
 }

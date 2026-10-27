@@ -43,10 +43,10 @@ class _Device {
   static Future<_Device> open() async {
     final dir = Directory.systemTemp.createTempSync('crypto_core_files_');
     final service = CryptoCoreService(storeDirectoryPath: dir.path);
-    final wrapped = _dataOf(await service.createStoreKey(''));
+    // The first run opens the store; the master password only gates it.
     expect(
-      await service.openStore(wrapped: wrapped, password: ''),
-      isA<CryptoCoreSuccess<void>>(),
+      await service.createMasterKey('test password'),
+      isA<CryptoCoreSuccess<CryptoCoreMasterKeySetup>>(),
     );
     return _Device._(dir, service);
   }
@@ -314,6 +314,96 @@ void main() {
         ),
         CryptoCoreFailureType.replay,
       );
+    });
+
+    test(
+        'the kept container opens again from its kept key, any number of '
+        'times, and not under another chat or after the chat is deleted',
+        () async {
+      await send();
+      final inbox = Directory(b.pathOf('Alice'))..createSync();
+      final received = _dataOf(
+        await b.service.decryptFileForChat(
+          chatId: _chatId,
+          inputPath: sealedPath,
+          outputDirectoryPath: inbox.path,
+        ),
+      );
+      await received.handler.progressStream.toList();
+      expect(received.keptKey.sublist(0, 6), [0x46, 0x55, 0x5A, 0x5A, 1, 0x20]);
+
+      for (final name in ['again.pdf', 'once more.pdf']) {
+        final output = b.pathOf(name);
+        final reopened = _dataOf(
+          await b.service.openKeptFileForChat(
+            chatId: _chatId,
+            inputPath: sealedPath,
+            keptKey: received.keptKey,
+            outputPath: output,
+          ),
+        );
+        final events = await reopened.progressStream.toList();
+        _expectWellFormed(events);
+        expect(events.last.isComplete, isTrue);
+        expect(events.last.errorMessage, isNull);
+        expect(File(output).readAsBytesSync(), _plaintext());
+      }
+
+      const otherChat = '0a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d';
+      expect(
+        _failureOf(
+          await b.service.openKeptFileForChat(
+            chatId: otherChat,
+            inputPath: sealedPath,
+            keptKey: received.keptKey,
+            outputPath: b.pathOf('other.pdf'),
+          ),
+        ),
+        CryptoCoreFailureType.unknownChat,
+      );
+
+      await b.service.deleteChat(_chatId);
+      final gone = b.pathOf('gone.pdf');
+      expect(
+        _failureOf(
+          await b.service.openKeptFileForChat(
+            chatId: _chatId,
+            inputPath: sealedPath,
+            keptKey: received.keptKey,
+            outputPath: gone,
+          ),
+        ),
+        CryptoCoreFailureType.unknownChat,
+      );
+      _expectNoOutput(gone);
+    });
+
+    test(
+        'a received name that is taken becomes "name (1).ext": the existing '
+        'file is never replaced (security review item 5)', () async {
+      await send();
+      final inbox = Directory(b.pathOf('Alice'))..createSync();
+      final mine = File(path.join(inbox.path, 'report.pdf'))
+        ..writeAsStringSync('my own report');
+      // A stale .part of the next name (a killed job) is not truncated either.
+      final stalePart = File(path.join(inbox.path, 'report (1).pdf.part'))
+        ..writeAsStringSync('stale');
+
+      final received = _dataOf(
+        await b.service.decryptFileForChat(
+          chatId: _chatId,
+          inputPath: sealedPath,
+          outputDirectoryPath: inbox.path,
+        ),
+      );
+      expect(received.outputPath, path.join(inbox.path, 'report (2).pdf'));
+      final events = await received.handler.progressStream.toList();
+      expect(events.last.isComplete, isTrue);
+      expect(events.last.errorMessage, isNull);
+
+      expect(File(received.outputPath).readAsBytesSync(), _plaintext());
+      expect(mine.readAsStringSync(), 'my own report');
+      expect(stalePart.readAsStringSync(), 'stale');
     });
 
     test(
