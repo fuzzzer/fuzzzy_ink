@@ -1677,6 +1677,22 @@
   "@anywhereSheetPutInPlaceCopied": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
   },
+  "anywhereSheetCopyToPaste": "დააკოპირეთ და ჩასვით, სადაც გინდათ.",
+  "@anywhereSheetCopyToPaste": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
+  },
+  "anywhereSheetCopy": "კოპირება",
+  "@anywhereSheetCopy": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
+  },
+  "anywhereSheetDone": "მზადაა",
+  "@anywhereSheetDone": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
+  },
+  "anywhereSheetCopyAutomatically": "შემდეგში ავტომატურად დაკოპირდეს",
+  "@anywhereSheetCopyAutomatically": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
+  },
   "anywhereSheetCopied": "დაკოპირდა. ჩასვით, სადაც გინდათ. 2 წუთში წაიშლება.",
   "@anywhereSheetCopied": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, experimental, 2026-10-26)"

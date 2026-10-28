@@ -26,7 +26,7 @@ private const val INVITE = "Fuzz/AwEBaW52aXRl"
 private const val PASSWORD = "violet-harbor-lantern-91"
 
 /** The app as the sheet sees it: answers per method, every call kept. */
-private class FakeApp : SheetPort, DraftNote {
+private class FakeApp : SheetPort, DraftNote, AutoCopy {
     var unlocked = false
     var biometric = "off"
     var settingKnown = true
@@ -43,6 +43,11 @@ private class FakeApp : SheetPort, DraftNote {
     var broughtForward = 0
     val flow = MutableSharedFlow<AnywhereEvent>(extraBufferCapacity = 8)
     override var isSeen = false
+    override var isOn = false
+
+    override fun set(isOn: Boolean) {
+        this.isOn = isOn
+    }
 
     override val events get() = flow
     override var isStarting = false
@@ -106,6 +111,7 @@ private class FakeApp : SheetPort, DraftNote {
             } else {
                 ChannelAnswer.Refused("notForAPerson")
             }
+            "copy" -> ChannelAnswer.Ok(mapOf("copied" to true))
             "show", "openInApp" -> ChannelAnswer.Ok(mapOf("status" to "shown"))
             else -> ChannelAnswer.Missing
         }
@@ -127,7 +133,7 @@ class SheetViewModelTest {
         SheetRequest(selectedText = text, canReplace = canReplace, sourceApp = sourceApp)
 
     private fun TestScope.sheet(request: SheetRequest): SheetViewModel {
-        val model = SheetViewModel(request, app, app)
+        val model = SheetViewModel(request, app, app, app)
         advanceUntilIdle()
         return model
     }
@@ -138,7 +144,7 @@ class SheetViewModelTest {
     fun `closed while the app is still starting, the sheet stays closed`() = runTest(dispatcher) {
         app.isStarting = true
         app.missingCalls = 3
-        val model = SheetViewModel(request(SECRET, canReplace = true), app, app)
+        val model = SheetViewModel(request(SECRET, canReplace = true), app, app, app)
         runCurrent()
         model.close()
         app.isStarting = false
@@ -149,26 +155,70 @@ class SheetViewModelTest {
     }
 
     @Test
-    fun `an editable selection gets the sealed output back in its place, and copied too`() = runTest(dispatcher) {
+    fun `the first time, an editable selection gets it in place and Copy is offered`() = runTest(dispatcher) {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = true))
         model.choose("nino")
         model.sawWholeSelection()
         model.lock()
-        runCurrent()
+        advanceUntilIdle()
 
         val lock = app.called("lock").single()
         assertEquals(SECRET, lock["text"])
-        assertEquals(true, lock["copy"])
+        assertEquals(false, lock["copy"])
         assertEquals("com.whatsapp", lock["sourceApp"])
-        assertEquals(UiState.Done("Nino", Outcome.PutInPlaceAndCopied, SEALED), model.state.value)
+        assertEquals(UiState.Done("Nino", Outcome.PutInPlace, SEALED, canCopy = true), model.state.value)
 
+        // Copy: the app copies this use's output (nothing is named), then the sheet goes.
+        model.copy()
+        runCurrent()
+        assertEquals(emptyMap<String, Any?>(), app.called("copy").single())
+        assertEquals(UiState.Done("Nino", Outcome.PutInPlaceAndCopied, SEALED), model.state.value)
         advanceUntilIdle()
         assertEquals(UiState.Finished(SEALED), model.state.value)
     }
 
     @Test
-    fun `a read-only selection is copied by the app and nothing goes back`() = runTest(dispatcher) {
+    fun `Done without Copy still puts it in place, nothing copied`() = runTest(dispatcher) {
+        app.unlocked = true
+        val model = sheet(request(SECRET, canReplace = true))
+        model.choose("nino")
+        model.sawWholeSelection()
+        model.lock()
+        advanceUntilIdle()
+        model.close()
+        assertEquals(UiState.Finished(SEALED), model.state.value)
+        assertTrue(app.called("copy").isEmpty())
+    }
+
+    @Test
+    fun `copy automatically, once turned on, copies at every Lock`() = runTest(dispatcher) {
+        app.unlocked = true
+        val first = sheet(request(SECRET, canReplace = true))
+        first.choose("nino")
+        first.sawWholeSelection()
+        first.lock()
+        advanceUntilIdle()
+        first.setAutoCopy(true)
+        assertTrue(app.isOn)
+        assertEquals(true, (first.state.value as UiState.Done).copiesAutomatically)
+
+        val next = sheet(request(SECRET, canReplace = true))
+        next.choose("nino")
+        next.sawWholeSelection()
+        next.lock()
+        runCurrent()
+        assertEquals(true, app.called("lock").last()["copy"])
+        assertEquals(
+            UiState.Done("Nino", Outcome.PutInPlaceAndCopied, SEALED, copiesAutomatically = true),
+            next.state.value,
+        )
+        advanceUntilIdle()
+        assertEquals(UiState.Finished(SEALED), next.state.value)
+    }
+
+    @Test
+    fun `a read-only selection offers Copy and nothing goes back`() = runTest(dispatcher) {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = false))
         model.choose("giorgi")
@@ -176,9 +226,10 @@ class SheetViewModelTest {
         model.lock()
         advanceUntilIdle()
 
-        assertEquals(true, app.called("lock").single()["copy"])
-        assertEquals(UiState.Done("Giorgi", Outcome.Copied), model.state.value)
-        model.close()
+        assertEquals(false, app.called("lock").single()["copy"])
+        assertEquals(UiState.Done("Giorgi", Outcome.Ready, canCopy = true), model.state.value)
+        model.copy()
+        advanceUntilIdle()
         assertEquals(UiState.Finished(null), model.state.value)
     }
 
@@ -217,7 +268,7 @@ class SheetViewModelTest {
     }
 
     @Test
-    fun `write sealed locks the sheet's own text and copies it`() = runTest(dispatcher) {
+    fun `write sealed locks the sheet's own text and offers Copy`() = runTest(dispatcher) {
         app.unlocked = true
         val model = sheet(request(null, canReplace = false))
         model.choose("nino")
@@ -229,8 +280,8 @@ class SheetViewModelTest {
         model.lock()
         advanceUntilIdle()
         assertEquals(SECRET, app.called("lock").single()["text"])
-        assertEquals(true, app.called("lock").single()["copy"])
-        assertEquals(UiState.Done("Nino", Outcome.Copied), model.state.value)
+        assertEquals(false, app.called("lock").single()["copy"])
+        assertEquals(UiState.Done("Nino", Outcome.Ready, canCopy = true), model.state.value)
         assertTrue("nothing asks to peek at the sheet's own text", app.called("peek").isEmpty())
     }
 

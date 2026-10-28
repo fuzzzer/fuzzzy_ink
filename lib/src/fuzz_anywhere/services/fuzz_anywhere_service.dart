@@ -89,6 +89,10 @@ class FuzzAnywhereService {
   /// the person can still paste it.
   bool _copiedHere = false;
 
+  /// The sealed output of this use's last Lock, for a later Copy press.
+  /// Dropped at a lock and when the use ends.
+  ({String output, CopyContent content})? _lastLock;
+
   /// The one opened message waiting for [show]. Dropped at a lock.
   _PendingDisplay? _pending;
   int _displayCount = 0;
@@ -254,11 +258,10 @@ class FuzzAnywhereService {
 
     final link = FuzzyLinkGenerator.generateFuzzLink(lockedText);
     final output = link ?? lockedText;
-    final isCopied = copy &&
-        await _copySealed(
-          output,
-          link != null ? CopyContent.sealedLink : CopyContent.sealedMessage,
-        );
+    final content =
+        link != null ? CopyContent.sealedLink : CopyContent.sealedMessage;
+    _lastLock = (output: output, content: content);
+    final isCopied = copy && await _copySealed(output, content);
     if (isCopied) _copiedHere = true;
     return AnywhereDone(
       AnywhereLockOutput(
@@ -267,6 +270,21 @@ class FuzzAnywhereService {
         isCopied: isCopied,
       ),
     );
+  }
+
+  /// Copies the sealed output of this use's last [lock], on the person's
+  /// own Copy press (owner, 2026-10-28). Never any other text: the caller
+  /// names nothing, so only what Fuzzzy Ink itself produced can be copied.
+  Future<AnywhereResult<bool>> copyLastLock() async {
+    final refusal = await _gate();
+    if (refusal != null) return AnywhereRefused(refusal);
+    final last = _lastLock;
+    if (last == null) {
+      return const AnywhereRefused(AnywhereFailure.nothingToCopy);
+    }
+    final isCopied = await _copySealed(last.output, last.content);
+    if (isCopied) _copiedHere = true;
+    return AnywhereDone(isCopied);
   }
 
   /// What [text] is and, for a message from one of the person's people,
@@ -459,6 +477,7 @@ class FuzzAnywhereService {
   Future<bool> _relockAfterUse() async {
     final copied = _copiedHere;
     _copiedHere = false;
+    _lastLock = null;
     if (!_unlockedHere) return false;
     _unlockedHere = false;
     if (!settings.state.settings.locksAgainAfterUse) return false;
@@ -546,6 +565,7 @@ class FuzzAnywhereService {
       // and a message on screen is gone with the private screens.
       _unlockedHere = false;
       _pending = null;
+      _lastLock = null;
     }
     _send(AnywhereLockChanged(isUnlocked: isUnlocked));
     final shownId = _shownId;

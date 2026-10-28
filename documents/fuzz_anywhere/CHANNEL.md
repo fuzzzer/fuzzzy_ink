@@ -38,6 +38,7 @@ shortcut and panel, the iPhone quick sheet). The Dart side is `lib/src/fuzz_anyw
 | `open` | `text` | `{status: "opened", displayId, personId, personName}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `emptyText`, `notForAPerson`, `alreadyOpened`, `tooOld`, `newerApp`, `damaged`, `notFuzzzy`, `notFromYourPeople`, `failed` |
 | `show` | `displayId` | `{status: "shown"}` | `unknownDisplay`, `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` |
 | `relock` | — | `{relocked: bool}` | — |
+| `copy` | — | `{copied: bool}` | `nothingToCopy`, `disabled`, `locked`, `notSetUp`, `notReady` |
 | `openInApp` | `text` | `{status: "shown"}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest` (missing, or a message: those open with `open`), `emptyText`, `newerApp`, `damaged`, `notFuzzzy`, `failed` |
 
 Notes, method by method:
@@ -81,10 +82,13 @@ Notes, method by method:
   exception to "cleared at lock": when `relock` locks the app right after the use that made this copy, that copy
   stays through that lock (its 2-minute clear still runs), or "Lock again after each use" would empty the
   clipboard before the person could paste (found live on the Mac, 2026-10-26). Never
-  copy anything yourself. Android: always ask for the copy (`copy: true`), so the locked text can be pasted
-  and sent at once (owner, 2026-10-28), and also return `output` as `EXTRA_PROCESS_TEXT` when the field is
-  editable; Mac
+  copy anything yourself. Android: ask for the copy at `lock` only when the person turned on "Copy
+  automatically next time"; otherwise offer a Copy button after Lock, which calls `copy` (owner, 2026-10-28).
+  Also return `output` as `EXTRA_PROCESS_TEXT` when the field is editable; Mac
   Services: write `output` to the service pasteboard.
+- **`copy`.** Copies the sealed output of this use's last `lock` through the copy guard, as `lock`'s
+  `copy: true` does, on the person's own Copy press. It takes no text: only what Fuzzzy Ink itself produced
+  can be copied. Nothing to copy before a Lock or after the use ended (`relock`, a lock): `nothingToCopy`.
 - **`peek`.** What `text` is, without opening it or spending anything (the core's peek). `kind` is `message`,
   `invite`, `reply`, `passwordText`, `newerApp`, `damaged` or `notFuzzzy`. For a message from one of the person's
   people, `personId` and `personName` say whose ("Open the message from Nino?"). A message link is read as its
@@ -150,6 +154,7 @@ and the tile component; Mac: unregister the services provider and the hot key; i
 | `alreadyOpened` | opened before (it opens once) | "Already opened. It's in {name}'s history." |
 | `tooOld` / `newerApp` / `damaged` / `notFuzzzy` / `notFromYourPeople` | as the app's Open screen | the app's Open wording |
 | `unknownDisplay` | `show` with an id `open` did not just give | a bug, or a lock came in between |
+| `nothingToCopy` | `copy` with no `lock` in this use, or after the use ended | nothing (offer Copy only after a Lock) |
 | `failed` | anything else | "Something went wrong" |
 
 Strings come from the app's `.arb` files (both languages); generate the native string files from them, do not

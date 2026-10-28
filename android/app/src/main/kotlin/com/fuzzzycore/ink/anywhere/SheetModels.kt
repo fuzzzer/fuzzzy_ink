@@ -130,11 +130,17 @@ sealed interface UiState {
         val isBusy: Boolean = false,
     ) : UiState
 
-    /** Locked. [returnText] is the sealed output that replaces the selection, if it does. */
+    /**
+     * Locked. [returnText] is the sealed output that replaces the selection,
+     * if it does. [canCopy]: not copied yet, Copy is offered.
+     */
     data class Done(
         val personName: String,
         val outcome: Outcome,
         val returnText: String? = null,
+        val canCopy: Boolean = false,
+        val copiesAutomatically: Boolean = false,
+        val isCopying: Boolean = false,
     ) : UiState
 
     data class Problem(val kind: ProblemKind, val name: String? = null) : UiState
@@ -145,7 +151,7 @@ sealed interface UiState {
 
 enum class SealedKind { Message, ForTheApp }
 
-enum class Outcome { PutInPlace, PutInPlaceAndCopied, Copied }
+enum class Outcome { PutInPlace, PutInPlaceAndCopied, Copied, Ready }
 
 enum class LockProblem { EmptyText, Failed }
 

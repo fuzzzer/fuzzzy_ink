@@ -2886,6 +2886,22 @@
   "@anywhereSheetPutInPlaceCopied": {
     "description": "Lock from other apps, the Android sheet: the locked text replaced the selection and is also copied (owner, 2026-10-28)."
   },
+  "anywhereSheetCopyToPaste": "Copy it, then paste it where you want.",
+  "@anywhereSheetCopyToPaste": {
+    "description": "Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28)."
+  },
+  "anywhereSheetCopy": "Copy",
+  "@anywhereSheetCopy": {
+    "description": "Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28)."
+  },
+  "anywhereSheetDone": "Done",
+  "@anywhereSheetDone": {
+    "description": "Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28)."
+  },
+  "anywhereSheetCopyAutomatically": "Copy automatically next time",
+  "@anywhereSheetCopyAutomatically": {
+    "description": "Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28)."
+  },
   "anywhereSheetCopied": "Copied. Paste it where you want. It clears in 2 minutes.",
   "@anywhereSheetCopied": {
     "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."

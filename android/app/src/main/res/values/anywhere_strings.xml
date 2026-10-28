@@ -49,6 +49,10 @@
     <string name="anywhereSheetLockedFor">Locked for %1$s</string>
     <string name="anywhereSheetPutInPlace">It\'s in place of the text you selected.</string>
     <string name="anywhereSheetPutInPlaceCopied">It\'s in place of your text, and copied. It clears in 2 minutes.</string>
+    <string name="anywhereSheetCopyToPaste">Copy it, then paste it where you want.</string>
+    <string name="anywhereSheetCopy">Copy</string>
+    <string name="anywhereSheetDone">Done</string>
+    <string name="anywhereSheetCopyAutomatically">Copy automatically next time</string>
     <string name="anywhereSheetCopied">Copied. Paste it where you want. It clears in 2 minutes.</string>
     <string name="anywhereSheetNoPeopleLine">Connect with someone in Fuzzzy Ink, then come back.</string>
     <string name="anywhereSheetOpenApp">Open Fuzzzy Ink</string>

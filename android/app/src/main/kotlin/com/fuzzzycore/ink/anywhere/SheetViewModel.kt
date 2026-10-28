@@ -32,6 +32,16 @@ interface DraftNote {
     fun markSeen()
 }
 
+/**
+ * "Copy automatically next time": off at first, so the first Lock shows a
+ * Copy button; on, every Lock copies by itself (owner, 2026-10-28). A flag
+ * only, never text.
+ */
+interface AutoCopy {
+    val isOn: Boolean
+    fun set(isOn: Boolean)
+}
+
 /** Everything a person can do on the sheet. */
 interface SheetActions {
     fun unlockWithBiometrics() {}
@@ -43,6 +53,8 @@ interface SheetActions {
     fun dismissDraftNote() {}
     fun sawWholeSelection() {}
     fun lock() {}
+    fun copy() {}
+    fun setAutoCopy(isOn: Boolean) {}
     fun open() {}
     fun openApp() {}
     fun close() {}
@@ -58,6 +70,7 @@ class SheetViewModel(
     private val request: SheetRequest,
     private val port: SheetPort,
     private val note: DraftNote,
+    private val autoCopy: AutoCopy,
 ) : ViewModel(), SheetActions {
     private val mutableState = MutableStateFlow<UiState>(UiState.Starting)
     val state: StateFlow<UiState> = mutableState.asStateFlow()
@@ -270,10 +283,10 @@ class SheetViewModel(
     }
 
     /**
-     * `lock` for the chosen person. The sealed output is always copied by
-     * the app's copy guard (sealed only, cleared after 2 minutes), so it can
-     * be pasted and sent at once (owner, 2026-10-28); an editable selection
-     * also gets it back in its place.
+     * `lock` for the chosen person. An editable selection gets the sealed
+     * output back in its place. With "Copy automatically" on, the app's copy
+     * guard also copies it at once (sealed only, cleared after 2 minutes);
+     * off, the Done step offers Copy (owner, 2026-10-28).
      */
     override fun lock() {
         val writing = mutableState.value as? UiState.Writing ?: return
@@ -290,7 +303,7 @@ class SheetViewModel(
         val arguments = buildMap<String, Any?> {
             put("personId", person.id)
             put("text", text)
-            put("copy", true)
+            put("copy", autoCopy.isOn)
             request.sourceApp?.let { put("sourceApp", it) }
         }
         flow = viewModelScope.launch {
@@ -309,16 +322,57 @@ class SheetViewModel(
 
     private suspend fun locked(writing: UiState.Writing, person: Person, answer: ChannelAnswer.Ok) {
         val output = answer.string("output")
-        when {
-            request.canReplace && output != null -> {
-                val outcome = if (answer.flag("copied")) Outcome.PutInPlaceAndCopied else Outcome.PutInPlace
-                mutableState.value = UiState.Done(person.name, outcome, returnText = output)
-                delay(DONE_PAUSE_MS)
-                finish(output)
-            }
-            answer.flag("copied") -> mutableState.value = UiState.Done(person.name, Outcome.Copied)
-            else -> mutableState.value = writing.copy(problem = LockProblem.Failed)
+        if (output == null) {
+            mutableState.value = writing.copy(problem = LockProblem.Failed)
+            return
         }
+        val isCopied = answer.flag("copied")
+        val returnText = output.takeIf { request.canReplace }
+        val outcome = when {
+            returnText != null && isCopied -> Outcome.PutInPlaceAndCopied
+            returnText != null -> Outcome.PutInPlace
+            isCopied -> Outcome.Copied
+            else -> Outcome.Ready
+        }
+        mutableState.value = UiState.Done(
+            personName = person.name,
+            outcome = outcome,
+            returnText = returnText,
+            canCopy = !isCopied,
+            copiesAutomatically = autoCopy.isOn,
+        )
+        // Copied at once and put in place: nothing left to do here.
+        if (outcome == Outcome.PutInPlaceAndCopied) {
+            delay(DONE_PAUSE_MS)
+            finish(output)
+        }
+    }
+
+    /** The person's own Copy press: the app copies this use's sealed output, nothing else. */
+    override fun copy() {
+        val done = mutableState.value as? UiState.Done ?: return
+        if (!done.canCopy || done.isCopying) return
+        mutableState.value = done.copy(isCopying = true)
+        flow = viewModelScope.launch {
+            when (val answer = port.call("copy")) {
+                is ChannelAnswer.Ok -> if (answer.flag("copied")) {
+                    val outcome = if (done.returnText != null) Outcome.PutInPlaceAndCopied else Outcome.Copied
+                    mutableState.value = done.copy(outcome = outcome, canCopy = false, isCopying = false)
+                    delay(DONE_PAUSE_MS)
+                    finish(done.returnText)
+                } else {
+                    mutableState.value = done.copy(isCopying = false)
+                }
+                is ChannelAnswer.Refused -> refused(answer)
+                ChannelAnswer.Missing -> problem(ProblemKind.NotReady)
+            }
+        }
+    }
+
+    override fun setAutoCopy(isOn: Boolean) {
+        autoCopy.set(isOn)
+        val done = mutableState.value as? UiState.Done ?: return
+        mutableState.value = done.copy(copiesAutomatically = isOn)
     }
 
     /**

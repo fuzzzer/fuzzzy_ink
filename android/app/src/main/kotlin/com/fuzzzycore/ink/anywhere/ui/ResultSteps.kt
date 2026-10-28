@@ -8,8 +8,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -17,8 +20,9 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -29,6 +33,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.fuzzzycore.ink.R
 import com.fuzzzycore.ink.anywhere.Outcome
@@ -98,12 +103,38 @@ internal fun DoneStep(state: UiState.Done, actions: SheetActions) {
                     Outcome.PutInPlace -> R.string.anywhereSheetPutInPlace
                     Outcome.PutInPlaceAndCopied -> R.string.anywhereSheetPutInPlaceCopied
                     Outcome.Copied -> R.string.anywhereSheetCopied
+                    Outcome.Ready -> R.string.anywhereSheetCopyToPaste
                 },
             ),
         )
-        if (state.outcome == Outcome.Copied) {
+        if (state.canCopy) {
+            MainButton(label = stringResource(R.string.anywhereSheetCopy), onClick = actions::copy, isBusy = state.isCopying)
+            TextButton(onClick = actions::close, enabled = !state.isCopying, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.anywhereSheetDone))
+            }
+            AutoCopyRow(isOn = state.copiesAutomatically, onChange = actions::setAutoCopy)
+        } else if (state.outcome == Outcome.Copied) {
             MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close)
         }
+    }
+}
+
+/** "Copy automatically next time", for people who use it often; the whole row toggles it. */
+@Composable
+private fun AutoCopyRow(isOn: Boolean, onChange: (Boolean) -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .toggleable(value = isOn, role = Role.Switch, onValueChange = onChange)
+            .padding(vertical = 4.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.anywhereSheetCopyAutomatically),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(checked = isOn, onCheckedChange = null)
     }
 }
 

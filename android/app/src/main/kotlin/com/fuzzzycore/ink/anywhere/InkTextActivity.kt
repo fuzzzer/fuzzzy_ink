@@ -44,7 +44,7 @@ class InkTextActivity : FragmentActivity() {
     private var isRelockSent = false
 
     private val viewModel: SheetViewModel by viewModels {
-        SheetViewModelFactory(sheetRequest(), EnginePort(), PreferencesDraftNote(applicationContext))
+        SheetViewModelFactory(sheetRequest(), EnginePort(), PreferencesDraftNote(applicationContext), PreferencesAutoCopy(applicationContext))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -152,12 +152,28 @@ private class PreferencesDraftNote(context: Context) : DraftNote {
     }
 }
 
+/** "Copy automatically next time": a flag only, never text. */
+private class PreferencesAutoCopy(context: Context) : AutoCopy {
+    private val preferences = context.getSharedPreferences("ink_anywhere_sheet", Context.MODE_PRIVATE)
+
+    override val isOn: Boolean get() = preferences.getBoolean(KEY, false)
+
+    override fun set(isOn: Boolean) {
+        preferences.edit().putBoolean(KEY, isOn).apply()
+    }
+
+    private companion object {
+        const val KEY = "copyAutomatically"
+    }
+}
+
 private class SheetViewModelFactory(
     private val request: SheetRequest,
     private val port: SheetPort,
     private val note: DraftNote,
+    private val autoCopy: AutoCopy,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        SheetViewModel(request, port, note) as T
+        SheetViewModel(request, port, note, autoCopy) as T
 }

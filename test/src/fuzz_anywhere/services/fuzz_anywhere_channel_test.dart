@@ -166,6 +166,17 @@ void main() {
       expect(locked.raw, isNot(contains(secretText)));
     });
 
+    test('copy copies the last Lock, taking no text from the platform',
+        () async {
+      await _call('lock', {'personId': ninoId, 'text': secretText});
+      final copied = await _call('copy', {'text': 'anything else'});
+      expect(copied!.value, {'copied': true});
+      expect(
+        app.copies.single.$1,
+        'https://ink.fuzzzycore.com/message#AwECc2VhbGVk',
+      );
+    });
+
     test('open answers a display id, never the opened text', () async {
       final peek = await _call('peek', {'text': blobFromNino});
       expect(peek!.value, {

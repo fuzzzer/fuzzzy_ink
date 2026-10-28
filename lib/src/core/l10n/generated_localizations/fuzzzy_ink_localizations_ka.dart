@@ -2451,6 +2451,19 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'მონიშნული ტექსტის ადგილას ჩაჯდა და დაკოპირდა. 2 წუთში წაიშლება.';
 
   @override
+  String get anywhereSheetCopyToPaste => 'დააკოპირეთ და ჩასვით, სადაც გინდათ.';
+
+  @override
+  String get anywhereSheetCopy => 'კოპირება';
+
+  @override
+  String get anywhereSheetDone => 'მზადაა';
+
+  @override
+  String get anywhereSheetCopyAutomatically =>
+      'შემდეგში ავტომატურად დაკოპირდეს';
+
+  @override
   String get anywhereSheetCopied =>
       'დაკოპირდა. ჩასვით, სადაც გინდათ. 2 წუთში წაიშლება.';
 

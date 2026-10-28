@@ -2435,6 +2435,19 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'It\'s in place of your text, and copied. It clears in 2 minutes.';
 
   @override
+  String get anywhereSheetCopyToPaste =>
+      'Copy it, then paste it where you want.';
+
+  @override
+  String get anywhereSheetCopy => 'Copy';
+
+  @override
+  String get anywhereSheetDone => 'Done';
+
+  @override
+  String get anywhereSheetCopyAutomatically => 'Copy automatically next time';
+
+  @override
   String get anywhereSheetCopied =>
       'Copied. Paste it where you want. It clears in 2 minutes.';
 

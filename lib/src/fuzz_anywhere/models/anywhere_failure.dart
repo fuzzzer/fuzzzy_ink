@@ -56,6 +56,9 @@ enum AnywhereFailure {
 
   /// `show` with an id `open` did not just give, or already shown.
   unknownDisplay('unknownDisplay'),
+
+  /// `copy` with no Lock in this use to copy (or the app locked since).
+  nothingToCopy('nothingToCopy'),
   failed('failed');
 
   const AnywhereFailure(this.code);

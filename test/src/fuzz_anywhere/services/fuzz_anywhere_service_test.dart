@@ -203,6 +203,32 @@ void main() {
       expect(app.copies.single, (output.output, CopyContent.sealedLink));
     });
 
+    test("Copy later: copies only this use's own sealed output", () async {
+      final output = _done(
+        await app.service.lock(personId: ninoId, text: secretText),
+      );
+      expect(output.isCopied, isFalse);
+      expect(app.copies, isEmpty);
+
+      expect(_done(await app.service.copyLastLock()), isTrue);
+      expect(app.copies.single, (output.output, CopyContent.sealedLink));
+    });
+
+    test('Copy with no Lock in this use, or after the use ended: nothing',
+        () async {
+      expect(
+        _refusal(await app.service.copyLastLock()),
+        AnywhereFailure.nothingToCopy,
+      );
+      await app.service.lock(personId: ninoId, text: secretText);
+      await app.service.relock();
+      expect(
+        _refusal(await app.service.copyLastLock()),
+        anyOf(AnywhereFailure.nothingToCopy, AnywhereFailure.locked),
+      );
+      expect(app.copies, isEmpty);
+    });
+
     test('refuses an empty text, someone not connected, a stranger', () async {
       expect(
         _refusal(await app.service.lock(personId: ninoId, text: '  ')),

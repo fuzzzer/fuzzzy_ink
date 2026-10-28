@@ -4288,6 +4288,30 @@ abstract class FuzzzyInkLocalizations {
   /// **'It\'s in place of your text, and copied. It clears in 2 minutes.'**
   String get anywhereSheetPutInPlaceCopied;
 
+  /// Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy it, then paste it where you want.'**
+  String get anywhereSheetCopyToPaste;
+
+  /// Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get anywhereSheetCopy;
+
+  /// Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get anywhereSheetDone;
+
+  /// Lock from other apps, the Android sheet: Copy offered after Lock, and the switch to copy at Lock every time (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy automatically next time'**
+  String get anywhereSheetCopyAutomatically;
+
   /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
   ///
   /// In en, this message translates to:

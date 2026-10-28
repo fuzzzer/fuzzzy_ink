@@ -89,6 +89,8 @@ class FuzzAnywhereChannel {
           'kind': output.isLink ? 'link' : 'text',
           'copied': output.isCopied,
         };
+      case 'copy':
+        return {'copied': _valueOf(await service.copyLastLock())};
       case 'peek':
         final peek = _valueOf(await service.peek(_string(arguments, 'text')));
         return {
