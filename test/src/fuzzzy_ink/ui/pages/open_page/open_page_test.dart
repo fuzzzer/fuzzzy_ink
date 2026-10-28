@@ -98,17 +98,93 @@ void main() {
       });
     }
 
-    testWidgets('the clipboard is read only on the tap and opened',
-        (tester) async {
+    Future<void> tapOpen(WidgetTester tester) async {
+      await tester.tap(find.byKey(const Key('btn.open.pasteBox.open')));
+      await tester.pump();
+    }
+
+    String pasteBoxText(WidgetTester tester) => tester
+        .widget<TextField>(
+          find.descendant(
+            of: find.byKey(const Key('field.open.pasteBox.text')),
+            matching: find.byType(TextField),
+          ),
+        )
+        .controller!
+        .text;
+
+    testWidgets(
+        'the clipboard is read only on the tap, shown in the box, and '
+        'opened only on Open', (tester) async {
       show(const OpenFlowState());
       clipboard = '  Fuzz/AwEC ';
       await pumpOpen(tester);
-      verifyNever(() => cubit.open(any()));
       await tester.tap(find.text('Paste it'));
       await tester.pump();
+      expect(
+        find.text('Found in what you copied. Check it, or paste your own.'),
+        findsOneWidget,
+      );
+      expect(pasteBoxText(tester), 'Fuzz/AwEC');
+      verifyNever(() => cubit.open(any()));
+      await tapOpen(tester);
       final request = verify(() => cubit.open(captureAny())).captured.single
           as OpenPastedText;
       expect(request.text, 'Fuzz/AwEC');
+    });
+
+    testWidgets('a whole copied message: only its locked part goes in the box',
+        (tester) async {
+      show(const OpenFlowState());
+      clipboard = 'Nino: here it is "https://ink.fuzzzycore.com/message#AwEC". '
+          'Open it tonight';
+      await pumpOpen(tester);
+      await tester.tap(find.text('Paste it'));
+      await tester.pump();
+      expect(
+        pasteBoxText(tester),
+        'https://ink.fuzzzycore.com/message#AwEC',
+      );
+    });
+
+    testWidgets(
+        'nothing locked in what was copied: the box stays empty for a '
+        'paste by hand', (tester) async {
+      show(const OpenFlowState());
+      clipboard = 'my bank password is 1234';
+      await pumpOpen(tester);
+      await tester.tap(find.text('Paste it'));
+      await tester.pump();
+      expect(
+        find.text(
+          'What you copied has nothing locked in it. Paste it yourself.',
+        ),
+        findsOneWidget,
+      );
+      expect(pasteBoxText(tester), isEmpty);
+      expect(find.text('my bank password is 1234'), findsNothing);
+      await tester.enterText(
+        find.byKey(const Key('field.open.pasteBox.text')),
+        ' Fuzz/AQE ',
+      );
+      await tester.pump();
+      await tapOpen(tester);
+      final request = verify(() => cubit.open(captureAny())).captured.single
+          as OpenPastedText;
+      expect(request.text, 'Fuzz/AQE');
+    });
+
+    testWidgets('back from the box returns to Open what you got',
+        (tester) async {
+      show(const OpenFlowState());
+      clipboard = 'Fuzz/AwEC';
+      await pumpOpen(tester);
+      await tester.tap(find.text('Paste it'));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('iconbtn.open.pasteBox.back')));
+      await tester.pump();
+      expect(find.text('Open what you got'), findsOneWidget);
+      verifyNever(() => cubit.open(any()));
     });
 
     group("iPhone's own Paste button (final regression 2026-10-26)", () {
@@ -147,8 +223,8 @@ void main() {
       }
 
       testWidgets(
-          'sits on the Paste it row and opens what it pastes, without '
-          'reading the clipboard itself', (tester) async {
+          'sits on the Paste it row and puts what it pastes in the box, '
+          'without reading the clipboard itself', (tester) async {
         show(const OpenFlowState());
         clipboard = 'not read';
         await pumpWithPlatformViews(tester);
@@ -162,22 +238,23 @@ void main() {
         );
 
         await pasteFromSystem(tester, '  Fuzz/AwEC ');
+        verifyNever(() => cubit.open(any()));
+        await tester.tap(find.byKey(const Key('btn.open.pasteBox.open')));
+        await tester.pump();
         final request = verify(() => cubit.open(captureAny())).captured.single
             as OpenPastedText;
         expect(request.text, 'Fuzz/AwEC');
       });
 
-      testWidgets('a paste with no text says there is nothing to paste',
-          (tester) async {
+      testWidgets('a paste with no text opens an empty box', (tester) async {
         show(const OpenFlowState());
         await pumpWithPlatformViews(tester);
         await pasteFromSystem(tester, null);
         expect(
-          find.text('Nothing to paste. Copy the locked text first.'),
+          find.byKey(const Key('field.open.pasteBox.text')),
           findsOneWidget,
         );
         verifyNever(() => cubit.open(any()));
-        await tester.pump(const Duration(seconds: 3));
       });
     });
 
@@ -189,17 +266,19 @@ void main() {
       expect(find.byType(UiKitView), findsNothing);
     });
 
-    testWidgets('nothing to paste says so and stays', (tester) async {
+    testWidgets('nothing copied: an empty box, and Open waits for text',
+        (tester) async {
       show(const OpenFlowState());
       await pumpOpen(tester);
       await tester.tap(find.text('Paste it'));
       await tester.pump();
+      expect(find.byKey(const Key('field.open.pasteBox.text')), findsOneWidget);
       expect(
-        find.text('Nothing to paste. Copy the locked text first.'),
-        findsOneWidget,
+        find.text('Found in what you copied. Check it, or paste your own.'),
+        findsNothing,
       );
+      await tapOpen(tester);
       verifyNever(() => cubit.open(any()));
-      await tester.pump(const Duration(seconds: 3));
     });
   });
 

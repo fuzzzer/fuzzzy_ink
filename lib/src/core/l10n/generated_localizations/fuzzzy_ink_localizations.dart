@@ -1432,6 +1432,24 @@ abstract class FuzzzyInkLocalizations {
   /// **'Locked text, invite or reply'**
   String get openPasteItHint;
 
+  /// Open → Paste it: the box for what to open (owner, 2026-10-28). The box's hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste locked text, an invite or a reply here'**
+  String get openPasteBoxHint;
+
+  /// Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held a locked part, put in the box.
+  ///
+  /// In en, this message translates to:
+  /// **'Found in what you copied. Check it, or paste your own.'**
+  String get openPasteFound;
+
+  /// Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held nothing to open; the box stays empty.
+  ///
+  /// In en, this message translates to:
+  /// **'What you copied has nothing locked in it. Paste it yourself.'**
+  String get openPasteNotFound;
+
   /// Fuzzzy Ink redesign (DESIGN.md copy table).
   ///
   /// In en, this message translates to:
@@ -4341,6 +4359,18 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Lock text'**
   String get anywhereSheetTileLabel;
+
+  /// Lock from other apps, the Android text selection menu item, worded like the menu's other actions (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock with Fuzzzy Ink'**
+  String get anywhereSheetMenuLock;
+
+  /// Lock from other apps, the Android text selection menu item, worded like the menu's other actions (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'Open with Fuzzzy Ink'**
+  String get anywhereSheetMenuOpen;
 
   /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
   ///

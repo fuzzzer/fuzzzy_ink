@@ -82,5 +82,28 @@ class FuzzyLinkParser {
     };
   }
 
+  /// The locked part of a longer text (a whole message with a link or a
+  /// `Fuzz/` text in it): the first word that is one of our links, or a
+  /// `Fuzz/` text, with the punctuation around it left off. `null` when
+  /// [text] holds none. Only the shape is checked; the core reads the rest.
+  static String? findIn(String text) {
+    for (final word in text.split(RegExp(r'\s+'))) {
+      final part = word.replaceAll(_edges, '');
+      if (part.isEmpty) continue;
+      if (parseText(part) != null) return part;
+      if (part.startsWith(fuzzIdentificator) &&
+          part.length > fuzzIdentificator.length &&
+          _isBlob(part.substring(fuzzIdentificator.length))) {
+        return part;
+      }
+    }
+    return null;
+  }
+
+  /// Quotes, brackets and sentence marks a messenger or a person may put
+  /// around a link: a link and a `Fuzz/` text start with a letter and end
+  /// with a base64url character.
+  static final _edges = RegExp(r'^[^A-Za-z]+|[^A-Za-z0-9_-]+$');
+
   static bool _isBlob(String text) => _blob.hasMatch(text);
 }

@@ -675,6 +675,18 @@
   "@openPasteItHint": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
   },
+  "openPasteBoxHint": "Paste locked text, an invite or a reply here",
+  "@openPasteBoxHint": {
+    "description": "Open → Paste it: the box for what to open (owner, 2026-10-28). The box's hint."
+  },
+  "openPasteFound": "Found in what you copied. Check it, or paste your own.",
+  "@openPasteFound": {
+    "description": "Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held a locked part, put in the box."
+  },
+  "openPasteNotFound": "What you copied has nothing locked in it. Paste it yourself.",
+  "@openPasteNotFound": {
+    "description": "Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held nothing to open; the box stays empty."
+  },
   "openLinksTip": "Links and QR codes come here. Nothing opens until you tap Open.",
   "@openLinksTip": {
     "description": "Fuzzzy Ink redesign (DESIGN.md copy table)."
@@ -2921,6 +2933,14 @@
   "anywhereSheetTileLabel": "Lock text",
   "@anywhereSheetTileLabel": {
     "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetMenuLock": "Lock with Fuzzzy Ink",
+  "@anywhereSheetMenuLock": {
+    "description": "Lock from other apps, the Android text selection menu item, worded like the menu's other actions (owner, 2026-10-28)."
+  },
+  "anywhereSheetMenuOpen": "Open with Fuzzzy Ink",
+  "@anywhereSheetMenuOpen": {
+    "description": "Lock from other apps, the Android text selection menu item, worded like the menu's other actions (owner, 2026-10-28)."
   },
   "anywhereSheetSelectedLength": "{count} characters",
   "@anywhereSheetSelectedLength": {

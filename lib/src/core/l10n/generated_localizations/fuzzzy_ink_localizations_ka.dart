@@ -753,6 +753,17 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get openPasteItHint => 'ჩაკეტილი ტექსტი, მოწვევა ან პასუხი';
 
   @override
+  String get openPasteBoxHint => 'ჩასვით აქ ჩაკეტილი ტექსტი, მოწვევა ან პასუხი';
+
+  @override
+  String get openPasteFound =>
+      'ვიპოვეთ დაკოპირებულში. შეამოწმეთ ან თავად ჩასვით.';
+
+  @override
+  String get openPasteNotFound =>
+      'დაკოპირებულში ჩაკეტილი არაფერია. თავად ჩასვით.';
+
+  @override
   String get openLinksTip =>
       'ბმულები და QR კოდები აქ მოდის. არაფერი გაიხსნება, სანამ „გახსნას“ არ დააჭერთ.';
 
@@ -2478,6 +2489,12 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
 
   @override
   String get anywhereSheetTileLabel => 'ტექსტის ჩაკეტვა';
+
+  @override
+  String get anywhereSheetMenuLock => 'ჩაკეტვა Fuzzzy Ink-ით';
+
+  @override
+  String get anywhereSheetMenuOpen => 'გახსნა Fuzzzy Ink-ით';
 
   @override
   String anywhereSheetSelectedLength(String count) {

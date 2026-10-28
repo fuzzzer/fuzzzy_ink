@@ -61,6 +61,8 @@
     <string name="anywhereSheetStarting">Starting Fuzzzy Ink…</string>
     <string name="anywhereSheetSelected">Selected</string>
     <string name="anywhereSheetTileLabel">Lock text</string>
+    <string name="anywhereSheetMenuLock">Lock with Fuzzzy Ink</string>
+    <string name="anywhereSheetMenuOpen">Open with Fuzzzy Ink</string>
     <string name="anywhereSheetSelectedLength">%1$s characters</string>
     <string name="anywhereSheetReadToTheEnd">Read it to the end first, then lock it.</string>
     <string name="anywhereSheetShowMore">Show more</string>

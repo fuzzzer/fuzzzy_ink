@@ -51,7 +51,8 @@ void main() {
     }
   });
 
-  test('the selection menu item is declared in development only, and off', () {
+  test('the selection menu items are declared in development only, and off',
+      () {
     for (final path in releaseManifests) {
       if (path.contains('/development/')) continue;
       final manifest = read(path);
@@ -60,15 +61,31 @@ void main() {
     }
     final development = read('$app/development/AndroidManifest.xml');
     final activity = RegExp(
-      r'<activity\s[^>]*android:name="com\.fuzzzycore\.ink\.anywhere\.InkTextActivity"[^>]*>(.*?)</activity>',
+      r'<activity\s[^>]*android:name="com\.fuzzzycore\.ink\.anywhere\.InkTextActivity"[^>]*>',
       dotAll: true,
     ).firstMatch(development);
     expect(activity, isNotNull);
-    final declaration = activity!.group(0)!;
-    expect(declaration, contains('android:enabled="false"'));
-    expect(declaration, contains('android:exported="true"'));
-    expect(declaration, contains('android.intent.action.PROCESS_TEXT'));
-    expect(declaration, contains('android:mimeType="text/plain"'));
+    expect(activity!.group(0), contains('android:enabled="false"'));
+    // "Lock with Fuzzzy Ink" and "Open with Fuzzzy Ink": the menu items.
+    for (final alias in ['LockTextAlias', 'OpenTextAlias']) {
+      final match = RegExp(
+        '<activity-alias\\s[^>]*android:name="com\\.fuzzzycore\\.ink\\.anywhere\\.$alias"'
+        '[^>]*>(.*?)</activity-alias>',
+        dotAll: true,
+      ).firstMatch(development);
+      expect(match, isNotNull, reason: alias);
+      final declaration = match!.group(0)!;
+      expect(declaration, contains('android:enabled="false"'));
+      expect(declaration, contains('android:exported="true"'));
+      expect(
+        declaration,
+        contains(
+          'android:targetActivity="com.fuzzzycore.ink.anywhere.InkTextActivity"',
+        ),
+      );
+      expect(declaration, contains('android.intent.action.PROCESS_TEXT'));
+      expect(declaration, contains('android:mimeType="text/plain"'));
+    }
     expect(development, contains('android.permission.HIDE_OVERLAY_WINDOWS'));
   });
 
@@ -77,7 +94,7 @@ void main() {
     final development = read('$app/development/AndroidManifest.xml');
     final switcher = read('$anywhere/AnywhereSwitch.kt');
     final declared = RegExp(
-      r'<(activity|service)\s[^>]*?android:name="(com\.fuzzzycore\.ink\.anywhere\.\w+)"[^>]*>',
+      r'<(activity-alias|activity|service)\s[^>]*?android:name="(com\.fuzzzycore\.ink\.anywhere\.\w+)"[^>]*>',
       dotAll: true,
     ).allMatches(development).toList();
     expect(declared, isNotEmpty);

@@ -199,6 +199,38 @@ void main() {
     });
   });
 
+  group('FuzzyLinkParser.findIn (the locked part of a longer text)', () {
+    test('finds a link or a Fuzz/ text among other words', () {
+      expect(
+        FuzzyLinkParser.findIn(
+          'Nino: here (https://ink.fuzzzycore.com/message#$_messageBody). Bye',
+        ),
+        '$_base/message#$_messageBody',
+      );
+      expect(
+        FuzzyLinkParser.findIn('read this:\n"Fuzz/AwEC-_x".'),
+        'Fuzz/AwEC-_x',
+      );
+      expect(FuzzyLinkParser.findIn('  Fuzz/AwEC  '), 'Fuzz/AwEC');
+    });
+
+    test('keeps the base64url ends of the locked part', () {
+      expect(FuzzyLinkParser.findIn('Fuzz/AwE-'), 'Fuzz/AwE-');
+      expect(FuzzyLinkParser.findIn('Fuzz/AwE_,'), 'Fuzz/AwE_');
+    });
+
+    test('finds nothing in text with nothing locked', () {
+      expect(FuzzyLinkParser.findIn(''), isNull);
+      expect(FuzzyLinkParser.findIn('my bank password is 1234'), isNull);
+      expect(FuzzyLinkParser.findIn('Fuzz/'), isNull);
+      expect(FuzzyLinkParser.findIn('Fuzz/a+b='), isNull);
+      expect(
+        FuzzyLinkParser.findIn('https://example.com/message#AwEC'),
+        isNull,
+      );
+    });
+  });
+
   group('FuzzyLinkType.fromPath', () {
     test('knows the three paths and nothing else', () {
       expect(FuzzyLinkType.fromPath('/invite'), FuzzyLinkType.invitation);

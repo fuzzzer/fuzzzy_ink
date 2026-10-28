@@ -293,7 +293,9 @@ workflows:
       - *add_certificates
       - *apply_profiles
       - name: Build IPA
-        script: flutter build ipa --release --flavor development -t lib/main_development.dart --export-options-plist=/Users/builder/export_options.plist
+        # FUZZ_ANYWHERE=true: the test app carries "Lock from other apps" (experimental, development
+        # flavour only; documents/fuzz_anywhere/CHANNEL.md). Still off until Settings turns it on.
+        script: flutter build ipa --release --flavor development -t lib/main_development.dart --dart-define=FUZZ_ANYWHERE=true --export-options-plist=/Users/builder/export_options.plist
     publishing:
       email: *notify_by_email
       app_store_connect: *testflight_internal

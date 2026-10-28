@@ -485,6 +485,18 @@
   "@openPasteIt": {},
   "openPasteItHint": "ჩაკეტილი ტექსტი, მოწვევა ან პასუხი",
   "@openPasteItHint": {},
+  "openPasteBoxHint": "ჩასვით აქ ჩაკეტილი ტექსტი, მოწვევა ან პასუხი",
+  "@openPasteBoxHint": {
+    "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-28)"
+  },
+  "openPasteFound": "ვიპოვეთ დაკოპირებულში. შეამოწმეთ ან თავად ჩასვით.",
+  "@openPasteFound": {
+    "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-28)"
+  },
+  "openPasteNotFound": "დაკოპირებულში ჩაკეტილი არაფერია. თავად ჩასვით.",
+  "@openPasteNotFound": {
+    "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-28)"
+  },
   "openLinksTip": "ბმულები და QR კოდები აქ მოდის. არაფერი გაიხსნება, სანამ „გახსნას“ არ დააჭერთ.",
   "@openLinksTip": {},
   "openNothingToPaste": "ჩასასმელი არაფერია. ჯერ ჩაკეტილი ტექსტი დააკოპირეთ.",
@@ -1712,6 +1724,14 @@
   "anywhereSheetTileLabel": "ტექსტის ჩაკეტვა",
   "@anywhereSheetTileLabel": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, experimental, 2026-10-26)"
+  },
+  "anywhereSheetMenuLock": "ჩაკეტვა Fuzzzy Ink-ით",
+  "@anywhereSheetMenuLock": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android selection menu, 2026-10-28)"
+  },
+  "anywhereSheetMenuOpen": "გახსნა Fuzzzy Ink-ით",
+  "@anywhereSheetMenuOpen": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android selection menu, 2026-10-28)"
   },
   "anywhereSheetSelectedLength": "{count} სიმბოლო",
   "@anywhereSheetSelectedLength": {

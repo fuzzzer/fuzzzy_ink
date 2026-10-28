@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 
 /**
- * Turns the "Lock from other apps" entry points (the selection menu item and
+ * Turns the "Lock from other apps" entry points (the selection menu items and
  * the Quick Settings tile) on and off. They are declared off
  * (`android:enabled="false"`) and only in the development flavour; they are
  * on only while the build has the flag and Settings → Lock from other apps is
@@ -15,6 +15,8 @@ object AnywhereSwitch {
     /** By name: the code is in every flavour, the declarations only in development. */
     val components = listOf(
         "com.fuzzzycore.ink.anywhere.InkTextActivity",
+        "com.fuzzzycore.ink.anywhere.LockTextAlias",
+        "com.fuzzzycore.ink.anywhere.OpenTextAlias",
         "com.fuzzzycore.ink.anywhere.InkTileService",
     )
 

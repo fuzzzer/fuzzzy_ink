@@ -747,6 +747,17 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get openPasteItHint => 'Locked text, invite or reply';
 
   @override
+  String get openPasteBoxHint => 'Paste locked text, an invite or a reply here';
+
+  @override
+  String get openPasteFound =>
+      'Found in what you copied. Check it, or paste your own.';
+
+  @override
+  String get openPasteNotFound =>
+      'What you copied has nothing locked in it. Paste it yourself.';
+
+  @override
   String get openLinksTip =>
       'Links and QR codes come here. Nothing opens until you tap Open.';
 
@@ -2460,6 +2471,12 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
 
   @override
   String get anywhereSheetTileLabel => 'Lock text';
+
+  @override
+  String get anywhereSheetMenuLock => 'Lock with Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetMenuOpen => 'Open with Fuzzzy Ink';
 
   @override
   String anywhereSheetSelectedLength(String count) {

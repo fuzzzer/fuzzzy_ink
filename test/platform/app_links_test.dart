@@ -125,8 +125,7 @@ void main() {
               as List<dynamic>)
           .single as Map<String, dynamic>)['appIDs'] as List<dynamic>;
       expect(testIds, [
-        for (final id in [...appIds.skip(1), devAppId])
-          '7W88HRQFXP.$id',
+        for (final id in [...appIds.skip(1), devAppId]) '7W88HRQFXP.$id',
       ]);
 
       final components =

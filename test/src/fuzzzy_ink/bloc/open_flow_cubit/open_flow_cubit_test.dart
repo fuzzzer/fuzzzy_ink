@@ -110,6 +110,25 @@ void main() {
   }
 
   group('a pasted message', () {
+    test('inside a whole copied message: only the locked part is read',
+        () async {
+      peekAnswers(
+        const CryptoCorePeek(kind: CryptoCorePeekKind.message, chatId: _ninoId),
+      );
+      decryptAnswers(const CryptoCoreSuccess('see you at 6'));
+      when(() => messages.addMessage(any(), notifyListeners: true))
+          .thenAnswer((_) async => 9);
+
+      final cubit = build();
+      await cubit.open(const OpenPastedText('here: Fuzz/AwEC. see you'));
+
+      verify(
+        () => crypto.peekPasted(text: 'Fuzz/AwEC', chatIds: [_ninoId]),
+      ).called(1);
+      expect(cubit.state.openedText, 'see you at 6');
+      await cubit.close();
+    });
+
     test('is recognised among connected people only, opened and kept',
         () async {
       peekAnswers(

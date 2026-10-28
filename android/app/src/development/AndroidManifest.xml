@@ -10,8 +10,9 @@
     <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
 
     <application>
-        <!-- "Fuzzzy Ink" in other apps' text selection menu. Exported, as the selection API
-             requires; it hands back only sealed output, and only where the field can take it. -->
+        <!-- The sheet behind other apps' text selection menu. Exported, as the selection API
+             requires; it hands back only sealed output, and only where the field can take it. The
+             menu items are the two aliases below. -->
         <activity
             android:name="com.fuzzzycore.ink.anywhere.InkTextActivity"
             android:enabled="false"
@@ -22,13 +23,35 @@
             android:excludeFromRecents="true"
             android:noHistory="false"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- "Lock with Fuzzzy Ink" and "Open with Fuzzzy Ink" in the selection menu, worded like the
+             menu's other actions (owner, 2026-10-28). Both open the same sheet, which locks plain
+             text and offers Open for locked text, whichever was tapped. -->
+        <activity-alias
+            android:name="com.fuzzzycore.ink.anywhere.LockTextAlias"
+            android:targetActivity="com.fuzzzycore.ink.anywhere.InkTextActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/anywhereSheetMenuLock">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+        <activity-alias
+            android:name="com.fuzzzycore.ink.anywhere.OpenTextAlias"
+            android:targetActivity="com.fuzzzycore.ink.anywhere.InkTextActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/anywhereSheetMenuOpen">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- "Lock text" in Quick Settings: the same sheet, to write in Fuzzzy Ink's own field. -->
         <service

@@ -9,6 +9,10 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 /// on iPhone the system's own Paste button pastes without asking), Choose a
 /// file (or drop one on a computer), and the tip that links and QR
 /// codes open here by themselves.
+///
+/// Paste it never opens the whole clipboard: it shows a box with only the
+/// locked part found in what was copied, to check, change or replace by
+/// pasting by hand, and opens on Open (owner, 2026-10-28).
 class OpenChooseView extends StatefulWidget {
   const OpenChooseView({super.key, required this.onClose});
 
@@ -18,16 +22,42 @@ class OpenChooseView extends StatefulWidget {
   State<OpenChooseView> createState() => _OpenChooseViewState();
 }
 
+/// What the clipboard held when the paste box opened.
+enum _Copied { found, nothingLocked, empty }
+
 class _OpenChooseViewState extends State<OpenChooseView> {
+  final _pasted = TextEditingController();
   bool _isPicking = false;
+
+  /// Null while choosing; set while the paste box is shown.
+  _Copied? _copied;
+
+  @override
+  void dispose() {
+    _pasted.dispose();
+    super.dispose();
+  }
 
   Future<void> _paste() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     if (!mounted) return;
-    await _openPasted(data?.text?.trim() ?? '');
+    _showPasteBox(data?.text ?? '');
   }
 
-  Future<void> _openPasted(String text) async {
+  void _showPasteBox(String copied) {
+    final found = FuzzyLinkParser.findIn(copied);
+    _pasted.text = found ?? '';
+    setState(() {
+      _copied = found != null
+          ? _Copied.found
+          : copied.trim().isEmpty
+              ? _Copied.empty
+              : _Copied.nothingLocked;
+    });
+  }
+
+  Future<void> _openPasted() async {
+    final text = _pasted.text.trim();
     if (text.isEmpty) {
       showInkToast(
         context,
@@ -62,10 +92,55 @@ class _OpenChooseViewState extends State<OpenChooseView> {
     }
   }
 
+  Widget _pasteBox(BuildContext context, _Copied copied) {
+    final localizations = context.fuzzzyInkLocalizations;
+    final space = context.fuzzzySpace;
+
+    return FlowScaffold(
+      qaId: 'open.pasteBox',
+      title: localizations.openPasteIt,
+      onLeading: () => setState(() => _copied = null),
+      footer: ListenableBuilder(
+        listenable: _pasted,
+        builder: (context, _) => FuzzzyButton(
+          qaId: 'open.pasteBox.open',
+          label: localizations.open,
+          onPressed: _pasted.text.trim().isEmpty ? null : _openPasted,
+        ),
+      ),
+      children: [
+        if (copied == _Copied.found)
+          InkNotice(
+            kind: InkNoticeKind.ok,
+            text: localizations.openPasteFound,
+            qaId: 'open.pasteBox.found',
+          )
+        else if (copied == _Copied.nothingLocked)
+          InkNotice(
+            kind: InkNoticeKind.warning,
+            text: localizations.openPasteNotFound,
+            qaId: 'open.pasteBox.notFound',
+          ),
+        if (copied != _Copied.empty) SizedBox(height: space.l),
+        FuzzzyTextField(
+          qaId: 'open.pasteBox.text',
+          controller: _pasted,
+          autofocus: copied != _Copied.found,
+          hint: localizations.openPasteBoxHint,
+          keyboardType: TextInputType.multiline,
+          minLines: 3,
+          maxLines: 8,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = context.fuzzzyInkLocalizations;
     final space = context.fuzzzySpace;
+    final copied = _copied;
+    if (copied != null) return _pasteBox(context, copied);
 
     return FileDropArea(
       onDropped: (paths) {
@@ -100,7 +175,7 @@ class _OpenChooseViewState extends State<OpenChooseView> {
                 hint: localizations.openPasteItHint,
                 onTap: _paste,
                 trailing: InkPasteButton.isAvailable
-                    ? InkPasteButton(qaId: 'open', onPasted: _openPasted)
+                    ? InkPasteButton(qaId: 'open', onPasted: _showPasteBox)
                     : null,
               ),
               SheetDoorRow(

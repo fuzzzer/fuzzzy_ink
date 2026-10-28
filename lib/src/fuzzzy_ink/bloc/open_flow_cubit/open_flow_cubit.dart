@@ -135,11 +135,13 @@ class OpenFlowCubit extends Cubit<OpenFlowState> {
 
   Future<void> _openText(String pasted) async {
     if (pasted.isEmpty) return _problem(OpenProblem.notFuzzzy);
-    var text = pasted;
+    // A whole message pasted: only its locked part is read.
+    final found = FuzzyLinkParser.findIn(pasted) ?? pasted;
+    var text = found;
 
     // A pasted link: its blob is what the peek reads. The paste is the
     // person's own action, so a message opens straight away.
-    final link = FuzzyLinkParser.parseText(pasted);
+    final link = FuzzyLinkParser.parseText(found);
     switch (link) {
       case FuzzMessageLinkPayload(:final encryptedMessage):
         text = '$fuzzIdentificator$encryptedMessage';
