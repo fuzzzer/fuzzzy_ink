@@ -39,6 +39,14 @@ def missingReleaseSigning = releaseSigningVariables.findAll { !System.getenv(it)
 // device installs. Only an explicit opt-in allows it.
 def unsignedReleaseProof = System.getenv("FUZZZY_UNSIGNED_RELEASE_PROOF") == "true"
 
+// "Lock from other apps" (experimental, documents/fuzz_anywhere/CHANNEL.md): the native pieces read the
+// same build flag as the Dart side, FUZZ_ANYWHERE=true among the --dart-define values (Flutter hands
+// them to Gradle base64-encoded). Without it the app keeps its own engine and every entry point stays off.
+def dartDefines = (project.findProperty("dart-defines") ?: "").toString().split(",").findAll { it }.collect {
+    new String(it.decodeBase64(), "UTF-8")
+}
+def fuzzAnywhereBuild = dartDefines.contains("FUZZ_ANYWHERE=true")
+
 android {
     namespace "com.fuzzzycore.ink"
     compileSdk 36
@@ -56,6 +64,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 
     defaultConfig {
@@ -66,6 +75,19 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "bool", "fuzz_anywhere_build", fuzzAnywhereBuild.toString()
+    }
+
+    // The native sheet of "Lock from other apps" is Jetpack Compose (Material 3). Its activity and tile
+    // are declared in the development flavour only (src/development/AndroidManifest.xml); elsewhere
+    // nothing references the code and the release shrinker drops it.
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        // The Compose compiler that matches Kotlin 1.9.22 (settings.gradle).
+        kotlinCompilerExtensionVersion "1.5.10"
     }
 
     signingConfigs {
@@ -116,7 +138,18 @@ flutter {
 }
 
 // Fails a release build that has no release key, naming what is missing, before anything is built.
+// Also fails a staging or production build that carries "Lock from other apps" (FUZZ_ANYWHERE=true):
+// the experiment is for the development flavour only (security review 2026-10-26).
 gradle.taskGraph.whenReady { graph ->
+    def experimentTasks = graph.allTasks.findAll {
+        it.project == project && it.name ==~ /(assemble|bundle|package)(Staging|Production)\w*/
+    }
+    if (fuzzAnywhereBuild && !experimentTasks.isEmpty()) {
+        throw new GradleException(
+            "FUZZ_ANYWHERE=true is for the development flavour only: \"Lock from other apps\" is an " +
+            "experiment (documents/fuzz_anywhere/CHANNEL.md). Build staging and production without it."
+        )
+    }
     def releaseTasks = graph.allTasks.findAll {
         it.project == project && it.name ==~ /(assemble|bundle|package)\w*Release/
     }
@@ -136,4 +169,18 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     // FileProvider for the content URIs UserFiles.kt hands out (T-0366).
     implementation 'androidx.core:core:1.13.1'
+
+    // "Lock from other apps": the Material 3 sheet. Exact versions: the Compose BOM pins every Compose
+    // artifact (2024.12.01: Compose 1.7.6, Material 3 1.3.1); listed in documents/security/sbom/android.cdx.json (`./sbom.sh android`).
+    implementation platform('androidx.compose:compose-bom:2024.12.01')
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.7'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
 }

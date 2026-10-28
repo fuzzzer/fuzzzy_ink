@@ -21,15 +21,37 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0252F45C16AF3CEEA49512B9 /* InkServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A64145A79064B5418196657 /* InkServiceProvider.swift */; };
+		0A0FB00B80F91E34133955A3 /* InkSealedTextViewIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */; };
+		1239EBC142B8B1CB013CFAD8 /* InkPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F1E0067AE7686ED2EA9FD5 /* InkPanel.swift */; };
+		1CA24486DB3C08DB58284D61 /* InkAnywhereView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72542263F3576C8CEE4CA70 /* InkAnywhereView.swift */; };
 		22D52931148246E68F1C25A2 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA31840B017CE62B6782217 /* Pods_RunnerTests.framework */; };
+		25735CAC1F19E2EFB0EEEB1A /* InkSealedTextViewMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */; };
 		331C80D8294CF71000263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C80D7294CF71000263BE5 /* RunnerTests.swift */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
-		F1A2B3C4D5E6F70812345612 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F70812345611 /* PrivacyInfo.xcprivacy */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		35ABBC4ADCA7147D847DEBE5 /* InkAnywherePreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5254D3E909BB69779F92B022 /* InkAnywherePreviews.swift */; };
+		4011E1DBEAC0C4E14AB47A0D /* InkMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2D403C2D543D15C0C20A261 /* InkMark.swift */; };
+		43199A399F59FBDFEE753998 /* InkStatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D8C02E0DB4A2EC7852BD5A /* InkStatusItem.swift */; };
+		47D9F7006E7017762DC16523 /* InkAnywhereContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1C68A5E27B17845A47A324 /* InkAnywhereContract.swift */; };
+		4FE958DFC56AFDDB63ADFABB /* InkHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61431A50DEF636EE9CEC6E66 /* InkHotKey.swift */; };
+		5B4C2EBAE915C59D188A0247 /* InkOpenViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5375F483FB8E821085DA5FF5 /* InkOpenViews.swift */; };
+		7F6444A0493E290BCD89A532 /* InkGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EA0B11A04FA28E02204FD9 /* InkGlass.swift */; };
+		9BB5C81D6426CF713ED72CCA /* InkStatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4808B598E18D411E80FD56 /* InkStatusViews.swift */; };
+		A3AB7C212EFC3ACAC5600D6E /* InkText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6B0A8311523775C3B8B42D /* InkText.swift */; };
+		AC22F7F54BBF14A23A899EF8 /* InkAnywhereChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADEFDA881941DA5F294C01A /* InkAnywhereChannel.swift */; };
+		D0BD58D046104F86E467C81E /* InkSealedTextBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */; };
+		D9A827C0798E3E2DEA6CADE8 /* InkLockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987AAAAAE6808E46CD8B2A82 /* InkLockViews.swift */; };
+		D9AFEEF74DD35A592BEC8167 /* InkAnywhereMac.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5885BA0436F2F4A225E7759B /* InkAnywhereMac.swift */; };
+		E263EC9D1DA4829CF488EABB /* Anywhere.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6726757D41F7DEF89B60B374 /* Anywhere.strings */; };
+		F1A2B3C4D5E6F70812345612 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F70812345611 /* PrivacyInfo.xcprivacy */; };
+		F2B8CB85CFA0CC41D430A8E2 /* InkUnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DF67238A7B0EC65026AF9C /* InkUnlockView.swift */; };
+		F423D8345DE0A7C1EE99CD1B /* InkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34023B8B594D832EB0C4CAA6 /* InkActionBar.swift */; };
 		FB4DC857FEEB65A2DF11D6BD /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D72115479306367F9523E62 /* Pods_Runner.framework */; };
+		FCE527220A3DD6B0A1A09D29 /* InkAnywhereModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02694BBCBC9F98F4D3FCA063 /* InkAnywhereModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,9 +85,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02694BBCBC9F98F4D3FCA063 /* InkAnywhereModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereModel.swift; sourceTree = "<group>"; };
+		0C4808B598E18D411E80FD56 /* InkStatusViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkStatusViews.swift; sourceTree = "<group>"; };
 		0F82164A14189DCDB2994FB8 /* Pods-Runner.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-development.xcconfig"; sourceTree = "<group>"; };
+		1C68F86C9BA051E5B1C3EA4D /* Services-development.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Services-development.plist"; sourceTree = "<group>"; };
 		24477EF9A6A8666076A10E9A /* Pods-RunnerTests.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-development.xcconfig"; sourceTree = "<group>"; };
 		25FCB1998D2F2F9307886933 /* Pods-Runner.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-production.xcconfig"; sourceTree = "<group>"; };
+		2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextBox.swift; sourceTree = "<group>"; };
 		303866F4F1EEA1C4A91BEF9D /* Pods-RunnerTests.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-staging.xcconfig"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -76,7 +102,6 @@
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Runner/Assets.xcassets; sourceTree = "<group>"; };
 		33CC10F52044A3C60003C045 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		33CC10F72044A3C60003C045 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Runner/Info.plist; sourceTree = "<group>"; };
-		F1A2B3C4D5E6F70812345611 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Runner/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		33CC11122044BFA00003C045 /* MainFlutterWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainFlutterWindow.swift; sourceTree = "<group>"; };
 		33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Debug.xcconfig"; sourceTree = "<group>"; };
 		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
@@ -84,24 +109,46 @@
 		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
+		34023B8B594D832EB0C4CAA6 /* InkActionBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkActionBar.swift; sourceTree = "<group>"; };
 		3BD5DA99917CB49089366AB1 /* Pods-Runner.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-production.xcconfig"; sourceTree = "<group>"; };
 		3D72115479306367F9523E62 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4184EABE2DB2E53FB810006E /* Pods-RunnerTests.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-production.xcconfig"; sourceTree = "<group>"; };
 		41DF6252F57F0E88DDC438C5 /* Pods-Runner.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-staging.xcconfig"; sourceTree = "<group>"; };
+		41F303D889BD7BAF6BC0B9A8 /* add_services_menu.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = add_services_menu.sh; sourceTree = "<group>"; };
 		4230F323D397402C42DA27AD /* Pods-Runner.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-development.xcconfig"; sourceTree = "<group>"; };
+		42EA0B11A04FA28E02204FD9 /* InkGlass.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkGlass.swift; sourceTree = "<group>"; };
+		4A64145A79064B5418196657 /* InkServiceProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkServiceProvider.swift; sourceTree = "<group>"; };
+		5254D3E909BB69779F92B022 /* InkAnywherePreviews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywherePreviews.swift; sourceTree = "<group>"; };
+		5375F483FB8E821085DA5FF5 /* InkOpenViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkOpenViews.swift; sourceTree = "<group>"; };
 		5765821004A460BDD0AA130D /* Pods-RunnerTests.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-development.xcconfig"; sourceTree = "<group>"; };
+		5885BA0436F2F4A225E7759B /* InkAnywhereMac.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereMac.swift; sourceTree = "<group>"; };
 		5A32D4057DFBD73A8F0CDC8B /* Pods-RunnerTests.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-development.xcconfig"; sourceTree = "<group>"; };
+		61431A50DEF636EE9CEC6E66 /* InkHotKey.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkHotKey.swift; sourceTree = "<group>"; };
+		65D8C02E0DB4A2EC7852BD5A /* InkStatusItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkStatusItem.swift; sourceTree = "<group>"; };
 		67B07714BB59BB02D413CA77 /* Pods-Runner.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-production.xcconfig"; sourceTree = "<group>"; };
+		6F1C68A5E27B17845A47A324 /* InkAnywhereContract.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereContract.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		84A6074A7B6E4DD1546B31CD /* Pods-RunnerTests.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-production.xcconfig"; sourceTree = "<group>"; };
 		8BE9B85CC1937F6BEDF743D1 /* Pods-Runner.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-staging.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		987AAAAAE6808E46CD8B2A82 /* InkLockViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkLockViews.swift; sourceTree = "<group>"; };
 		9AA31840B017CE62B6782217 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2D403C2D543D15C0C20A261 /* InkMark.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkMark.swift; sourceTree = "<group>"; };
+		A72542263F3576C8CEE4CA70 /* InkAnywhereView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereView.swift; sourceTree = "<group>"; };
+		B3C6700FDB40E5F818F98C66 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		BA212615BB28F85E507EDA82 /* Pods-Runner.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-development.xcconfig"; sourceTree = "<group>"; };
+		BADEFDA881941DA5F294C01A /* InkAnywhereChannel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkAnywhereChannel.swift; sourceTree = "<group>"; };
+		BC6B0A8311523775C3B8B42D /* InkText.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkText.swift; sourceTree = "<group>"; };
 		C2AAED7F09DA3D644BCFF17F /* Pods-RunnerTests.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-staging.xcconfig"; sourceTree = "<group>"; };
+		C2CEAF6326C7109E6F6044A0 /* ka */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ka; path = ka.lproj/Anywhere.strings; sourceTree = "<group>"; };
 		C3613FA5CDD1BBDCA1B32D65 /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
+		CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewIOS.swift; sourceTree = "<group>"; };
 		D712456BD409C6DD5581D909 /* Pods-Runner.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		E0F1E0067AE7686ED2EA9FD5 /* InkPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkPanel.swift; sourceTree = "<group>"; };
+		E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkSealedTextViewMac.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F70812345611 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Runner/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F213D4CC6B8EEB4129E7FDAA /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		F8DF67238A7B0EC65026AF9C /* InkUnlockView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InkUnlockView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +171,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01BF4C4A0611036923F8B29D /* Anywhere */ = {
+			isa = PBXGroup;
+			children = (
+				5885BA0436F2F4A225E7759B /* InkAnywhereMac.swift */,
+				61431A50DEF636EE9CEC6E66 /* InkHotKey.swift */,
+				E0F1E0067AE7686ED2EA9FD5 /* InkPanel.swift */,
+				4A64145A79064B5418196657 /* InkServiceProvider.swift */,
+				65D8C02E0DB4A2EC7852BD5A /* InkStatusItem.swift */,
+				1C68F86C9BA051E5B1C3EA4D /* Services-development.plist */,
+				41F303D889BD7BAF6BC0B9A8 /* add_services_menu.sh */,
+			);
+			name = Anywhere;
+			path = Anywhere;
+			sourceTree = "<group>";
+		};
+		287D63EA8A2D1D3CCF895403 /* Anywhere */ = {
+			isa = PBXGroup;
+			children = (
+				34023B8B594D832EB0C4CAA6 /* InkActionBar.swift */,
+				BADEFDA881941DA5F294C01A /* InkAnywhereChannel.swift */,
+				02694BBCBC9F98F4D3FCA063 /* InkAnywhereModel.swift */,
+				5254D3E909BB69779F92B022 /* InkAnywherePreviews.swift */,
+				A72542263F3576C8CEE4CA70 /* InkAnywhereView.swift */,
+				42EA0B11A04FA28E02204FD9 /* InkGlass.swift */,
+				987AAAAAE6808E46CD8B2A82 /* InkLockViews.swift */,
+				A2D403C2D543D15C0C20A261 /* InkMark.swift */,
+				5375F483FB8E821085DA5FF5 /* InkOpenViews.swift */,
+				0C4808B598E18D411E80FD56 /* InkStatusViews.swift */,
+				BC6B0A8311523775C3B8B42D /* InkText.swift */,
+				F8DF67238A7B0EC65026AF9C /* InkUnlockView.swift */,
+				C87530944DF573C275F01F5B /* Strings */,
+				6F1C68A5E27B17845A47A324 /* InkAnywhereContract.swift */,
+				2AB354633BA1C39C6C552A7D /* InkSealedTextBox.swift */,
+				E4775C28CFD982148FC3A003 /* InkSealedTextViewMac.swift */,
+				CF88D2D4E261106983E78776 /* InkSealedTextViewIOS.swift */,
+			);
+			name = Anywhere;
+			path = ../apple/Anywhere;
+			sourceTree = "<group>";
+		};
 		331C80D6294CF71000263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +239,7 @@
 				33CC10EE2044A3C60003C045 /* Products */,
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				839C67CC20A915F5A2C32E70 /* Pods */,
+				287D63EA8A2D1D3CCF895403 /* Anywhere */,
 			);
 			sourceTree = "<group>";
 		};
@@ -196,6 +284,7 @@
 				33E51914231749380026EE4D /* Release.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
+				01BF4C4A0611036923F8B29D /* Anywhere */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -223,6 +312,15 @@
 				C2AAED7F09DA3D644BCFF17F /* Pods-RunnerTests.profile-staging.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C87530944DF573C275F01F5B /* Strings */ = {
+			isa = PBXGroup;
+			children = (
+				6726757D41F7DEF89B60B374 /* Anywhere.strings */,
+			);
+			name = Strings;
+			path = Strings;
 			sourceTree = "<group>";
 		};
 		D73912EC22F37F3D000D13A0 /* Frameworks */ = {
@@ -267,6 +365,7 @@
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* ShellScript */,
 				A16A2ADDC0EA76ACFC68164B /* [CP] Embed Pods Frameworks */,
+				547C48F3160E66FD38426A72 /* Services menu (development flavour only) */,
 			);
 			buildRules = (
 			);
@@ -315,6 +414,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ka,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
@@ -343,6 +443,7 @@
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 				F1A2B3C4D5E6F70812345612 /* PrivacyInfo.xcprivacy in Resources */,
+				E263EC9D1DA4829CF488EABB /* Anywhere.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +487,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
+		};
+		547C48F3160E66FD38426A72 /* Services menu (development flavour only) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Runner/Anywhere/Services-development.plist",
+			);
+			name = "Services menu (development flavour only)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Runner/Anywhere/add_services_menu.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		5C89C71B723C811313E186DC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -466,6 +589,27 @@
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
+				F423D8345DE0A7C1EE99CD1B /* InkActionBar.swift in Sources */,
+				AC22F7F54BBF14A23A899EF8 /* InkAnywhereChannel.swift in Sources */,
+				FCE527220A3DD6B0A1A09D29 /* InkAnywhereModel.swift in Sources */,
+				35ABBC4ADCA7147D847DEBE5 /* InkAnywherePreviews.swift in Sources */,
+				1CA24486DB3C08DB58284D61 /* InkAnywhereView.swift in Sources */,
+				7F6444A0493E290BCD89A532 /* InkGlass.swift in Sources */,
+				D9A827C0798E3E2DEA6CADE8 /* InkLockViews.swift in Sources */,
+				4011E1DBEAC0C4E14AB47A0D /* InkMark.swift in Sources */,
+				5B4C2EBAE915C59D188A0247 /* InkOpenViews.swift in Sources */,
+				9BB5C81D6426CF713ED72CCA /* InkStatusViews.swift in Sources */,
+				A3AB7C212EFC3ACAC5600D6E /* InkText.swift in Sources */,
+				F2B8CB85CFA0CC41D430A8E2 /* InkUnlockView.swift in Sources */,
+				D9AFEEF74DD35A592BEC8167 /* InkAnywhereMac.swift in Sources */,
+				4FE958DFC56AFDDB63ADFABB /* InkHotKey.swift in Sources */,
+				1239EBC142B8B1CB013CFAD8 /* InkPanel.swift in Sources */,
+				0252F45C16AF3CEEA49512B9 /* InkServiceProvider.swift in Sources */,
+				43199A399F59FBDFEE753998 /* InkStatusItem.swift in Sources */,
+				47D9F7006E7017762DC16523 /* InkAnywhereContract.swift in Sources */,
+				D0BD58D046104F86E467C81E /* InkSealedTextBox.swift in Sources */,
+				25735CAC1F19E2EFB0EEEB1A /* InkSealedTextViewMac.swift in Sources */,
+				0A0FB00B80F91E34133955A3 /* InkSealedTextViewIOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +636,15 @@
 			);
 			name = MainMenu.xib;
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		6726757D41F7DEF89B60B374 /* Anywhere.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3C6700FDB40E5F818F98C66 /* en */,
+				C2CEAF6326C7109E6F6044A0 /* ka */,
+			);
+			name = Anywhere.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -958,6 +1111,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -1052,6 +1206,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-development";
@@ -1238,6 +1393,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.fuzzzycore.ink.dev";
 				PRODUCT_NAME = "$(FLAVOR_APP_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) INK_ANYWHERE";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Profile-development";

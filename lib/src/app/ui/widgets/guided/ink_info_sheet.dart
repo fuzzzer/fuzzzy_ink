@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
-/// The nine "Why?" explanations of DESIGN.md section 7. Each is a title and
-/// two or three short lines; the explanations live here instead of on the
-/// screens.
+/// The nine "Why?" explanations of DESIGN.md section 7, and [otherApps] for
+/// the experimental "Lock from other apps". Each is a title and two or three
+/// short lines; the explanations live here instead of on the screens.
 enum InkInfoTopic {
   noReset,
   recoveryKey,
@@ -14,7 +14,8 @@ enum InkInfoTopic {
   files,
   noCopying,
   passwordLocking,
-  safePassword;
+  safePassword,
+  otherApps;
 
   String title(FuzzzyInkLocalizations l) => switch (this) {
         noReset => l.infoNoResetTitle,
@@ -26,6 +27,7 @@ enum InkInfoTopic {
         noCopying => l.infoNoCopyingTitle,
         passwordLocking => l.infoPasswordLockingTitle,
         safePassword => l.infoSafePasswordTitle,
+        otherApps => l.infoOtherAppsTitle,
       };
 
   List<String> lines(FuzzzyInkLocalizations l) => switch (this) {
@@ -57,6 +59,11 @@ enum InkInfoTopic {
             l.infoPasswordLockingLine2,
           ],
         safePassword => [l.infoSafePasswordLine1, l.infoSafePasswordLine2],
+        otherApps => [
+            l.infoOtherAppsLine1,
+            l.infoOtherAppsLine2,
+            l.infoOtherAppsLine3,
+          ],
       };
 
   /// "Safe to send anywhere" also shows the invite steps.

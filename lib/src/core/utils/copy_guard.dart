@@ -33,6 +33,10 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 ///   clipboard monitors; cleared after its time and when the window closes.
 /// - Linux: the Flutter clipboard; a clipboard manager may keep a copy.
 /// Every copy is cleared when the app locks, if it is still the app's.
+/// Sealed output that "Lock from other apps" copies is marked sensitive the
+/// same way (it still pastes everywhere), so on Android it too is cleared
+/// after its 2 minutes while the person is in another app; a copy a killed
+/// process left behind is cleared at the app's next start (`Guard.kt`).
 const guardChannel = MethodChannel('com.fuzzzycore.ink/guard');
 
 /// Settings → My safe → Copy passwords (decided 2026-10-26: kept, on by
@@ -210,6 +214,7 @@ class ClipboardGuard {
   final _cleared = StreamController<ClipboardCopyCleared>.broadcast();
   int _lastCopyId = 0;
   ({int id, CopyContent content})? _pendingCopy;
+  int? _keepAtLockId;
 
   /// Counts the copies made; the id of the latest one.
   int get lastCopyId => _lastCopyId;
@@ -218,14 +223,23 @@ class ClipboardGuard {
   Stream<ClipboardCopyCleared> get cleared => _cleared.stream;
 
   /// Copies [text] when the policy allows [content]; answers whether it did.
-  Future<bool> copy(String text, CopyContent content) async {
+  ///
+  /// [markSensitive] marks an allowed copy sensitive although its content
+  /// is not (the policy's clear time stays): "Lock from other apps" copies
+  /// sealed output while the person is in another app, where Android can
+  /// clear it only blind (security review 2026-10-26).
+  Future<bool> copy(
+    String text,
+    CopyContent content, {
+    bool markSensitive = false,
+  }) async {
     if (!policy.allows(content)) return false;
 
     final clearAfter = policy.clearAfter(content);
     _clearTimer?.cancel();
     await _clipboard.write(
       text,
-      sensitive: policy.isSensitive(content),
+      sensitive: markSensitive || policy.isSensitive(content),
       clearAfter: clearAfter,
     );
     _isClearPending = true;
@@ -234,6 +248,30 @@ class ClipboardGuard {
     _clearTimer = Timer(clearAfter, () => unawaited(clearNow()));
     _lifecycleListener ??= AppLifecycleListener(onResume: _retryPendingClear);
     return true;
+  }
+
+  /// "Lock from other apps" locks the app again right after a use whose
+  /// sealed output it just copied, before the person can paste it: that one
+  /// copy stays through that one lock, and leaves on its own timer (2
+  /// minutes) or with the next copy. Anything but a sealed message or
+  /// link is cleared as before.
+  void keepSealedCopyAtNextLock() {
+    final pending = _pendingCopy;
+    if (pending == null) return;
+    if (pending.content != CopyContent.sealedMessage &&
+        pending.content != CopyContent.sealedLink) {
+      return;
+    }
+    _keepAtLockId = pending.id;
+  }
+
+  /// The app locks: its last copy leaves the clipboard, unless it is the
+  /// sealed copy [keepSealedCopyAtNextLock] spared for this lock.
+  Future<void> clearAtLock() async {
+    final keep = _keepAtLockId;
+    _keepAtLockId = null;
+    if (keep != null && keep == _pendingCopy?.id) return;
+    await clearNow();
   }
 
   /// Clears the clipboard now if it still holds the app's last copy.
@@ -301,12 +339,14 @@ abstract final class CopyGuard {
 
   /// Copies [text] if [content] may leave the app, with no toast: for a
   /// control that confirms in place ("Copied" on the button or row itself).
-  /// Answers whether it copied.
+  /// Answers whether it copied. See [ClipboardGuard.copy] for
+  /// [markSensitive].
   static Future<bool> copyQuietly({
     required String text,
     required CopyContent content,
+    bool markSensitive = false,
   }) =>
-      _clipboardGuard.copy(text, content);
+      _clipboardGuard.copy(text, content, markSensitive: markSensitive);
 
   /// The id of the latest copy ([ClipboardGuard.lastCopyId]).
   static int get lastCopyId => _clipboardGuard.lastCopyId;
@@ -316,7 +356,11 @@ abstract final class CopyGuard {
 
   /// The app locks: the app's last copy leaves the clipboard now if it is
   /// still there, timer or not (security review 2026-10-26).
-  static Future<void> clearOnLock() => _clipboardGuard.clearNow();
+  static Future<void> clearOnLock() => _clipboardGuard.clearAtLock();
+
+  /// See [ClipboardGuard.keepSealedCopyAtNextLock].
+  static void keepSealedCopyAtNextLock() =>
+      _clipboardGuard.keepSealedCopyAtNextLock();
 
   /// Context menu for a text field that holds plaintext or a secret: an
   /// allow-list (security review 2026-10-26). Paste, Select all, Delete and

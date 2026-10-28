@@ -18,7 +18,11 @@ class _FakeGuard extends ClipboardGuard {
   final copies = <(String, CopyContent)>[];
 
   @override
-  Future<bool> copy(String text, CopyContent content) async {
+  Future<bool> copy(
+    String text,
+    CopyContent content, {
+    bool markSensitive = false,
+  }) async {
     copies.add((text, content));
     return policy.allows(content);
   }

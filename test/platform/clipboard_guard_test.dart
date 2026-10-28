@@ -12,11 +12,11 @@ void main() {
     ).readAsStringSync();
     expect(guard, contains('handler.postDelayed(expire, expiresInMs)'));
     expect(guard, contains('clipboard.clearPrimaryClip()'));
-    expect(guard, contains('fun onDestroy()'));
+    expect(guard, contains('fun onDestroy(activity: Activity)'));
     expect(
       File('android/app/src/main/kotlin/com/fuzzzycore/ink/MainActivity.kt')
           .readAsStringSync(),
-      contains('guard?.onDestroy()'),
+      contains('guard?.onDestroy(this)'),
     );
   });
 

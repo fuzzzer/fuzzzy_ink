@@ -20,6 +20,14 @@ class MainFlutterWindow: NSWindow {
     InkIncoming.shared.register(messenger: flutterViewController.engine.binaryMessenger)
     InkDevice.shared.register(
       window: self, messenger: flutterViewController.engine.binaryMessenger)
+    // "Lock from other apps" (experimental): the Services menu, the
+    // shortcut and the menu bar panel; all off until the build and the
+    // person's Settings switch say so. Development flavour only.
+    #if INK_ANYWHERE
+      if #available(macOS 12.0, *) {
+        InkAnywhereMac.shared.register(messenger: flutterViewController.engine.binaryMessenger)
+      }
+    #endif
 
     super.awakeFromNib()
   }

@@ -2,6 +2,9 @@
 # CycloneDX SBOMs for both halves of the app, committed under documents/security/sbom/ (F5-3).
 #   ./sbom.sh rust|flutter            regenerate documents/security/sbom/<half>.cdx.json
 #   ./sbom.sh rust|flutter --check    regenerate to a temp file and fail if it differs from the committed one (CI drift gate)
+#   ./sbom.sh android [--check]       the Android app's Maven dependencies as shipped in the production release
+#                                     (Gradle's resolved productionReleaseRuntimeClasspath; needs the Android SDK and a
+#                                     prior `flutter pub get`, so it is a local gate, not yet in CI)
 # Pinned tools: cargo-cyclonedx 0.5.9 (`cargo install --locked cargo-cyclonedx@0.5.9`; bump it here and in
 # .github/workflows/main.yaml together) and cdxgen 12.8.4 with every package under it locked by
 # tools/sbom/package-lock.json (exact versions and integrity hashes, installed by `npm ci` with no install
@@ -34,8 +37,13 @@ case $half in
     npm ci --prefix tools/sbom --ignore-scripts --no-audit --no-fund --loglevel=error
     tools/sbom/node_modules/.bin/cdxgen -t flutter --spec-version 1.6 --exclude '**/build/**' --exclude 'tools/**' -o "$tmp/new.json" .
     ;;
+  android)
+    # Gradle prints the resolved tree; tools/sbom/android_cdx.py turns it into CycloneDX (no timestamp, sorted)
+    (cd android && ./gradlew -q :app:dependencies --configuration productionReleaseRuntimeClasspath) > "$tmp/tree.txt"
+    python3 tools/sbom/android_cdx.py < "$tmp/tree.txt" > "$tmp/new.json"
+    ;;
   *)
-    echo "usage: $0 rust|flutter [--check]"
+    echo "usage: $0 rust|flutter|android [--check]"
     exit 2
     ;;
 esac

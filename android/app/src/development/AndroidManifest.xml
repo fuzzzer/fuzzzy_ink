@@ -1,0 +1,46 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- "Lock from other apps" (experimental, documents/fuzz_anywhere/CHANNEL.md): declared in the
+         development flavour only for this first round. Both entry points are off here and are
+         switched on only while the build has FUZZ_ANYWHERE=true and Settings → Lock from other
+         apps is on (anywhere/AnywhereSwitch.kt). No new permission but the overlay hiding below:
+         no accessibility service, no keyboard, no drawing over other apps, no network. -->
+
+    <!-- A normal permission: the sheet hides other apps' overlays while it is up (Android 12+),
+         so nothing can draw over the password field. -->
+    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
+
+    <application>
+        <!-- "Fuzzzy Ink" in other apps' text selection menu. Exported, as the selection API
+             requires; it hands back only sealed output, and only where the field can take it. -->
+        <activity
+            android:name="com.fuzzzycore.ink.anywhere.InkTextActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/fuzzzyInk"
+            android:theme="@style/AnywhereSheetTheme"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:noHistory="false"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- "Lock text" in Quick Settings: the same sheet, to write in Fuzzzy Ink's own field. -->
+        <service
+            android:name="com.fuzzzycore.ink.anywhere.InkTileService"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/anywhere_tile"
+            android:label="@string/anywhereSheetTileLabel"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

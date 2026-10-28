@@ -119,6 +119,26 @@ void main() {
       });
     });
 
+    test('sealed output for another app is marked sensitive, same 2 minutes',
+        () {
+      fakeAsync((async) {
+        final clipboard = _FakeSecureClipboard();
+        final guard = ClipboardGuard(clipboard: clipboard);
+        unawaited(
+          guard.copy('FUZZ:abc', CopyContent.sealedLink, markSensitive: true),
+        );
+        unawaited(
+          guard.copy('typed', CopyContent.plaintext, markSensitive: true),
+        );
+        async.flushMicrotasks();
+
+        expect(clipboard.writes, hasLength(1), reason: 'plaintext stays out');
+        expect(clipboard.writes.single.sensitive, isTrue);
+        expect(clipboard.writes.single.clearAfter, CopyPolicy.sealedClearAfter);
+        guard.dispose();
+      });
+    });
+
     test('copies sealed output and clears it after two minutes', () {
       fakeAsync((async) {
         final clipboard = _FakeSecureClipboard();
@@ -217,6 +237,39 @@ void main() {
       await CopyGuard.clearOnLock();
       expect(clipboard.clears, 1);
       expect(guard.isClearPending, isFalse);
+    });
+  });
+
+  group('locking right after a use from another app', () {
+    test('the sealed copy it just made stays through that one lock', () async {
+      final clipboard = _FakeSecureClipboard();
+      final guard = ClipboardGuard(clipboard: clipboard);
+      addTearDown(guard.dispose);
+      const link = 'https://ink.fuzzzycore.com/message#a';
+      await guard.copy(link, CopyContent.sealedLink);
+      guard.keepSealedCopyAtNextLock();
+      await guard.clearAtLock();
+      expect(clipboard.clears, 0);
+      expect(guard.isClearPending, isTrue, reason: 'its timer still runs');
+
+      await guard.clearAtLock();
+      expect(clipboard.clears, 1, reason: 'one lock only');
+    });
+
+    test('anything else, or a newer copy, is cleared at the lock', () async {
+      final clipboard = _FakeSecureClipboard();
+      final guard = ClipboardGuard(clipboard: clipboard);
+      addTearDown(guard.dispose);
+      await guard.copy('hunter2', CopyContent.vaultPassword);
+      guard.keepSealedCopyAtNextLock();
+      await guard.clearAtLock();
+      expect(clipboard.clears, 1);
+
+      await guard.copy('Fuzz/abc', CopyContent.sealedMessage);
+      guard.keepSealedCopyAtNextLock();
+      await guard.copy('Fuzz/def', CopyContent.sealedInvitation);
+      await guard.clearAtLock();
+      expect(clipboard.clears, 2);
     });
   });
 

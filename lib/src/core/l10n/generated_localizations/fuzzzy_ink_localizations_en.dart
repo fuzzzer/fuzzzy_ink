@@ -2360,4 +2360,154 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   @override
   String get incomingFileUnreadable =>
       'Couldn\'t read that file. Open it again from where it is.';
+
+  @override
+  String get anywhereSection => 'Other apps';
+
+  @override
+  String get anywhereLockFromOtherApps => 'Lock from other apps';
+
+  @override
+  String get anywhereExperimental => 'Experimental';
+
+  @override
+  String get anywhereLockAgain => 'Lock again after each use';
+
+  @override
+  String get infoOtherAppsTitle => 'Locking from other apps';
+
+  @override
+  String get infoOtherAppsLine1 =>
+      'Lock or open text from another app\'s menu.';
+
+  @override
+  String get infoOtherAppsLine2 =>
+      'What you open shows only in Fuzzzy Ink. It never goes back.';
+
+  @override
+  String get infoOtherAppsLine3 =>
+      'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.';
+
+  @override
+  String get anywhereSheetOpenTitle => 'Open this locked text?';
+
+  @override
+  String get anywhereSheetOpenInInkTitle => 'Open it in Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetOpenInInkLine =>
+      'It\'s an invite, a reply or text locked with a password. Fuzzzy Ink shows what comes next.';
+
+  @override
+  String get anywhereSheetOpenInInkAction => 'Open in Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetGotIt => 'Got it';
+
+  @override
+  String get anywhereSheetChange => 'Change';
+
+  @override
+  String get anywhereSheetSelectedText => 'Your selected text';
+
+  @override
+  String anywhereSheetLockedFor(String name) {
+    return 'Locked for $name';
+  }
+
+  @override
+  String get anywhereSheetPutInPlace =>
+      'It\'s in place of the text you selected.';
+
+  @override
+  String get anywhereSheetCopied =>
+      'Copied. Paste it where you want. It clears in 2 minutes.';
+
+  @override
+  String get anywhereSheetNoPeopleLine =>
+      'Connect with someone in Fuzzzy Ink, then come back.';
+
+  @override
+  String get anywhereSheetOpenApp => 'Open Fuzzzy Ink';
+
+  @override
+  String get anywhereSheetSetUpTitle => 'Set up Fuzzzy Ink first';
+
+  @override
+  String get anywhereSheetSetUpLine =>
+      'Make a master password in the app, then come back.';
+
+  @override
+  String get anywhereSheetNotReadyTitle => 'Fuzzzy Ink isn\'t ready';
+
+  @override
+  String get anywhereSheetNotReadyLine => 'Open Fuzzzy Ink, then try again.';
+
+  @override
+  String get anywhereSheetFailedTitle => 'Something went wrong';
+
+  @override
+  String get anywhereSheetUnlockLine => 'Unlock to lock or open text here.';
+
+  @override
+  String get anywhereSheetClose => 'Close';
+
+  @override
+  String get anywhereSheetStarting => 'Starting Fuzzzy Ink…';
+
+  @override
+  String get anywhereSheetSelected => 'Selected';
+
+  @override
+  String get anywhereSheetTileLabel => 'Lock text';
+
+  @override
+  String anywhereSheetSelectedLength(String count) {
+    return '$count characters';
+  }
+
+  @override
+  String get anywhereSheetReadToTheEnd =>
+      'Read it to the end first, then lock it.';
+
+  @override
+  String get anywhereSheetShowMore => 'Show more';
+
+  @override
+  String get anywhereSheetShowLess => 'Show less';
+
+  @override
+  String get anywhereNativeLockTitle => 'Lock a message';
+
+  @override
+  String get anywhereNativeOpenTitle => 'Open a message';
+
+  @override
+  String get anywhereNativeLockIntentDescription =>
+      'Write a message and lock it for one of your people.';
+
+  @override
+  String get anywhereNativeUnlock => 'Unlock';
+
+  @override
+  String get anywhereNativeUseTouchId => 'Unlock with Touch ID';
+
+  @override
+  String get anywhereNativeUseFaceId => 'Unlock with Face ID';
+
+  @override
+  String get anywhereNativeTurnOn =>
+      'Turn on Lock from other apps in Fuzzzy Ink\'s Settings.';
+
+  @override
+  String get anywhereNativeCopiedPressPaste => 'Copied. Press ⌘V to paste it.';
+
+  @override
+  String get anywhereNativeShownInApp => 'It\'s open in Fuzzzy Ink.';
+
+  @override
+  String get anywhereNativeShowApp => 'Show Fuzzzy Ink';
+
+  @override
+  String get anywhereNativeCheck => 'Check';
 }

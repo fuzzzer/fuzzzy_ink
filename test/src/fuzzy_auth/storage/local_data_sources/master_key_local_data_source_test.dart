@@ -92,6 +92,25 @@ void main() {
     verifyNever(() => own.delete(key: MasterKeyLocalDataSource.storeWrapKey));
   });
 
+  test(
+      'a refused wildcard delete still removes the sealed "Lock from other '
+      'apps" settings', () async {
+    when(() => own.deleteAll()).thenThrow(
+      PlatformException(code: 'Unexpected security result code'),
+    );
+    for (final key in [
+      FuzzAnywhereLocalDataSource.settingsKey,
+      FuzzAnywhereLocalDataSource.appPeopleKey,
+    ]) {
+      when(() => own.containsKey(key: key)).thenAnswer((_) async => true);
+    }
+    await expectLater(dataSource.deleteAll(), completes);
+    verify(() => own.delete(key: FuzzAnywhereLocalDataSource.settingsKey))
+        .called(1);
+    verify(() => own.delete(key: FuzzAnywhereLocalDataSource.appPeopleKey))
+        .called(1);
+  });
+
   test('an own entry that is there but cannot be removed fails the erase',
       () async {
     when(() => own.deleteAll()).thenThrow(

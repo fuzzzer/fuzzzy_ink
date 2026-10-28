@@ -34,10 +34,21 @@ import java.util.UUID
  * looper, which runs while the process lives, and it also runs when the
  * activity is destroyed; without focus the clip is cleared with
  * `clearPrimaryClip` (API 28+), which needs no read. The cost: text the user
- * copied in another app within those seconds is cleared too. A killed
- * process clears nothing; Android 13+ then drops the clip after about an hour.
+ * copied in another app within those seconds is cleared too. Sealed output
+ * that "Lock from other apps" copies comes marked sensitive for the same
+ * reason (the person pastes it in another app). A killed process clears
+ * nothing then; its copy is cleared at the app's next start, the first time
+ * the app may look ([clearLeftover]), and Android 13+ drops the clip after
+ * about an hour anyway.
+ *
+ * The guard belongs to the engine, not to one activity: with "Lock from
+ * other apps" the engine outlives [MainActivity] and serves the selection
+ * sheet too (`anywhere/InkEngine.kt`). The activity that shows the app's
+ * screens [attach]es itself; a protection asked for while none is attached is
+ * kept and applied to the next one, so a private screen is never shown
+ * unprotected after the app's activity is built again.
  */
-class Guard(private val activity: Activity) : MethodChannel.MethodCallHandler {
+class Guard(context: Context) : MethodChannel.MethodCallHandler {
 
     companion object {
         const val CHANNEL = "com.fuzzzycore.ink/guard"
@@ -45,15 +56,29 @@ class Guard(private val activity: Activity) : MethodChannel.MethodCallHandler {
 
         /** `ClipDescription.EXTRA_IS_SENSITIVE`, which keyboards read before API 33 too. */
         private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
+
+        /** Once per process: a copy an earlier run left was looked for. */
+        private var isLeftoverChecked = false
     }
 
+    private val appContext = context.applicationContext
     private var ourLabel: String? = null
     private var ourIsSensitive = false
+    private var isSecureAsked = false
     private val handler = Handler(Looper.getMainLooper())
     private val expire = Runnable { clearIfOurs() }
 
+    /** The activity showing the app's screens now; null while none is. */
+    private var activity: Activity? = null
+
     private val clipboard: ClipboardManager
-        get() = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        get() = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    /** [activity] shows the app's screens now: it gets the asked protection. */
+    fun attach(activity: Activity) {
+        this.activity = activity
+        applySecure(activity)
+    }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
@@ -77,7 +102,12 @@ class Guard(private val activity: Activity) : MethodChannel.MethodCallHandler {
     }
 
     private fun setSecure(isSecure: Boolean) {
-        if (isSecure) {
+        isSecureAsked = isSecure
+        activity?.let(::applySecure)
+    }
+
+    private fun applySecure(activity: Activity) {
+        if (isSecureAsked) {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -104,10 +134,29 @@ class Guard(private val activity: Activity) : MethodChannel.MethodCallHandler {
         }
     }
 
-    /** The activity is going away: a sensitive copy does not outlive it. */
-    fun onDestroy() {
+    /**
+     * The app has focus for the first time in this process: a copy an
+     * earlier run made (its label, never its text, says so) and could not
+     * clear because the process was killed goes now, as at a lock.
+     */
+    fun clearLeftover() {
+        if (isLeftoverChecked) return
+        isLeftoverChecked = true
+        val label = clipboard.primaryClipDescription?.label?.toString() ?: return
+        if (!label.startsWith(LABEL_PREFIX) || label == ourLabel) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            clipboard.clearPrimaryClip()
+        } else {
+            clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+        }
+    }
+
+    /** [activity] is going away: a sensitive copy does not outlive it. */
+    fun onDestroy(activity: Activity) {
+        if (this.activity !== activity) return
         handler.removeCallbacks(expire)
         if (ourIsSensitive) clearIfOurs()
+        this.activity = null
     }
 
     /** Answers `cleared`, `notOurs` or `unavailable` (see `ClipboardClearResult`). */
@@ -115,7 +164,7 @@ class Guard(private val activity: Activity) : MethodChannel.MethodCallHandler {
         val label = ourLabel ?: return "notOurs"
         // From Android 10 an app without focus sees no clipboard at all. A
         // sensitive copy is cleared blind; anything else waits for focus.
-        if (!activity.hasWindowFocus()) {
+        if (activity?.hasWindowFocus() != true) {
             if (!ourIsSensitive || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
                 return "unavailable"
             }
