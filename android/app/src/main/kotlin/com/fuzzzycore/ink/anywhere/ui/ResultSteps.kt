@@ -96,6 +96,7 @@ internal fun DoneStep(state: UiState.Done, actions: SheetActions) {
             line = stringResource(
                 when (state.outcome) {
                     Outcome.PutInPlace -> R.string.anywhereSheetPutInPlace
+                    Outcome.PutInPlaceAndCopied -> R.string.anywhereSheetPutInPlaceCopied
                     Outcome.Copied -> R.string.anywhereSheetCopied
                 },
             ),

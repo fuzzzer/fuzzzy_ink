@@ -81,7 +81,9 @@ Notes, method by method:
   exception to "cleared at lock": when `relock` locks the app right after the use that made this copy, that copy
   stays through that lock (its 2-minute clear still runs), or "Lock again after each use" would empty the
   clipboard before the person could paste (found live on the Mac, 2026-10-26). Never
-  copy anything yourself. Android: return `output` as `EXTRA_PROCESS_TEXT` when the field is editable; Mac
+  copy anything yourself. Android: always ask for the copy (`copy: true`), so the locked text can be pasted
+  and sent at once (owner, 2026-10-28), and also return `output` as `EXTRA_PROCESS_TEXT` when the field is
+  editable; Mac
   Services: write `output` to the service pasteboard.
 - **`peek`.** What `text` is, without opening it or spending anything (the core's peek). `kind` is `message`,
   `invite`, `reply`, `passwordText`, `newerApp`, `damaged` or `notFuzzzy`. For a message from one of the person's

@@ -48,6 +48,7 @@
     <string name="anywhereSheetSelectedText">მონიშნული ტექსტი</string>
     <string name="anywhereSheetLockedFor">ჩაიკეტა: %1$s</string>
     <string name="anywhereSheetPutInPlace">ის მონიშნული ტექსტის ადგილას ჩაჯდა.</string>
+    <string name="anywhereSheetPutInPlaceCopied">მონიშნული ტექსტის ადგილას ჩაჯდა და დაკოპირდა. 2 წუთში წაიშლება.</string>
     <string name="anywhereSheetCopied">დაკოპირდა. ჩასვით, სადაც გინდათ. 2 წუთში წაიშლება.</string>
     <string name="anywhereSheetNoPeopleLine">Fuzzzy Ink-ში დაუკავშირდით ვინმეს და დაბრუნდით.</string>
     <string name="anywhereSheetOpenApp">Fuzzzy Ink-ის გახსნა</string>

@@ -145,7 +145,7 @@ sealed interface UiState {
 
 enum class SealedKind { Message, ForTheApp }
 
-enum class Outcome { PutInPlace, Copied }
+enum class Outcome { PutInPlace, PutInPlaceAndCopied, Copied }
 
 enum class LockProblem { EmptyText, Failed }
 

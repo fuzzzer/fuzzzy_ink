@@ -75,6 +75,7 @@ class SheetViewModel(
     }
 
     private fun restart() {
+        if (mutableState.value is UiState.Finished) return
         flow?.cancel()
         flow = viewModelScope.launch { start() }
     }
@@ -269,9 +270,10 @@ class SheetViewModel(
     }
 
     /**
-     * `lock` for the chosen person. An editable selection gets the sealed
-     * output back in its place; anything else is copied by the app's copy
-     * guard (sealed only, cleared after 2 minutes).
+     * `lock` for the chosen person. The sealed output is always copied by
+     * the app's copy guard (sealed only, cleared after 2 minutes), so it can
+     * be pasted and sent at once (owner, 2026-10-28); an editable selection
+     * also gets it back in its place.
      */
     override fun lock() {
         val writing = mutableState.value as? UiState.Writing ?: return
@@ -288,7 +290,7 @@ class SheetViewModel(
         val arguments = buildMap<String, Any?> {
             put("personId", person.id)
             put("text", text)
-            put("copy", !request.canReplace)
+            put("copy", true)
             request.sourceApp?.let { put("sourceApp", it) }
         }
         flow = viewModelScope.launch {
@@ -309,7 +311,8 @@ class SheetViewModel(
         val output = answer.string("output")
         when {
             request.canReplace && output != null -> {
-                mutableState.value = UiState.Done(person.name, Outcome.PutInPlace, returnText = output)
+                val outcome = if (answer.flag("copied")) Outcome.PutInPlaceAndCopied else Outcome.PutInPlace
+                mutableState.value = UiState.Done(person.name, outcome, returnText = output)
                 delay(DONE_PAUSE_MS)
                 finish(output)
             }
@@ -409,7 +412,10 @@ class SheetViewModel(
         mutableState.value = UiState.Problem(kind, name)
     }
 
+    /** Final: nothing still running (a status read, an unlock) can bring a step back. */
     private fun finish(returnText: String? = null) {
+        if (mutableState.value is UiState.Finished) return
+        flow?.cancel()
         countdown?.cancel()
         mutableState.value = UiState.Finished(returnText)
     }

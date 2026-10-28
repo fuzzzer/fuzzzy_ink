@@ -1673,6 +1673,10 @@
   "@anywhereSheetPutInPlace": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, experimental, 2026-10-26)"
   },
+  "anywhereSheetPutInPlaceCopied": "მონიშნული ტექსტის ადგილას ჩაჯდა და დაკოპირდა. 2 წუთში წაიშლება.",
+  "@anywhereSheetPutInPlaceCopied": {
+    "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, 2026-10-28)"
+  },
   "anywhereSheetCopied": "დაკოპირდა. ჩასვით, სადაც გინდათ. 2 წუთში წაიშლება.",
   "@anywhereSheetCopied": {
     "description": "Georgian draft, needs a native read (lock from other apps, the Android sheet, experimental, 2026-10-26)"

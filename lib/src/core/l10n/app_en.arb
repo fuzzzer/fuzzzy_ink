@@ -2882,6 +2882,10 @@
   "@anywhereSheetPutInPlace": {
     "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
   },
+  "anywhereSheetPutInPlaceCopied": "It's in place of your text, and copied. It clears in 2 minutes.",
+  "@anywhereSheetPutInPlaceCopied": {
+    "description": "Lock from other apps, the Android sheet: the locked text replaced the selection and is also copied (owner, 2026-10-28)."
+  },
   "anywhereSheetCopied": "Copied. Paste it where you want. It clears in 2 minutes.",
   "@anywhereSheetCopied": {
     "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."

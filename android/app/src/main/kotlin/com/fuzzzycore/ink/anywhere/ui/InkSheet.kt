@@ -48,6 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fuzzzycore.ink.R
 import com.fuzzzycore.ink.anywhere.SheetActions
 import com.fuzzzycore.ink.anywhere.UiState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -64,14 +66,12 @@ fun InkSheet(
 ) {
     val current by state.collectAsStateWithLifecycle()
     // The person (a swipe, the scrim, back) or the sheet itself is closing it.
+    // Set only by a real close, never by the sheet merely sliding down: the
+    // other app's keyboard can slide it down by itself, and a sheet that
+    // counted that as closing stayed hidden over the other app, an invisible
+    // window that took every tap until Back (owner, 2026-10-28).
     var isClosing by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { value ->
-            if (value == SheetValue.Hidden) isClosing = true
-            true
-        },
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     // The last step on screen stays while the sheet slides away.
     var shown by remember { mutableStateOf<UiState>(UiState.Starting) }
     if (current !is UiState.Finished) shown = current
@@ -79,19 +79,32 @@ fun InkSheet(
     LaunchedEffect(current) {
         val finished = current as? UiState.Finished ?: return@LaunchedEffect
         isClosing = true
-        sheetState.hide()
-        onFinished(finished.returnText)
+        // The activity goes even if the slide down is interrupted or never
+        // ends: a window Android stopped drawing never finishes its animation.
+        try {
+            withTimeoutOrNull(HIDE_LIMIT_MS) { sheetState.hide() }
+        } finally {
+            onFinished(finished.returnText)
+        }
     }
 
     // The other app's keyboard closes while the sheet slides up; the new
     // insets can cut the slide short and leave it hidden. Slide it up again
-    // unless someone is closing it.
+    // unless someone is closing it. And whatever slid it away (the person,
+    // the keyboard, a stalled animation), if it is still headed off screen a
+    // moment later, the activity goes: never an invisible window over the
+    // other app that takes every tap until Back (owner, 2026-10-28).
     LaunchedEffect(sheetState.currentValue, sheetState.targetValue, isClosing) {
-        if (!isClosing &&
-            sheetState.currentValue == SheetValue.Hidden &&
-            sheetState.targetValue == SheetValue.Hidden
-        ) {
-            sheetState.show()
+        if (sheetState.targetValue != SheetValue.Hidden) return@LaunchedEffect
+        if (sheetState.currentValue == SheetValue.Hidden && !isClosing) {
+            delay(RESHOW_DELAY_MS)
+            if (!isClosing) runCatching { sheetState.show() }
+        }
+        delay(HIDDEN_LIMIT_MS)
+        if (sheetState.targetValue == SheetValue.Hidden) {
+            isClosing = true
+            actions.close()
+            onFinished((current as? UiState.Done)?.returnText ?: (current as? UiState.Finished)?.returnText)
         }
     }
 
@@ -106,6 +119,15 @@ fun InkSheet(
         SheetBody(state = shown, actions = actions)
     }
 }
+
+/** A moment for a person's own swipe to report its close before the sheet slides up again. */
+private const val RESHOW_DELAY_MS = 150L
+
+/** How long the sheet may stay headed off screen before the activity goes. */
+private const val HIDDEN_LIMIT_MS = 1_000L
+
+/** The longest the slide down may take before the activity goes anyway. */
+private const val HIDE_LIMIT_MS = 600L
 
 /** The sheet's content for one state; previews render it directly. */
 @Composable

@@ -4282,6 +4282,12 @@ abstract class FuzzzyInkLocalizations {
   /// **'It\'s in place of the text you selected.'**
   String get anywhereSheetPutInPlace;
 
+  /// Lock from other apps, the Android sheet: the locked text replaced the selection and is also copied (owner, 2026-10-28).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s in place of your text, and copied. It clears in 2 minutes.'**
+  String get anywhereSheetPutInPlaceCopied;
+
   /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
   ///
   /// In en, this message translates to:

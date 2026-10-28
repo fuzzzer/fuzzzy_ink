@@ -135,7 +135,21 @@ class SheetViewModelTest {
     private val SheetViewModel.writing get() = state.value as UiState.Writing
 
     @Test
-    fun `an editable selection gets the sealed output back in its place, and only that`() = runTest(dispatcher) {
+    fun `closed while the app is still starting, the sheet stays closed`() = runTest(dispatcher) {
+        app.isStarting = true
+        app.missingCalls = 3
+        val model = SheetViewModel(request(SECRET, canReplace = true), app, app)
+        runCurrent()
+        model.close()
+        app.isStarting = false
+        advanceUntilIdle()
+
+        // A late status answer never brings a step back over the other app.
+        assertEquals(UiState.Finished(null), model.state.value)
+    }
+
+    @Test
+    fun `an editable selection gets the sealed output back in its place, and copied too`() = runTest(dispatcher) {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = true))
         model.choose("nino")
@@ -145,9 +159,9 @@ class SheetViewModelTest {
 
         val lock = app.called("lock").single()
         assertEquals(SECRET, lock["text"])
-        assertEquals(false, lock["copy"])
+        assertEquals(true, lock["copy"])
         assertEquals("com.whatsapp", lock["sourceApp"])
-        assertEquals(UiState.Done("Nino", Outcome.PutInPlace, SEALED), model.state.value)
+        assertEquals(UiState.Done("Nino", Outcome.PutInPlaceAndCopied, SEALED), model.state.value)
 
         advanceUntilIdle()
         assertEquals(UiState.Finished(SEALED), model.state.value)
