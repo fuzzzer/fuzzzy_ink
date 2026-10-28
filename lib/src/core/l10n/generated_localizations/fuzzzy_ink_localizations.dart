@@ -4161,6 +4161,276 @@ abstract class FuzzzyInkLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t read that file. Open it again from where it is.'**
   String get incomingFileUnreadable;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Other apps'**
+  String get anywhereSection;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock from other apps'**
+  String get anywhereLockFromOtherApps;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental'**
+  String get anywhereExperimental;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock again after each use'**
+  String get anywhereLockAgain;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Locking from other apps'**
+  String get infoOtherAppsTitle;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock or open text from another app\'s menu.'**
+  String get infoOtherAppsLine1;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'What you open shows only in Fuzzzy Ink. It never goes back.'**
+  String get infoOtherAppsLine2;
+
+  /// Lock from other apps (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.'**
+  String get infoOtherAppsLine3;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open this locked text?'**
+  String get anywhereSheetOpenTitle;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open it in Fuzzzy Ink'**
+  String get anywhereSheetOpenInInkTitle;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s an invite, a reply or text locked with a password. Fuzzzy Ink shows what comes next.'**
+  String get anywhereSheetOpenInInkLine;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Fuzzzy Ink'**
+  String get anywhereSheetOpenInInkAction;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get anywhereSheetGotIt;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get anywhereSheetChange;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Your selected text'**
+  String get anywhereSheetSelectedText;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Locked for {name}'**
+  String anywhereSheetLockedFor(String name);
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s in place of the text you selected.'**
+  String get anywhereSheetPutInPlace;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. Paste it where you want. It clears in 2 minutes.'**
+  String get anywhereSheetCopied;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with someone in Fuzzzy Ink, then come back.'**
+  String get anywhereSheetNoPeopleLine;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fuzzzy Ink'**
+  String get anywhereSheetOpenApp;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Set up Fuzzzy Ink first'**
+  String get anywhereSheetSetUpTitle;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Make a master password in the app, then come back.'**
+  String get anywhereSheetSetUpLine;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Fuzzzy Ink isn\'t ready'**
+  String get anywhereSheetNotReadyTitle;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fuzzzy Ink, then try again.'**
+  String get anywhereSheetNotReadyLine;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get anywhereSheetFailedTitle;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock to lock or open text here.'**
+  String get anywhereSheetUnlockLine;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get anywhereSheetClose;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Starting Fuzzzy Ink…'**
+  String get anywhereSheetStarting;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get anywhereSheetSelected;
+
+  /// Lock from other apps, the Android sheet (experimental, 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock text'**
+  String get anywhereSheetTileLabel;
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} characters'**
+  String anywhereSheetSelectedLength(String count);
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Read it to the end first, then lock it.'**
+  String get anywhereSheetReadToTheEnd;
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get anywhereSheetShowMore;
+
+  /// Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get anywhereSheetShowLess;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock a message'**
+  String get anywhereNativeLockTitle;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a message'**
+  String get anywhereNativeOpenTitle;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a message and lock it for one of your people.'**
+  String get anywhereNativeLockIntentDescription;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get anywhereNativeUnlock;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Touch ID'**
+  String get anywhereNativeUseTouchId;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Face ID'**
+  String get anywhereNativeUseFaceId;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Lock from other apps in Fuzzzy Ink\'s Settings.'**
+  String get anywhereNativeTurnOn;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. Press ⌘V to paste it.'**
+  String get anywhereNativeCopiedPressPaste;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s open in Fuzzzy Ink.'**
+  String get anywhereNativeShownInApp;
+
+  /// Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Fuzzzy Ink'**
+  String get anywhereNativeShowApp;
+
+  /// Lock from other apps, the Mac panel's Open: checks whose message it is before Open spends it (experimental, security fixes 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get anywhereNativeCheck;
 }
 
 class _FuzzzyInkLocalizationsDelegate

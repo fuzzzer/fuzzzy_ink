@@ -108,6 +108,16 @@ class DependencyInjection {
       BiometricAuthRepository(),
     );
 
+    // "Lock from other apps" (experimental): only in a build that has it.
+    if (fuzzAnywhereEnabled) {
+      sl.safeRegisterSingleton<FuzzAnywhereSettingsRepository>(
+        FuzzAnywhereSettingsRepository(
+          localDataSource: FuzzAnywhereLocalDataSource(),
+          cryptoCoreService: sl.get<CryptoCoreService>(),
+        ),
+      );
+    }
+
     sl.safeRegisterSingleton<AppLockThrottleRepository>(
       AppLockThrottleRepository(
         localDataSource: AppLockThrottleLocalDataSource(),

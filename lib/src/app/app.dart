@@ -34,41 +34,45 @@ class App extends StatelessWidget {
     return GlobalBlocProviders(
       child: GlobalBlocListeners(
         child: AppAutoLock(
-          child: FuzzyLinkListener(
-            // Look and Language from Settings (each "Like my phone" until
-            // the person picks).
-            child: BlocBuilder<ThemeCubit, ThemeState>(
-              builder: (context, look) =>
-                  BlocBuilder<LocalizationCubit, LocalizationState>(
-                builder: (context, language) => MaterialApp.router(
-                  scaffoldMessengerKey: scaffoldMessengerKey,
-                  theme: _paperTheme,
-                  darkTheme: _nightTheme,
-                  themeMode: look.chosenBrightness.themeMode,
-                  locale: language.followsPhone ? null : language.locale,
-                  localizationsDelegates:
-                      FuzzzyInkLocalizations.localizationsDelegates,
-                  supportedLocales: FuzzzyInkLocalizations.supportedLocales,
-                  builder: (context, child) {
-                    final brightness =
-                        switch (look.chosenBrightness.themeMode) {
-                      ThemeMode.dark => Brightness.dark,
-                      ThemeMode.light => Brightness.light,
-                      ThemeMode.system =>
-                        MediaQuery.platformBrightnessOf(context),
-                    };
-                    final theme = brightness == Brightness.dark
-                        ? _nightTheme
-                        : _paperTheme;
-                    return AppSwitcherCover(
-                      ground: theme.extension<FuzzzyColors>()!.ground,
-                      brightness: brightness,
-                      child: child ?? const SizedBox.shrink(),
-                    );
-                  },
-                  routerConfig: AppRouter.router(
-                    navigatorKey: navigatorKey,
+          // "Lock from other apps" (experimental): only its child without
+          // the build flag.
+          child: FuzzAnywhereHost(
+            child: FuzzyLinkListener(
+              // Look and Language from Settings (each "Like my phone" until
+              // the person picks).
+              child: BlocBuilder<ThemeCubit, ThemeState>(
+                builder: (context, look) =>
+                    BlocBuilder<LocalizationCubit, LocalizationState>(
+                  builder: (context, language) => MaterialApp.router(
                     scaffoldMessengerKey: scaffoldMessengerKey,
+                    theme: _paperTheme,
+                    darkTheme: _nightTheme,
+                    themeMode: look.chosenBrightness.themeMode,
+                    locale: language.followsPhone ? null : language.locale,
+                    localizationsDelegates:
+                        FuzzzyInkLocalizations.localizationsDelegates,
+                    supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+                    builder: (context, child) {
+                      final brightness =
+                          switch (look.chosenBrightness.themeMode) {
+                        ThemeMode.dark => Brightness.dark,
+                        ThemeMode.light => Brightness.light,
+                        ThemeMode.system =>
+                          MediaQuery.platformBrightnessOf(context),
+                      };
+                      final theme = brightness == Brightness.dark
+                          ? _nightTheme
+                          : _paperTheme;
+                      return AppSwitcherCover(
+                        ground: theme.extension<FuzzzyColors>()!.ground,
+                        brightness: brightness,
+                        child: child ?? const SizedBox.shrink(),
+                      );
+                    },
+                    routerConfig: AppRouter.router(
+                      navigatorKey: navigatorKey,
+                      scaffoldMessengerKey: scaffoldMessengerKey,
+                    ),
                   ),
                 ),
               ),

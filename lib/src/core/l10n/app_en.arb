@@ -2796,5 +2796,195 @@
   "incomingFileUnreadable": "Couldn't read that file. Open it again from where it is.",
   "@incomingFileUnreadable": {
     "description": "A .fuzz file another app opened in Fuzzzy Ink could not be read (gone, or no permission)."
+  },
+  "anywhereSection": "Other apps",
+  "@anywhereSection": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereLockFromOtherApps": "Lock from other apps",
+  "@anywhereLockFromOtherApps": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereExperimental": "Experimental",
+  "@anywhereExperimental": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereLockAgain": "Lock again after each use",
+  "@anywhereLockAgain": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsTitle": "Locking from other apps",
+  "@infoOtherAppsTitle": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine1": "Lock or open text from another app's menu.",
+  "@infoOtherAppsLine1": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine2": "What you open shows only in Fuzzzy Ink. It never goes back.",
+  "@infoOtherAppsLine2": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "infoOtherAppsLine3": "Text typed in another app may already be saved or synced there. Write private words in Fuzzzy Ink.",
+  "@infoOtherAppsLine3": {
+    "description": "Lock from other apps (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenTitle": "Open this locked text?",
+  "@anywhereSheetOpenTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkTitle": "Open it in Fuzzzy Ink",
+  "@anywhereSheetOpenInInkTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkLine": "It's an invite, a reply or text locked with a password. Fuzzzy Ink shows what comes next.",
+  "@anywhereSheetOpenInInkLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenInInkAction": "Open in Fuzzzy Ink",
+  "@anywhereSheetOpenInInkAction": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetGotIt": "Got it",
+  "@anywhereSheetGotIt": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetChange": "Change",
+  "@anywhereSheetChange": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSelectedText": "Your selected text",
+  "@anywhereSheetSelectedText": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetLockedFor": "Locked for {name}",
+  "@anywhereSheetLockedFor": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "anywhereSheetPutInPlace": "It's in place of the text you selected.",
+  "@anywhereSheetPutInPlace": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetCopied": "Copied. Paste it where you want. It clears in 2 minutes.",
+  "@anywhereSheetCopied": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNoPeopleLine": "Connect with someone in Fuzzzy Ink, then come back.",
+  "@anywhereSheetNoPeopleLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetOpenApp": "Open Fuzzzy Ink",
+  "@anywhereSheetOpenApp": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSetUpTitle": "Set up Fuzzzy Ink first",
+  "@anywhereSheetSetUpTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSetUpLine": "Make a master password in the app, then come back.",
+  "@anywhereSheetSetUpLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNotReadyTitle": "Fuzzzy Ink isn't ready",
+  "@anywhereSheetNotReadyTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetNotReadyLine": "Open Fuzzzy Ink, then try again.",
+  "@anywhereSheetNotReadyLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetFailedTitle": "Something went wrong",
+  "@anywhereSheetFailedTitle": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetUnlockLine": "Unlock to lock or open text here.",
+  "@anywhereSheetUnlockLine": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetClose": "Close",
+  "@anywhereSheetClose": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetStarting": "Starting Fuzzzy Ink…",
+  "@anywhereSheetStarting": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSelected": "Selected",
+  "@anywhereSheetSelected": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetTileLabel": "Lock text",
+  "@anywhereSheetTileLabel": {
+    "description": "Lock from other apps, the Android sheet (experimental, 2026-10-26)."
+  },
+  "anywhereSheetSelectedLength": "{count} characters",
+  "@anywhereSheetSelectedLength": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26).",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "anywhereSheetReadToTheEnd": "Read it to the end first, then lock it.",
+  "@anywhereSheetReadToTheEnd": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
+  "anywhereSheetShowMore": "Show more",
+  "@anywhereSheetShowMore": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
+  "anywhereSheetShowLess": "Show less",
+  "@anywhereSheetShowLess": {
+    "description": "Lock from other apps, the selected text another app sent (Android sheet and Mac panel, experimental, security fixes 2026-10-26)."
+  },
+  "anywhereNativeLockTitle": "Lock a message",
+  "@anywhereNativeLockTitle": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeOpenTitle": "Open a message",
+  "@anywhereNativeOpenTitle": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeLockIntentDescription": "Write a message and lock it for one of your people.",
+  "@anywhereNativeLockIntentDescription": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeUnlock": "Unlock",
+  "@anywhereNativeUnlock": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeUseTouchId": "Unlock with Touch ID",
+  "@anywhereNativeUseTouchId": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeUseFaceId": "Unlock with Face ID",
+  "@anywhereNativeUseFaceId": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeTurnOn": "Turn on Lock from other apps in Fuzzzy Ink's Settings.",
+  "@anywhereNativeTurnOn": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeCopiedPressPaste": "Copied. Press ⌘V to paste it.",
+  "@anywhereNativeCopiedPressPaste": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeShownInApp": "It's open in Fuzzzy Ink.",
+  "@anywhereNativeShownInApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeShowApp": "Show Fuzzzy Ink",
+  "@anywhereNativeShowApp": {
+    "description": "Lock from other apps, native Mac and iPhone sheets (experimental, 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
+  },
+  "anywhereNativeCheck": "Check",
+  "@anywhereNativeCheck": {
+    "description": "Lock from other apps, the Mac panel's Open: checks whose message it is before Open spends it (experimental, security fixes 2026-10-26); generated into apple/Anywhere/Strings by tools/native_strings/apple_strings.dart."
   }
 }

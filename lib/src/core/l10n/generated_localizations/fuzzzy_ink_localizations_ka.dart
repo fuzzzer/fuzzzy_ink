@@ -2377,4 +2377,156 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   @override
   String get incomingFileUnreadable =>
       'ფაილის წაკითხვა ვერ მოხერხდა. ხელახლა გახსენით იქიდან, სადაც არის.';
+
+  @override
+  String get anywhereSection => 'სხვა აპები';
+
+  @override
+  String get anywhereLockFromOtherApps => 'ჩაკეტვა სხვა აპებიდან';
+
+  @override
+  String get anywhereExperimental => 'ექსპერიმენტული';
+
+  @override
+  String get anywhereLockAgain => 'ყოველი გამოყენების შემდეგ ჩაკეტვა';
+
+  @override
+  String get infoOtherAppsTitle => 'ჩაკეტვა სხვა აპებიდან';
+
+  @override
+  String get infoOtherAppsLine1 =>
+      'ჩაკეტეთ ან გახსენით ტექსტი სხვა აპის მენიუდან.';
+
+  @override
+  String get infoOtherAppsLine2 =>
+      'რასაც ხსნით, მხოლოდ Fuzzzy Ink-ში ჩანს. უკან არასდროს ბრუნდება.';
+
+  @override
+  String get infoOtherAppsLine3 =>
+      'სხვა აპში აკრეფილი ტექსტი შეიძლება იქ უკვე შენახული ან სინქრონიზებული იყოს. პირადი სიტყვები Fuzzzy Ink-ში დაწერეთ.';
+
+  @override
+  String get anywhereSheetOpenTitle => 'გავხსნათ ეს ჩაკეტილი ტექსტი?';
+
+  @override
+  String get anywhereSheetOpenInInkTitle => 'გახსენით Fuzzzy Ink-ში';
+
+  @override
+  String get anywhereSheetOpenInInkLine =>
+      'ეს არის მოწვევა, პასუხი ან პაროლით ჩაკეტილი ტექსტი. Fuzzzy Ink გაჩვენებთ, რა არის შემდეგ.';
+
+  @override
+  String get anywhereSheetOpenInInkAction => 'Fuzzzy Ink-ში გახსნა';
+
+  @override
+  String get anywhereSheetGotIt => 'გასაგებია';
+
+  @override
+  String get anywhereSheetChange => 'შეცვლა';
+
+  @override
+  String get anywhereSheetSelectedText => 'მონიშნული ტექსტი';
+
+  @override
+  String anywhereSheetLockedFor(String name) {
+    return 'ჩაიკეტა: $name';
+  }
+
+  @override
+  String get anywhereSheetPutInPlace => 'ის მონიშნული ტექსტის ადგილას ჩაჯდა.';
+
+  @override
+  String get anywhereSheetCopied =>
+      'დაკოპირდა. ჩასვით, სადაც გინდათ. 2 წუთში წაიშლება.';
+
+  @override
+  String get anywhereSheetNoPeopleLine =>
+      'Fuzzzy Ink-ში დაუკავშირდით ვინმეს და დაბრუნდით.';
+
+  @override
+  String get anywhereSheetOpenApp => 'Fuzzzy Ink-ის გახსნა';
+
+  @override
+  String get anywhereSheetSetUpTitle => 'ჯერ Fuzzzy Ink მოამზადეთ';
+
+  @override
+  String get anywhereSheetSetUpLine =>
+      'აპში შექმენით მთავარი პაროლი და დაბრუნდით.';
+
+  @override
+  String get anywhereSheetNotReadyTitle => 'Fuzzzy Ink მზად არ არის';
+
+  @override
+  String get anywhereSheetNotReadyLine =>
+      'გახსენით Fuzzzy Ink და სცადეთ თავიდან.';
+
+  @override
+  String get anywhereSheetFailedTitle => 'რაღაც ვერ გამოვიდა';
+
+  @override
+  String get anywhereSheetUnlockLine =>
+      'აქ ტექსტის ჩასაკეტად ან გასახსნელად ჯერ განბლოკეთ.';
+
+  @override
+  String get anywhereSheetClose => 'დახურვა';
+
+  @override
+  String get anywhereSheetStarting => 'Fuzzzy Ink იხსნება…';
+
+  @override
+  String get anywhereSheetSelected => 'არჩეულია';
+
+  @override
+  String get anywhereSheetTileLabel => 'ტექსტის ჩაკეტვა';
+
+  @override
+  String anywhereSheetSelectedLength(String count) {
+    return '$count სიმბოლო';
+  }
+
+  @override
+  String get anywhereSheetReadToTheEnd =>
+      'ჯერ ბოლომდე წაიკითხეთ, მერე ჩაკეტეთ.';
+
+  @override
+  String get anywhereSheetShowMore => 'მეტის ჩვენება';
+
+  @override
+  String get anywhereSheetShowLess => 'ნაკლების ჩვენება';
+
+  @override
+  String get anywhereNativeLockTitle => 'შეტყობინების ჩაკეტვა';
+
+  @override
+  String get anywhereNativeOpenTitle => 'შეტყობინების გახსნა';
+
+  @override
+  String get anywhereNativeLockIntentDescription =>
+      'დაწერეთ შეტყობინება და ჩაკეტეთ თქვენი ერთ-ერთი ადამიანისთვის.';
+
+  @override
+  String get anywhereNativeUnlock => 'განბლოკვა';
+
+  @override
+  String get anywhereNativeUseTouchId => 'Touch ID-ით განბლოკვა';
+
+  @override
+  String get anywhereNativeUseFaceId => 'Face ID-ით განბლოკვა';
+
+  @override
+  String get anywhereNativeTurnOn =>
+      'ჩართეთ „ჩაკეტვა სხვა აპებიდან“ Fuzzzy Ink-ის პარამეტრებში.';
+
+  @override
+  String get anywhereNativeCopiedPressPaste =>
+      'დაკოპირდა. ჩასასმელად დააჭირეთ ⌘V-ს.';
+
+  @override
+  String get anywhereNativeShownInApp => 'Fuzzzy Ink-ში გაიხსნა.';
+
+  @override
+  String get anywhereNativeShowApp => 'Fuzzzy Ink-ის ჩვენება';
+
+  @override
+  String get anywhereNativeCheck => 'შემოწმება';
 }
