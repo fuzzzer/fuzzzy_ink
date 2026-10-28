@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +49,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fuzzzycore.ink.R
 import com.fuzzzycore.ink.anywhere.SheetActions
 import com.fuzzzycore.ink.anywhere.UiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.StateFlow
 
@@ -88,23 +91,34 @@ fun InkSheet(
         }
     }
 
-    // The other app's keyboard closes while the sheet slides up; the new
-    // insets can cut the slide short and leave it hidden. Slide it up again
-    // unless someone is closing it. And whatever slid it away (the person,
-    // the keyboard, a stalled animation), if it is still headed off screen a
+    // The other app's keyboard (or a fingerprint prompt) can slide the sheet
+    // down by itself. One watcher for the whole sheet slides it up again,
+    // unless someone is closing it, and if it is still headed off screen a
     // moment later, the activity goes: never an invisible window over the
     // other app that takes every tap until Back (owner, 2026-10-28).
-    LaunchedEffect(sheetState.currentValue, sheetState.targetValue, isClosing) {
-        if (sheetState.targetValue != SheetValue.Hidden) return@LaunchedEffect
-        if (sheetState.currentValue == SheetValue.Hidden && !isClosing) {
-            delay(RESHOW_DELAY_MS)
-            if (!isClosing) runCatching { sheetState.show() }
-        }
-        delay(HIDDEN_LIMIT_MS)
-        if (sheetState.targetValue == SheetValue.Hidden) {
-            isClosing = true
-            actions.close()
-            onFinished((current as? UiState.Done)?.returnText ?: (current as? UiState.Finished)?.returnText)
+    // It is not keyed on the sheet's values: a watcher restarted by every
+    // change cancelled its own slide up, which changes them, over and over,
+    // and never reached the close.
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        var reshow: Job? = null
+        var offScreenFor = 0L
+        while (true) {
+            delay(WATCH_STEP_MS)
+            if (sheetState.targetValue != SheetValue.Hidden) {
+                offScreenFor = 0L
+                continue
+            }
+            if (sheetState.currentValue == SheetValue.Hidden && !isClosing && reshow?.isActive != true) {
+                reshow = scope.launch { withTimeoutOrNull(HIDE_LIMIT_MS) { sheetState.show() } }
+            }
+            offScreenFor += WATCH_STEP_MS
+            if (offScreenFor >= HIDDEN_LIMIT_MS) {
+                isClosing = true
+                actions.close()
+                onFinished((current as? UiState.Done)?.returnText ?: (current as? UiState.Finished)?.returnText)
+                break
+            }
         }
     }
 
@@ -120,11 +134,11 @@ fun InkSheet(
     }
 }
 
-/** A moment for a person's own swipe to report its close before the sheet slides up again. */
-private const val RESHOW_DELAY_MS = 150L
+/** How often the watcher looks at the sheet; also the moment a person's own swipe has to report its close. */
+private const val WATCH_STEP_MS = 200L
 
 /** How long the sheet may stay headed off screen before the activity goes. */
-private const val HIDDEN_LIMIT_MS = 1_000L
+private const val HIDDEN_LIMIT_MS = 1_200L
 
 /** The longest the slide down may take before the activity goes anyway. */
 private const val HIDE_LIMIT_MS = 600L
