@@ -60,8 +60,23 @@ definitions:
       echo "CARGO_ENCODED_RUSTFLAGS=--remap-path-prefix=$HOME/.cargo/registry/src=/cargo/registry/src" >> "$CM_ENV"
 
   route_design_kit_over_ssh: &route_design_kit_over_ssh
-    name: Route the private fuzzzy_ui_kit dependency over SSH
-    script: git config --global url."git@github.com:fuzzzy-bot/fuzzy_design.git".insteadOf "https://github.com/fuzzzy-bot/fuzzy_design.git"
+    name: Route the private fuzzzy_ui_kit and fuzzzy_cast dependencies over SSH
+    # The design kit comes through Codemagic's agent (FUZZY_DESIGN_SSH_KEY). fuzzzy_cast lives in
+    # fuzzzer/fuzzzy_assets under its own read-only deploy key, offered only to that host alias
+    # (IdentitiesOnly). It is named *_DEPLOY_KEY, not *_SSH_KEY: a second agent key breaks the
+    # design-kit fetch.
+    script: |
+      set -euo pipefail
+      test -n "${FUZZZY_ASSETS_DEPLOY_KEY:-}" || { echo "FUZZZY_ASSETS_DEPLOY_KEY is not set (group fuzzzycore_deps)"; exit 1; }
+      mkdir -p ~/.ssh && chmod 700 ~/.ssh
+      (umask 077; printf '%s\n' "$FUZZZY_ASSETS_DEPLOY_KEY" > ~/.ssh/fuzzzy_assets_deploy_key)
+      printf '%s\n' \
+        "Host github-fuzzzy-assets" "  HostName github.com" "  HostKeyAlias github.com" "  User git" \
+        "  IdentityFile ~/.ssh/fuzzzy_assets_deploy_key" "  IdentitiesOnly yes" >> ~/.ssh/config
+      chmod 600 ~/.ssh/config
+      git config --global url."git@github.com:fuzzzy-bot/fuzzy_design.git".insteadOf "https://github.com/fuzzzy-bot/fuzzy_design.git"
+      git config --global url."git@github-fuzzzy-assets:fuzzzer/fuzzzy_assets.git".insteadOf "https://github.com/fuzzzy-bot/fuzzzy_assets.git"
+      git config --global --add url."git@github-fuzzzy-assets:fuzzzer/fuzzzy_assets.git".insteadOf "https://github.com/fuzzzer/fuzzzy_assets.git"
 
   pub_get: &pub_get
     name: Flutter pub get
