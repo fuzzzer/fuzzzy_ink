@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -30,21 +31,22 @@ import androidx.compose.ui.unit.dp
 import com.fuzzzycore.ink.R
 
 @Composable
-internal fun StepTitle(text: String) {
+internal fun StepTitle(text: String, tag: String = "anywhere.step.title") {
     Text(
         text = text,
         style = MaterialTheme.typography.headlineSmall,
         color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.semantics { heading() },
+        modifier = Modifier.semantics { heading() }.testTag(tag),
     )
 }
 
 @Composable
-internal fun StepLine(text: String) {
+internal fun StepLine(text: String, tag: String = "anywhere.step.line") {
     Text(
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.testTag(tag),
     )
 }
 
@@ -55,16 +57,16 @@ internal fun StepError(text: String) {
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.error,
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }.testTag("anywhere.step.error"),
     )
 }
 
-/** Title and line, close together. */
+/** Title and line, close together; [tag] names them for tests ("<tag>.title", "<tag>.line"). */
 @Composable
-internal fun StepHeading(title: String, line: String?) {
+internal fun StepHeading(title: String, line: String?, tag: String = "anywhere.step") {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        StepTitle(title)
-        if (line != null) StepLine(line)
+        StepTitle(title, tag = "$tag.title")
+        if (line != null) StepLine(line, tag = "$tag.line")
     }
 }
 
@@ -73,6 +75,7 @@ internal fun StepHeading(title: String, line: String?) {
 internal fun MainButton(
     label: String,
     onClick: () -> Unit,
+    tag: String,
     enabled: Boolean = true,
     isBusy: Boolean = false,
 ) {
@@ -81,7 +84,8 @@ internal fun MainButton(
         enabled = enabled && !isBusy,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 52.dp),
+            .heightIn(min = 52.dp)
+            .testTag(tag),
     ) {
         AnimatedContent(
             targetState = isBusy,

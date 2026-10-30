@@ -206,7 +206,8 @@ class AccessNote extends StatelessWidget {
     final bold = this.bold;
     final trailing = this.trailing;
 
-    return Container(
+    final qaId = this.qaId;
+    final note = Container(
       key: qaId == null ? null : Key('note.$qaId'),
       padding: EdgeInsets.symmetric(horizontal: space.m, vertical: space.s),
       decoration: BoxDecoration(
@@ -252,6 +253,10 @@ class AccessNote extends StatelessWidget {
         ],
       ),
     );
+    // An id of its own for tests and screen readers' tools (Fuzzzy Tester).
+    return qaId == null
+        ? note
+        : Semantics(container: true, identifier: 'note.$qaId', child: note);
   }
 }
 

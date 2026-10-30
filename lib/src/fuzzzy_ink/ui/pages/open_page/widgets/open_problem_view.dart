@@ -115,7 +115,12 @@ class OpenProblemView extends StatelessWidget {
                 qaId: 'open.problem.${problem.name}',
               ),
             ),
-            FlowTitle(title: title, line: line),
+            // Its own id per kind, the title and line read as one.
+            Semantics(
+              container: true,
+              identifier: 'open.problem.${problem.name}.text',
+              child: FlowTitle(title: title, line: line),
+            ),
             if (problem == OpenProblem.alreadyOpened) ...[
               SizedBox(height: context.fuzzzySpace.s),
               const Center(

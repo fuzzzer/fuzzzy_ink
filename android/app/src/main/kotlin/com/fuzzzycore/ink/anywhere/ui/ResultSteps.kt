@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -63,9 +64,14 @@ internal fun SealedStep(state: UiState.Sealed, actions: SheetActions) {
                     if (state.kind == SealedKind.Message) R.string.openLinkOpen else R.string.anywhereSheetOpenInInkAction,
                 ),
                 onClick = actions::open,
+                tag = "btn.anywhere.open",
                 isBusy = state.isBusy,
             )
-            TextButton(onClick = actions::close, enabled = !state.isBusy, modifier = Modifier.fillMaxWidth()) {
+            TextButton(
+                onClick = actions::close,
+                enabled = !state.isBusy,
+                modifier = Modifier.fillMaxWidth().testTag("btn.anywhere.notNow"),
+            ) {
                 Text(stringResource(R.string.openLinkNotNow))
             }
         }
@@ -108,13 +114,22 @@ internal fun DoneStep(state: UiState.Done, actions: SheetActions) {
             ),
         )
         if (state.canCopy) {
-            MainButton(label = stringResource(R.string.anywhereSheetCopy), onClick = actions::copy, isBusy = state.isCopying)
-            TextButton(onClick = actions::close, enabled = !state.isCopying, modifier = Modifier.fillMaxWidth()) {
+            MainButton(
+                label = stringResource(R.string.anywhereSheetCopy),
+                onClick = actions::copy,
+                tag = "btn.anywhere.copy",
+                isBusy = state.isCopying,
+            )
+            TextButton(
+                onClick = actions::close,
+                enabled = !state.isCopying,
+                modifier = Modifier.fillMaxWidth().testTag("btn.anywhere.done"),
+            ) {
                 Text(stringResource(R.string.anywhereSheetDone))
             }
             AutoCopyRow(isOn = state.copiesAutomatically, onChange = actions::setAutoCopy)
         } else if (state.outcome == Outcome.Copied) {
-            MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close)
+            MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close, tag = "btn.anywhere.ok")
             // Copied by itself: the switch shows that it is on, and turns it off here.
             if (state.copiesAutomatically || state.wasCopiedAutomatically) {
                 AutoCopyRow(isOn = state.copiesAutomatically, onChange = actions::setAutoCopy)
@@ -131,7 +146,8 @@ private fun AutoCopyRow(isOn: Boolean, onChange: (Boolean) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .toggleable(value = isOn, role = Role.Switch, onValueChange = onChange)
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .testTag("toggle.anywhere.copyAutomatically"),
     ) {
         Text(
             text = stringResource(R.string.anywhereSheetCopyAutomatically),
@@ -162,6 +178,7 @@ internal fun ProblemStep(state: UiState.Problem, actions: SheetActions) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         StepBadge(Icons.Outlined.Info, MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.colorScheme.onSurfaceVariant)
         StepHeading(
+            tag = "anywhere.problem.${state.kind.name}",
             title = stringResource(title),
             // A line that names someone is left out when the name is not known.
             line = when {
@@ -171,9 +188,9 @@ internal fun ProblemStep(state: UiState.Problem, actions: SheetActions) {
             },
         )
         if (state.kind.opensTheApp) {
-            MainButton(label = stringResource(R.string.anywhereSheetOpenApp), onClick = actions::openApp)
+            MainButton(label = stringResource(R.string.anywhereSheetOpenApp), onClick = actions::openApp, tag = "btn.anywhere.openApp")
         } else {
-            MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close)
+            MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close, tag = "btn.anywhere.ok")
         }
     }
 }

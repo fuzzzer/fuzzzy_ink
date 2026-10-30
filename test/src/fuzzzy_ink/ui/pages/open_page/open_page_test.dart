@@ -634,6 +634,22 @@ void main() {
       }
     }
 
+    testWidgets('the title and line carry an id per kind, read as one',
+        (tester) async {
+      final semantics = tester.ensureSemantics();
+      show(
+        const OpenFlowState(
+          phase: OpenPhase.problem,
+          problem: OpenProblem.damaged,
+        ),
+      );
+      await pumpOpen(tester);
+      final node = tester.getSemantics(find.text("Can't open this"));
+      expect(node.identifier, 'open.problem.damaged.text');
+      expect(node.label, startsWith("Can't open this\n"));
+      semantics.dispose();
+    });
+
     testWidgets('Back starts over', (tester) async {
       show(
         const OpenFlowState(

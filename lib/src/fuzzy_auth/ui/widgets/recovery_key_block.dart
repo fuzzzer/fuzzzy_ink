@@ -70,15 +70,19 @@ class RecoveryKeyBlock extends StatelessWidget {
             // Plain Text: never selectable, so never copyable.
             child: Column(
               children: [
-                for (final line in lines)
-                  Text(
-                    line,
-                    textAlign: TextAlign.center,
-                    style: context.fuzzzyTextStyles.dataL.copyWith(
-                      color: colors.ink,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.4,
-                      wordSpacing: 6,
+                for (final (index, line) in lines.indexed)
+                  Semantics(
+                    container: true,
+                    identifier: 'recoveryKey.line${index + 1}',
+                    child: Text(
+                      line,
+                      textAlign: TextAlign.center,
+                      style: context.fuzzzyTextStyles.dataL.copyWith(
+                        color: colors.ink,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.4,
+                        wordSpacing: 6,
+                      ),
                     ),
                   ),
               ],

@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -89,7 +90,8 @@ internal fun WritingStep(state: UiState.Writing, actions: SheetActions) {
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focus),
+                        .focusRequester(focus)
+                        .testTag("field.anywhere.draft"),
                 )
             }
         }
@@ -103,6 +105,7 @@ internal fun WritingStep(state: UiState.Writing, actions: SheetActions) {
                 label = person?.let { stringResource(R.string.lockForName, it.name) }
                     ?: stringResource(R.string.lockWhoTitle),
                 onClick = actions::lock,
+                tag = "btn.anywhere.lock",
                 enabled = state.canLock,
                 isBusy = state.isLocking,
             )
@@ -202,7 +205,7 @@ private fun DraftNoteCard(onDismiss: () -> Unit) {
             TextButton(
                 onClick = onDismiss,
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onTertiaryContainer),
-                modifier = Modifier.align(Alignment.End),
+                modifier = Modifier.align(Alignment.End).testTag("btn.anywhere.gotIt"),
             ) {
                 Text(stringResource(R.string.anywhereSheetGotIt))
             }

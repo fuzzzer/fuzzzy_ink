@@ -39,10 +39,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,9 +54,9 @@ import com.fuzzzycore.ink.anywhere.SheetActions
 import com.fuzzzycore.ink.anywhere.UiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * The sheet over the other app. It slides up on its own spring, changes
@@ -144,13 +147,19 @@ private const val HIDDEN_LIMIT_MS = 1_200L
 private const val HIDE_LIMIT_MS = 600L
 
 /** The sheet's content for one state; previews render it directly. */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SheetBody(state: UiState, actions: SheetActions) {
     val title = stringResource(R.string.fuzzzyInk)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .semantics { paneTitle = title }
+            // Its tags are ids in the screen tree, for tests (Fuzzzy Tester).
+            .semantics {
+                paneTitle = title
+                testTagsAsResourceId = true
+            }
+            .testTag("anywhere.sheet")
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .padding(bottom = 24.dp)

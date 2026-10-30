@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
@@ -42,6 +43,38 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+  });
+
+  testWidgets('each key line and a note carry ids of their own',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+    await pumpRedesign(
+      tester,
+      const Column(
+        children: [
+          AccessNote(
+            tone: AccessNoteTone.warning,
+            text: 'Old people and My safe were removed.',
+            qaId: 'setup.previousData',
+          ),
+          RecoveryKeyBlock(
+            qaId: 'setup',
+            recoveryKey: 'K7QF 3MZD 8WTR PX2N LC5H 9VBA T4EJ 6YRU',
+          ),
+        ],
+      ),
+      private: true,
+      surface: const Size(320, 640),
+    );
+    SemanticsNode node(String text) => tester.getSemantics(find.text(text));
+    expect(node('K7QF 3MZD 8WTR PX2N').identifier, 'recoveryKey.line1');
+    expect(node('K7QF 3MZD 8WTR PX2N').label, 'K7QF 3MZD 8WTR PX2N');
+    expect(node('LC5H 9VBA T4EJ 6YRU').identifier, 'recoveryKey.line2');
+    expect(
+      node('Old people and My safe were removed.').identifier,
+      'note.setup.previousData',
+    );
+    semantics.dispose();
   });
 
   group('LockoutCountdownBar', () {

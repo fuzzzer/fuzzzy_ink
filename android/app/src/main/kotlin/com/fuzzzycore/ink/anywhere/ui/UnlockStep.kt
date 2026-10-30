@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -70,7 +71,8 @@ internal fun UnlockStep(state: UiState.Locked, actions: SheetActions) {
                 enabled = !state.isBusy && state.waitSeconds == 0,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 52.dp),
+                    .heightIn(min = 52.dp)
+                    .testTag("btn.anywhere.biometric"),
             ) {
                 Icon(Icons.Filled.Face, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
                 Text(stringResource(R.string.accessUseBio), modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
@@ -80,6 +82,7 @@ internal fun UnlockStep(state: UiState.Locked, actions: SheetActions) {
         MainButton(
             label = stringResource(R.string.chatAuthUnlock),
             onClick = actions::unlockWithPassword,
+            tag = "btn.anywhere.unlock",
             enabled = state.password.isNotEmpty() && state.waitSeconds == 0,
             isBusy = state.isBusy,
         )
@@ -131,7 +134,8 @@ private fun PasswordField(state: UiState.Locked, actions: SheetActions) {
             supportingText = message?.let { { StepErrorText(it, isError = state.isWrong || state.waitSeconds > 0) } },
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focus),
+                .focusRequester(focus)
+                .testTag("field.anywhere.password"),
         )
     }
 }

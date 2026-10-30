@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -41,11 +42,13 @@ internal fun PeopleList(people: List<Person>, selectedId: String?, onChoose: (St
             PersonRow(
                 person = person,
                 isSelected = isSelected,
-                modifier = Modifier.selectable(
-                    selected = isSelected,
-                    role = Role.RadioButton,
-                    onClick = { onChoose(person.id) },
-                ),
+                modifier = Modifier
+                    .selectable(
+                        selected = isSelected,
+                        role = Role.RadioButton,
+                        onClick = { onChoose(person.id) },
+                    )
+                    .testTag("row.anywhere.person"),
                 trailing = { RadioButton(selected = isSelected, onClick = null) },
             )
         }
@@ -60,7 +63,7 @@ internal fun ChosenPerson(person: Person, canChange: Boolean, onChange: () -> Un
         isSelected = true,
         trailing = {
             if (canChange) {
-                TextButton(onClick = onChange) { Text(stringResource(R.string.anywhereSheetChange)) }
+                TextButton(onClick = onChange, modifier = Modifier.testTag("btn.anywhere.change")) { Text(stringResource(R.string.anywhereSheetChange)) }
             }
         },
     )
