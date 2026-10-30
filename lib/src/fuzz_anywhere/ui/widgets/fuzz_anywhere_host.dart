@@ -74,11 +74,30 @@ class _FuzzAnywhereHostState extends State<FuzzAnywhereHost> {
   }
 
   /// The opened message on the history item screen (private, behind the
-  /// lock); done when it is closed, or dropped by a lock.
+  /// lock); done when it is closed, or dropped by a lock, or taken away
+  /// by anything else. A push's own future completes only when its page is
+  /// popped: a page that another place replaces (`go`, `restore`) never
+  /// completes it, and "Lock again after each use" would then wait forever
+  /// (Fuzzzy Tester, 1.1.5+12: the relock was skipped once).
   static Future<void> _showOpened(HistoryItemPagePayload payload) async {
     final router = AppRouter.routerInstance;
     if (router == null) return;
-    await router.push<void>(AppRouter.personItem, extra: payload);
+    final gone = Completer<void>();
+    void onGone() {
+      if (!gone.isCompleted) gone.complete();
+    }
+
+    final closed = router.push<void>(
+      AppRouter.personItem,
+      extra: HistoryItemPagePayload(
+        chat: payload.chat,
+        message: payload.message,
+        fileSize: payload.fileSize,
+        onGone: onGone,
+      ),
+    );
+    unawaited(closed.whenComplete(onGone));
+    await gone.future;
   }
 
   /// The app's Open screen with a sealed text filled in ("Open in Fuzzzy

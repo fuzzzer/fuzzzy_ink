@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../../helpers/people_harness.dart';
@@ -180,5 +183,58 @@ void main() {
       find.text("Save gives you a normal copy. Then it's yours."),
       findsOneWidget,
     );
+  });
+
+  testWidgets(
+      'says when it has left, also when another place replaces it, which '
+      'completes no push (the "Lock again after each use" gap)',
+      (tester) async {
+    var gone = 0;
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const Scaffold(body: Text('home')),
+        ),
+        GoRoute(
+          path: AppRouter.personItem,
+          builder: (_, state) => HistoryItemPage(
+            payload: state.extra! as HistoryItemPagePayload,
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(
+        theme: FuzzzyTheme.build(inkPack, FuzzzySkin.night),
+        localizationsDelegates: FuzzzyInkLocalizations.localizationsDelegates,
+        supportedLocales: FuzzzyInkLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
+    );
+
+    var pushCompleted = false;
+    unawaited(
+      router
+          .push<void>(
+            AppRouter.personItem,
+            extra: HistoryItemPagePayload(
+              chat: personChat(),
+              message: _message(isSent: false),
+              onGone: () => gone++,
+            ),
+          )
+          .whenComplete(() => pushCompleted = true),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('The keys are under the blue pot.'), findsOneWidget);
+
+    router.go('/');
+    await tester.pumpAndSettle();
+    expect(find.text('home'), findsOneWidget);
+    expect(pushCompleted, isFalse);
+    expect(gone, 1);
   });
 }

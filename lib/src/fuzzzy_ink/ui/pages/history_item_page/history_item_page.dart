@@ -22,14 +22,38 @@ class HistoryItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ChatFileCubit>(
+    final page = BlocProvider<ChatFileCubit>(
       create: (_) => ChatFileCubit(
         cryptoCoreService: sl.get<CryptoCoreService>(),
         userFileStore: sl.get<UserFileStore>(),
       ),
       child: ProvidedHistoryItemPage(payload: payload),
     );
+    final onGone = payload.onGone;
+    return onGone == null ? page : _OnGone(onGone: onGone, child: page);
   }
+}
+
+/// Says when the screen has left the app for good.
+class _OnGone extends StatefulWidget {
+  const _OnGone({required this.onGone, required this.child});
+
+  final VoidCallback onGone;
+  final Widget child;
+
+  @override
+  State<_OnGone> createState() => _OnGoneState();
+}
+
+class _OnGoneState extends State<_OnGone> {
+  @override
+  void dispose() {
+    widget.onGone();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class ProvidedHistoryItemPage extends StatelessWidget {
