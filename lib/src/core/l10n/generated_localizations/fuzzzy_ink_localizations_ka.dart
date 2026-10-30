@@ -760,6 +760,14 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
       'ვიპოვეთ დაკოპირებულში. შეამოწმეთ ან თავად ჩასვით.';
 
   @override
+  String openPasteFoundMany(int count, int index) {
+    return 'დაკოპირებულში $count ვიპოვეთ. ეს არის $index / $count: გახსენით, მერე დაბრუნდით შემდეგისთვის.';
+  }
+
+  @override
+  String get openPasteNext => 'შემდეგის ჩვენება';
+
+  @override
   String get openPasteNotFound =>
       'დაკოპირებულში ჩაკეტილი არაფერია. თავად ჩასვით.';
 

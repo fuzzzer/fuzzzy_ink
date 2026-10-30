@@ -754,6 +754,14 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
       'Found in what you copied. Check it, or paste your own.';
 
   @override
+  String openPasteFoundMany(int count, int index) {
+    return '$count found in what you copied. This is $index of $count: open it, then come back for the next.';
+  }
+
+  @override
+  String get openPasteNext => 'Show the next one';
+
+  @override
   String get openPasteNotFound =>
       'What you copied has nothing locked in it. Paste it yourself.';
 

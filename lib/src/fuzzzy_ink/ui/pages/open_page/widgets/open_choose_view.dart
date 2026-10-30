@@ -12,7 +12,9 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 ///
 /// Paste it never opens the whole clipboard: it shows a box with only the
 /// locked part found in what was copied, to check, change or replace by
-/// pasting by hand, and opens on Open (owner, 2026-10-28).
+/// pasting by hand, and opens on Open (owner, 2026-10-28). When it found
+/// more than one, it says how many and shows them one at a time
+/// (owner, 2026-10-30).
 class OpenChooseView extends StatefulWidget {
   const OpenChooseView({super.key, required this.onClose});
 
@@ -32,6 +34,10 @@ class _OpenChooseViewState extends State<OpenChooseView> {
   /// Null while choosing; set while the paste box is shown.
   _Copied? _copied;
 
+  /// Every locked part found in what was copied, and the one in the box.
+  List<String> _found = const [];
+  int _shownIndex = 0;
+
   @override
   void dispose() {
     _pasted.dispose();
@@ -45,15 +51,22 @@ class _OpenChooseViewState extends State<OpenChooseView> {
   }
 
   void _showPasteBox(String copied) {
-    final found = FuzzyLinkParser.findIn(copied);
-    _pasted.text = found ?? '';
+    final found = FuzzyLinkParser.findAll(copied);
+    _pasted.text = found.firstOrNull ?? '';
     setState(() {
-      _copied = found != null
+      _found = found;
+      _shownIndex = 0;
+      _copied = found.isNotEmpty
           ? _Copied.found
           : copied.trim().isEmpty
               ? _Copied.empty
               : _Copied.nothingLocked;
     });
+  }
+
+  void _showNextFound() {
+    setState(() => _shownIndex = (_shownIndex + 1) % _found.length);
+    _pasted.text = _found[_shownIndex];
   }
 
   Future<void> _openPasted() async {
@@ -112,7 +125,12 @@ class _OpenChooseViewState extends State<OpenChooseView> {
         if (copied == _Copied.found)
           InkNotice(
             kind: InkNoticeKind.ok,
-            text: localizations.openPasteFound,
+            text: _found.length > 1
+                ? localizations.openPasteFoundMany(
+                    _found.length,
+                    _shownIndex + 1,
+                  )
+                : localizations.openPasteFound,
             qaId: 'open.pasteBox.found',
           )
         else if (copied == _Copied.nothingLocked)
@@ -131,6 +149,15 @@ class _OpenChooseViewState extends State<OpenChooseView> {
           minLines: 3,
           maxLines: 8,
         ),
+        if (copied == _Copied.found && _found.length > 1) ...[
+          SizedBox(height: space.m),
+          FuzzzyButton(
+            qaId: 'open.pasteBox.next',
+            label: localizations.openPasteNext,
+            variant: FuzzzyButtonVariant.secondary,
+            onPressed: _showNextFound,
+          ),
+        ],
       ],
     );
   }

@@ -1444,6 +1444,18 @@ abstract class FuzzzyInkLocalizations {
   /// **'Found in what you copied. Check it, or paste your own.'**
   String get openPasteFound;
 
+  /// Open → Paste it: the copied text held more than one locked part (owner, 2026-10-30: say how many and let the person open each). The box holds one of them.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} found in what you copied. This is {index} of {count}: open it, then come back for the next.'**
+  String openPasteFoundMany(int count, int index);
+
+  /// Open → Paste it: puts the next locked part found in the copied text into the box (owner, 2026-10-30).
+  ///
+  /// In en, this message translates to:
+  /// **'Show the next one'**
+  String get openPasteNext;
+
   /// Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held nothing to open; the box stays empty.
   ///
   /// In en, this message translates to:

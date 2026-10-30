@@ -148,6 +148,44 @@ void main() {
     });
 
     testWidgets(
+        'two locked parts in one copy: "2 found", one at a time, each '
+        'opens', (tester) async {
+      show(const OpenFlowState());
+      clipboard = 'first Fuzz/AwEC then Fuzz/AQE';
+      await pumpOpen(tester);
+      await tester.tap(find.text('Paste it'));
+      await tester.pump();
+      expect(
+        find.text(
+          '2 found in what you copied. This is 1 of 2: open it, then come '
+          'back for the next.',
+        ),
+        findsOneWidget,
+      );
+      expect(pasteBoxText(tester), 'Fuzz/AwEC');
+      await tester.tap(find.byKey(const Key('btn.open.pasteBox.next')));
+      await tester.pump();
+      expect(pasteBoxText(tester), 'Fuzz/AQE');
+      expect(find.textContaining('This is 2 of 2'), findsOneWidget);
+      await tapOpen(tester);
+      final request = verify(() => cubit.open(captureAny())).captured.single
+          as OpenPastedText;
+      expect(request.text, 'Fuzz/AQE');
+      await tester.tap(find.byKey(const Key('btn.open.pasteBox.next')));
+      await tester.pump();
+      expect(pasteBoxText(tester), 'Fuzz/AwEC');
+    });
+
+    testWidgets('one locked part: no "next"', (tester) async {
+      show(const OpenFlowState());
+      clipboard = 'Fuzz/AwEC';
+      await pumpOpen(tester);
+      await tester.tap(find.text('Paste it'));
+      await tester.pump();
+      expect(find.byKey(const Key('btn.open.pasteBox.next')), findsNothing);
+    });
+
+    testWidgets(
         'nothing locked in what was copied: the box stays empty for a '
         'paste by hand', (tester) async {
       show(const OpenFlowState());

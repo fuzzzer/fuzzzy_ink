@@ -683,6 +683,22 @@
   "@openPasteFound": {
     "description": "Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held a locked part, put in the box."
   },
+  "openPasteFoundMany": "{count} found in what you copied. This is {index} of {count}: open it, then come back for the next.",
+  "@openPasteFoundMany": {
+    "description": "Open → Paste it: the copied text held more than one locked part (owner, 2026-10-30: say how many and let the person open each). The box holds one of them.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "openPasteNext": "Show the next one",
+  "@openPasteNext": {
+    "description": "Open → Paste it: puts the next locked part found in the copied text into the box (owner, 2026-10-30)."
+  },
   "openPasteNotFound": "What you copied has nothing locked in it. Paste it yourself.",
   "@openPasteNotFound": {
     "description": "Open → Paste it: the box for what to open (owner, 2026-10-28). Shown when the copied text held nothing to open; the box stays empty."

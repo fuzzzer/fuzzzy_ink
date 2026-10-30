@@ -493,6 +493,22 @@
   "@openPasteFound": {
     "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-28)"
   },
+  "openPasteFoundMany": "დაკოპირებულში {count} ვიპოვეთ. ეს არის {index} / {count}: გახსენით, მერე დაბრუნდით შემდეგისთვის.",
+  "@openPasteFoundMany": {
+    "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-30)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "openPasteNext": "შემდეგის ჩვენება",
+  "@openPasteNext": {
+    "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-30)"
+  },
   "openPasteNotFound": "დაკოპირებულში ჩაკეტილი არაფერია. თავად ჩასვით.",
   "@openPasteNotFound": {
     "description": "Georgian draft, needs a native read (Open → Paste it box, 2026-10-28)"
