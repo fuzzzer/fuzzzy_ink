@@ -3,6 +3,7 @@ package com.fuzzzycore.ink
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.fuzzzycore.ink.anywhere.AnywhereSwitch
 import com.fuzzzycore.ink.anywhere.InkEngine
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -27,6 +28,19 @@ class MainActivity: FlutterFragmentActivity() {
         // A build without "Lock from other apps" leaves no entry point on,
         // whatever an earlier build switched on.
         if (!InkEngine.isInBuild(this)) AnywhereSwitch.apply(this, isOn = false)
+        // Back with nothing left to go back to leaves the app as Home does,
+        // never closing this activity: a build without "Lock from other
+        // apps" keeps its engine here, so closing it locked the app at once
+        // instead of after the background time (owner, 2026-10-30: one
+        // minute, after Back as after Home). Added before Flutter's own
+        // handler, which goes first while the app has a page to go back to.
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    moveTaskToBack(true)
+                }
+            },
+        )
     }
 
     /**
