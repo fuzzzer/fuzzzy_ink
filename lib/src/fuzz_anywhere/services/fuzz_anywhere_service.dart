@@ -119,6 +119,7 @@ class FuzzAnywhereService {
       locksAgainAfterUse: known.settings.locksAgainAfterUse,
       isUnlocked: auth.status.hasAccess,
       isSetUp: !auth.status.isSetupRequired && !auth.status.isInitial,
+      isStarting: auth.status.isInitial,
       biometric: !canUseBiometrics
           ? AnywhereBiometric.none
           : auth.biometricEnabled

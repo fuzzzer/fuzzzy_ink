@@ -109,7 +109,8 @@ class SheetViewModel(
             when (val answer = port.call("status")) {
                 is ChannelAnswer.Ok -> {
                     val status = AnywhereStatus.of(answer)
-                    if (status.isSetUp || !port.isStarting) return status
+                    // Not set up and done starting: there is no master password.
+                    if (status.isSetUp || !status.isStarting || !port.isStarting) return status
                 }
                 ChannelAnswer.Missing -> if (!port.isStarting) {
                     problem(ProblemKind.NotReady)
@@ -431,7 +432,9 @@ class SheetViewModel(
 
     private fun onEvent(event: AnywhereEvent) {
         when (event) {
-            is AnywhereEvent.SettingsChanged -> if (!event.isOn) finish()
+            // Off, or no master password (Erase everything, Android's Clear
+            // storage): ask again, so a cleared app says to set it up first.
+            is AnywhereEvent.SettingsChanged -> if (!event.isOn) restart()
             is AnywhereEvent.LockChanged -> if (!event.isUnlocked) onLockedElsewhere()
             AnywhereEvent.ShownClosed -> Unit
         }

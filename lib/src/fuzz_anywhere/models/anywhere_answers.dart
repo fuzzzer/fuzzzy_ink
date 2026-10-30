@@ -85,6 +85,7 @@ class AnywhereStatus {
     required this.isUnlocked,
     required this.isSetUp,
     required this.biometric,
+    this.isStarting = false,
   });
 
   /// The setting is sealed: until the first unlock of this run it is not
@@ -97,6 +98,10 @@ class AnywhereStatus {
   /// A master password exists.
   final bool isSetUp;
   final AnywhereBiometric biometric;
+
+  /// The app is still reading whether a master password exists: [isSetUp]
+  /// is not known yet.
+  final bool isStarting;
 }
 
 /// Whether fingerprint or face can unlock. Which one the device has is the

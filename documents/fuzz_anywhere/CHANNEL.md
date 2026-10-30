@@ -29,7 +29,7 @@ shortcut and panel, the iPhone quick sheet). The Dart side is `lib/src/fuzz_anyw
 
 | Method | Arguments | Answer | Refusals |
 |---|---|---|---|
-| `status` | — | `{version: 1, enabled, settingKnown, lockAgainAfterUse, unlocked, setUp, biometric, language?}` | `unsupportedVersion` |
+| `status` | — | `{version: 1, enabled, settingKnown, lockAgainAfterUse, unlocked, setUp, starting, biometric, language?}` | `unsupportedVersion` |
 | `unlock` | — | `{status: "unlocked"}` | `disabled`, `notSetUp`, `notReady`, `biometricOff`, `biometricGone`, `notUnlocked` |
 | `unlockWithPassword` | `password` (string) | `{status: "unlocked"}` | `disabled`, `notSetUp`, `notReady`, `badRequest` (missing or empty), `wrongPassword` (+ `waitSeconds` when a wait started), `lockedOut` (+ `waitSeconds`), `notUnlocked` |
 | `people` | `sourceApp` (string, optional) | `{people: [{id, name, verified, lastUsedHere}]}` | `disabled`, `locked`, `notSetUp`, `notReady`, `badRequest`, `failed` |
@@ -48,7 +48,10 @@ Notes, method by method:
   "Unlock Fuzzzy Ink", and after the unlock read `status` again (or wait for `settingsChanged`).
   `biometric` is `"on"` (turned on in Fuzzzy Ink), `"off"` (the device can, Fuzzzy Ink does not) or `"none"`.
   Which kind (face, fingerprint) is the platform's own to read for its icon. `setUp` is false until a master
-  password exists (and while the app is still starting). `language` (`en` or `ka`) is there only when the person
+  password exists (and while the app is still starting); `starting` is true only in that start, while the app still
+reads whether a master password exists, so `setUp: false` with `starting: false` means there is none (a new
+install, "Erase everything", Android's Clear storage): show "Set up Fuzzzy Ink first" at once (added 2026-10-30).
+`language` (`en` or `ka`) is there only when the person
   picked a language in Settings → Language; without it the app follows the device, and so does the native sheet
   (English when the device's language is neither). Added 2026-10-26 for the Apple sheets; version 1.
 - **`unlock`.** Runs the app's own fingerprint or face prompt (the biometric copy of the master password). On
@@ -134,7 +137,9 @@ The first read of a run and the no-password case are sent even though nothing ch
 looks like the starting state, and the native side must still switch off what an earlier run or setup left on
 (security review 2026-10-26). On `settingsChanged` with `enabled: false`: switch the entry points off (Android: disable the selection activity
 and the tile component; Mac: unregister the services provider and the hot key; iPhone: hide the shortcuts). On
-`enabled: true`, switch them on. On `lockChanged` with `unlocked: false`: drop any person list or name you show.
+`enabled: true`, switch them on. On `lockChanged` with `unlocked: false`: drop any person list or name you show. On `settingsChanged` with
+`enabled: false` while a sheet is up, read `status` again: off closes it, no master password shows "Set up Fuzzzy
+Ink first" (2026-10-30).
 
 ## 4. Refusal codes
 

@@ -134,6 +134,9 @@ void main() {
       expect(switches.single.isOn, isFalse);
       // The sheet's own flags ("Copy automatically next time") go too.
       expect(events.whereType<AnywhereSheetForget>(), hasLength(1));
+      final status = await app.service.status();
+      expect(status.isSetUp, isFalse);
+      expect(status.isStarting, isFalse);
     });
 
     test('with a master password, the sheet keeps its flags', () async {

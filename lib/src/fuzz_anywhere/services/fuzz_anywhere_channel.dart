@@ -126,6 +126,7 @@ class FuzzAnywhereChannel {
         'lockAgainAfterUse': status.locksAgainAfterUse,
         'unlocked': status.isUnlocked,
         'setUp': status.isSetUp,
+        'starting': status.isStarting,
         'biometric': status.biometric.code,
         if (language?.call() case final code?) 'language': code,
       };

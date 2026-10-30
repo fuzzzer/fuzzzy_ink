@@ -32,6 +32,7 @@ private class FakeApp : SheetPort, DraftNote, AutoCopy {
     var settingKnown = true
     var enabled = true
     var setUp = true
+    var readingSetUp = false
     var missingCalls = 0
     val people: MutableList<Map<String, Any>> = mutableListOf(
         mapOf("id" to "nino", "name" to "Nino", "verified" to true, "lastUsedHere" to false),
@@ -80,6 +81,7 @@ private class FakeApp : SheetPort, DraftNote, AutoCopy {
                     "settingKnown" to (settingKnown || unlocked),
                     "unlocked" to unlocked,
                     "setUp" to setUp,
+                    "starting" to readingSetUp,
                     "biometric" to biometric,
                 ),
             )
@@ -436,6 +438,7 @@ class SheetViewModelTest {
     fun `switched off in Settings, the sheet goes`() = runTest(dispatcher) {
         app.unlocked = true
         val model = sheet(request(SECRET, canReplace = true))
+        app.enabled = false
         app.flow.emit(AnywhereEvent.SettingsChanged(isOn = false))
         advanceUntilIdle()
         assertEquals(UiState.Finished(null), model.state.value)
@@ -457,6 +460,27 @@ class SheetViewModelTest {
         model.setAutoCopy(false)
         assertFalse(app.isOn)
         assertEquals(done.copy(copiesAutomatically = false), model.state.value)
+    }
+
+    @Test
+    fun `storage cleared, the switch-off message shows set up first, never a silent close`() = runTest(dispatcher) {
+        app.isStarting = true
+        app.setUp = false
+        app.readingSetUp = true
+        val model = SheetViewModel(request(SECRET, canReplace = true), app, app, app)
+        runCurrent()
+        // Still starting: it waits.
+        assertEquals(UiState.Starting, model.state.value)
+        app.readingSetUp = false
+        app.enabled = false
+        app.settingKnown = false
+        app.flow.emit(AnywhereEvent.SettingsChanged(isOn = false))
+        advanceTimeBy(SheetViewModel.STARTING_POLL_MS * 2)
+        runCurrent()
+        assertEquals(UiState.Problem(ProblemKind.NotSetUp), model.state.value)
+        app.flow.emit(AnywhereEvent.SettingsChanged(isOn = false))
+        advanceUntilIdle()
+        assertEquals(UiState.Problem(ProblemKind.NotSetUp), model.state.value)
     }
 
     @Test

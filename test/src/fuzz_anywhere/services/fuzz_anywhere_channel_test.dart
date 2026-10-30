@@ -85,6 +85,7 @@ void main() {
       'lockAgainAfterUse': true,
       'unlocked': false,
       'setUp': true,
+      'starting': false,
       'biometric': 'on',
     });
   });

@@ -76,6 +76,8 @@ data class AnywhereStatus(
     val isUnlocked: Boolean,
     val isSetUp: Boolean,
     val canUseBiometric: Boolean,
+    /** The app is still reading whether it has a master password. */
+    val isStarting: Boolean = false,
 ) {
     companion object {
         fun of(answer: ChannelAnswer.Ok) = AnywhereStatus(
@@ -84,6 +86,7 @@ data class AnywhereStatus(
             isUnlocked = answer.flag("unlocked"),
             isSetUp = answer.flag("setUp"),
             canUseBiometric = answer.string("biometric") == "on",
+            isStarting = answer.flag("starting"),
         )
     }
 }
