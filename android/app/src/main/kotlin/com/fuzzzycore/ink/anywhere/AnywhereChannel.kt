@@ -75,7 +75,9 @@ class AnywhereChannel(messenger: BinaryMessenger) {
 
         /**
          * Takes Dart's events on [messenger]: the switch turns the entry
-         * points on and off ([AnywhereSwitch]); the rest goes to [events].
+         * points on and off ([AnywhereSwitch]); Settings and "Erase
+         * everything" read, change and forget the sheet's flags
+         * ([SheetPreferences]); the rest goes to [events].
          */
         fun listen(messenger: BinaryMessenger, context: Context) {
             val app = context.applicationContext
@@ -93,6 +95,17 @@ class AnywhereChannel(messenger: BinaryMessenger) {
                     }
                     "shownClosed" -> {
                         eventFlow.tryEmit(AnywhereEvent.ShownClosed)
+                        result.success(null)
+                    }
+                    "sheetFlags" -> result.success(
+                        mapOf("copyAutomatically" to SheetPreferences.autoCopy(app).isOn),
+                    )
+                    "setCopyAutomatically" -> {
+                        SheetPreferences.autoCopy(app).set(call.argument<Boolean>("enabled") == true)
+                        result.success(null)
+                    }
+                    "forgetSheet" -> {
+                        SheetPreferences.forget(app)
                         result.success(null)
                     }
                     else -> result.notImplemented()

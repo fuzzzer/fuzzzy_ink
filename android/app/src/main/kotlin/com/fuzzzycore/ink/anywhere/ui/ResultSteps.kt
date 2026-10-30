@@ -115,6 +115,10 @@ internal fun DoneStep(state: UiState.Done, actions: SheetActions) {
             AutoCopyRow(isOn = state.copiesAutomatically, onChange = actions::setAutoCopy)
         } else if (state.outcome == Outcome.Copied) {
             MainButton(label = stringResource(R.string.openErrorOk), onClick = actions::close)
+            // Copied by itself: the switch shows that it is on, and turns it off here.
+            if (state.copiesAutomatically || state.wasCopiedAutomatically) {
+                AutoCopyRow(isOn = state.copiesAutomatically, onChange = actions::setAutoCopy)
+            }
         }
     }
 }

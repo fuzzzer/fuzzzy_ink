@@ -108,6 +108,18 @@ Uint8List? fakeOpen(String name, Uint8List blob) {
   ]);
 }
 
+/// The Android sheet's flags, kept in memory.
+class MemorySheetFlags implements AnywhereSheetFlagsDataSource {
+  bool isCopyingAutomatically = false;
+
+  @override
+  Future<bool> copiesAutomatically() async => isCopyingAutomatically;
+
+  @override
+  Future<void> setCopiesAutomatically(bool isOn) async =>
+      isCopyingAutomatically = isOn;
+}
+
 /// One app with "Lock from other apps" around it: the real
 /// [FuzzyAuthStore], [FuzzAnywhereSettingsCubit], repository, Lock and Open
 /// flows, over mocks.
@@ -130,7 +142,10 @@ class AnywhereHarness {
       localDataSource: storage,
       cryptoCoreService: crypto,
     );
-    settings = FuzzAnywhereSettingsCubit(repository: repository);
+    settings = FuzzAnywhereSettingsCubit(
+      repository: repository,
+      sheetFlags: sheetFlags,
+    );
     service = FuzzAnywhereService(
       authStore: authStore,
       settings: settings,
@@ -178,6 +193,7 @@ class AnywhereHarness {
   final sendQueue = MockSendQueue();
   final receiveQueue = MockReceiveQueue();
   final storage = MemoryAnywhereStorage();
+  final sheetFlags = MemorySheetFlags();
   final _added = StreamController<NewMessageAdded>.broadcast();
 
   late final FuzzyAuthStore authStore;

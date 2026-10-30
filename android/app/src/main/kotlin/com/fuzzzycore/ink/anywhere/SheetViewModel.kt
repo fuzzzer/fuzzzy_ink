@@ -340,6 +340,7 @@ class SheetViewModel(
             returnText = returnText,
             canCopy = !isCopied,
             copiesAutomatically = autoCopy.isOn,
+            wasCopiedAutomatically = isCopied,
         )
         // Copied at once and put in place: nothing left to do here.
         if (outcome == Outcome.PutInPlaceAndCopied) {

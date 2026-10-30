@@ -553,8 +553,13 @@ class FuzzAnywhereService {
   void _onAuthChanged(FuzzyAuthState state) {
     // No master password (a new install, or "Erase everything"): nothing
     // can be on. Said every time, so the entry points an earlier setup
-    // switched on go too (security review 2026-10-26).
-    if (state.status.isSetupRequired) _sendSwitchOff();
+    // switched on go too (security review 2026-10-26), and the sheet's own
+    // flags are forgotten with every other setting (Fuzzzy Tester,
+    // 2026-10-30).
+    if (state.status.isSetupRequired) {
+      _sendSwitchOff();
+      _send(const AnywhereSheetForget());
+    }
     final isUnlocked = state.status.hasAccess;
     if (isUnlocked == _wasUnlocked) return;
     _wasUnlocked = isUnlocked;

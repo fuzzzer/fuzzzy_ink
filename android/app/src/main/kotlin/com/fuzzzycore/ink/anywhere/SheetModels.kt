@@ -140,6 +140,8 @@ sealed interface UiState {
         val returnText: String? = null,
         val canCopy: Boolean = false,
         val copiesAutomatically: Boolean = false,
+        /** Lock copied it by itself ("Copy automatically next time" was on). */
+        val wasCopiedAutomatically: Boolean = false,
         val isCopying: Boolean = false,
     ) : UiState
 

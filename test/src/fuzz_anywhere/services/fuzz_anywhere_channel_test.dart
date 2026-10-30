@@ -89,6 +89,17 @@ void main() {
     });
   });
 
+  test('no master password: the platform switches off and forgets the sheet',
+      () async {
+    app.authStore.emit(
+      app.authStore.state.copyWith(status: AuthStateStatus.setupRequired),
+    );
+    await pumpEventQueue();
+    final methods = sentToPlatform.map((call) => call.method).toList();
+    expect(methods, containsAllInOrder(['settingsChanged', 'forgetSheet']));
+    expect(sentToPlatform.last.arguments, {'v': 1});
+  });
+
   test(
       'status names the language picked in Settings, none while it follows '
       'the device', () async {

@@ -4210,6 +4210,18 @@ abstract class FuzzzyInkLocalizations {
   /// **'Experimental'**
   String get anywhereExperimental;
 
+  /// Settings → Other apps: the Android sheet's "Copy automatically next time", shown while it is on so it can be turned off (Fuzzzy Tester, 2026-10-30).
+  ///
+  /// In en, this message translates to:
+  /// **'Copy automatically'**
+  String get anywhereCopyAutomatically;
+
+  /// Settings → Other apps: under "Copy automatically" (2026-10-30).
+  ///
+  /// In en, this message translates to:
+  /// **'Lock in another app copies the locked text by itself. It clears in 2 minutes.'**
+  String get anywhereCopyAutomaticallyLine;
+
   /// Lock from other apps (experimental, 2026-10-26).
   ///
   /// In en, this message translates to:

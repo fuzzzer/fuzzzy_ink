@@ -210,7 +210,13 @@ class SheetViewModelTest {
         runCurrent()
         assertEquals(true, app.called("lock").last()["copy"])
         assertEquals(
-            UiState.Done("Nino", Outcome.PutInPlaceAndCopied, SEALED, copiesAutomatically = true),
+            UiState.Done(
+                "Nino",
+                Outcome.PutInPlaceAndCopied,
+                SEALED,
+                copiesAutomatically = true,
+                wasCopiedAutomatically = true,
+            ),
             next.state.value,
         )
         advanceUntilIdle()
@@ -433,6 +439,24 @@ class SheetViewModelTest {
         app.flow.emit(AnywhereEvent.SettingsChanged(isOn = false))
         advanceUntilIdle()
         assertEquals(UiState.Finished(null), model.state.value)
+    }
+
+    @Test
+    fun `copied by itself, the Done step shows the switch on and turns it off`() = runTest(dispatcher) {
+        app.unlocked = true
+        app.isOn = true
+        val model = sheet(request(SECRET, canReplace = false))
+        model.choose("nino")
+        model.sawWholeSelection()
+        model.lock()
+        advanceUntilIdle()
+        val done = model.state.value as UiState.Done
+        assertEquals(Outcome.Copied, done.outcome)
+        assertTrue(done.copiesAutomatically)
+        assertTrue(done.wasCopiedAutomatically)
+        model.setAutoCopy(false)
+        assertFalse(app.isOn)
+        assertEquals(done.copy(copiesAutomatically = false), model.state.value)
     }
 
     @Test

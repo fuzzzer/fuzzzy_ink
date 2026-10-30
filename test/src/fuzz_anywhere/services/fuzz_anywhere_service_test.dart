@@ -132,6 +132,18 @@ void main() {
       final switches = events.whereType<AnywhereSettingsChanged>().toList();
       expect(switches, hasLength(1));
       expect(switches.single.isOn, isFalse);
+      // The sheet's own flags ("Copy automatically next time") go too.
+      expect(events.whereType<AnywhereSheetForget>(), hasLength(1));
+    });
+
+    test('with a master password, the sheet keeps its flags', () async {
+      app.storeSettings(_on);
+      final events = <AnywhereEvent>[];
+      app.service.events.listen(events.add);
+      await app.boot();
+      await app.unlockInApp();
+      await pumpEventQueue();
+      expect(events.whereType<AnywhereSheetForget>(), isEmpty);
     });
 
     test('found off at an unlock from outside: the app locks again', () async {

@@ -1,6 +1,5 @@
 package com.fuzzzycore.ink.anywhere
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -44,7 +43,12 @@ class InkTextActivity : FragmentActivity() {
     private var isRelockSent = false
 
     private val viewModel: SheetViewModel by viewModels {
-        SheetViewModelFactory(sheetRequest(), EnginePort(), PreferencesDraftNote(applicationContext), PreferencesAutoCopy(applicationContext))
+        SheetViewModelFactory(
+            sheetRequest(),
+            EnginePort(),
+            SheetPreferences.draftNote(applicationContext),
+            SheetPreferences.autoCopy(applicationContext),
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,36 +138,6 @@ class InkTextActivity : FragmentActivity() {
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             )
         }
-    }
-}
-
-/** The one-time draft note's mark: a flag only, never text. */
-private class PreferencesDraftNote(context: Context) : DraftNote {
-    private val preferences = context.getSharedPreferences("ink_anywhere_sheet", Context.MODE_PRIVATE)
-
-    override val isSeen: Boolean get() = preferences.getBoolean(KEY, false)
-
-    override fun markSeen() {
-        preferences.edit().putBoolean(KEY, true).apply()
-    }
-
-    private companion object {
-        const val KEY = "draftNoteSeen"
-    }
-}
-
-/** "Copy automatically next time": a flag only, never text. */
-private class PreferencesAutoCopy(context: Context) : AutoCopy {
-    private val preferences = context.getSharedPreferences("ink_anywhere_sheet", Context.MODE_PRIVATE)
-
-    override val isOn: Boolean get() = preferences.getBoolean(KEY, false)
-
-    override fun set(isOn: Boolean) {
-        preferences.edit().putBoolean(KEY, isOn).apply()
-    }
-
-    private companion object {
-        const val KEY = "copyAutomatically"
     }
 }
 

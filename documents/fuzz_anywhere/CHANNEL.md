@@ -126,6 +126,9 @@ Dart calls these on the same channel. Each carries `v: 1`. If native has no hand
 | `lockChanged` | `unlocked` (bool) | the app locked or unlocked, any way (Lock now, auto-lock, an unlock, `relock`) |
 | `settingsChanged` | `enabled`, `lockAgainAfterUse` (bools) | the switches changed; the first read of a run (after the first unlock), even when it reads as before; and `enabled: false` whenever there is no master password (a new install, "Erase everything") |
 | `shownClosed` | `displayId` | the private screen `show` opened was closed (or dropped by a lock) |
+| `sheetFlags` | — | Settings reads the sheet's "Copy automatically next time"; answer `{copyAutomatically: bool}` (Android; added 2026-10-30) |
+| `setCopyAutomatically` | `enabled` (bool) | Settings turns "Copy automatically next time" on or off (Android; added 2026-10-30) |
+| `forgetSheet` | — | whenever there is no master password (a new install, "Erase everything"), with `settingsChanged` `enabled: false`: forget every flag the sheet keeps ("Copy automatically next time", the draft note seen) (Android; added 2026-10-30) |
 
 The first read of a run and the no-password case are sent even though nothing changed in this run: "off"
 looks like the starting state, and the native side must still switch off what an earlier run or setup left on

@@ -2390,6 +2390,13 @@ class FuzzzyInkLocalizationsEn extends FuzzzyInkLocalizations {
   String get anywhereExperimental => 'Experimental';
 
   @override
+  String get anywhereCopyAutomatically => 'Copy automatically';
+
+  @override
+  String get anywhereCopyAutomaticallyLine =>
+      'Lock in another app copies the locked text by itself. It clears in 2 minutes.';
+
+  @override
   String get anywhereLockAgain => 'Lock again after each use';
 
   @override

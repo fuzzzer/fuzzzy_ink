@@ -58,6 +58,33 @@ void main() {
     );
   });
 
+  testWidgets(
+      '"Copy automatically" shows while the sheet copies by itself, and '
+      'turns it off', (tester) async {
+    app.storeSettings(
+      const FuzzAnywhereSettings(isOn: true, locksAgainAfterUse: true),
+    );
+    await app.boot();
+    await app.unlockInApp();
+    await app.settings.load();
+    await pumpSection(tester, flag: true);
+    expect(find.text('Copy automatically'), findsNothing);
+
+    app.sheetFlags.isCopyingAutomatically = true;
+    await app.settings.readSheetFlags();
+    await tester.pumpAndSettle();
+    expect(find.text('Copy automatically'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const Key('toggle.settings.otherAppsCopyAutomatically')),
+    );
+    await tester.pumpAndSettle();
+    expect(app.sheetFlags.isCopyingAutomatically, isFalse);
+    expect(app.settings.state.copiesAutomatically, isFalse);
+    // Still there, to turn it on again while this screen is up.
+    expect(find.text('Copy automatically'), findsOneWidget);
+  });
+
   testWidgets('"Why?" says what it does and the draft caveat', (tester) async {
     await app.settings.load();
     await pumpSection(tester, flag: true);

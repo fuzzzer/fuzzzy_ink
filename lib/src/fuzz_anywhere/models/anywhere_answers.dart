@@ -139,6 +139,13 @@ final class AnywhereSettingsChanged extends AnywhereEvent {
   final bool locksAgainAfterUse;
 }
 
+/// No master password (a new install, "Erase everything"): the sheet
+/// forgets the flags it keeps ("Copy automatically next time", the draft
+/// note seen), as the erase promises for every setting.
+final class AnywhereSheetForget extends AnywhereEvent {
+  const AnywhereSheetForget();
+}
+
 /// The private screen `show` opened was closed.
 final class AnywhereShownClosed extends AnywhereEvent {
   const AnywhereShownClosed(this.displayId);

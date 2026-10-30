@@ -2837,6 +2837,14 @@
   "@anywhereExperimental": {
     "description": "Lock from other apps (experimental, 2026-10-26)."
   },
+  "anywhereCopyAutomatically": "Copy automatically",
+  "@anywhereCopyAutomatically": {
+    "description": "Settings → Other apps: the Android sheet's \"Copy automatically next time\", shown while it is on so it can be turned off (Fuzzzy Tester, 2026-10-30)."
+  },
+  "anywhereCopyAutomaticallyLine": "Lock in another app copies the locked text by itself. It clears in 2 minutes.",
+  "@anywhereCopyAutomaticallyLine": {
+    "description": "Settings → Other apps: under \"Copy automatically\" (2026-10-30)."
+  },
   "anywhereLockAgain": "Lock again after each use",
   "@anywhereLockAgain": {
     "description": "Lock from other apps (experimental, 2026-10-26)."

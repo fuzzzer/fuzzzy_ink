@@ -1633,6 +1633,14 @@
   "@anywhereExperimental": {
     "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"
   },
+  "anywhereCopyAutomatically": "ავტომატურად დაკოპირება",
+  "@anywhereCopyAutomatically": {
+    "description": "Georgian draft, needs a native read (lock from other apps, 2026-10-30)"
+  },
+  "anywhereCopyAutomaticallyLine": "სხვა აპში ჩაკეტილი ტექსტი თავისით დაკოპირდება. 2 წუთში წაიშლება.",
+  "@anywhereCopyAutomaticallyLine": {
+    "description": "Georgian draft, needs a native read (lock from other apps, 2026-10-30)"
+  },
   "anywhereLockAgain": "ყოველი გამოყენების შემდეგ ჩაკეტვა",
   "@anywhereLockAgain": {
     "description": "Georgian draft, needs a native read (lock from other apps, experimental, 2026-10-26)"

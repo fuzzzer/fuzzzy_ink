@@ -2407,6 +2407,13 @@ class FuzzzyInkLocalizationsKa extends FuzzzyInkLocalizations {
   String get anywhereExperimental => 'ექსპერიმენტული';
 
   @override
+  String get anywhereCopyAutomatically => 'ავტომატურად დაკოპირება';
+
+  @override
+  String get anywhereCopyAutomaticallyLine =>
+      'სხვა აპში ჩაკეტილი ტექსტი თავისით დაკოპირდება. 2 წუთში წაიშლება.';
+
+  @override
   String get anywhereLockAgain => 'ყოველი გამოყენების შემდეგ ჩაკეტვა';
 
   @override

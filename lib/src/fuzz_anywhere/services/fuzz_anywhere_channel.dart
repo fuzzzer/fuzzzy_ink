@@ -182,6 +182,7 @@ class FuzzAnywhereChannel {
           'shownClosed',
           <String, Object?>{'displayId': displayId},
         ),
+      AnywhereSheetForget() => ('forgetSheet', const <String, Object?>{}),
     };
     try {
       await _channel.invokeMethod<void>(method, {
