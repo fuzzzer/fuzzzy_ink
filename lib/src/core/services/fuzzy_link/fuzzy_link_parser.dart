@@ -83,27 +83,98 @@ class FuzzyLinkParser {
   }
 
   /// The locked part of a longer text (a whole message with a link or a
-  /// `Fuzz/` text in it): the first word that is one of our links, or a
-  /// `Fuzz/` text, with the punctuation around it left off. `null` when
-  /// [text] holds none. Only the shape is checked; the core reads the rest.
-  static String? findIn(String text) {
-    for (final word in text.split(RegExp(r'\s+'))) {
-      final part = word.replaceAll(_edges, '');
-      if (part.isEmpty) continue;
-      if (parseText(part) != null) return part;
-      if (part.startsWith(fuzzIdentificator) &&
-          part.length > fuzzIdentificator.length &&
-          _isBlob(part.substring(fuzzIdentificator.length))) {
-        return part;
-      }
+  /// `Fuzz/` text in it): the first of [findAll], or `null` when [text]
+  /// holds none.
+  static String? findIn(String text) => findAll(text).firstOrNull;
+
+  /// Every locked part of a longer text, in order, each once: our links and
+  /// `Fuzz/` texts, found anywhere, even glued to a word ("is:https://…",
+  /// "[open it](https://…)"), with the punctuation after them left off.
+  ///
+  /// A locked part a mail or messenger wrapped over several lines (or that
+  /// a person typed with spaces in it) comes back whole, its whitespace
+  /// dropped, as the core reads it (`PROTOCOL.md` §6.1). Only the shape is
+  /// checked; the core reads the rest.
+  static List<String> findAll(String text) {
+    final found = <String>[];
+    var searchedTo = 0;
+    for (final start in _starts.allMatches(text)) {
+      if (start.start < searchedTo) continue;
+      final part = _lockedPartAt(text, start.start);
+      if (part == null) continue;
+      searchedTo = part.end;
+      if (!found.contains(part.text)) found.add(part.text);
     }
-    return null;
+    return found;
   }
 
-  /// Quotes, brackets and sentence marks a messenger or a person may put
-  /// around a link: a link and a `Fuzz/` text start with a letter and end
-  /// with a base64url character.
-  static final _edges = RegExp(r'^[^A-Za-z]+|[^A-Za-z0-9_-]+$');
+  /// Where a link or a `Fuzz/` text may start. The case of a link's scheme
+  /// does not matter (`Uri` reads it); `Fuzz/` is checked exactly below.
+  static final _starts = RegExp('https://|Fuzz/', caseSensitive: false);
+
+  static final _word = RegExp(r'\S+');
+
+  /// Sentence marks, quotes and brackets a messenger or a person may put
+  /// after a link: a link and a `Fuzz/` text end with a base64url character.
+  static final _trailing = RegExp(r'[^A-Za-z0-9_-]+$');
+
+  /// The widths a wrapped line may have: a whole locked part is longer than
+  /// the widest (a message is well over 128 characters), so an unwrapped
+  /// one is never joined to the word after it.
+  static const _minWrapWidth = 32;
+  static const _maxWrapWidth = 128;
+
+  /// The locked part that starts at [start] in [text], with the lines a
+  /// wrap made of it joined again, or `null` when there is none there.
+  static ({String text, int end})? _lockedPartAt(String text, int start) {
+    final words = _word.allMatches(text, start).toList();
+    final pieces = <String>[];
+    final ends = <int>[];
+    for (var i = 0; i < words.length; i++) {
+      if (i > 0) {
+        // A blank line ends what a wrap could have made.
+        final gap = text.substring(words[i - 1].end, words[i].start);
+        if ('\n'.allMatches(gap).length > 1) break;
+      }
+      final word = words[i].group(0)!;
+      final piece = word.replaceFirst(_trailing, '');
+      if (piece.isEmpty || (i > 0 && !_isBlob(piece))) break;
+      pieces.add(piece);
+      ends.add(words[i].start + piece.length);
+      // Punctuation after it: nothing more can be part of it.
+      if (piece.length != word.length) break;
+    }
+    if (pieces.isEmpty || !_isLocked(pieces.first)) return null;
+
+    for (var last = pieces.length - 1; last > 0; last--) {
+      if (!_isWrapped(pieces.sublist(0, last + 1))) continue;
+      final joined = pieces.sublist(0, last + 1).join();
+      if (_isLocked(joined)) return (text: joined, end: ends[last]);
+    }
+    return (text: pieces.first, end: ends.first);
+  }
+
+  /// Whether [pieces] look like one text wrapped at one width: every line
+  /// but the first and the last exactly that wide, the first and the last no
+  /// wider. The first may be narrower when words came before it on its line.
+  static bool _isWrapped(List<String> pieces) {
+    final width = pieces.length > 2 ? pieces[1].length : pieces.first.length;
+    if (width < _minWrapWidth || width > _maxWrapWidth) return false;
+    if (pieces.first.length > width || pieces.last.length > width) {
+      return false;
+    }
+    for (var i = 1; i < pieces.length - 1; i++) {
+      if (pieces[i].length != width) return false;
+    }
+    return true;
+  }
+
+  /// One of our links, or a `Fuzz/` text, by its shape.
+  static bool _isLocked(String part) =>
+      parseText(part) != null ||
+      (part.startsWith(fuzzIdentificator) &&
+          part.length > fuzzIdentificator.length &&
+          _isBlob(part.substring(fuzzIdentificator.length)));
 
   static bool _isBlob(String text) => _blob.hasMatch(text);
 }

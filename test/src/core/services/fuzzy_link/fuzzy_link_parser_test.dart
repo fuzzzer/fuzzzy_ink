@@ -7,10 +7,21 @@ import 'package:fuzzzy_ink/lib.dart';
 final _invitationBody = 'RlVaWgEB${'A' * 263}';
 final _acceptanceBody = 'RlVaWgEC${'B' * 600}';
 const _messageBody = 'RlVaWgEDAQ-_xyz09';
+
+/// As long as a real message: every real locked part is longer than a
+/// wrapped line can be.
+final _realMessageBody = 'RlVaWgEDAQ${'C' * 190}';
 const _chatId = '6f1e9b2c-3d4a-4f5b-8c6d-7e8f9a0b1c2d';
 const _base = 'https://ink.fuzzzycore.com';
 
 FuzzyLinkPayload? _parse(String link) => FuzzyLinkParser.parse(Uri.parse(link));
+
+/// [text] broken every [width] characters with [separator], as a mail
+/// program wraps a long line.
+String _wrap(String text, int width, String separator) => [
+      for (var i = 0; i < text.length; i += width)
+        text.substring(i, i + width > text.length ? text.length : i + width),
+    ].join(separator);
 
 void main() {
   group('FuzzyLinkParser accepts exactly the three link kinds', () {
@@ -228,6 +239,56 @@ void main() {
         FuzzyLinkParser.findIn('https://example.com/message#AwEC'),
         isNull,
       );
+    });
+
+    test('finds a link glued to a word, in any script', () {
+      final link = '$_base/message#$_realMessageBody';
+      expect(FuzzyLinkParser.findIn('Here it is:$link thanks'), link);
+      expect(FuzzyLinkParser.findIn('[open it]($link)'), link);
+      expect(FuzzyLinkParser.findIn('ბმული:$link მადლობა'), link);
+      expect(FuzzyLinkParser.findIn('see:Fuzz/AwEC-_x.'), 'Fuzz/AwEC-_x');
+    });
+
+    test('joins a Fuzz/ text wrapped every 76 characters, once', () {
+      final fuzz = 'Fuzz/$_invitationBody';
+      for (final separator in ['\n', '\r\n', ' ']) {
+        final wrapped = _wrap(fuzz, 76, separator);
+        expect(wrapped.contains(separator), isTrue);
+        expect(FuzzyLinkParser.findIn(wrapped), fuzz);
+        expect(FuzzyLinkParser.findAll('Hi,\n\n$wrapped\n\nBye'), [fuzz]);
+      }
+    });
+
+    test('joins a wrapped Fuzz/ text that starts after other words', () {
+      final fuzz = 'Fuzz/$_invitationBody';
+      final line = 'Here it is: $fuzz';
+      final wrapped = _wrap(line, 72, '\n');
+      expect(FuzzyLinkParser.findIn(wrapped), fuzz);
+    });
+
+    test('joins a wrapped link', () {
+      final link = '$_base/invite#$_invitationBody';
+      expect(FuzzyLinkParser.findIn(_wrap(link, 76, '\n')), link);
+    });
+
+    test('never joins the word after an unwrapped locked part', () {
+      final fuzz = 'Fuzz/$_invitationBody';
+      expect(FuzzyLinkParser.findIn('$fuzz thanks'), fuzz);
+      expect(FuzzyLinkParser.findIn('$fuzz\nthanks'), fuzz);
+      expect(FuzzyLinkParser.findIn('Fuzz/AwEC thanks'), 'Fuzz/AwEC');
+      // A wrapped one ends at its short last line.
+      final wrapped = _wrap(fuzz, 76, '\n');
+      expect(FuzzyLinkParser.findIn('$wrapped\nthanks a lot'), fuzz);
+    });
+
+    test('finds every locked part, each once', () {
+      final link = '$_base/message#$_realMessageBody';
+      final invite = '$_base/invite#$_invitationBody';
+      expect(
+        FuzzyLinkParser.findAll('first $invite then $link and $link again'),
+        [invite, link],
+      );
+      expect(FuzzyLinkParser.findAll('nothing here'), isEmpty);
     });
   });
 
