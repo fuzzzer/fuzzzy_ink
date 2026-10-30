@@ -5,7 +5,8 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 
 /// An opened message (private): "From Nino", where it went ("Just now ·
 /// kept in Nino's history", or not kept for a password text), the text
-/// large and not selectable, the "No copy" tag with Why?, and Done. A
+/// large and not selectable (hidden characters as their codes,
+/// [VisibleText]), the "No copy" tag with Why?, and Done. A
 /// person's history shows the same screen with its own [whenLine]
 /// ("Opened Today · 09:20").
 class OpenedTextView extends StatelessWidget {
@@ -62,10 +63,14 @@ class OpenedTextView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(context.fuzzzyRadius.m),
               ),
               // Plain Text: never selectable, so nothing can be copied out.
-              child: Text(
-                state.openedText ?? '',
-                key: const Key('opened.text.body'),
-                style: type.titleS.copyWith(color: colors.ink),
+              // Hidden characters show as their codes, as the sender saw them.
+              child: Semantics(
+                identifier: 'opened.text.body',
+                child: Text(
+                  VisibleText.of(state.openedText ?? ''),
+                  key: const Key('opened.text.body'),
+                  style: type.titleS.copyWith(color: colors.ink),
+                ),
               ),
             ),
             SizedBox(height: space.s),

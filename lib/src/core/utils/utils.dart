@@ -7,3 +7,4 @@ export 'id_generator.dart';
 export 'ink_device_channel.dart';
 export 'logger.dart';
 export 'share_helper.dart';
+export 'visible_text.dart';

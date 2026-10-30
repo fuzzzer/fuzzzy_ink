@@ -120,6 +120,18 @@ void main() {
     guard.dispose();
   });
 
+  testWidgets(
+      'hidden marks show as codes on your locked message and on an opened '
+      'one, as the sheet showed them', (tester) async {
+    for (final isSent in [true, false]) {
+      await pumpItem(
+        tester,
+        _message(isSent: isSent).copyWith(decryptedMessage: 'a\u200Bb\u202Ec'),
+      );
+      expect(find.text('a[U+200B]b[U+202E]c'), findsOneWidget);
+    }
+  });
+
   testWidgets('a message that cannot be read says so', (tester) async {
     await pumpItem(tester, _message(isSent: true, isUnreadable: true));
     expect(

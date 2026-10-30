@@ -141,7 +141,8 @@ class _WhenLine extends StatelessWidget {
   }
 }
 
-/// The text itself, large, in a box. Never selectable or copyable.
+/// The text itself, large, in a box. Never selectable or copyable; hidden
+/// characters show as their codes ([VisibleText]).
 class _MessageBox extends StatelessWidget {
   const _MessageBox({required this.message});
 
@@ -164,7 +165,7 @@ class _MessageBox extends StatelessWidget {
       child: Text(
         unreadable
             ? context.fuzzzyInkLocalizations.itemUnreadable
-            : message.decryptedMessage,
+            : VisibleText.of(message.decryptedMessage),
         style: unreadable
             ? type.body.copyWith(color: colors.inkMute)
             : type.titleM.copyWith(

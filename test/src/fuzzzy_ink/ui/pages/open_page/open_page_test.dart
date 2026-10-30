@@ -458,6 +458,31 @@ void main() {
       });
     }
 
+    testWidgets(
+        'hidden marks show as the codes the sender saw, never applied; '
+        'the text keeps its id and stays with its "kept in" line',
+        (tester) async {
+      final semantics = tester.ensureSemantics();
+      show(
+        OpenFlowState(
+          phase: OpenPhase.openedText,
+          chat: _nino,
+          openedText: 'zw\u200B rtl\u202ETXET',
+          historyRowId: 3,
+        ),
+      );
+      await pumpOpen(tester);
+      expect(find.text('zw[U+200B] rtl[U+202E]TXET'), findsOneWidget);
+      final node =
+          tester.getSemantics(find.byKey(const Key('opened.text.body')));
+      expect(node.identifier, 'opened.text.body');
+      expect(
+        node.label,
+        "Just now · kept in Nino's history\nzw[U+200B] rtl[U+202E]TXET",
+      );
+      semantics.dispose();
+    });
+
     testWidgets('with a password: not kept', (tester) async {
       show(
         const OpenFlowState(phase: OpenPhase.openedText, openedText: 'hello'),
