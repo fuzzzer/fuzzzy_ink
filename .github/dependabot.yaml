@@ -4,11 +4,16 @@ version: 2
 # frb refuses to build on any mismatch, and a dependabot group cannot span two ecosystems, so every
 # frb bump — patch included — is ignored here and done by hand (playbooks/rust-flutter-bridge.md §8).
 # The `flutter-rust-bridge` groups only take effect if that ignore is ever lifted.
+#
+# Version-update pull requests are off (owner, 2026-11-12): `open-pull-requests-limit: 0` stops every
+# routine bump and its email. Known vulnerabilities still show under the repo's Security tab -> Dependabot,
+# checked on demand. Raise a limit again to get bump pull requests for that ecosystem.
 updates:
   - package-ecosystem: cargo
     directory: /rust/fuzzy_crypto_core
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
     groups:
       flutter-rust-bridge:
         patterns: ["flutter_rust_bridge*"]
@@ -18,6 +23,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
     groups:
       flutter-rust-bridge:
         patterns: ["flutter_rust_bridge*"]
@@ -27,3 +33,4 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
