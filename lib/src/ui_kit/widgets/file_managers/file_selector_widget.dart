@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/lib.dart';
 import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
@@ -42,7 +43,7 @@ class _FileSelectorWidgetState extends State<FileSelectorWidget> {
         }
       }
     } catch (e) {
-      debugPrint('File selection error: $e');
+      if (kDebugMode) debugPrint('File selection error: $e');
       scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(
