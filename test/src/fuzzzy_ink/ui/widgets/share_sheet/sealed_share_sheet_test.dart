@@ -166,7 +166,7 @@ void main() {
 
       expect(find.text('Send a link'), findsNothing);
       expect(find.byType(QrCodeView), findsOneWidget);
-      expect(find.byType(InkMark), findsOneWidget);
+      expect(find.byType(InkMark), findsNothing);
       expect(
         find.text('Safe to show anyone. Only their reply connects you.'),
         findsOneWidget,

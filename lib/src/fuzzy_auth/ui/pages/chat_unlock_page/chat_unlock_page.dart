@@ -165,11 +165,6 @@ class _ChatUnlockPageState extends State<ChatUnlockPage> {
             ),
           ],
           children: [
-            const Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: SettleIn(child: InkMark(size: 56, qaId: 'lock')),
-            ),
-            SizedBox(height: space.l),
             AccessTitle(localizations.accessLockedTitle),
             ValueListenableBuilder<WaitingArrival?>(
               valueListenable: _pendingLink,

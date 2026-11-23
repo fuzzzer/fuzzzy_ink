@@ -408,8 +408,6 @@ class SealedQrCodePage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const InkMark(qaId: 'qr'),
-                  SizedBox(height: space.m),
                   Text(
                     label.toUpperCase(),
                     style: type.label.copyWith(color: colors.inkMute),

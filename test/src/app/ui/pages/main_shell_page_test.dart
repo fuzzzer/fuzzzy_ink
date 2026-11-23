@@ -208,12 +208,12 @@ void main() {
     verify(() => vault.lock()).called(1);
   });
 
-  testWidgets('wide screens get the side rail instead, with the mark',
+  testWidgets('wide screens get the side rail instead, with no logo',
       (tester) async {
     await pumpShell(tester, size: const Size(1024, 768));
     expect(find.byType(FuzzzySideNav), findsOneWidget);
     expect(find.byType(FuzzzyBottomNav), findsNothing);
-    expect(find.byType(InkMark), findsOneWidget);
+    expect(find.byType(InkMark), findsNothing);
 
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();

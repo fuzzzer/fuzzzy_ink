@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzzy_ink/src/src.dart';
 
-/// The Fuzzzy Ink mark, drawn in exactly one place (DESIGN.md section 11):
-/// home header 26, lock screen 56, app-switcher cover 64, welcome 96, the
-/// recovery-key print sheet 18, the QR screen.
+/// The Fuzzzy Ink mark. The logo is the app icon only: no page inside the
+/// app shows it (owner, 2026-11-23). Its one remaining use is [assetFor],
+/// which gives the iPhone app-switcher cover its file (drawn at 64).
 ///
-/// It paints the chosen logo (a solid brand-black drop, `#0b0c0f`, on the
-/// red sun, on both looks) from `assets/logo/`, at 1x, 2x and 3x:
+/// It paints the chosen logo (the ink-drop nib: a solid brand-black drop,
+/// `#0b0c0f`, with a pen slit into a round hole, on the red sun, on both
+/// looks) from `assets/logo/`, at 1x, 2x and 3x:
 /// [nightAsset] on the dark look, [paperAsset] on the light look. The look
 /// is read from the nearest [Theme], so a page that forces paper (the
 /// printed recovery key) gets the paper mark.

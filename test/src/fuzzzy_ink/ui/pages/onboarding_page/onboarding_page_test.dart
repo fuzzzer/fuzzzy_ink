@@ -19,11 +19,11 @@ void main() {
 
   tearDown(() => harness.tearDown());
 
-  testWidgets('Welcome: the mark, one line, the offline tag and Start',
+  testWidgets('Welcome: one line, the offline tag and Start, no logo',
       (tester) async {
     await harness.pump(tester, const OnboardingPage());
 
-    expect(find.byKey(const Key('mark.welcome')), findsOneWidget);
+    expect(find.byType(InkMark), findsNothing);
     expect(find.text(en.accessWelcomeLine), findsOneWidget);
     expect(find.text(en.accessWelcomeTag.toUpperCase()), findsOneWidget);
     expect(find.text(en.accessStart), findsOneWidget);

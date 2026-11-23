@@ -149,8 +149,6 @@ class RecoveryKeyPrintSheet extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const InkMark(size: 18, qaId: 'print'),
-                    SizedBox(width: space.s),
                     Expanded(
                       child: Text(
                         localizations.accessPrintSheetTitle,

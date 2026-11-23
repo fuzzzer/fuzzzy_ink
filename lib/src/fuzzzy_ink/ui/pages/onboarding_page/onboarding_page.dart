@@ -90,11 +90,6 @@ class _WelcomeView extends StatelessWidget {
           ),
         ),
         SizedBox(height: space.xl),
-        const Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: InkMark(size: 96, qaId: 'welcome'),
-        ),
-        SizedBox(height: space.l),
         Semantics(
           header: true,
           child: Text(

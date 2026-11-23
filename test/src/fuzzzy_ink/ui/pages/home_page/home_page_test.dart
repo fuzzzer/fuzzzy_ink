@@ -132,7 +132,7 @@ void main() {
         expect(find.byKey(const Key('tile.home.open')), findsOneWidget);
         expect(find.byKey(const Key('home.loading')), findsOneWidget);
         expect(find.byType(FuzzzySkeleton), findsNWidgets(9));
-        expect(find.byType(InkMark), findsOneWidget);
+        expect(find.byType(InkMark), findsNothing);
       });
 
       testWidgets('load error: one fact and what to do ($skin)',
@@ -193,7 +193,7 @@ void main() {
         ChatGeneralDataListState(status: _loaded, chatList: [_mom]),
       );
       await pumpHome(tester);
-      expect(find.byKey(const Key('mark.home')), findsOneWidget);
+      expect(find.byType(InkMark), findsNothing);
       expect(find.byKey(const Key('iconbtn.app.lock')), findsNothing);
       expect(find.byKey(const Key('keeper.home')), findsNothing);
     });

@@ -20,8 +20,6 @@ class HomeHeader extends StatelessWidget {
         height: 56,
         child: Row(
           children: [
-            const InkMark(qaId: 'home'),
-            SizedBox(width: space.s + space.xs / 2),
             Expanded(
               child: Semantics(
                 header: true,

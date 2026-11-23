@@ -8,7 +8,7 @@ them to `lib/src/ui_kit/`. Each widget's doc comment says what it is for; this p
 
 | Piece | File | Use it for |
 |---|---|---|
-| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark everywhere (header 26, lock screen 56, welcome 96, print sheet 18, QR screen). Paints `assets/logo/ink_mark.png` on the dark look and `ink_mark_paper.png` on the light look: the drop solid black on the red sun on both. |
+| `InkMark` | `app/ui/widgets/ink_mark/` | The Ink mark (the ink-drop nib). Shown on no page inside the app (owner, 2026-11-23: the logo is the app icon only); `InkMark.assetFor` gives the iPhone app-switcher cover its file. Paints `assets/logo/ink_mark.png` on the dark look and `ink_mark_paper.png` on the light look. |
 | `StepsIndicator` | `app/ui/widgets/guided/` | The step bar at the top of every flow ("Step 2 of 3 · Recovery key"). |
 | `StepPicture` | `app/ui/widgets/guided/` | The three-dot picture instead of a paragraph. `StepPicture.inviteSteps(context, name:)` is the invite flow's. `justDone` fills a step once. |
 | `WhyLink`, `showInkInfoSheet`, `InkInfoTopic` | `app/ui/widgets/guided/` | "Why?" / "How?" / "More" links and the nine explanation sheets. |

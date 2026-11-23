@@ -49,10 +49,10 @@ void main() {
 
   Finder passwordField() => kitField('unlock.password');
 
-  testWidgets('a private screen: the mark, the title and the password',
+  testWidgets('a private screen: the title and the password, no logo',
       (tester) async {
     await pumpPage(tester, locked);
-    expect(find.byKey(const Key('mark.lock')), findsOneWidget);
+    expect(find.byType(InkMark), findsNothing);
     expect(find.text(l10n.accessLockedTitle), findsOneWidget);
     expect(
       SensitiveScreen.isIn(tester.element(find.text(l10n.accessLockedTitle))),

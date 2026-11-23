@@ -109,8 +109,6 @@ class MainShellPage extends StatelessWidget {
                   onSelect: (i) => _select(context, i),
                   header: Row(
                     children: [
-                      const InkMark(qaId: 'rail'),
-                      SizedBox(width: context.fuzzzySpace.s),
                       Flexible(
                         child: Text(
                           localizations.fuzzzyInk,
