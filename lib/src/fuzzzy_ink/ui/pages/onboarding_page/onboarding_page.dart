@@ -8,7 +8,7 @@ import 'package:fuzzzy_ui_kit/fuzzzy_ui_kit.dart';
 import 'package:go_router/go_router.dart';
 
 /// The first run's opening (DESIGN.md section 4.1, prototype `ob-welcome`
-/// and `ob-how`): Welcome (the mark, one line, Start, the language chip),
+/// and `ob-how`): Welcome (the name, one line, Start, the language button in the top corner),
 /// then How it works (three picture cards, "Why once?", one tip, Next). Next
 /// leads to the master password.
 class OnboardingPage extends StatefulWidget {
@@ -77,19 +77,15 @@ class _WelcomeView extends StatelessWidget {
           onPressed: onStart,
         ),
       ],
+      topEnd: FuzzzyButton(
+        label: language,
+        variant: FuzzzyButtonVariant.ghost,
+        size: FuzzzyButtonSize.s,
+        icon: const Icon(Icons.translate),
+        qaId: 'welcome.language',
+        onPressed: () => showLanguageSheet(context),
+      ),
       children: [
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: FuzzzyButton(
-            label: language,
-            variant: FuzzzyButtonVariant.ghost,
-            size: FuzzzyButtonSize.s,
-            icon: const Icon(Icons.translate),
-            qaId: 'welcome.language',
-            onPressed: () => showLanguageSheet(context),
-          ),
-        ),
-        SizedBox(height: space.xl),
         Semantics(
           header: true,
           child: Text(

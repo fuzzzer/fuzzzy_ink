@@ -18,6 +18,7 @@ class AccessPage extends StatelessWidget {
     this.centerContent = false,
     this.qaId,
     this.actions = const [],
+    this.topEnd,
   });
 
   final List<Widget> children;
@@ -37,6 +38,10 @@ class AccessPage extends StatelessWidget {
 
   /// At the header's end (a Fuzzzy Cast keeper's spots).
   final List<Widget> actions;
+
+  /// A small control pinned to the top end corner on a screen with no
+  /// header, kept at its own width (the welcome screen's language button).
+  final Widget? topEnd;
 
   /// The widest the content gets (the design's dialog width on a computer).
   static const double maxContentWidth = 560;
@@ -76,6 +81,14 @@ class AccessPage extends StatelessWidget {
                     ? null
                     : AppBarBack(barQaId: qaId ?? 'access', onPressed: back),
                 actions: actions,
+              ),
+            if (!hasHeader && topEnd != null)
+              Padding(
+                padding: EdgeInsets.fromLTRB(space.l, space.s, space.s, 0),
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: IntrinsicWidth(child: topEnd),
+                ),
               ),
             Expanded(
               child: LayoutBuilder(
