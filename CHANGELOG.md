@@ -61,6 +61,9 @@ All notable changes to Fuzzzy Ink are documented here. The format follows
   log opened messages.
 
 ### Changed
+- **A new app icon: the ink-drop nib.** The ink drop now has a pen slit running from its tip into a round hole,
+  so it reads as a fountain-pen nib, on every platform and build. The logo is the app icon only: the welcome, home,
+  lock and QR screens, the side menu and the printed recovery sheet no longer show it.
 - **The app is called Fuzzzy Ink** (was Fuzzzy Seal) wherever a person sees the name: the home-screen and window
   titles on every platform, the welcome and unlock screens, the Face ID and biometric prompts, and the text sent with a
   shared invitation, acceptance or message, in English and Georgian. The identifiers changed too, from 1.1.1 on:
