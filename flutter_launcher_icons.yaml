@@ -1,8 +1,8 @@
-# App icon — production (the Fuzzzy Ink mark: a black ink drop with a straight tip, upright
-# on the blood red sun). ANDROID ONLY, on purpose.
+# App icon — production (the Fuzzzy Ink mark: a black ink drop shaped as a pen nib, a slit
+# from its tip into a round hole, upright on the blood red sun). ANDROID ONLY, on purpose.
 #
-# Artwork is owner-approved (2026-10-26) and lives in the brand kit:
-#   /Volumes/Fuzzzity 2/fuzzzy_company/company/brand/logo/ink/v1/prod/night
+# Artwork is owner-approved (the nib, 2026-11-23; the drop before it, 2026-10-26) and lives in the brand kit:
+#   /Volumes/Fuzzzity 2/fuzzzy_company/company/brand/logo/ink/v2/prod/night
 # Staging and development use the same kit's staging/night and dev/night folders. This replaces
 # the company mark (sun and branch) the app used before; Fuzzzy Ink now has its own mark.
 # The copies under assets/launcher_icons/ are build inputs only — never edit them by hand and
